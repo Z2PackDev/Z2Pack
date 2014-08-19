@@ -2,3 +2,6 @@
 *__pycache__*
 *.in~
 *~
+src/python_tools/.git
+src/python_tools/.gitignore
+build

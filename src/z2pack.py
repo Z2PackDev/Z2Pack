@@ -5,11 +5,11 @@
 # Date:    21.03.2014 11:46:38 CET
 # File:    topolopy.py
 
+import python_tools.string_tools as string_tools
 
 import sys
 import time
 import pickle
-import strings
 import numpy as np
 import scipy.linalg as la
 import matplotlib.pyplot as plt
@@ -87,7 +87,7 @@ class Z2PACK_IMPL_PLANE:
         - automated check for distance between gap and wcc -> add string
         """
         #----------------initial output---------------------------------# # TODO: add all variables
-        print(strings.cbox( "starting wcc calculation\n\n" +\
+        print(string_tools.cbox( "starting wcc calculation\n\n" +\
                             "options:\n" +\
                             "initial # of strings: " + str(self.__Nstrings) + "\n"+\
                             "use pickle: " + ("yes" if self.__use_pickle else "no")
@@ -127,7 +127,7 @@ class Z2PACK_IMPL_PLANE:
                              " min " + \
                             str(int(np.floor(duration)) % 60) + \
                             " sec"
-        print(strings.cbox( "finished wcc calculation" + "\ntime: " 
+        print(string_tools.cbox( "finished wcc calculation" + "\ntime: " 
                             + duration_string))
         
         #----------------return value-----------------------------------#
@@ -406,30 +406,5 @@ class z2pack_abinit(Z2PACK_IMPL_SYSTEM):
     def scf(self, scf_vars_path, **kwargs):
         self.abinit_system.scf(io.parse_input(scf_vars_path), **kwargs)
 
-#-----------------------------------------------------------------------#
-#-----------------------------------------------------------------------#
-#                               TESTING                                 #
-#-----------------------------------------------------------------------#
-#-----------------------------------------------------------------------#
-
-
-Bi = z2pack_abinit( "Bi", "../abinit_input/Bi_common.in", "../Psps/83bi.5.hgh", './', abinit_command = "mpirun -np 7 abinit", num_occupied = 10)
-Bi.scf("../abinit_input/Bi_scf.in", clean_subfolder = True)
-Bi_1 = Bi.plane(2, 0, 0, pickle_file = 'Bi_01_pickle.txt')
-Bi_1.wcc_calc()
-
-def calculate(system):
-    system.wcc_calc()
-
-def plot(system, shift = 0):
-    system.load()
-    system.plot(shift)
-    print(system.invariant())
-
-#-----------------------------------------------------------------------#
-
-#----------------calculations-------------------------------------------#
-calculate(Bi_1)
-
-#----------------plots--------------------------------------------------#
-plot(Bi_1)
+if __name__ == "__main__":
+    print("z2pack.py")

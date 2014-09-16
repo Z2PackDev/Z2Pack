@@ -5,3 +5,4 @@
 src/python_tools/.git
 src/python_tools/.gitignore
 build
+website/venv

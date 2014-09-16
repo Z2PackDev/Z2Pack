@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+
+<head>
+<link rel="stylesheet" type="text/css" href="static/style.css">
+</head>
+
+<html lang="en-US">
+<title>Z2Pack - Topological Invariants Calculator</title>
+<div class="page">
+    <img src="/static/z2pack_logo.svg" alt="" width="300" height="">
+    <hr style="margin:0"/>
+    <p>
+        Check out the <a href = "http://www.github.com/greschd">Z2Pack Pyhton package</a> for additional features, especially ab-initio calculations. 
+    </p>
+    <p>
+        New here? Take a look at the <a href = "TODO">Quick Guide</a> or the <a href = "TODO">Tutorial</a> first!
+    </p>
+    <h1>Tight-binding topological invariants calculator</h1>
+        <form method="post">
+            <h2>reduced unit cell coordinates:</h2>
+            a1 
+            <input type="text" name = "a1_x1">
+            <input type="text" name = "a1_x2">
+            <input type="text" name = "a1_x3"><br/>
+            a2
+            <input type="text" name = "a2_x1">
+            <input type="text" name = "a2_x2">
+            <input type="text" name = "a2_x3"><br/>
+            a3 
+            <input type="text" name = "a3_x1">
+            <input type="text" name = "a3_x2">
+            <input type="text" name = "a3_x3"><br/>
+            <h2>atom positions</h2>
+        <p>
+            positions as multiple of the primitive vectors a1, a2, a3
+        </p>
+        <hr/>
+        <div id="dynamicInput">
+        </div>
+        <input type="button" value="add atom" onClick="addInput('dynamicInput');">        
+        <input type="button" value="remove atom" onClick="removeInput('dynamicInput');">
+        <p>
+            {{bla}}
+        </p>
+        <p>
+            <input type="submit" value="start calculation">
+        </p>
+    
+    <!--SCRIPTS-->
+    <script>
+        var counter = 0;
+        addInput("dynamicInput");
+        var limit = 20;
+        function addInput(divName){
+             if (counter == limit)  {
+                  alert("You have reached the limit of adding " + counter + " atoms");
+             }
+             else {
+                  counter++;
+                  var newdiv = document.createElement('div');
+                  newdiv.innerHTML = "atom " + counter + " <br> x: <input type='text' name='atompos_" + counter + "_x'> y: <input type='text' name='atompos_" + counter + "_y'> z: <input type='text' name='atompos_" + counter + "_z'>";
+                  document.getElementById(divName).appendChild(newdiv);
+             }
+        }
+        function removeInput(divName){
+            if (counter == 1) {
+                alert("At least one atom per unit cell needed");
+            }
+            document.getElementById(divName).removeChild(document.getElementById(divName).lastChild);
+            counter--;
+        }
+    </script>
+</html>

@@ -378,7 +378,7 @@ class Z2PACK_IMPL_PLANE:
 import abinit_run as ar
 import abinit_input_io as io
 
-class z2pack_abinit(Z2PACK_IMPL_SYSTEM):
+class abinit(Z2PACK_IMPL_SYSTEM):
     
     def __init__(   self, 
                     name,
@@ -390,21 +390,24 @@ class z2pack_abinit(Z2PACK_IMPL_SYSTEM):
                     **kwargs
                     ):
         self.defaults = kwargs
-        self.abinit_system = ar.ABINIT_RUN_IMPL(    name, 
+        self.__name = name
+        self.__abinit_system = ar.ABINIT_RUN_IMPL(  name, 
                                                     io.parse_input(common_vars_path) , 
                                                     psps_files, 
                                                     working_folder, 
                                                     abinit_command = abinit_command,
                                                     num_occupied = num_occupied)
-        def M_handle_creator_abinit(string_dir, plane_pos_dir, plane_pos):
+        def __M_handle_creator_abinit(string_dir, plane_pos_dir, plane_pos):
             if(3 - string_dir > 2 * plane_pos_dir):
-                return lambda kx, N: self.abinit_system.nscf(string_dir, [kx, plane_pos], N)
+                return lambda kx, N: self.__abinit_system.nscf(string_dir, [kx, plane_pos], N)
             else:
-                return lambda kx, N: self.abinit_system.nscf(string_dir, [plane_pos, kx], N)
-        self.M_handle_creator = M_handle_creator_abinit
+                return lambda kx, N: self.__abinit_system.nscf(string_dir, [plane_pos, kx], N)
+        self.M_handle_creator = __M_handle_creator_abinit
         
     def scf(self, scf_vars_path, **kwargs):
-        self.abinit_system.scf(io.parse_input(scf_vars_path), **kwargs)
+        print("starting SCF calculation for " + self.__name)
+        self.__abinit_system.scf(io.parse_input(scf_vars_path), **kwargs)
+        print("")
 
 if __name__ == "__main__":
     print("z2pack.py")

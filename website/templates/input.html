@@ -1,20 +1,5 @@
-<!DOCTYPE html>
-
-<head>
-<link rel="stylesheet" type="text/css" href="static/style.css">
-</head>
-
-<html lang="en-US">
-<title>Z2Pack - Topological Invariants Calculator</title>
-<div class="page">
-    <img src="/static/z2pack_logo.svg" alt="" width="300" height="">
-    <hr style="margin:0"/>
-    <p>
-        Check out the <a href = "http://www.github.com/greschd">Z2Pack Pyhton package</a> for additional features, especially ab-initio calculations. 
-    </p>
-    <p>
-        New here? Take a look at the <a href = "TODO">Quick Guide</a> or the <a href = "TODO">Tutorial</a> first!
-    </p>
+{% extends "layout.html" %}
+{% block body %}
     <h1>Tight-binding topological invariants calculator</h1>
         <form method="post">
             <h2>reduced unit cell coordinates:</h2>
@@ -70,4 +55,4 @@
             counter--;
         }
     </script>
-</html>
+{% endblock %}

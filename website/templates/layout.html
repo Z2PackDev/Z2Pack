@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+</head>
+
+<html lang="en-US">
+<title>Z2Pack - Topological Invariants Calculator</title>
+<div class="page">
+    <div style="position:relative;">
+    <img src="/static/z2pack_logo.svg" alt="logo" width="300" height=""> 
+    <div style="position:absolute; bottom:0; right:0; " >
+        created by <a href="http://www.github.com/greschd"> Dominik Gresch</a>
+    </div>
+    </div>
+    <hr style="margin:0"/>
+    {% for message in get_flashed_messages() %}
+        <div class=flash>{{ message }}</div>
+    {% endfor %}
+    {% block body %}{% endblock %}
+</div>
+</html>

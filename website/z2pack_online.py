@@ -9,7 +9,7 @@
 
 from sqlite3 import dbapi2 as sqlite3
 from flask import Flask, request, session, g, redirect, url_for, abort, \
-     render_template, flash, _app_ctx_stack
+     render_template, _app_ctx_stack, jsonify, send_from_directory
 
 # configuration
 DEBUG = True
@@ -34,7 +34,6 @@ def input():
         else:
             return render_template('input.html')
     else:
-        #~ print( request.values["a1_x1"])
         return render_template('input.html')
         
 @app.route('/not_implemented')
@@ -44,6 +43,24 @@ def not_implemented():
 @app.route('/results')
 def results():
     return render_template('result.html')
+    
+# to be removed (serves as example only)
+@app.route('/echo/', methods=['GET'])
+def echo():
+    ret_data = {"value": request.args.get('echoValue')}
+    return jsonify(ret_data)
+    
+@app.route('/user_guide')
+def user_guide():
+    return render_template('user_guide.html')
+    
+@app.route('/downloads/<path:filename>')
+def download(filename):
+    return send_from_directory(directory = 'downloads/', filename = filename)
 
+@app.route('/downloads')
+def downloads():
+    return render_template('downloads.html')
+    
 if __name__ == '__main__':
     app.run()

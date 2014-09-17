@@ -1,22 +1,27 @@
 <!DOCTYPE html>
 
 <head>
-    <link rel="stylesheet" type="text/css" href="static/style.css">
+    <link rel="stylesheet" type="text/css" href="static/style.css"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <!--SCRIPTS-->
+    <script type=text/javascript>
+        var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+    <script type=text/javascript src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 </head>
-
 <html lang="en-US">
-<title>Z2Pack - Topological Invariants Calculator</title>
-<div class="page">
-    <div style="position:relative;">
-    <img src="/static/z2pack_logo.svg" alt="logo" width="300" height=""> 
-    <div style="position:absolute; bottom:0; right:0; " >
-        created by <a href="http://www.github.com/greschd"> Dominik Gresch</a>
-    </div>
-    </div>
-    <hr style="margin:0"/>
-    {% for message in get_flashed_messages() %}
-        <div class=flash>{{ message }}</div>
-    {% endfor %}
-    {% block body %}{% endblock %}
-</div>
+    <body>
+        <title>Z2Pack - Topological Invariants Calculator</title>
+        <div class="page">
+            <div style="position:relative;">
+            <img src="/static/z2pack_logo.svg" alt="logo" width="300" height=""> 
+            <div style="position:absolute; bottom:0; right:0; " >
+                created by <a href="http://www.github.com/greschd"> Dominik Gresch</a>
+            </div>
+            </div>
+            <hr style="margin:0"/>
+                <div id="flasher"></div>
+            {% block body %}{% endblock %}
+        </div>
+    </body>
 </html>

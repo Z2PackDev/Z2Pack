@@ -3,7 +3,7 @@
 #
 # Author:  Dominik Gresch <greschd@ethz.ch>
 # Date:    21.03.2014 11:46:38 CET
-# File:    topolopy.py
+# File:    z2pack.py
 
 import python_tools.string_tools as string_tools
 
@@ -408,6 +408,16 @@ class abinit(Z2PACK_IMPL_SYSTEM):
         print("starting SCF calculation for " + self.__name)
         self.__abinit_system.scf(io.parse_input(scf_vars_path), **kwargs)
         print("")
+        
+#-----------------------------------------------------------------------#
+#-----------------------------------------------------------------------#
+#                TIGHT BINDING SPECIALIZATION                           #
+#-----------------------------------------------------------------------#
+#-----------------------------------------------------------------------#
+
+class tight_binding(Z2PACK_IMPL_SYSTEM):
+    
+    
 
 if __name__ == "__main__":
     print("z2pack.py")

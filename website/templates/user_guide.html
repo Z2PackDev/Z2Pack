@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>User Guide</h1>
+    <p>
+        This is the User Guide for the Z2Pack <strong>Python</strong> package.
+        Since this is the underlying library for Z2Pack online, it can be used
+        as a reference for the advanced options available. If you need help 
+        with Z2Pack online specifically, please refer to the 
+        <a href = "TODO">Tutorial</a>.
+    </p>
+    <div class='to_ToC'>
+    <h2>Overview</h2>
+    <h2>Core functionality</h2>
+    <h2>Convergence options</h2>
+    <h2 id="setup">Setting up ABINIT for Z2Pack</h2>
+            <p>
+                In order for Z2Pack to work with ABINIT, we need an ABINIT 
+                installation with a modified version of the Wannier90 fallback.
+                The can be achieved with the following steps:
+            </p>
+        <h3>Step 1</h3>
+            <p>
+                <form action="/downloads/wannier90-1.2.0.1.tar.gz" method="GET">
+                    <input type="submit" value="Download"/>
+                </form>
+                Move the source to the tarball directory of your ABINIT 
+                installation (usually <code>~/.abinit/tarballs</code>). 
+                <div class="highlight">
+                    <strong>Warning:</strong> <br/>This will break your 
+                    Wannier90/ABINIT installation. If you intend to use ABINIT
+                    with Wannier90 apart from Z2Pack, you may want to 
+                    create a second ABINIT installation. Make sure you
+                    also use a different tarball directory.
+                </div>
+            </p>
+        <h3>Step 2</h3>
+            <p>
+                Next, we need to change the checksum ABINIT expects from
+                the Wannier90 source:
+                <ol>
+                    <li>
+                        Get the md5sum for both the original Wannier90
+                        source and the modified source. On a LINUX machine,
+                        you can check for the md5sum with the command 
+                        <code>md5sum filename</code>.
+                    </li>
+                    <li>
+                        Go to your ABINIT source folder and open the file
+                        <code> fallbacks/configure</code>. Search and replace
+                        every instance of the old checksum with the new one.
+                        You should find 2 checksums to replace. 
+                    </li>
+                </ol>
+            </p>
+        <h3>Step 3</h3>
+            <p>
+                Build ABINIT with Wannier90 enabled. If any of the previous 
+                steps were not done correctly, the installation will get stuck
+                trying to download Wannier90. 
+            </p>
+        <h3>Step 4</h3>
+            When using Z2Pack, make sure you are using the right value for <code>abinit_command</code>, especially if you created a second ABINIT installation. For details check out the <a href = "#z2pack.abinit">z2pack.abinit</a> section.
+    <h2>Getting the Z2Pack Python package</h2>
+    <h2 id='z2pack.abinit'> The z2pack.abinit class </h2>
+    </div>
+
+    <script src="/static/ToC.js"></script>
+{% endblock %}

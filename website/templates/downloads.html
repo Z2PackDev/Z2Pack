@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block body %}
+    <h1>Downloads</h1>
+    <table style="width:100%; border:0;">
+        <tr class="downloads">
+            <td>modified Wannier90 source</td>
+            <td>
+                <form action="/downloads/wannier90-1.2.0.1.tar.gz" method="GET">
+                        <input type="submit" value="Download"/>
+                </form>
+            </td>
+        </tr>
+        <tr class="downloads">
+            <td>Z2Pack Python package</td>
+            <td><form action="" method="GET">
+                        <input type="submit" value="not yet..."/>
+                </form></td>
+        </tr>
+        
+    </table>
+{% endblock %}

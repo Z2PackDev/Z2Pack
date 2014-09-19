@@ -24,18 +24,29 @@ class ABINIT_RUN_IMPL:
                     common_vars, 
                     psps_files, 
                     working_folder, 
-                    abinit_command = "abinit",
-                    num_occupied = None   
+                    num_occupied,
+                    abinit_command = "abinit"
                 ):
         self.name = name
         self.calling_path = os.getcwd()
         self.common_vars = common_vars
-        if(working_folder[0] == "/" or working_folder[0] == "~"):
-            self.psps_files = psps_files
+        if(working_folder[0] == "/" or working_folder[0] == "~"): # absolute
             self.working_folder = working_folder
-        else:
-            self.psps_files = working_folder + '/' + psps_files
+        else: #relative
             self.working_folder = self.calling_path + '/' + working_folder
+        if(isinstance(psps_files, str)):
+            if(psps_files[0] == "/" or psps_files[0] == "~"): # absolute
+                self.psps_files = psps_files
+            else: # relative
+                self.psps_files = self.calling_path + '/' + psps_files
+        else:
+            self.psps_files = []
+            for psps_file in psps_files:
+                if(psps_file[0] == "/" or psps_file[0] == "~"): # absolute
+                    self.psps_files.append(psps_file)
+                else: # relative
+                    self.psps_files.append(self.calling_path + '/' + psps_file)
+        
         self.abinit_command = abinit_command
         self.num_occupied = num_occupied
         
@@ -45,7 +56,7 @@ class ABINIT_RUN_IMPL:
                             input_wfct_path = None,
                             additional_args = {},
                             create_wannier90_input = False,
-                            clean_subfolder = False,
+                            clean_subfolder = True,
                             setup_only = False
                         ):
         data = {}
@@ -85,10 +96,10 @@ class ABINIT_RUN_IMPL:
         abinit_runtime_input += run_name + "_o\n" + run_name + "_\n"
         
         if(isinstance(self.psps_files, str)):
-            abinit_runtime_input += self.calling_path + "/" + self.psps_files+ "\n"
+            abinit_runtime_input += self.psps_files+ "\n"
         else:
             for psps_file in self.psps_files:
-                abinit_runtime_input += self.calling_path + "/" + psps_file + "\n"
+                abinit_runtime_input +=  psps_file + "\n"
         
         f = open(subfolder + "/" + run_name + ".files", "w")
         f.write(abinit_runtime_input)
@@ -103,6 +114,7 @@ class ABINIT_RUN_IMPL:
 #-----------------------------------------------------------------------#
 
     def scf(self, scf_args = {}, setup_only = False, **kwargs):
+        scf_args.update({'prtden': 1})
         self.__abinit_run__("work_scf_" + self.name, tag = "_scf", additional_args = scf_args, setup_only = setup_only, **kwargs)
         
 #-----------------------------------------------------------------------#
@@ -160,7 +172,7 @@ class ABINIT_RUN_IMPL:
                     clean_subfolder = True
                     )
 #----------------------read in mmn--------------------------------------#
-        M = mmn.getM(subfolder + "/wannier90.mmn")
+        M = mmn.getM(self.working_folder + '/' + subfolder + "/wannier90.mmn")
         return M
 
     

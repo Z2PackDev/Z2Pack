@@ -225,7 +225,7 @@ class Z2PACK_IMPL_PLANE:
         N = 8
         niter = 0
         print(str(N), end = "", flush = True) # Output
-        x, min_sv = self.__trywcc(self.__M_handle(kx, N))
+        x, min_sv = self.__trywcc(self.__M_handle(kx, N), verbose)
         #----------------iteration--------------------------------------#
         while(True):
             # larger steps for small min_sv (every second step)
@@ -235,7 +235,7 @@ class Z2PACK_IMPL_PLANE:
                 N += 2
             xold = x.copy()
             print(", " + str(N), end = "", flush = True)    # Output
-            x, min_sv = self.__trywcc(self.__M_handle(kx, N))
+            x, min_sv = self.__trywcc(self.__M_handle(kx, N), verbose)
             niter += 1
 
             #----------------break conditions---------------------------#
@@ -248,7 +248,7 @@ class Z2PACK_IMPL_PLANE:
 
         return sorted(x)
     
-    def __trywcc(self, allM):
+    def __trywcc(self, allM, verbose):
         """
         Calculates the WCC from the MMN matrices
         """
@@ -389,8 +389,8 @@ class abinit(Z2PACK_IMPL_SYSTEM):
                     common_vars_path,
                     psps_files,
                     working_folder,
+                    num_occupied,
                     abinit_command = "abinit",
-                    num_occupied = None,
                     **kwargs
                     ):
         self.defaults = kwargs
@@ -399,8 +399,8 @@ class abinit(Z2PACK_IMPL_SYSTEM):
                                                     io.parse_input(common_vars_path) , 
                                                     psps_files, 
                                                     working_folder, 
-                                                    abinit_command = abinit_command,
-                                                    num_occupied = num_occupied)
+                                                    num_occupied,
+                                                    abinit_command = abinit_command)
         def __M_handle_creator_abinit(string_dir, plane_pos_dir, plane_pos):
             if(3 - string_dir > 2 * plane_pos_dir):
                 return lambda kx, N: self.__abinit_system.nscf(string_dir, [kx, plane_pos], N)

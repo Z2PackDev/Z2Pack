@@ -5,25 +5,48 @@ var ToC =
 
 var newLine, el, title, link;
 
-$("h2").each(function() {
+var ul_open = false;
+
+$("h1,h2").each(function() {
 
     el = $(this);
     title = el.text();
-    link = "#" + el.attr("id");
+    if(el.attr("id") != 'dismiss') {
+        if(el.is('h1')) {
+            link = "#" + el.attr("id");
+            
+            newLine = "";
+            if(ul_open) {
+                newLine += "</ul> </li>";
+            }
+            newLine +=
+            "<li>" +
+            "<a href='" + link + "'>" +
+            title +
+            "</a>" +
+            "<ul>";
+            ul_open = true;
+            ToC += newLine;
+        }
+        else {
+            link = "#" + el.attr("id");
 
-    newLine =
-    "<li>" +
-    "<a href='" + link + "'>" +
-    title +
-    "</a>" +
-    "</li>";
+            newLine =
+            "<li>" +
+            "<a href='" + link + "'>" +
+            title +
+            "</a>" +
+            "</li>";
 
-    ToC += newLine;
-    console.log(ToC);
-    
+            ToC += newLine;
+            
+        }
+        
+        
+    }
 });
 
 ToC +=
-   "</ul>" +
+   "</li> </ul> </ul>" +
   "</nav>";
 $(".to_ToC").prepend(ToC);

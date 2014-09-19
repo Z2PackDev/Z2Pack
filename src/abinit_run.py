@@ -131,7 +131,7 @@ class ABINIT_RUN_IMPL:
         ngkpt[string_dir] = string_N
         string_pos.insert(string_dir,0.0)
         string_args = {'kptopt': 3}
-        string_args.update({"ngkpt": ngkpt}) # TODO: choose version
+        string_args.update({"ngkpt": ngkpt})
         string_args.update({"nshiftk": 1})
         string_args.update({"shiftk": string_pos})
         

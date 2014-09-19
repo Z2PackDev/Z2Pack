@@ -61,7 +61,8 @@ class Z2PACK_IMPL_PLANE:
                     gap_tol = 2e-2, 
                     Nstrings = 11, 
                     use_pickle = True, 
-                    pickle_file = "res_pickle.txt", **kwargs):
+                    pickle_file = "res_pickle.txt", 
+                    **kwargs):
         """
         constructor
         parses the input variables
@@ -80,19 +81,20 @@ class Z2PACK_IMPL_PLANE:
         elif(self.__Nstrings < 8):
             warnings.warn("Nstrings should usually be >= 8 for good results", UserWarning)
     
-    def wcc_calc(self):
+    def wcc_calc(self, verbose = True):
         """
         calculating the wcc of the system
         - automated convergence in string direction
         - automated check for distance between gap and wcc -> add string
         """
         #----------------initial output---------------------------------# # TODO: add all variables
-        print(string_tools.cbox( "starting wcc calculation\n\n" +\
-                            "options:\n" +\
-                            "initial # of strings: " + str(self.__Nstrings) + "\n"+\
-                            "use pickle: " + ("yes" if self.__use_pickle else "no")
-                            ) + "\n")
-        
+        if(verbose):
+            print(string_tools.cbox( "starting wcc calculation\n\n" +\
+                                "options:\n" +\
+                                "initial # of strings: " + str(self.__Nstrings) + "\n"+\
+                                "use pickle: " + ("yes" if self.__use_pickle else "no")
+                                ) + "\n")
+            
         start_time = time.time()
 
         #----------------initializing-----------------------------------#
@@ -107,7 +109,7 @@ class Z2PACK_IMPL_PLANE:
         while not (all(self.__neighbour_check)):
             for i, kx in enumerate(self.__k_points):
                 if not(self.__string_status[i]):
-                    self.__wcc_list[i] = self.__getwcc(kx)
+                    self.__wcc_list[i] = self.__getwcc(kx, verbose)
                     self.__gaps[i] = self.__gapfind(self.__wcc_list[i])
                     self.__string_status[i] = True
                     self.__save()
@@ -127,7 +129,8 @@ class Z2PACK_IMPL_PLANE:
                              " min " + \
                             str(int(np.floor(duration)) % 60) + \
                             " sec"
-        print(string_tools.cbox( "finished wcc calculation" + "\ntime: " 
+        if(verbose):
+            print(string_tools.cbox( "finished wcc calculation" + "\ntime: " 
                             + duration_string))
         
         #----------------return value-----------------------------------#
@@ -210,7 +213,7 @@ class Z2PACK_IMPL_PLANE:
             f.close()
     
     #----------------calculating one string-----------------------------#
-    def __getwcc(self, kx):
+    def __getwcc(self, kx, verbose):
         """
         calculates WCC along a string by increasing the number of steps 
         (k-points) along the string until the WCC converge
@@ -258,7 +261,8 @@ class Z2PACK_IMPL_PLANE:
             min_sv = min(min(E), min_sv)
         # getting the wcc from the eigenvalues of gamma
         [eigs, _] = la.eig(Gamma)
-        print(" (" + "%.3f" % min_sv + ")", end= "", flush = True)
+        if(verbose):
+            print(" (" + "%.3f" % min_sv + ")", end= "", flush = True)
         return [(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs], min_sv
     
 
@@ -416,7 +420,7 @@ class abinit(Z2PACK_IMPL_SYSTEM):
 #-----------------------------------------------------------------------#
 
 class tight_binding(Z2PACK_IMPL_SYSTEM):
-    
+    pass
     
 
 if __name__ == "__main__":

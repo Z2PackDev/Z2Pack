@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
-<h1>User Guide</h1>
+<h1 id="dismiss">User Guide</h1>
     <p>
         This is the User Guide for the Z2Pack <strong>Python</strong> package.
         Since this is the underlying library for Z2Pack online, it can be used
@@ -9,9 +9,20 @@
         <a href = "TODO">Tutorial</a>.
     </p>
     <div class='to_ToC'>
-    <h2>Overview</h2>
-    <h2>Core functionality</h2>
-    <h2>Convergence options</h2>
+    <h1 id="core">Z2Pack Core</h1>
+    <h2 id="overview">Overview</h2>
+    <h2 id="getting">Getting the Z2Pack Python package</h2>
+        The Z2Pack Python package is available on  <a href = "TODO">GitHub</a>.
+        As of now, there is no installable version, but you can easily include
+        the package from any Python script by adding the following to your file:<br/>
+        <code>  import sys <br/>
+                sys.path.append("path_to_package/src/") <br/>
+                import z2pack</code><br/>
+    <h2 id='system_object'>The <code>system</code> object</h2>
+    <h2 id='plane_object'>The <code>plane</code> object</h2>
+    <h3>Variables</h3>
+    <h3>Methods</h3>
+    <h1 id="abinit">ZPack for ABINIT</h1>
     <h2 id="setup">Setting up ABINIT for Z2Pack</h2>
             <p>
                 In order for Z2Pack to work with ABINIT, we need an ABINIT 
@@ -21,6 +32,7 @@
         <h3>Step 1</h3>
             <p>
                 <form action="/downloads/wannier90-1.2.0.1.tar.gz" method="GET">
+                    Download the modified Wannier90 source.
                     <input type="submit" value="Download"/>
                 </form>
                 Move the source to the tarball directory of your ABINIT 
@@ -60,8 +72,9 @@
             </p>
         <h3>Step 4</h3>
             When using Z2Pack, make sure you are using the right value for <code>abinit_command</code>, especially if you created a second ABINIT installation. For details check out the <a href = "#z2pack.abinit">z2pack.abinit</a> section.
-    <h2>Getting the Z2Pack Python package</h2>
-    <h2 id='z2pack.abinit'> The z2pack.abinit class </h2>
+    <h2 id='Bi'>A first example: Bismuth</h2>
+        
+    <h2 id='List of variables'> The z2pack.abinit class </h2>
     </div>
 
     <script src="/static/ToC.js"></script>

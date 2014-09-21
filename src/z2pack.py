@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 #-----------------------------------------------------------------------#
 
 
-class Z2PACK_IMPL_SYSTEM:
+class Z2packSystem:
     
     def __init__(self, M_handle_creator, **kwargs):
         self.defaults = kwargs
@@ -40,12 +40,12 @@ class Z2PACK_IMPL_SYSTEM:
         if(string_dir == plane_pos_dir):
             raise ValueError('strings cannot be perpendicular to the plane')
         
-        return Z2PACK_IMPL_PLANE(   
+        return Z2packPlane(   
                                     self.M_handle_creator(string_dir, plane_pos_dir, plane_pos),
                                     **kw_arguments
                                 )
 
-class Z2PACK_IMPL_PLANE:
+class Z2packPlane:
     """
     input variables:
     Nstrings:            number of strings at the beginning (should be 
@@ -382,7 +382,7 @@ class Z2PACK_IMPL_PLANE:
 import abinit_run as ar
 import abinit_input_io as io
 
-class abinit(Z2PACK_IMPL_SYSTEM):
+class Abinit(Z2packSystem):
     
     def __init__(   self, 
                     name,
@@ -419,7 +419,7 @@ class abinit(Z2PACK_IMPL_SYSTEM):
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
 
-class tight_binding(Z2PACK_IMPL_SYSTEM):
+class TightBinding(Z2packSystem):
     pass
     
 

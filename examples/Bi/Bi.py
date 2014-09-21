@@ -14,7 +14,7 @@ Bismuth example
 """
 
 # creating the z2pack.abinit object
-Bi = z2pack.abinit( "Bi", 
+Bi = z2pack.Abinit( "Bi", 
                     "Bi_common.in", 
                     "../Psps/83bi.5.hgh", 
                     "./build", 
@@ -26,9 +26,9 @@ Bi = z2pack.abinit( "Bi",
 #~ Bi.scf("Bi_scf.in", clean_subfolder = True)
 
 # creating the z2pack.plane object
-Bi_1 = Bi.plane(2, 0, 0, pickle_file = 'build/Bi_01_pickle.txt')
+Bi_plane = Bi.plane(2, 0, 0, pickle_file = 'build/Bi_01_pickle.txt')
 
 # WCC calculation
-Bi_1.wcc_calc()
+Bi_plane.wcc_calc()
     
 

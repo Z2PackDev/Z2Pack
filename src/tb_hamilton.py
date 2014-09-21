@@ -9,7 +9,7 @@ import sys
 import numpy as np
 import sympy as sp
 
-class tb_system:
+class TbSystem:
     """
     """
     def __init__(self, a_1, a_2, a_3):
@@ -110,7 +110,7 @@ class tb_system:
         print(self.__hoppings)
         
 if __name__ == "__main__":
-    a = tb_system([0.1, 0.2, 0.3],[0.1, 0.3, 0.2],[0.3, 0.2, 0.1])
+    a = TbSystem([0.1, 0.2, 0.3],[0.1, 0.3, 0.2],[0.3, 0.2, 0.1])
     a.add_atom(([0.1, 0.1],1),[1,2,3])
     a.add_atom(([0.2, 0.1],1),[1,2,2.2])
     a.add_hopping(1j, (0,1),(1,1),[0,0,1])

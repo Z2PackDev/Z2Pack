@@ -77,7 +77,7 @@ class ABINIT_RUN_IMPL:
         io.produce_input(data, subfolder + "/" + run_name + ".in")
         
         if(create_wannier90_input):
-            if(self.num_occupied == None):
+            if(self.num_occupied is None):
                 raise ValueError('number of occupied bands not set')
             wannier90_input.write_input(self.num_occupied, data['nband'], subfolder + '/wannier90.win')
             
@@ -88,7 +88,7 @@ class ABINIT_RUN_IMPL:
 #-------------------get correct runtime input---------------------------#
         abinit_runtime_input = run_name + ".in\n" + run_name + ".out\n"
         
-        if(input_wfct_path == None):
+        if(input_wfct_path is None):
             abinit_runtime_input += run_name + "_i\n"
         else:
             abinit_runtime_input += self.working_folder + "/" + input_wfct_path + "\n"

@@ -67,18 +67,18 @@ class Z2packPlane:
         constructor
         parses the input variables
         """
-        self.__M_handle = M_handle
-        self.__wcc_tol = wcc_tol
-        self.__gap_tol = gap_tol
-        self.__max_iter = max_iter
-        self.__use_pickle = use_pickle
-        self.__pickle_file = pickle_file
-        self.__Nstrings = Nstrings
+        self._M_handle = M_handle
+        self._wcc_tol = wcc_tol
+        self._gap_tol = gap_tol
+        self._max_iter = max_iter
+        self._use_pickle = use_pickle
+        self._pickle_file = pickle_file
+        self._Nstrings = Nstrings
         #----------------input checks-----------------------------------#   
         # checking Nstrings
-        if(self.__Nstrings < 2):
+        if(self._Nstrings < 2):
             raise ValueError("Nstrings must be at least 2")
-        elif(self.__Nstrings < 8):
+        elif(self._Nstrings < 8):
             warnings.warn("Nstrings should usually be >= 8 for good results", UserWarning)
     
     def wcc_calc(self, verbose = True):
@@ -91,33 +91,33 @@ class Z2packPlane:
         if(verbose):
             print(string_tools.cbox( "starting wcc calculation\n\n" +\
                                 "options:\n" +\
-                                "initial # of strings: " + str(self.__Nstrings) + "\n"+\
-                                "use pickle: " + ("yes" if self.__use_pickle else "no")
+                                "initial # of strings: " + str(self._Nstrings) + "\n"+\
+                                "use pickle: " + ("yes" if self._use_pickle else "no")
                                 ) + "\n")
             
         start_time = time.time()
 
         #----------------initializing-----------------------------------#
-        self.__k_points = list(np.linspace(0, 0.5, self.__Nstrings, endpoint = True))
-        self.__gaps = [None for i in range(self.__Nstrings)]
-        self.__wcc_list = [[] for i in range(self.__Nstrings)] 
-        self.__neighbour_check = [False for i in range(self.__Nstrings - 1)]
-        self.__string_status = [False for i in range(self.__Nstrings)]
+        self._k_points = list(np.linspace(0, 0.5, self._Nstrings, endpoint = True))
+        self._gaps = [None for i in range(self._Nstrings)]
+        self._wcc_list = [[] for i in range(self._Nstrings)] 
+        self._neighbour_check = [False for i in range(self._Nstrings - 1)]
+        self._string_status = [False for i in range(self._Nstrings)]
         
                 
         #----------------main calculation part--------------------------#
-        while not (all(self.__neighbour_check)):
-            for i, kx in enumerate(self.__k_points):
-                if not(self.__string_status[i]):
-                    self.__wcc_list[i] = self.__getwcc(kx, verbose)
-                    self.__gaps[i] = self.__gapfind(self.__wcc_list[i])
-                    self.__string_status[i] = True
-                    self.__save()
+        while not (all(self._neighbour_check)):
+            for i, kx in enumerate(self._k_points):
+                if not(self._string_status[i]):
+                    self._wcc_list[i] = self._getwcc(kx, verbose)
+                    self._gaps[i] = self._gapfind(self._wcc_list[i])
+                    self._string_status[i] = True
+                    self._save()
                     
-            self.__check_neighbours()
+            self._check_neighbours()
 
         #----------------dump results into pickle file------------------#
-        self.__save()
+        self._save()
             
             
         #----------------output to signal end of wcc calculation--------#
@@ -134,72 +134,72 @@ class Z2packPlane:
                             + duration_string))
         
         #----------------return value-----------------------------------#
-        return [self.__k_points, self.__wcc_list]
+        return [self._k_points, self._wcc_list]
             
     #-------------------------------------------------------------------#
     #                support functions for wcc                          #
     #-------------------------------------------------------------------#
 
     #----------------checking distance gap-wcc--------------------------#
-    def __check_neighbours(self):
+    def _check_neighbours(self):
         """
         checks the neighbour conditions, adds a value in k_points when
         they are not fulfilled
         - adds at most one k_point per run
         - returns Boolean: all neighbour conditions fulfilled <=> True
         """
-        for i, status in enumerate(self.__neighbour_check):
+        for i, status in enumerate(self._neighbour_check):
             if not(status):
-                if(self.__string_status[i] and self.__string_status[i + 1]):
-                    print("Checking neighbouring k-points k = " + "%.4f" % self.__k_points[i] + " and k = " + "%.4f" % self.__k_points[i + 1] + "\n", end = "", flush = True)
-                    if(self.__check_single_neighbour(i, i + 1)):
+                if(self._string_status[i] and self._string_status[i + 1]):
+                    print("Checking neighbouring k-points k = " + "%.4f" % self._k_points[i] + " and k = " + "%.4f" % self._k_points[i + 1] + "\n", end = "", flush = True)
+                    if(self._check_single_neighbour(i, i + 1)):
                         print("Condition fulfilled\n\n", end = "", flush = True)
-                        self.__neighbour_check[i] = True
+                        self._neighbour_check[i] = True
                     else:
                         print("Condition not fulfilled\n\n", end = "", flush = True)
                         # add entries to neighbour_check, k_point and string_status
-                        self.__neighbour_check.insert(i + 1, False)
-                        self.__string_status.insert(i + 1, False)
-                        self.__k_points.insert(i + 1, (self.__k_points[i] + self.__k_points[i+1]) / 2)
-                        self.__wcc_list.insert(i + 1, [])
-                        self.__gaps.insert(i + 1, None)
+                        self._neighbour_check.insert(i + 1, False)
+                        self._string_status.insert(i + 1, False)
+                        self._k_points.insert(i + 1, (self._k_points[i] + self._k_points[i+1]) / 2)
+                        self._wcc_list.insert(i + 1, [])
+                        self._gaps.insert(i + 1, None)
                         #---------check length of the variables---------#
-                        assert len(self.__k_points) == len(self.__wcc_list)
-                        assert len(self.__k_points) - 1 == len(self.__neighbour_check)
-                        assert len(self.__k_points) == len(self.__string_status)
-                        assert len(self.__k_points) == len(self.__gaps)
+                        assert len(self._k_points) == len(self._wcc_list)
+                        assert len(self._k_points) - 1 == len(self._neighbour_check)
+                        assert len(self._k_points) == len(self._string_status)
+                        assert len(self._k_points) == len(self._gaps)
                         return False
                 else:
                     return False
         return True
         
     
-    def __check_single_neighbour(self, i, j):
+    def _check_single_neighbour(self, i, j):
         """
         checks if the gap[i] is too close to any of the WCC in 
         wcc_list[j] and vice versa
         should be used with j = i + 1
         """
-        return self.__check_single_direction(self.__wcc_list[j], self.__gaps[i])
+        return self._check_single_direction(self._wcc_list[j], self._gaps[i])
         
-    def __check_single_direction(self, wcc, gap):
+    def _check_single_direction(self, wcc, gap):
         """
         checks if gap is too close to any of the elements in wcc
         """
         for wcc_val in wcc:
-            if(min(abs(1 + wcc_val - gap) % 1, abs(1 - gap + wcc_val) % 1) < self.__gap_tol):
+            if(min(abs(1 + wcc_val - gap) % 1, abs(1 - gap + wcc_val) % 1) < self._gap_tol):
                 return False
         return True
         
     #----------------pickle: save and load------------------------------#
-    def __save(self):
+    def _save(self):
         """
         save k_points, wcc and gaps to pickle file
         only works if use_pickle = True
         """
-        if(self.__use_pickle):
-            f = open(self.__pickle_file, "wb")
-            pickle.dump([self.__k_points, self.__wcc_list, self.__gaps], f)
+        if(self._use_pickle):
+            f = open(self._pickle_file, "wb")
+            pickle.dump([self._k_points, self._wcc_list, self._gaps], f)
             f.close()
             
     def load(self):
@@ -207,13 +207,13 @@ class Z2packPlane:
         load k_points, wcc and gaps from pickle file
         only works if use_pickle = True
         """
-        if(self.__use_pickle):
-            f = open(self.__pickle_file, "rb")
-            [self.__k_points, self.__wcc_list, self.__gaps] = pickle.load(f)
+        if(self._use_pickle):
+            f = open(self._pickle_file, "rb")
+            [self._k_points, self._wcc_list, self._gaps] = pickle.load(f)
             f.close()
     
     #----------------calculating one string-----------------------------#
-    def __getwcc(self, kx, verbose):
+    def _getwcc(self, kx, verbose):
         """
         calculates WCC along a string by increasing the number of steps 
         (k-points) along the string until the WCC converge
@@ -225,7 +225,7 @@ class Z2packPlane:
         N = 8
         niter = 0
         print(str(N), end = "", flush = True) # Output
-        x, min_sv = self.__trywcc(self.__M_handle(kx, N), verbose)
+        x, min_sv = self._trywcc(self._M_handle(kx, N), verbose)
         #----------------iteration--------------------------------------#
         while(True):
             # larger steps for small min_sv (every second step)
@@ -235,20 +235,20 @@ class Z2packPlane:
                 N += 2
             xold = x.copy()
             print(", " + str(N), end = "", flush = True)    # Output
-            x, min_sv = self.__trywcc(self.__M_handle(kx, N), verbose)
+            x, min_sv = self._trywcc(self._M_handle(kx, N), verbose)
             niter += 1
 
             #----------------break conditions---------------------------#
-            if(self.__convcheck(x, xold)): # success
+            if(self._convcheck(x, xold)): # success
                 print(" finished!\n\n", end = "", flush = True)
                 break
-            if(niter > self.__max_iter): # failure
+            if(niter > self._max_iter): # failure
                 print("failed to converge!\n\n", end = "", flush = True)
                 break
 
         return sorted(x)
     
-    def __trywcc(self, allM, verbose):
+    def _trywcc(self, allM, verbose):
         """
         Calculates the WCC from the MMN matrices
         """
@@ -268,11 +268,11 @@ class Z2packPlane:
 
         
     #----------------wcc convergence functions--------------------------#
-    def __convcheck(self, x, y):
+    def _convcheck(self, x, y):
         """
         check convergence of wcc from x to y
         
-        depends on: self.__wcc_tol
+        depends on: self._wcc_tol
                     roughly corresponds to the total 'movement' in WCC that
                     is tolerated between x and y
         """
@@ -280,12 +280,12 @@ class Z2packPlane:
             print("Warning: consecutive strings don't have the same amount of WCC")
             return False
         else:
-            return self.__convsum(x, y, self.__wcc_tol) < 1 
+            return self._convsum(x, y, self._wcc_tol) < 1 
     
 
-    def __convsum(self, listA, listB, epsilon = 1e-2, N0 = 7):
+    def _convsum(self, listA, listB, epsilon = 1e-2, N0 = 7):
         """
-        helper function for __convcheck
+        helper function for _convcheck
         
         calculates the absolute value of the change in density from listA
         to listB, when each WCC corresponds to a triangle of width epsilon
@@ -308,7 +308,7 @@ class Z2packPlane:
         return sum(abs(val)) / N0
     #-------------------------------------------------------------------#
         
-    def __gapfind(self, x):
+    def _gapfind(self, x):
         """
         finds the largest gap in vector x, modulo 1
         """
@@ -336,15 +336,15 @@ class Z2packPlane:
         plt.figure()
         plt.ylim(0,1)
         plt.xlim(-0.01, 0.51)
-        plt.plot(self.__k_points, [(x + shift) % 1 for x in self.__gaps], 'bD')
+        plt.plot(self._k_points, [(x + shift) % 1 for x in self._gaps], 'bD')
         # add plots with +/- 1 to ensure periodicity
-        plt.plot(self.__k_points, [(x + shift) % 1 + 1 for x in self.__gaps], 'bD')
-        plt.plot(self.__k_points, [(x + shift) % 1 - 1 for x in self.__gaps], 'bD')
-        for i, kpt in enumerate(self.__k_points):
-            plt.plot([kpt] * len(self.__wcc_list[i]), [(x + shift) % 1 for x in self.__wcc_list[i]], "ro")
+        plt.plot(self._k_points, [(x + shift) % 1 + 1 for x in self._gaps], 'bD')
+        plt.plot(self._k_points, [(x + shift) % 1 - 1 for x in self._gaps], 'bD')
+        for i, kpt in enumerate(self._k_points):
+            plt.plot([kpt] * len(self._wcc_list[i]), [(x + shift) % 1 for x in self._wcc_list[i]], "ro")
             # add plots with +/- 1 to ensure periodicity
-            plt.plot([kpt] * len(self.__wcc_list[i]), [(x + shift) % 1 + 1 for x in self.__wcc_list[i]], "ro")
-            plt.plot([kpt] * len(self.__wcc_list[i]), [(x + shift) % 1 - 1 for x in self.__wcc_list[i]], "ro")
+            plt.plot([kpt] * len(self._wcc_list[i]), [(x + shift) % 1 + 1 for x in self._wcc_list[i]], "ro")
+            plt.plot([kpt] * len(self._wcc_list[i]), [(x + shift) % 1 - 1 for x in self._wcc_list[i]], "ro")
         plt.show()
         
     
@@ -354,16 +354,16 @@ class Z2packPlane:
         """
             
         inv = 1
-        for i in range(0, len(self.__wcc_list)-1):
-            for j in range(0, len(self.__wcc_list[0])):
-                inv *= self.__sgng(self.__gaps[i], self.__gaps[i+1], self.__wcc_list[i+1][j])
+        for i in range(0, len(self._wcc_list)-1):
+            for j in range(0, len(self._wcc_list[0])):
+                inv *= self._sgng(self._gaps[i], self._gaps[i+1], self._wcc_list[i+1][j])
         
         return 1 if inv == -1 else 0
         
     #-------------------------------------------------------------------#
     #                support functions for invariants                   #
     #-------------------------------------------------------------------#
-    def __sgng(self, z, zplus, x):
+    def _sgng(self, z, zplus, x):
         """
         calculates the invariant between two WCC strings
         """
@@ -394,23 +394,23 @@ class Abinit(Z2packSystem):
                     **kwargs
                     ):
         self.defaults = kwargs
-        self.__name = name
-        self.__abinit_system = ar.ABINIT_RUN_IMPL(  name, 
+        self._name = name
+        self._abinit_system = ar.ABINIT_RUN_IMPL(  name, 
                                                     io.parse_input(common_vars_path) , 
                                                     psps_files, 
                                                     working_folder, 
                                                     num_occupied,
                                                     abinit_command = abinit_command)
-        def __M_handle_creator_abinit(string_dir, plane_pos_dir, plane_pos):
+        def _M_handle_creator_abinit(string_dir, plane_pos_dir, plane_pos):
             if(3 - string_dir > 2 * plane_pos_dir):
-                return lambda kx, N: self.__abinit_system.nscf(string_dir, [kx, plane_pos], N)
+                return lambda kx, N: self._abinit_system.nscf(string_dir, [kx, plane_pos], N)
             else:
-                return lambda kx, N: self.__abinit_system.nscf(string_dir, [plane_pos, kx], N)
-        self.M_handle_creator = __M_handle_creator_abinit
+                return lambda kx, N: self._abinit_system.nscf(string_dir, [plane_pos, kx], N)
+        self.M_handle_creator = _M_handle_creator_abinit
         
     def scf(self, scf_vars_path, **kwargs):
-        print("starting SCF calculation for " + self.__name)
-        self.__abinit_system.scf(io.parse_inputh (scf_vars_path), **kwargs)
+        print("starting SCF calculation for " + self._name)
+        self._abinit_system.scf(io.parse_inputh (scf_vars_path), **kwargs)
         print("")
         
 #-----------------------------------------------------------------------#

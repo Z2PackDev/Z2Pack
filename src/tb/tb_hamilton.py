@@ -8,18 +8,19 @@
 import sys
 import numpy as np
 import sympy as sp
+import scipy.linalg as la
 
 class TbSystem:
     """
     """
     def __init__(self, a_1, a_2, a_3):
-        self.__unit_cell = [a_1, a_2, a_3]
-        for vec in self.__unit_cell:
+        self._unit_cell = [a_1, a_2, a_3]
+        for vec in self._unit_cell:
             if(len(vec) != 3):
                 raise ValueError('invalid argument: length of vector != 3')
-        self.__atoms = []
-        self.__hoppings = []
-        self.__electrons = 0
+        self._atoms = []
+        self._hoppings = []
+        self._electrons = 0
 
     def add_atom(self, element, position):
         """
@@ -40,9 +41,9 @@ class TbSystem:
             raise ValueError("num_electrons must be an integer")
             
 #--------add the atom - store as (orbitals, num_electrons, position)----#
-        self.__atoms.append((tuple(element[0]), element[1], tuple(position)))
+        self._atoms.append((tuple(element[0]), element[1], tuple(position)))
 #----------------return the index the atom will get---------------------#
-        return len(self.__atoms) - 1
+        return len(self._atoms) - 1
         
     def add_hopping(self, overlap, orbital_1, orbital_2, rec_lattice_vec):
         """
@@ -54,12 +55,12 @@ class TbSystem:
         atom_2 is in the unit cell at rec_lattice_vec
         """
 #----------------check if the orbitals exist----------------------------#
-        num_atoms = len(self.__atoms)
+        num_atoms = len(self._atoms)
         if not(orbital_1[0] < num_atoms and orbital_2[0] < num_atoms):
             raise ValueError("atom index out of range")
-        if not(orbital_1[1] < len(self.__atoms[orbital_1[0]][0])):
+        if not(orbital_1[1] < len(self._atoms[orbital_1[0]][0])):
             raise ValueError("orbital index out of range (orbital_1)")
-        if not(orbital_2[1] < len(self.__atoms[orbital_2[0]][0])):
+        if not(orbital_2[1] < len(self._atoms[orbital_2[0]][0])):
             raise ValueError("orbital index out of range (orbital_2)")
 #----------------check rec_lattice_vec----------------------------------#
         if(len(rec_lattice_vec) != 3):
@@ -71,90 +72,104 @@ class TbSystem:
 #----------------add hopping--------------------------------------------#
         indices_1 = (orbital_1[0], orbital_1[1])
         indices_2 = (orbital_2[0], orbital_2[1])
-        connecting_vector = tuple(self.__atoms[orbital_2[0]][2][i] - self.__atoms[orbital_1[0]][2][i] + rec_lattice_vec[i] for i in range(3))
-        self.__hoppings.append((overlap, indices_1, indices_2, connecting_vector))
+        connecting_vector = tuple(self._atoms[orbital_2[0]][2][i] - self._atoms[orbital_1[0]][2][i] + rec_lattice_vec[i] for i in range(3))
+        self._hoppings.append((overlap, indices_1, indices_2, connecting_vector))
         
     def num_atoms(self):
-        return len(self.__atoms)
+        return len(self._atoms)
 
     def create_hamiltonian(self):
 #----------------create conversion from index to orbital/vice versa-----#
         count = 0
         orbital_to_index = []
         index_to_orbital = []
-        for atom_num, atom in enumerate(self.__atoms):
+        self._T_list = []
+        for atom_num, atom in enumerate(self._atoms):
             num_orbitals = len(atom[0])
             orbital_to_index.append([count + i for i in range(num_orbitals)])
             for i in range(num_orbitals):
                 index_to_orbital.append((atom_num, i))
+                self._T_list.append(atom[2])
             count += num_orbitals
 
         kx, ky, kz = sp.symbols('kx ky kz')
         k = (kx, ky, kz)
         
-        H = [list(row) for row in np.diag([energy for atom in self.__atoms for energy in atom[0]])]
+        H = [list(row) for row in np.diag([energy for atom in self._atoms for energy in atom[0]])]
         H = sp.sympify(H)
         
-        for hopping in self.__hoppings:
+        for hopping in self._hoppings:
             index_1 = orbital_to_index[hopping[1][0]][hopping[1][1]]
             index_2 = orbital_to_index[hopping[2][0]][hopping[2][1]]
-            phase = sp.exp(sum([hopping[3][i]*k_comp for i, k_comp in enumerate(k)]))
+            phase = sp.exp(-1j * self._dot_prod(hopping[3], k))
             H[index_1][index_2] += hopping[0] * phase
             H[index_2][index_1] += (hopping[0] * phase).conjugate()
             
-        self.__num_electrons = sum(atom[1] for atom in self.__atoms) # needed for __getM
-        self.hamiltonian = lambda kxval, kyval, kzval: [[expr.subs([(kx,kxval), (ky, kyval), (kz, kzval)]) for expr in row] for row in H]
+        self._num_electrons = sum(atom[1] for atom in self._atoms) # needed for _getM
+        self.hamiltonian = lambda kval: [[expr.subs([(kx,kval[0]), (ky, kval[1]), (kz, kval[2])]) for expr in row] for row in H]
         return self.hamiltonian
         
-    def __getM(self, string_dir, string_pos, N):
+    def _getM(self, string_dir, string_pos, N):
 #----------------check if hamiltonian exists - else create it-----------#
         try:
             self.hamiltonian
         except:
             self.create_hamiltonian()
-        print(self.__num_electrons) # DEBUG
+        print(self._num_electrons) # DEBUG
         
+        k_points = [string_pos.copy() for i in range(N)]
+        ky = np.linspace(0, 1, N, endpoint = False)
+        for i, step in enumerate(k_points):
+            step.insert(string_dir, ky[i])
         
-        
-    def DEBUG(self):
-        print(self.__atoms)
-        print(self.__hoppings)
-"""
-    # computes the M-matrices for N k-steps
-    def __getM(self, kx, N, count):
-        
-        ky = np.linspace(0, 2. * np.pi / self.__a, N - 1 , endpoint = False)
         eigs = []
-        occ = len(self.__H(0,0,*self.__H_args)) / 2   # half - occupied bands
-        for k in ky:
-            eigval, eigvec = la.eig(self.__H(kx, k, *self.__H_args))
+        print(string_pos)
+        print(k_points)
+        
+        for k in k_points:
+            eigval, eigvec = la.eig(self.hamiltonian(k))
             idx = eigval.argsort()
-            if(abs(eigval[idx[occ - 1]] - eigval[idx[occ]]) < self.__gap_tol):
-                count[0] += 1
-            idx = idx[:occ]
+            idx = idx[:self._num_electrons]
             idx.sort() # preserve the order of the wcc
             eigvec = eigvec[:,idx]
-            eigs.append(np.array(eigvec[:,:occ])) # take only the lower - energy eigenstates
+            eigs.append(np.array(eigvec[:,:self._num_electrons])) # take only the lower - energy eigenstates
+
         # last eigenvector = first one
         eigs.append(eigs[0])
-        eigsize = eigs[0].shape[0]
-        eignum = eigs[0].shape[1]
+        eigsize, eignum = eigs[0].shape
         
         M = []
-        deltak = 2 * np.pi / (self.__a * (N - 1))
-        for i in range(0, N - 1):
+        deltak = [0, 0]
+        deltak.insert(string_dir, 1./N)
+        for i in range(0, N):
             # overlap <un|um> -> see ../theory
-            Mnew = [[sum(np.conjugate(eigs[i][j,m])*eigs[i + 1][j,n]*np.exp(-1j * deltak * self.__T[j][1])  for j in range(eigsize)) for n in range(eignum)] for m in range(eignum)]
+            Mnew = [[sum(np.conjugate(eigs[i][j,m])*eigs[i + 1][j,n]*np.exp(-1j * self._dot_prod(deltak, self._T_list[j]))  for j in range(eigsize)) for n in range(eignum)] for m in range(eignum)]
             M.append(Mnew) 
         return M
-"""
+        
+    def _dot_prod(self, k_vec, x_vec):
+        """
+        helper function for dot product of real space with reciprocal space
+        vectors (both w.r.t. their basis)
+        order or k_vec / x_vec not important
+        assumes x_vec / k_vec are w.r.t. the unit cell / reciprocal lattice
+            where a_i.b_j = 2*Pi*KroneckerDelta(i,j)
+        """
+        n = len(k_vec)
+        if(len(x_vec) != n):
+            raise ValueError('k_vec and x_vec must be of the same size')
+        return 2 * np.pi * sum(x_vec[i]*k_vec[i] for i in range(n))
+    
+    def DEBUG(self):
+        print(self._atoms)
+        print(self._hoppings)
         
 if __name__ == "__main__":
     a = TbSystem([0.1, 0.2, 0.3],[0.1, 0.3, 0.2],[0.3, 0.2, 0.1])
     a.add_atom(([0.1, 0.1],2),[1,2,3])
     a.add_atom(([0.2, 0.1],1),[1,2,2.2])
-    a.add_hopping(1j, (0,1),(1,1),[0,0,1])
-    #~ H = a.create_hamiltonian()
-    a._TbSystem__getM(1,2,3)
-    #~ print(H(1,2,3))
+    a.add_hopping(1, (0,1),(1,1),[0,0,1])
+    H = a.create_hamiltonian()
+    #~ print(a._TbSystem_getM(1,[2,3],5))
+    print(H([1,2,3]))
     #~ a.DEBUG()

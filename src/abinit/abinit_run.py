@@ -27,25 +27,25 @@ class ABINIT_RUN_IMPL:
                     num_occupied,
                     abinit_command = "abinit"
                 ):
-        self.name = name
-        self.calling_path = os.getcwd()
-        self.common_vars = common_vars
+        self._name = name
+        self._calling_path = os.getcwd()
+        self._common_vars = common_vars
         if(working_folder[0] == "/" or working_folder[0] == "~"): # absolute
-            self.working_folder = working_folder
+            self._working_folder = working_folder
         else: #relative
-            self.working_folder = self.calling_path + '/' + working_folder
+            self._working_folder = self._calling_path + '/' + working_folder
         if(isinstance(psps_files, str)):
             if(psps_files[0] == "/" or psps_files[0] == "~"): # absolute
                 self.psps_files = psps_files
             else: # relative
-                self.psps_files = self.calling_path + '/' + psps_files
+                self.psps_files = self._calling_path + '/' + psps_files
         else:
             self.psps_files = []
             for psps_file in psps_files:
                 if(psps_file[0] == "/" or psps_file[0] == "~"): # absolute
                     self.psps_files.append(psps_file)
                 else: # relative
-                    self.psps_files.append(self.calling_path + '/' + psps_file)
+                    self.psps_files.append(self._calling_path + '/' + psps_file)
         
         self.abinit_command = abinit_command
         self.num_occupied = num_occupied
@@ -60,10 +60,10 @@ class ABINIT_RUN_IMPL:
                             setup_only = False
                         ):
         data = {}
-        data.update(self.common_vars)
+        data.update(self._common_vars)
         data.update(additional_args)
-        subfolder = self.working_folder + '/' + subfolder
-        run_name = self.name + tag
+        subfolder = self._working_folder + '/' + subfolder
+        run_name = self._name + tag
         
 #-------------------print input file(s) to working_folder---------------#
         if(clean_subfolder):
@@ -91,7 +91,7 @@ class ABINIT_RUN_IMPL:
         if(input_wfct_path is None):
             abinit_runtime_input += run_name + "_i\n"
         else:
-            abinit_runtime_input += self.working_folder + "/" + input_wfct_path + "\n"
+            abinit_runtime_input += self._working_folder + "/" + input_wfct_path + "\n"
             
         abinit_runtime_input += run_name + "_o\n" + run_name + "_\n"
         
@@ -115,7 +115,7 @@ class ABINIT_RUN_IMPL:
 
     def scf(self, scf_args = {}, setup_only = False, **kwargs):
         scf_args.update({'prtden': 1})
-        self.__abinit_run__("work_scf_" + self.name, tag = "_scf", additional_args = scf_args, setup_only = setup_only, **kwargs)
+        self.__abinit_run__("work_scf_" + self._name, tag = "_scf", additional_args = scf_args, setup_only = setup_only, **kwargs)
         
 #-----------------------------------------------------------------------#
 #                                                                       #
@@ -160,19 +160,19 @@ class ABINIT_RUN_IMPL:
         nscf_args.update(additional_args)
 
 #----------------clean out working directory----------------------------#
-        subfolder = "work_nscf_" + self.name
+        subfolder = "work_nscf_" + self._name
         
 #----------------------call to abinit_run-------------------------------#
         self.__abinit_run__( 
                     subfolder,
                     tag = "_nscf",
-                    input_wfct_path = "work_scf_" + self.name + "/" + self.name + "_scf_o", 
+                    input_wfct_path = "work_scf_" + self._name + "/" + self._name + "_scf_o", 
                     additional_args = nscf_args, 
                     create_wannier90_input = True,
                     clean_subfolder = True
                     )
 #----------------------read in mmn--------------------------------------#
-        M = mmn.getM(self.working_folder + '/' + subfolder + "/wannier90.mmn")
+        M = mmn.getM(self._working_folder + '/' + subfolder + "/wannier90.mmn")
         return M
 
     

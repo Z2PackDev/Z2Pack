@@ -379,8 +379,8 @@ class Z2packPlane:
 #-----------------------------------------------------------------------#
 
 
-import abinit_run as ar
-import abinit_input_io as io
+import abinit.abinit_run as ar
+import abinit.abinit_input_io as io
 
 class Abinit(Z2packSystem):
     
@@ -410,7 +410,7 @@ class Abinit(Z2packSystem):
         
     def scf(self, scf_vars_path, **kwargs):
         print("starting SCF calculation for " + self.__name)
-        self.__abinit_system.scf(io.parse_input(scf_vars_path), **kwargs)
+        self.__abinit_system.scf(io.parse_inputh (scf_vars_path), **kwargs)
         print("")
         
 #-----------------------------------------------------------------------#

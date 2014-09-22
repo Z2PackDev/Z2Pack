@@ -5,9 +5,9 @@
 # Date:    13.08.2014 12:02:54 CEST
 # File:    abinit_run.py
 
-import read_mmn as mmn
-import abinit_input_io as io
-import wannier90_input
+import abinit.read_mmn as mmn
+import abinit.abinit_input_io as io
+import abinit.wannier90_input as wannier90_input
 
 import os
 import sys

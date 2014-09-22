@@ -19,6 +19,7 @@ class TbSystem:
                 raise ValueError('invalid argument: length of vector != 3')
         self.__atoms = []
         self.__hoppings = []
+        self.__electrons = 0
 
     def add_atom(self, element, position):
         """
@@ -101,19 +102,59 @@ class TbSystem:
             H[index_1][index_2] += hopping[0] * phase
             H[index_2][index_1] += (hopping[0] * phase).conjugate()
             
+        self.__num_electrons = sum(atom[1] for atom in self.__atoms) # needed for __getM
         self.hamiltonian = lambda kxval, kyval, kzval: [[expr.subs([(kx,kxval), (ky, kyval), (kz, kzval)]) for expr in row] for row in H]
         return self.hamiltonian
+        
+    def __getM(self, string_dir, string_pos, N):
+#----------------check if hamiltonian exists - else create it-----------#
+        try:
+            self.hamiltonian
+        except:
+            self.create_hamiltonian()
+        print(self.__num_electrons) # DEBUG
+        
         
         
     def DEBUG(self):
         print(self.__atoms)
         print(self.__hoppings)
+"""
+    # computes the M-matrices for N k-steps
+    def __getM(self, kx, N, count):
+        
+        ky = np.linspace(0, 2. * np.pi / self.__a, N - 1 , endpoint = False)
+        eigs = []
+        occ = len(self.__H(0,0,*self.__H_args)) / 2   # half - occupied bands
+        for k in ky:
+            eigval, eigvec = la.eig(self.__H(kx, k, *self.__H_args))
+            idx = eigval.argsort()
+            if(abs(eigval[idx[occ - 1]] - eigval[idx[occ]]) < self.__gap_tol):
+                count[0] += 1
+            idx = idx[:occ]
+            idx.sort() # preserve the order of the wcc
+            eigvec = eigvec[:,idx]
+            eigs.append(np.array(eigvec[:,:occ])) # take only the lower - energy eigenstates
+        # last eigenvector = first one
+        eigs.append(eigs[0])
+        eigsize = eigs[0].shape[0]
+        eignum = eigs[0].shape[1]
+        
+        M = []
+        deltak = 2 * np.pi / (self.__a * (N - 1))
+        for i in range(0, N - 1):
+            # overlap <un|um> -> see ../theory
+            Mnew = [[sum(np.conjugate(eigs[i][j,m])*eigs[i + 1][j,n]*np.exp(-1j * deltak * self.__T[j][1])  for j in range(eigsize)) for n in range(eignum)] for m in range(eignum)]
+            M.append(Mnew) 
+        return M
+"""
         
 if __name__ == "__main__":
     a = TbSystem([0.1, 0.2, 0.3],[0.1, 0.3, 0.2],[0.3, 0.2, 0.1])
-    a.add_atom(([0.1, 0.1],1),[1,2,3])
+    a.add_atom(([0.1, 0.1],2),[1,2,3])
     a.add_atom(([0.2, 0.1],1),[1,2,2.2])
     a.add_hopping(1j, (0,1),(1,1),[0,0,1])
-    H = a.create_hamiltonian()
-    print(H(1,2,3))
+    #~ H = a.create_hamiltonian()
+    a._TbSystem__getM(1,2,3)
+    #~ print(H(1,2,3))
     #~ a.DEBUG()

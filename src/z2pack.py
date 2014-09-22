@@ -7,6 +7,13 @@
 
 import python_tools.string_tools as string_tools
 
+# for the ABINIT specialization
+import abinit.abinit_run as ar
+import abinit.abinit_input_io as io
+
+# for the tight-binding specialization
+import tightbind.tightbind import TbSystem
+
 import sys
 import time
 import pickle
@@ -22,35 +29,49 @@ import matplotlib.pyplot as plt
 
 
 class Z2packSystem:
+    """
+    abstract Base Class for Z2Pack systems 
+    method: plane
+    """
     
     def __init__(self, M_handle_creator, **kwargs):
-        self.defaults = kwargs
-        self.M_handle_creator = M_handle_creator
+        """
+        M_handle_creator: takes (string_dir, plane_pos_dir, plane_pos)
+            and creates an M_handle
+            --> M_handle(kx, N): creates M-matrices
+        
+        kwargs: passed to Z2PackPlane constructor unless overwritten
+            by plane() kwargs
+        """
+        self._defaults = kwargs
+        self._M_handle_creator = M_handle_creator
     
 
     def plane(self, string_dir, plane_pos_dir, plane_pos, **kwargs):
         """
         plane position: orthogonal to plane_pos_dir, at plane_pos
-        strings: along string_dir                       
+        strings: along string_dir
+        
+        kwargs: passed to Z2PackPlane constructor. Take precedence
+            over kwargs from Z2PackSystem constructor.
         """
 #----------------updating keyword arguments-----------------------------#
-        kw_arguments = self.defaults.copy()
+        kw_arguments = self._defaults.copy()
         kw_arguments.update(kwargs)
 #----------------creating M_handle--------------------------------------#
         if(string_dir == plane_pos_dir):
             raise ValueError('strings cannot be perpendicular to the plane')
         
         return Z2packPlane(   
-                                    self.M_handle_creator(string_dir, plane_pos_dir, plane_pos),
+                                    self._M_handle_creator(string_dir, plane_pos_dir, plane_pos),
                                     **kw_arguments
                                 )
 
 class Z2packPlane:
     """
     input variables:
-    Nstrings:            number of strings at the beginning (should be 
+    Nstrings:           number of strings at the beginning (should be 
                         >= 8 for good results)
-                        TODO
     """
     
     #----------------CONSTRUCTOR - PARSE INPUT--------------------------#
@@ -377,11 +398,6 @@ class Z2packPlane:
 #                         ABINIT SPECIALIZATION                         #
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
-
-
-import abinit.abinit_run as ar
-import abinit.abinit_input_io as io
-
 class Abinit(Z2packSystem):
     
     def __init__(   self, 
@@ -393,20 +409,21 @@ class Abinit(Z2packSystem):
                     abinit_command = "abinit",
                     **kwargs
                     ):
-        self.defaults = kwargs
+        self._defaults = kwargs
         self._name = name
-        self._abinit_system = ar.ABINIT_RUN_IMPL(  name, 
-                                                    io.parse_input(common_vars_path) , 
-                                                    psps_files, 
-                                                    working_folder, 
-                                                    num_occupied,
-                                                    abinit_command = abinit_command)
+        self._abinit_system = ar.AbinitRun( name, 
+                                            io.parse_input(common_vars_path) , 
+                                            psps_files, 
+                                            working_folder, 
+                                            num_occupied,
+                                            abinit_command = abinit_command)
         def _M_handle_creator_abinit(string_dir, plane_pos_dir, plane_pos):
+            # check if kx is before or after plane_pos_dir
             if(3 - string_dir > 2 * plane_pos_dir):
                 return lambda kx, N: self._abinit_system.nscf(string_dir, [kx, plane_pos], N)
             else:
                 return lambda kx, N: self._abinit_system.nscf(string_dir, [plane_pos, kx], N)
-        self.M_handle_creator = _M_handle_creator_abinit
+        self._M_handle_creator = _M_handle_creator_abinit
         
     def scf(self, scf_vars_path, **kwargs):
         print("starting SCF calculation for " + self._name)
@@ -420,7 +437,22 @@ class Abinit(Z2packSystem):
 #-----------------------------------------------------------------------#
 
 class TightBinding(Z2packSystem):
-    pass
+    def __init__(   self,
+                    tbsystem,
+                    **kwargs
+                    ):
+        self._defaults = kwargs
+        self._tbsystem = tbsystem
+        def _M_handle_creator_tb(string_dir, plane_pos_dir, plane_pos):
+            # check if kx is before or after plane_pos_dir
+            if(3 - string_dir > 2 * plane_pos_dir):
+                return lambda kx, N: self._tbsystem._getM(string_dir, [kx, plane_pos], N)
+            else:
+                return lambda kx, N: self._tbsystem._getM(string_dir, [plane_pos, kx], N)
+        self._M_handle_creator = _M_handle_creator_tb
+        
+    
+    
     
 
 if __name__ == "__main__":

@@ -17,7 +17,7 @@ import subprocess
 #                                                                       #
 #                                                                       #
 #-----------------------------------------------------------------------#
-class ABINIT_RUN_IMPL:
+class AbinitRun:
     
     def __init__(   self, 
                     name,
@@ -50,7 +50,7 @@ class ABINIT_RUN_IMPL:
         self.abinit_command = abinit_command
         self.num_occupied = num_occupied
         
-    def __abinit_run__  (   self, 
+    def _abinit_run  (   self, 
                             subfolder,
                             tag = "", 
                             input_wfct_path = None,
@@ -115,7 +115,7 @@ class ABINIT_RUN_IMPL:
 
     def scf(self, scf_args = {}, setup_only = False, **kwargs):
         scf_args.update({'prtden': 1})
-        self.__abinit_run__("work_scf_" + self._name, tag = "_scf", additional_args = scf_args, setup_only = setup_only, **kwargs)
+        self._abinit_run("work_scf_" + self._name, tag = "_scf", additional_args = scf_args, setup_only = setup_only, **kwargs)
         
 #-----------------------------------------------------------------------#
 #                                                                       #
@@ -163,7 +163,7 @@ class ABINIT_RUN_IMPL:
         subfolder = "work_nscf_" + self._name
         
 #----------------------call to abinit_run-------------------------------#
-        self.__abinit_run__( 
+        self._abinit_run( 
                     subfolder,
                     tag = "_nscf",
                     input_wfct_path = "work_scf_" + self._name + "/" + self._name + "_scf_o", 

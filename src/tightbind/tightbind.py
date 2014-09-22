@@ -3,7 +3,7 @@
 #
 # Author:  Dominik Gresch <greschd@ethz.ch>
 # Date:    17.09.2014 10:25:24 CEST
-# File:    tb_hamilton.py
+# File:    tightbind.py
 
 import sys
 import numpy as np
@@ -115,7 +115,6 @@ class TbSystem:
             self.hamiltonian
         except:
             self.create_hamiltonian()
-        print(self._num_electrons) # DEBUG
         
         k_points = [string_pos.copy() for i in range(N)]
         ky = np.linspace(0, 1, N, endpoint = False)
@@ -142,7 +141,7 @@ class TbSystem:
         deltak = [0, 0]
         deltak.insert(string_dir, 1./N)
         for i in range(0, N):
-            # overlap <un|um> -> see ../theory
+            # overlap <un|um> 
             Mnew = [[sum(np.conjugate(eigs[i][j,m])*eigs[i + 1][j,n]*np.exp(-1j * self._dot_prod(deltak, self._T_list[j]))  for j in range(eigsize)) for n in range(eignum)] for m in range(eignum)]
             M.append(Mnew) 
         return M

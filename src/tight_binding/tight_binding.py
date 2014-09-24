@@ -27,11 +27,6 @@ class Vectors:
             res.append([-1 if(i==axes) else 0 for i in range(3)])
         return res
         
-    def around_origin(exclude_axis = None):
-        """
-        adds vectors to each of the uc's touching the origin (0,0,0)
-        """
-    
     def combine(x_vals, y_vals, z_vals):
         """
         creates all combinations of values. z changes fastest, x slowest
@@ -76,7 +71,7 @@ class TbSystem:
             in [0,1])
         """
         
-#------------------------check input------------------------------------#
+        # check input
         if(len(position) != 3):
             raise ValueError('position must be a list/tuple of length 3')
         if(len(element) != 2):
@@ -84,9 +79,9 @@ class TbSystem:
         if not(isinstance(element[1], int)):
             raise ValueError("num_electrons must be an integer")
             
-#--------add the atom - store as (orbitals, num_electrons, position)----#
+        # add the atom - store as (orbitals, num_electrons, position)
         self._atoms.append((tuple(element[0]), element[1], tuple(position)))
-#----------------return the index the atom will get---------------------#
+        # return the index the atom will get
         return len(self._atoms) - 1
         
     def add_hopping(self,  orbital_pair, rec_lattice_vec, overlap, phase = None):
@@ -144,7 +139,7 @@ class TbSystem:
         return len(self._atoms)
     
     def create_hamiltonian(self):
-#----------------create conversion from index to orbital/vice versa-----#
+        # create conversion from index to orbital/vice versa
         count = 0
         orbital_to_index = []
         index_to_orbital = []
@@ -161,71 +156,56 @@ class TbSystem:
             H = [list(row) for row in np.diag([energy for atom in self._atoms for energy in atom[0]])]
             
             for hopping in self._hoppings:
-                #~ print(hopping) #DEBUG
+                # add entry for hopping
                 index_1 = orbital_to_index[hopping[1][0]][hopping[1][1]]
                 index_2 = orbital_to_index[hopping[2][0]][hopping[2][1]]
-                #~ print("index_1 {0}; index2 {1}".format(index_1, index_2)) # DEBUG
                 phase = np.exp(1j * self._dot_prod(hopping[3], k))
-                #~ print(phase) # DEBUG
                 H[index_1][index_2] += hopping[0] * phase
 
-                #~ if(hopping[4]):
-                    #~ H[index_2][index_1] += (hopping[0] * phase).conjugate()
+                # add conjugate if hopping is not on the diagonal
                 if not(index_1 == index_2):
                     H[index_2][index_1] += (hopping[0] * phase).conjugate()
             return H
-            #~ print(H) #DEBUG
                 
         self._num_electrons = sum(atom[1] for atom in self._atoms) # needed for _getM
         self.hamiltonian = _H
         return self.hamiltonian
         
     def _getM(self, string_dir, string_pos, N):
-#----------------check if hamiltonian exists - else create it-----------#
+        # check if hamiltonian exists - else create it
         try:
             self.hamiltonian
         except:
             self.create_hamiltonian()
         
+        # create k-points for string
         k_points = [string_pos.copy() for i in range(N - 1)]
         ky = np.linspace(0, 1, N - 1, endpoint = False)
         for i, step in enumerate(k_points):
             step.insert(string_dir, ky[i])
-        #~ print(k_points) # DEBUG
+            
+        # get eigenvectors corr. to occupied states
         eigs = []
-        #~ print(self._num_electrons) # DEBUG
         for k in k_points:
             eigval, eigvec = la.eig(self.hamiltonian(k))
-            #~ print("k")
-            #~ print(k)
-            #~ print('hamilton')
-            #~ print(self.hamiltonian(k)) # DEBUG
             eigval = np.real(eigval)
-            #~ print(eigval) # DEBUG
             idx = eigval.argsort()
-            #~ print(idx) # DEBUG
             idx = idx[:self._num_electrons]
             idx.sort() # preserve the order of the wcc
-            #~ print(eigval[idx]) # DEBUG
             eigvec = eigvec[:,idx]
-            #~ print(eigvec) # DEBUG
             eigs.append(np.array(eigvec)) # take only the lower - energy eigenstates
 
         # last eigenvector = first one
         eigs.append(eigs[0])
         eigsize, eignum = eigs[0].shape
+        
+        # create M - matrices
         M = []
         deltak = [0, 0]
         deltak.insert(string_dir, 1./(N-1))
         for i in range(0, N - 1):
-            #~ print(deltak)
-            # overlap <un|um> 
-            #~ print(eigsize)
-            #~ print(eignum)
             Mnew = [[sum(np.conjugate(eigs[i][j,m])*eigs[i + 1][j,n]*np.exp(-1j * self._dot_prod(deltak, self._T_list[j]))  for j in range(eigsize)) for n in range(eignum)] for m in range(eignum)]
-            #~ print([self._dot_prod(deltak, self._T_list[j]) for j in range(eigsize)])   
             M.append(Mnew) 
-        #~ print(M) # DEBUG
         return M
         
     def _dot_prod(self, k_vec, x_vec):
@@ -241,16 +221,6 @@ class TbSystem:
             raise ValueError('k_vec and x_vec must be of the same size')
         return 2 * np.pi * sum(x_vec[i]*k_vec[i] for i in range(n))
     
-    def DEBUG(self):
-        print(self._atoms)
-        print(self._hoppings)
         
 if __name__ == "__main__":
-    a = TbSystem([0.1, 0.2, 0.3],[0.1, 0.3, 0.2],[0.3, 0.2, 0.1])
-    a.add_atom(([0.1, 0.1],2),[1,2,3])
-    a.add_atom(([0.2, 0.1],1),[1,2,2.2])
-    a.add_hopping(1, (0,1),(1,1),[0,0,1])
-    H = a.create_hamiltonian()
-    #~ print(a._TbSystem_getM(1,[2,3],5))
-    print(H([1,2,3]))
-    #~ a.DEBUG()
+    print("tight_binding.py")

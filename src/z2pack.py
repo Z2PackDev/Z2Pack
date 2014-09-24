@@ -7,12 +7,13 @@
 
 import python_tools.string_tools as string_tools
 
-# for the ABINIT specialization
+# for the ABINIT specialisation
 import abinit.abinit_run as ar
 import abinit.abinit_input_io as io
 
-# for the tight-binding specialization
+# for the tight-binding specialisation
 from tight_binding.tight_binding import TbSystem
+from tight_binding.tight_binding import Vectors as TbVectors
 
 import sys
 import time
@@ -120,7 +121,7 @@ class Z2packPlane:
             
         start_time = time.time()
 
-        #----------------initializing-----------------------------------#
+        #----------------initialising-----------------------------------#
         self._k_points = list(np.linspace(0, 0.5, self._Nstrings, endpoint = True))
         self._gaps = [None for i in range(self._Nstrings)]
         self._wcc_list = [[] for i in range(self._Nstrings)] 
@@ -406,7 +407,7 @@ class Z2packPlane:
         
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
-#                         ABINIT SPECIALIZATION                         #
+#                         ABINIT SPECIALISATION                         #
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
 class Abinit(Z2packSystem):
@@ -454,7 +455,7 @@ class Abinit(Z2packSystem):
         
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
-#                TIGHT BINDING SPECIALIZATION                           #
+#                TIGHT BINDING SPECIALISATION                           #
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
 

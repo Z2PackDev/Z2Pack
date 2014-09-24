@@ -21,14 +21,12 @@ if __name__ == "__main__":
     t2 = 0.3
     
     # add hopping between different atoms
-    tb.add_hopping((0, 0), (1, 1), z2pack.TbVectors.combine([0,-1],[0,-1],0), t1, phase = [1, -1j, 1j, -1])
-    tb.add_hopping((0, 1), (1, 0), z2pack.TbVectors.combine([0,-1],[0,-1],0), t1, phase = [1, 1j, -1j, -1])
+    tb.add_hopping(((0, 0), (1, 1)), z2pack.TbVectors.combine([0,-1],[0,-1],0), t1, phase = [1, -1j, 1j, -1])
+    tb.add_hopping(((0, 1), (1, 0)), z2pack.TbVectors.combine([0,-1],[0,-1],0), t1, phase = [1, 1j, -1j, -1])
     
     # add hopping between neighbouring orbitals of the same type
-    tb.add_hopping((0, 0), (0, 0), z2pack.TbVectors.neighbour_uc([0,1]), t2)
-    tb.add_hopping((0, 1), (0, 1), z2pack.TbVectors.neighbour_uc([0,1]), t2)
-    tb.add_hopping((1, 1), (1, 1), z2pack.TbVectors.neighbour_uc([0,1]), -t2)
-    tb.add_hopping((1, 0), (1, 0), z2pack.TbVectors.neighbour_uc([0,1]), -t2)
+    tb.add_hopping((((0, 0), (0, 0)),((0, 1), (0, 1))), z2pack.TbVectors.neighbour_uc([0,1]), t2)
+    tb.add_hopping((((1, 1), (1, 1)),((1, 0), (1, 0))), z2pack.TbVectors.neighbour_uc([0,1]), -t2)
 
     # call to Z2Pack
     tb_system = z2pack.TightBinding(tb)

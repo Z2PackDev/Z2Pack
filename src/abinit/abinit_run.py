@@ -46,6 +46,10 @@ class AbinitRun:
                     self.psps_files.append(psps_file)
                 else: # relative
                     self.psps_files.append(self._calling_path + '/' + psps_file)
+                    
+        # create working folder if it doesn't exist
+        if not(os.path.isdir(self._working_folder)):
+            subprocess.call("mkdir " + self._working_folder, shell = True)
         
         self.abinit_command = abinit_command
         self.num_occupied = num_occupied

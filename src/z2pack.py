@@ -12,7 +12,7 @@ import abinit.abinit_run as ar
 import abinit.abinit_input_io as io
 
 # for the tight-binding specialization
-import tightbind.tightbind import TbSystem
+from tight_binding.tight_binding import TbSystem
 
 import sys
 import time
@@ -84,6 +84,7 @@ class Z2packPlane:
                     use_pickle = True, 
                     pickle_file = "res_pickle.txt", 
                     **kwargs):
+        # TODO: most of those arguments belong in wcc_calc!!
         """
         constructor
         parses the input variables
@@ -109,7 +110,8 @@ class Z2packPlane:
         - automated check for distance between gap and wcc -> add string
         """
         #----------------initial output---------------------------------# # TODO: add all variables
-        if(verbose):
+        self._verbose = verbose
+        if(self._verbose):
             print(string_tools.cbox( "starting wcc calculation\n\n" +\
                                 "options:\n" +\
                                 "initial # of strings: " + str(self._Nstrings) + "\n"+\
@@ -150,7 +152,7 @@ class Z2packPlane:
                              " min " + \
                             str(int(np.floor(duration)) % 60) + \
                             " sec"
-        if(verbose):
+        if(self._verbose):
             print(string_tools.cbox( "finished wcc calculation" + "\ntime: " 
                             + duration_string))
         
@@ -172,12 +174,15 @@ class Z2packPlane:
         for i, status in enumerate(self._neighbour_check):
             if not(status):
                 if(self._string_status[i] and self._string_status[i + 1]):
-                    print("Checking neighbouring k-points k = " + "%.4f" % self._k_points[i] + " and k = " + "%.4f" % self._k_points[i + 1] + "\n", end = "", flush = True)
+                    if(self._verbose):
+                        print("Checking neighbouring k-points k = " + "%.4f" % self._k_points[i] + " and k = " + "%.4f" % self._k_points[i + 1] + "\n", end = "", flush = True)
                     if(self._check_single_neighbour(i, i + 1)):
-                        print("Condition fulfilled\n\n", end = "", flush = True)
+                        if(self._verbose):
+                            print("Condition fulfilled\n\n", end = "", flush = True)
                         self._neighbour_check[i] = True
                     else:
-                        print("Condition not fulfilled\n\n", end = "", flush = True)
+                        if(self._verbose):
+                            print("Condition not fulfilled\n\n", end = "", flush = True)
                         # add entries to neighbour_check, k_point and string_status
                         self._neighbour_check.insert(i + 1, False)
                         self._string_status.insert(i + 1, False)
@@ -240,12 +245,14 @@ class Z2packPlane:
         (k-points) along the string until the WCC converge
         """
         #----------------initial output---------------------------------#
-        print("calculating string at kx = " + "%.5f" % kx + "; N = ", end = "", flush = True)
+        if(self._verbose):
+            print("calculating string at kx = " + "%.4f" % kx + "; N = ", end = "", flush = True)
 
         #----------------first two steps--------------------------------#
         N = 8
         niter = 0
-        print(str(N), end = "", flush = True) # Output
+        if(self._verbose):
+            print(str(N), end = "", flush = True) # Output
         x, min_sv = self._trywcc(self._M_handle(kx, N), verbose)
         #----------------iteration--------------------------------------#
         while(True):
@@ -255,16 +262,19 @@ class Z2packPlane:
             else:
                 N += 2
             xold = x.copy()
-            print(", " + str(N), end = "", flush = True)    # Output
+            if(self._verbose):
+                print(", " + str(N), end = "", flush = True)    # Output
             x, min_sv = self._trywcc(self._M_handle(kx, N), verbose)
             niter += 1
 
             #----------------break conditions---------------------------#
             if(self._convcheck(x, xold)): # success
-                print(" finished!\n\n", end = "", flush = True)
+                if(self._verbose):
+                    print(" finished!\n\n", end = "", flush = True)
                 break
             if(niter > self._max_iter): # failure
-                print("failed to converge!\n\n", end = "", flush = True)
+                if(self._verbose):
+                    print("failed to converge!\n\n", end = "", flush = True)
                 break
 
         return sorted(x)
@@ -283,7 +293,8 @@ class Z2packPlane:
         # getting the wcc from the eigenvalues of gamma
         [eigs, _] = la.eig(Gamma)
         if(verbose):
-            print(" (" + "%.3f" % min_sv + ")", end= "", flush = True)
+            if(self._verbose):
+                print(" (" + "%.3f" % min_sv + ")", end= "", flush = True)
         return [(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs], min_sv
     
 
@@ -298,7 +309,8 @@ class Z2packPlane:
                     is tolerated between x and y
         """
         if(len(x) != len(y)):
-            print("Warning: consecutive strings don't have the same amount of WCC")
+            if(self._verbose):
+                print("Warning: consecutive strings don't have the same amount of WCC")
             return False
         else:
             return self._convsum(x, y, self._wcc_tol) < 1 
@@ -391,8 +403,7 @@ class Z2packPlane:
         return np.copysign(1,np.sin(2*np.pi*(zplus - z)) + np.sin(2*np.pi*(x-zplus)) + np.sin(2*np.pi*(z-x)))
     #----------------END SUPPORT FUNCTIONS FOR INVARIANTS---------------#
     
-    
-
+        
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
 #                         ABINIT SPECIALIZATION                         #
@@ -420,15 +431,26 @@ class Abinit(Z2packSystem):
         def _M_handle_creator_abinit(string_dir, plane_pos_dir, plane_pos):
             # check if kx is before or after plane_pos_dir
             if(3 - string_dir > 2 * plane_pos_dir):
-                return lambda kx, N: self._abinit_system.nscf(string_dir, [kx, plane_pos], N)
-            else:
                 return lambda kx, N: self._abinit_system.nscf(string_dir, [plane_pos, kx], N)
+            else:
+                return lambda kx, N: self._abinit_system.nscf(string_dir, [kx, plane_pos], N)
         self._M_handle_creator = _M_handle_creator_abinit
         
-    def scf(self, scf_vars_path, **kwargs):
-        print("starting SCF calculation for " + self._name)
-        self._abinit_system.scf(io.parse_inputh (scf_vars_path), **kwargs)
-        print("")
+    def scf(self, scf_vars_path, verbose = True, **kwargs):
+        self._verbose = verbose
+        try:
+            if not(kwargs['setup_only']): 
+                if(self._verbose):
+                    print("starting SCF calculation for " + self._name)
+            else:
+                if(self._verbose):
+                    print("setting up SCF calculation for " + self._name)
+        except:
+            if(self._verbose):
+                print("starting SCF calculation for " + self._name)
+        self._abinit_system.scf(io.parse_input(scf_vars_path), **kwargs)
+        if(self._verbose):
+            print("")
         
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
@@ -446,9 +468,9 @@ class TightBinding(Z2packSystem):
         def _M_handle_creator_tb(string_dir, plane_pos_dir, plane_pos):
             # check if kx is before or after plane_pos_dir
             if(3 - string_dir > 2 * plane_pos_dir):
-                return lambda kx, N: self._tbsystem._getM(string_dir, [kx, plane_pos], N)
-            else:
                 return lambda kx, N: self._tbsystem._getM(string_dir, [plane_pos, kx], N)
+            else:
+                return lambda kx, N: self._tbsystem._getM(string_dir, [kx, plane_pos], N)
         self._M_handle_creator = _M_handle_creator_tb
         
     

@@ -16,7 +16,7 @@ Bismuth Selenide example
 # creating the z2pack.abinit object
 BiSe = z2pack.Abinit(   "BiSe", 
                         "BiSe_common.in", 
-                        ["../Psps/83bi.5.hgh","../Psps/34se.6.hgh"], 
+                        ["../Psps/34se.6.hgh","../Psps/83bi.5.hgh"], 
                         "./build", 
                         10, 
                         abinit_command = "mpirun -np 7 abinit")

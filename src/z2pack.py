@@ -5,6 +5,8 @@
 # Date:    21.03.2014 11:46:38 CET
 # File:    z2pack.py
 
+from __future__ import print_function
+
 import python_tools.string_tools as string_tools
 
 # for the ABINIT specialisation
@@ -12,11 +14,12 @@ import abinit.abinit_run as ar
 import abinit.abinit_input_io as io
 
 # for the tight-binding specialisation
+import tight_binding.tb_vectors as TbVectors 
 from tight_binding.tight_binding import TbSystem
-from tight_binding.tight_binding import Vectors as TbVectors
 
 import sys
 import time
+import copy
 import pickle
 import numpy as np
 import scipy.linalg as la
@@ -57,7 +60,7 @@ class Z2PackSystem:
             over kwargs from Z2PackSystem constructor.
         """
         # updating keyword arguments
-        kw_arguments = self._defaults.copy()
+        kw_arguments = copy.copy(self._defaults)
         kw_arguments.update(kwargs)
         
         # creating M_handle
@@ -128,7 +131,7 @@ class Z2PackPlane:
                             >= 8 for good results)
         verbose:            toggles output printed
         """
-        kwarguments = self._defaults.copy()
+        kwarguments = copy.copy(self._defaults)
         kwarguments.update(kwargs)
         # parse input variables
         self._wcc_tol = kwarguments['wcc_tol']
@@ -212,14 +215,17 @@ class Z2PackPlane:
             if not(status):
                 if(self._string_status[i] and self._string_status[i + 1]):
                     if(self._verbose):
-                        print("Checking neighbouring k-points k = " + "%.4f" % self._k_points[i] + " and k = " + "%.4f" % self._k_points[i + 1] + "\n", end = "", flush = True)
+                        print("Checking neighbouring k-points k = " + "%.4f" % self._k_points[i] + " and k = " + "%.4f" % self._k_points[i + 1] + "\n", end = "")
+                        sys.stdout.flush()
                     if(self._check_single_neighbour(i, i + 1)):
                         if(self._verbose):
-                            print("Condition fulfilled\n\n", end = "", flush = True)
+                            print("Condition fulfilled\n\n", end = "")
+                            sys.stdout.flush()
                         self._neighbour_check[i] = True
                     else:
                         if(self._verbose):
-                            print("Condition not fulfilled\n\n", end = "", flush = True)
+                            print("Condition not fulfilled\n\n", end = "")
+                            sys.stdout.flush()
                         # add entries to neighbour_check, k_point and string_status
                         self._neighbour_check.insert(i + 1, False)
                         self._string_status.insert(i + 1, False)
@@ -270,10 +276,9 @@ class Z2PackPlane:
         load k_points, wcc and gaps from pickle file
         only works if pickle_file exists
         """
-        if(self._use_pickle):
-            f = open(self._pickle_file, "rb")
-            [self._k_points, self._wcc_list, self._gaps] = pickle.load(f)
-            f.close()
+        f = open(self._pickle_file, "rb")
+        [self._k_points, self._wcc_list, self._gaps] = pickle.load(f)
+        f.close()
     
     # calculating one string
     def _getwcc(self, kx):
@@ -283,13 +288,15 @@ class Z2PackPlane:
         """
         # initial output
         if(self._verbose):
-            print("calculating string at kx = " + "%.4f" % kx + "; N = ", end = "", flush = True)
+            print("calculating string at kx = " + "%.4f" % kx + "; N = ", end = "")
+            sys.stdout.flush()
 
         # first two steps
         N = 8
         niter = 0
         if(self._verbose):
-            print(str(N), end = "", flush = True) # Output
+            print(str(N), end = "")
+            sys.stdout.flush() # Output
         x, min_sv = self._trywcc(self._M_handle(kx, N))
         # iteration
         while(True):
@@ -298,21 +305,24 @@ class Z2PackPlane:
                 N += 4
             else:
                 N += 2
-            xold = x.copy()
+            xold = copy.copy(x)
             if(self._verbose):
                 # Output
-                print(", " + str(N), end = "", flush = True)
+                print(", " + str(N), end = "")
+                sys.stdout.flush()
             x, min_sv = self._trywcc(self._M_handle(kx, N))
             niter += 1
 
             # break conditions
             if(self._convcheck(x, xold)): # success
                 if(self._verbose):
-                    print(" finished!\n\n", end = "", flush = True)
+                    print(" finished!\n\n", end = "")
+                    sys.stdout.flush()
                 break
             if(niter > self._max_iter): # failure
                 if(self._verbose):
-                    print("failed to converge!\n\n", end = "", flush = True)
+                    print("failed to converge!\n\n", end = "")
+                    sys.stdout.flush()
                 break
 
         return sorted(x)
@@ -331,7 +341,8 @@ class Z2PackPlane:
         [eigs, _] = la.eig(Gamma)
         if(self._verbose):
             if(self._verbose):
-                print(" (" + "%.3f" % min_sv + ")", end= "", flush = True)
+                print(" (" + "%.3f" % min_sv + ")", end= "")
+                sys.stdout.flush()
         return [(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs], min_sv
     
 
@@ -473,6 +484,8 @@ class Abinit(Z2PackSystem):
                                 for SCF and NSCF (common variables)
         psps_files:             path to pseudopotential file or list
                                 of paths to pseudopotential files
+                                MUST BE in the SAME ORDER as the atom
+                                types in the common input file
         working_folder:         path to 'build' folder
         num_occupied:           number of occupied bands
         

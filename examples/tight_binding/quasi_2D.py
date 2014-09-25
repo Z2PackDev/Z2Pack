@@ -10,6 +10,7 @@ sys.path.append("../../src/")
 import z2pack
 
 if __name__ == "__main__":
+    
     tb = z2pack.TbSystem([1, 0, 0], [0, 1, 0], [0, 0, 1])
     
     # create the two atoms

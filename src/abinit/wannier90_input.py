@@ -8,6 +8,18 @@
 import sys
 
 def write_input(num_wann, num_bands, file_path, spinors = True):
+    """
+    writes input file for Wannier90
+    
+    args:
+    ~~~~
+    num_wann, num_bands:    value for these Wannier90 variables
+    file_path:              path where input file is created
+    
+    kwargs:
+    ~~~~~~
+    spinors:                corresponds to Wannier90 variable spinors
+    """
     input_string =  "num_wann " + str(num_wann) + "\n" +\
                     "num_bands " + str(num_wann) + "\n"
                     

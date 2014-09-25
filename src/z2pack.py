@@ -24,11 +24,13 @@ import matplotlib.pyplot as plt
 
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
-#                        LIBRARY CORE                                   #
+#                           LIBRARY CORE                                #
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
 class Z2PackSystem:
     """
+    Z2PackSystem Class
+    ~~~~~~~~~~~~~~~~~~
     abstract Base Class for Z2Pack systems (Interface definition)
     method: plane
     """
@@ -76,6 +78,8 @@ class Z2PackPlane:
     variable. 
     The M_handle is created by Z2PackSystem.plane(), and as such is 
     specific to the type of Z2Pack calculation (ABINIT, Tb, ...)
+    
+    methods: wcc_calc, load, plot, invariant
     """
     
     def __init__(   self, 
@@ -438,7 +442,7 @@ class Z2PackPlane:
         
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
-#                         ABINIT SPECIALISATION                         #
+#                       ABINIT SPECIALISATION                           #
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
 class Abinit(Z2PackSystem):
@@ -446,6 +450,9 @@ class Abinit(Z2PackSystem):
     Abinit Class
     ~~~~~~~~~~~~
     Subclass of Z2PackSystem used for calculating systems using ABINIT
+    
+    methods: scf, inherits plane
+    
     """
     
     def __init__(   self, 
@@ -455,6 +462,7 @@ class Abinit(Z2PackSystem):
                     working_folder,
                     num_occupied,
                     abinit_command = "abinit",
+                    nscf_args = {},
                     **kwargs
                     ):
         """
@@ -471,6 +479,7 @@ class Abinit(Z2PackSystem):
         kwargs:
         ~~~~~~
         abinit_command:         command to call abinit
+        nscf_args:              passed to AbinitRun.nscf
         other kwargs:           are passed to the Z2PackPlane 
                                 constructor via .plane(), which passes 
                                 them to wcc_calc()
@@ -488,9 +497,9 @@ class Abinit(Z2PackSystem):
         def _M_handle_creator_abinit(string_dir, plane_pos_dir, plane_pos):
             # check if kx is before or after plane_pos_dir
             if(3 - string_dir > 2 * plane_pos_dir):
-                return lambda kx, N: self._abinit_system.nscf(string_dir, [plane_pos, kx], N)
+                return lambda kx, N: self._abinit_system.nscf(string_dir, [plane_pos, kx], N, **nscf_args)
             else:
-                return lambda kx, N: self._abinit_system.nscf(string_dir, [kx, plane_pos], N)
+                return lambda kx, N: self._abinit_system.nscf(string_dir, [kx, plane_pos], N, **nscf_args)
         self._M_handle_creator = _M_handle_creator_abinit
         
     def scf(self, scf_vars_path, verbose = True, **kwargs):
@@ -531,7 +540,7 @@ class Abinit(Z2PackSystem):
         
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
-#                TIGHT BINDING SPECIALISATION                           #
+#                    TIGHT BINDING SPECIALISATION                       #
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
 
@@ -541,6 +550,8 @@ class TightBinding(Z2PackSystem):
     ~~~~~~~~~~~~~~~~~~
     Subclass of Z2PackSystem used for calculating system with a tight-
     binding model
+    
+    method: inherits plane
     """
     def __init__(   self,
                     tbsystem,

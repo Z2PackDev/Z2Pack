@@ -11,9 +11,21 @@ import sympy as sp
 import scipy.linalg as la
 
 class Vectors:
+    """
+    Vectors Class
+    ~~~~~~~~~~~~~
+    Tool to easily create multiple reciprocal lattice vectors
+    
+    methods: neighbour_uc, combine
+    """
     def neighbour_uc(axes):
         """
-        adds two vectors for every axis, with +-1 in that axis
+        adds two vectors for every axis, with +-1 in that axis (0 on 
+        other coordinates)
+        
+        args:
+        ~~~~
+        axes:               list of axes for which to add neighbours
         """
         res = []
         
@@ -32,6 +44,10 @@ class Vectors:
         creates all combinations of values. z changes fastest, x slowest
         x_vals, y_vals, z_vals can be an iterable or a number
         order from the lists is preserved
+        
+        args:
+        ~~~~
+        x_vals, y_vals, z_vals:     values to combine for x,y,z
         """
         res = []
         try:
@@ -51,6 +67,12 @@ class Vectors:
 
 class TbSystem:
     """
+    TbSystem Class
+    ~~~~~~~~~~~~~~
+    Describes a tight-binding system
+    
+    members: hamiltonian
+    methods: add_atom, add_hopping, create_hamiltonian
     """
     def __init__(self, a_1, a_2, a_3):
         self._unit_cell = [a_1, a_2, a_3]
@@ -87,13 +109,20 @@ class TbSystem:
     def add_hopping(self,  orbital_pairs, rec_lattice_vec, overlap, phase = None):
         """
         adds an hopping of value 'overlap' between atom_1 and atom_2
-        
-        orbital_pairs: tuple (orbital_1, orbital_2)
-        
-            orbital_1, orbital_2: tuple (atom_index, orbital_index)
-        
         while atom_1 is in the unit cell at the origin, 
         atom_2 is in the unit cell at rec_lattice_vec
+        
+        args:
+        ~~~~
+        orbital_pairs:              tuple (orbital_1, orbital_2)
+                                    or list of those
+            orbital_1, orbital_2:   tuple (atom_index, orbital_index)
+        rec_lattice_vec:            vector connecting unit cells
+                                    or list of those
+        overlap:                    strength of hopping
+        phase:                      multiplicative factor for overlap
+                                    or list of factors (one for each
+                                    rec_lattice_vec)
         """
         
         # check if there are multiple orbital pairs
@@ -134,11 +163,13 @@ class TbSystem:
                 indices_1 = (orbital_pairs[0][0], orbital_pairs[0][1])
                 indices_2 = (orbital_pairs[1][0], orbital_pairs[1][1])
                 self._hoppings.append((overlap, indices_1, indices_2, rec_lattice_vec))
-        
-    def num_atoms(self):
-        return len(self._atoms)
     
     def create_hamiltonian(self):
+        """
+        creates the self.hamiltonian object
+        self.hamiltonian returns the matrix hamiltonian as a function of
+        k (list of length 3)
+        """
         # create conversion from index to orbital/vice versa
         count = 0
         orbital_to_index = []
@@ -172,6 +203,16 @@ class TbSystem:
         return self.hamiltonian
         
     def _getM(self, string_dir, string_pos, N):
+        """
+        returns:        M-matrices
+        
+        args:
+        ~~~~
+        string_dir:     axis along which string goes (index in 0,1,2)
+        string_pos:     position of string as a list where the coord.
+                        in string_dir has been removed
+        N:              number of steps in the string
+        """
         # check if hamiltonian exists - else create it
         try:
             self.hamiltonian

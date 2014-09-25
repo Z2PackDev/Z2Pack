@@ -6,17 +6,15 @@
 # File:    read_mmn.py
 
 import numpy as np
-#~ def check(A):
-    #~ x = np.array(A)
-    #~ B = x - x.transpose()
-    #~ print(B)
-    #~ for temp in B:
-        #~ for temp2 in temp:
-            #~ if(abs(temp2)>1e-9):
-                #~ return False
-    #~ return True
     
 def getM(mmn_file):
+    """
+    reads M-matrices from .mmn file 
+    
+    args:
+    ~~~~
+    mmn_file:           path to .mmn file
+    """
     f = open(mmn_file, "r")
     f.readline()
     
@@ -55,11 +53,7 @@ def getM(mmn_file):
         temp2 = []
         for j in range(0, len(temp), num_bands):
             temp2.append(temp[j:j + num_bands])
-            #~ temp2.append([x / num_bands for x in temp[j:j + num_bands]] )  # DEBUG
         
-        import numpy as np # DEBUG
-        #~ M.append(np.array([list(x) for x in zip(*temp2)]).transpose())
-        #~ print(check([list(x) for x in zip(*temp2)]))
         M.append([list(x) for x in zip(*temp2)])
         
     
@@ -67,18 +61,4 @@ def getM(mmn_file):
     return M
     
 
-
-#~ M = getM("test/wannier90.mmn")
-#~ print(M[0])
-#~ print(M[-1])
-#~ foo = list(enumerate(k_kplusb))
-#~ foo2 = list(filter(lambda x: x[1][1]==12, foo))
-#~ foo3 = sorted(foo2, key = lambda x: x[0])
-#~ print(foo)
-#~ print(foo2)
-#~ print(foo3)
-
-#~ for point in k_kplusb:
-    #~ print(point)
-#~ print(nntot)
 

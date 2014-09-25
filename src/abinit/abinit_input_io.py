@@ -9,6 +9,13 @@ import sys
 import numpy as np
     
 def parse_input(name):
+    """
+    turns ABINIT input file into a dict
+    
+    args:
+    ~~~~
+    name:               path to input file
+    """
     in_file = open(name, "r")
     text = in_file.read()
     in_file.close()
@@ -82,6 +89,14 @@ def parse_input(name):
     return data
     
 def produce_input(data, name):
+    """
+    turns dict into ABINIT input file
+    
+    args:
+    ~~~~
+    data:               dict
+    name:               path to input file
+    """
     stream = open(name, "w")
     
     keys = list(data.keys())

@@ -84,11 +84,11 @@ class TbSystem:
         # return the index the atom will get
         return len(self._atoms) - 1
         
-    def add_hopping(self,  orbital_pair, rec_lattice_vec, overlap, phase = None):
+    def add_hopping(self,  orbital_pairs, rec_lattice_vec, overlap, phase = None):
         """
         adds an hopping of value 'overlap' between atom_1 and atom_2
         
-        orbital_pair: tuple (orbital_1, orbital_2)
+        orbital_pairs: tuple (orbital_1, orbital_2)
         
             orbital_1, orbital_2: tuple (atom_index, orbital_index)
         
@@ -98,18 +98,18 @@ class TbSystem:
         
         # check if there are multiple orbital pairs
         try:
-            orbital_pair[0][0][0]
-            for pair in orbital_pair:
+            orbital_pairs[0][0][0]
+            for pair in orbital_pairs:
                 self.add_hopping(pair, rec_lattice_vec, overlap, phase)
         except:
             # check if the orbitals exist
             num_atoms = len(self._atoms)
-            if not(orbital_pair[0][0] < num_atoms and orbital_pair[1][0] < num_atoms):
+            if not(orbital_pairs[0][0] < num_atoms and orbital_pairs[1][0] < num_atoms):
                 raise ValueError("atom index out of range")
-            if not(orbital_pair[0][1] < len(self._atoms[orbital_pair[0][0]][0])):
-                raise ValueError("orbital index out of range (orbital_pair[0])")
-            if not(orbital_pair[1][1] < len(self._atoms[orbital_pair[1][0]][0])):
-                raise ValueError("orbital index out of range (orbital_pair[1])")
+            if not(orbital_pairs[0][1] < len(self._atoms[orbital_pairs[0][0]][0])):
+                raise ValueError("orbital index out of range (orbital_pairs[0])")
+            if not(orbital_pairs[1][1] < len(self._atoms[orbital_pairs[1][0]][0])):
+                raise ValueError("orbital index out of range (orbital_pairs[1])")
                 
             # check if there are multiple rec_lattice_vec
             if(hasattr(rec_lattice_vec[0], '__getitem__') and hasattr(rec_lattice_vec[0], '__iter__')):
@@ -117,10 +117,10 @@ class TbSystem:
                     phase = 1
                 try:
                     for i, vec in enumerate(rec_lattice_vec):
-                        self.add_hopping(orbital_pair, vec, overlap * phase[i])
+                        self.add_hopping(orbital_pairs, vec, overlap * phase[i])
                 except:
                     for vec in rec_lattice_vec:
-                        self.add_hopping(orbital_pair, vec, overlap * phase)
+                        self.add_hopping(orbital_pairs, vec, overlap * phase)
                         
             else:
                 # check rec_lattice_vec
@@ -131,8 +131,8 @@ class TbSystem:
                         raise ValueError('rec_lattice_vec must consist of integers')
 
                 # add hopping
-                indices_1 = (orbital_pair[0][0], orbital_pair[0][1])
-                indices_2 = (orbital_pair[1][0], orbital_pair[1][1])
+                indices_1 = (orbital_pairs[0][0], orbital_pairs[0][1])
+                indices_2 = (orbital_pairs[1][0], orbital_pairs[1][1])
                 self._hoppings.append((overlap, indices_1, indices_2, rec_lattice_vec))
         
     def num_atoms(self):

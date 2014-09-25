@@ -24,14 +24,12 @@ import matplotlib.pyplot as plt
 
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
-#                     GENERAL PURPOSE LIBRARY                           #
+#                        LIBRARY CORE                                   #
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
-
-
-class Z2packSystem:
+class Z2PackSystem:
     """
-    abstract Base Class for Z2Pack systems 
+    abstract Base Class for Z2Pack systems (Interface definition)
     method: plane
     """
     
@@ -56,72 +54,106 @@ class Z2packSystem:
         kwargs: passed to Z2PackPlane constructor. Take precedence
             over kwargs from Z2PackSystem constructor.
         """
-#----------------updating keyword arguments-----------------------------#
+        # updating keyword arguments
         kw_arguments = self._defaults.copy()
         kw_arguments.update(kwargs)
-#----------------creating M_handle--------------------------------------#
+        
+        # creating M_handle
         if(string_dir == plane_pos_dir):
             raise ValueError('strings cannot be perpendicular to the plane')
         
-        return Z2packPlane(   
+        return Z2PackPlane(   
                                     self._M_handle_creator(string_dir, plane_pos_dir, plane_pos),
                                     **kw_arguments
                                 )
 
-class Z2packPlane:
+class Z2PackPlane:
     """
-    input variables:
-    Nstrings:           number of strings at the beginning (should be 
-                        >= 8 for good results)
+    Z2PackPlane Class:
+    ~~~~~~~~~~~~~~~~~
+    specifies a plane in the 3D system, on which to calculate the 
+    topological invariant. This is achieved via the M_handle input
+    variable. 
+    The M_handle is created by Z2PackSystem.plane(), and as such is 
+    specific to the type of Z2Pack calculation (ABINIT, Tb, ...)
     """
     
-    #----------------CONSTRUCTOR - PARSE INPUT--------------------------#
     def __init__(   self, 
                     M_handle, 
-                    max_iter = 10, 
-                    wcc_tol = 1e-2, 
-                    gap_tol = 2e-2, 
-                    Nstrings = 11, 
-                    use_pickle = True, 
                     pickle_file = "res_pickle.txt", 
                     **kwargs):
-        # TODO: most of those arguments belong in wcc_calc!!
         """
         constructor
         parses the input variables
+        
+        args:
+        ~~~~
+        M_handle:           should create a list of MMN given (k, N)
+        pickle_file:        path to file for saving using pickle
+        
+        kwargs:
+        ~~~~~~
+        same as for wcc_calc. kwargs for wcc_calc take precedence
         """
         self._M_handle = M_handle
-        self._wcc_tol = wcc_tol
-        self._gap_tol = gap_tol
-        self._max_iter = max_iter
-        self._use_pickle = use_pickle
         self._pickle_file = pickle_file
-        self._Nstrings = Nstrings
-        #----------------input checks-----------------------------------#   
+        self._defaults = {  'wcc_tol': 1e-2,
+                            'gap_tol': 2e-2,
+                            'max_iter': 10,
+                            'use_pickle': True,
+                            'Nstrings': 11,
+                            'verbose': True
+                            }
+        self._defaults.update(kwargs)
+        
+    def wcc_calc(self, **kwargs):
+        """
+        calculating the wcc of the system
+        - automated convergence in string direction
+        - automated check for distance between gap and wcc -> add string
+        
+        kwargs:
+        ~~~~~~
+        wcc_tol:            maximum movement of wcc between two steps 
+                            for convergence
+        gap_tol:            minimum size of gap between the largest gap
+                            and the closest wcc at neighbouring strings
+        max_iter:           max. number of iterations for 1 string
+        use_pickle:         toggles use of pickle for saving
+        Nstrings:           number of strings at the beginning (should be 
+                            >= 8 for good results)
+        verbose:            toggles output printed
+        """
+        kwarguments = self._defaults.copy()
+        kwarguments.update(kwargs)
+        # parse input variables
+        self._wcc_tol = kwarguments['wcc_tol']
+        self._gap_tol = kwarguments['gap_tol']
+        self._max_iter = kwarguments['max_iter']
+        self._use_pickle = kwarguments['use_pickle']
+        self._Nstrings = kwarguments['Nstrings']
+        self._verbose = kwarguments['verbose']
+            
         # checking Nstrings
         if(self._Nstrings < 2):
             raise ValueError("Nstrings must be at least 2")
         elif(self._Nstrings < 8):
             warnings.warn("Nstrings should usually be >= 8 for good results", UserWarning)
-    
-    def wcc_calc(self, verbose = True):
-        """
-        calculating the wcc of the system
-        - automated convergence in string direction
-        - automated check for distance between gap and wcc -> add string
-        """
-        #----------------initial output---------------------------------# # TODO: add all variables
-        self._verbose = verbose
+
+        # initial output 
         if(self._verbose):
             print(string_tools.cbox( "starting wcc calculation\n\n" +\
-                                "options:\n" +\
-                                "initial # of strings: " + str(self._Nstrings) + "\n"+\
-                                "use pickle: " + ("yes" if self._use_pickle else "no")
+                                "kwargs:\n" +\
+                                "wcc_tol" + "     " + str(self._wcc_tol) + "\n" +\
+                                "gap_tol" + "     " + str(self._gap_tol) + "\n" +\
+                                "max_iter" + "    " + str(self._max_iter) + "\n" +\
+                                "use_pickle" + "  " + str(self._use_pickle) + "\n" +\
+                                "Nstrings" + "    " + str(self._Nstrings) 
                                 ) + "\n")
             
         start_time = time.time()
 
-        #----------------initialising-----------------------------------#
+        # initialising
         self._k_points = list(np.linspace(0, 0.5, self._Nstrings, endpoint = True))
         self._gaps = [None for i in range(self._Nstrings)]
         self._wcc_list = [[] for i in range(self._Nstrings)] 
@@ -129,22 +161,22 @@ class Z2packPlane:
         self._string_status = [False for i in range(self._Nstrings)]
         
                 
-        #----------------main calculation part--------------------------#
+        # main calculation part
         while not (all(self._neighbour_check)):
             for i, kx in enumerate(self._k_points):
                 if not(self._string_status[i]):
-                    self._wcc_list[i] = self._getwcc(kx, verbose)
+                    self._wcc_list[i] = self._getwcc(kx)
                     self._gaps[i] = self._gapfind(self._wcc_list[i])
                     self._string_status[i] = True
                     self._save()
                     
             self._check_neighbours()
 
-        #----------------dump results into pickle file------------------#
+        # dump results into pickle file
         self._save()
             
             
-        #----------------output to signal end of wcc calculation--------#
+        # output to signal end of wcc calculation
         end_time = time.time()
         duration = end_time - start_time
         duration_string =   str(int(np.floor(duration / 3600))) + \
@@ -157,14 +189,14 @@ class Z2packPlane:
             print(string_tools.cbox( "finished wcc calculation" + "\ntime: " 
                             + duration_string))
         
-        #----------------return value-----------------------------------#
+        # return value
         return [self._k_points, self._wcc_list]
             
     #-------------------------------------------------------------------#
     #                support functions for wcc                          #
     #-------------------------------------------------------------------#
 
-    #----------------checking distance gap-wcc--------------------------#
+    # checking distance gap-wcc
     def _check_neighbours(self):
         """
         checks the neighbour conditions, adds a value in k_points when
@@ -190,7 +222,7 @@ class Z2packPlane:
                         self._k_points.insert(i + 1, (self._k_points[i] + self._k_points[i+1]) / 2)
                         self._wcc_list.insert(i + 1, [])
                         self._gaps.insert(i + 1, None)
-                        #---------check length of the variables---------#
+                        # check length of the variables
                         assert len(self._k_points) == len(self._wcc_list)
                         assert len(self._k_points) - 1 == len(self._neighbour_check)
                         assert len(self._k_points) == len(self._string_status)
@@ -218,11 +250,11 @@ class Z2packPlane:
                 return False
         return True
         
-    #----------------pickle: save and load------------------------------#
+    # pickle: save and load
     def _save(self):
         """
         save k_points, wcc and gaps to pickle file
-        only works if use_pickle = True
+        only works if use_pickle = True & path to pickle_file exists
         """
         if(self._use_pickle):
             f = open(self._pickle_file, "wb")
@@ -232,30 +264,30 @@ class Z2packPlane:
     def load(self):
         """
         load k_points, wcc and gaps from pickle file
-        only works if use_pickle = True
+        only works if pickle_file exists
         """
         if(self._use_pickle):
             f = open(self._pickle_file, "rb")
             [self._k_points, self._wcc_list, self._gaps] = pickle.load(f)
             f.close()
     
-    #----------------calculating one string-----------------------------#
-    def _getwcc(self, kx, verbose):
+    # calculating one string
+    def _getwcc(self, kx):
         """
         calculates WCC along a string by increasing the number of steps 
         (k-points) along the string until the WCC converge
         """
-        #----------------initial output---------------------------------#
+        # initial output
         if(self._verbose):
             print("calculating string at kx = " + "%.4f" % kx + "; N = ", end = "", flush = True)
 
-        #----------------first two steps--------------------------------#
+        # first two steps
         N = 8
         niter = 0
         if(self._verbose):
             print(str(N), end = "", flush = True) # Output
-        x, min_sv = self._trywcc(self._M_handle(kx, N), verbose)
-        #----------------iteration--------------------------------------#
+        x, min_sv = self._trywcc(self._M_handle(kx, N))
+        # iteration
         while(True):
             # larger steps for small min_sv (every second step)
             if(niter % 2 == 1 and min_sv < 0.5): 
@@ -264,11 +296,12 @@ class Z2packPlane:
                 N += 2
             xold = x.copy()
             if(self._verbose):
-                print(", " + str(N), end = "", flush = True)    # Output
-            x, min_sv = self._trywcc(self._M_handle(kx, N), verbose)
+                # Output
+                print(", " + str(N), end = "", flush = True)
+            x, min_sv = self._trywcc(self._M_handle(kx, N))
             niter += 1
 
-            #----------------break conditions---------------------------#
+            # break conditions
             if(self._convcheck(x, xold)): # success
                 if(self._verbose):
                     print(" finished!\n\n", end = "", flush = True)
@@ -280,27 +313,26 @@ class Z2packPlane:
 
         return sorted(x)
     
-    def _trywcc(self, allM, verbose):
+    def _trywcc(self, allM):
         """
         Calculates the WCC from the MMN matrices
         """
         Gamma = np.eye(len(allM[0]))
         min_sv = 1
         for M in allM:
-            #~ [V,E,W] = la.svd(M)  # TODO: implement the second convergence criterion
             [V,E,W] = la.svd(M)
             Gamma = np.dot(np.dot(V,W).conjugate().transpose(), Gamma)
             min_sv = min(min(E), min_sv)
         # getting the wcc from the eigenvalues of gamma
         [eigs, _] = la.eig(Gamma)
-        if(verbose):
+        if(self._verbose):
             if(self._verbose):
                 print(" (" + "%.3f" % min_sv + ")", end= "", flush = True)
         return [(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs], min_sv
     
 
         
-    #----------------wcc convergence functions--------------------------#
+    # wcc convergence functions
     def _convcheck(self, x, y):
         """
         check convergence of wcc from x to y
@@ -340,7 +372,6 @@ class Z2packPlane:
             for i in range(1, N0):
                 val[(index + i) % N] -= 1 - (i/N0)
         return sum(abs(val)) / N0
-    #-------------------------------------------------------------------#
         
     def _gapfind(self, x):
         """
@@ -410,7 +441,12 @@ class Z2packPlane:
 #                         ABINIT SPECIALISATION                         #
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
-class Abinit(Z2packSystem):
+class Abinit(Z2PackSystem):
+    """
+    Abinit Class
+    ~~~~~~~~~~~~
+    Subclass of Z2PackSystem used for calculating systems using ABINIT
+    """
     
     def __init__(   self, 
                     name,
@@ -421,6 +457,26 @@ class Abinit(Z2packSystem):
                     abinit_command = "abinit",
                     **kwargs
                     ):
+        """
+        args:
+        ~~~~
+        name:
+        common_vars_path:       path to ABINIT input file with variables
+                                for SCF and NSCF (common variables)
+        psps_files:             path to pseudopotential file or list
+                                of paths to pseudopotential files
+        working_folder:         path to 'build' folder
+        num_occupied:           number of occupied bands
+        
+        kwargs:
+        ~~~~~~
+        abinit_command:         command to call abinit
+        other kwargs:           are passed to the Z2PackPlane 
+                                constructor via .plane(), which passes 
+                                them to wcc_calc()
+                                precedence: wcc_calc > plane > this
+                                (newer kwargs take precedence)
+        """
         self._defaults = kwargs
         self._name = name
         self._abinit_system = ar.AbinitRun( name, 
@@ -438,6 +494,25 @@ class Abinit(Z2packSystem):
         self._M_handle_creator = _M_handle_creator_abinit
         
     def scf(self, scf_vars_path, verbose = True, **kwargs):
+        """
+        args:
+        ~~~~
+        scf_vars_path:          path to SCF - specific input file
+        verbose:                toggles printing
+        
+        kwargs:
+        ~~~~~~
+        passed to AbinitRun.scf()
+        abinit_args:            ABINIT variables (as dict), will be 
+                                added to SCF input file
+        
+            passed on further to _abinit_run()
+            setup_only:         suppresses call to ABINIT, only 
+                                creates input files
+            clean_subfolder:    toggles deletion of old data when 
+                                starting a new calculation 
+                                default: True
+        """
         self._verbose = verbose
         try:
             if not(kwargs['setup_only']): 
@@ -449,6 +524,7 @@ class Abinit(Z2packSystem):
         except:
             if(self._verbose):
                 print("starting SCF calculation for " + self._name)
+        
         self._abinit_system.scf(io.parse_input(scf_vars_path), **kwargs)
         if(self._verbose):
             print("")
@@ -459,11 +535,31 @@ class Abinit(Z2packSystem):
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
 
-class TightBinding(Z2packSystem):
+class TightBinding(Z2PackSystem):
+    """
+    TightBinding Class
+    ~~~~~~~~~~~~~~~~~~
+    Subclass of Z2PackSystem used for calculating system with a tight-
+    binding model
+    """
     def __init__(   self,
                     tbsystem,
                     **kwargs
                     ):
+        """
+        args:
+        ~~~~
+        tbsystem:               TbSystem object
+        
+        kwargs:
+        ~~~~~~
+        no TightBinding - specific kwargs
+        other kwargs:           are passed to the Z2PackPlane 
+                                constructor via .plane(), which passes 
+                                them to wcc_calc()
+                                precedence: wcc_calc > plane > this
+                                (newer kwargs take precedence)
+        """
         self._defaults = kwargs
         self._tbsystem = tbsystem
         def _M_handle_creator_tb(string_dir, plane_pos_dir, plane_pos):

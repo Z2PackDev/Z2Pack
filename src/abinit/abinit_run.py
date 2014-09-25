@@ -118,6 +118,10 @@ class AbinitRun:
 #-----------------------------------------------------------------------#
 
     def scf(self, scf_args = {}, setup_only = False, **kwargs):
+        try:
+            scf_args.update(kwargs['abinit_args'])
+            del kwargs['abinit_args']
+        except: pass
         scf_args.update({'prtden': 1})
         self._abinit_run("work_scf_" + self._name, tag = "_scf", additional_args = scf_args, setup_only = setup_only, **kwargs)
         
@@ -141,8 +145,6 @@ class AbinitRun:
         string_end = list(string_pos)
         string_begin.insert(string_dir, 0)
         string_end.insert(string_dir, 1)
-        #~ string_args = {"ndivk": string_N, "kptbounds": [string_begin, string_end]}
-        #~ string_args.update(additional_args)
         ngkpt = [1, 1, 1]
         ngkpt[string_dir] = string_N
         string_pos.insert(string_dir,0.0)

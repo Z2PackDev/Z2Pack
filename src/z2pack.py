@@ -104,7 +104,10 @@ class Z2PackPlane:
         """
         self._M_handle = M_handle
         self._pickle_file = pickle_file
-        self._defaults = {  'wcc_tol': 1e-2,
+        self._defaults = {  
+                            'no_iter': False,
+                            'no_neighbour_check': False,
+                            'wcc_tol': 1e-2,
                             'gap_tol': 2e-2,
                             'max_iter': 10,
                             'use_pickle': True,
@@ -113,6 +116,7 @@ class Z2PackPlane:
                             }
         self._defaults.update(kwargs)
         
+    # TODO: Convergence on/off
     def wcc_calc(self, **kwargs):
         """
         calculating the wcc of the system
@@ -121,11 +125,14 @@ class Z2PackPlane:
         
         kwargs:
         ~~~~~~
+        no_iter:            turns iterations off
+        no_neighbour_check: turns neighbour checks off
         wcc_tol:            maximum movement of wcc between two steps 
                             for convergence
         gap_tol:            minimum size of gap between the largest gap
                             and the closest wcc at neighbouring strings
         max_iter:           max. number of iterations for 1 string
+        
         use_pickle:         toggles use of pickle for saving
         Nstrings:           number of strings at the beginning (should be 
                             >= 8 for good results)
@@ -134,6 +141,8 @@ class Z2PackPlane:
         kwarguments = copy.copy(self._defaults)
         kwarguments.update(kwargs)
         # parse input variables
+        self._no_iter = kwarguments['no_iter']
+        self._no_neighbour_check = kwarguments['no_neighbour_check']
         self._wcc_tol = kwarguments['wcc_tol']
         self._gap_tol = kwarguments['gap_tol']
         self._max_iter = kwarguments['max_iter']
@@ -177,7 +186,12 @@ class Z2PackPlane:
                     self._string_status[i] = True
                     self._save()
                     
-            self._check_neighbours()
+            if not(self._no_neighbour_check):
+                self._check_neighbours()
+            else:
+                if(self._verbose):
+                    print('skipping neighbour checks')
+                    break
 
         # dump results into pickle file
         self._save()
@@ -288,45 +302,75 @@ class Z2PackPlane:
         """
         # initial output
         if(self._verbose):
-            print("calculating string at kx = " + "%.4f" % kx + "; N = ", end = "")
+            print("calculating string at kx = " + "%.4f" % kx)
             sys.stdout.flush()
 
         # first two steps
         N = 8
         niter = 0
         if(self._verbose):
-            print(str(N), end = "")
+            print('    N = ' + str(N), end = '')
             sys.stdout.flush() # Output
         x, min_sv = self._trywcc(self._M_handle(kx, N))
-        # iteration
-        while(True):
-            # larger steps for small min_sv (every second step)
-            if(niter % 2 == 1 and min_sv < 0.5): 
-                N += 4
-            else:
-                N += 2
-            xold = copy.copy(x)
+        
+        # no iteration
+        if(self._no_iter):
             if(self._verbose):
-                # Output
-                print(", " + str(N), end = "")
+                print('no iteration\n\n', end='')
                 sys.stdout.flush()
-            x, min_sv = self._trywcc(self._M_handle(kx, N))
-            niter += 1
-
-            # break conditions
-            if(self._convcheck(x, xold)): # success
+        # iteration
+        else:
+            while(True):
+                # larger steps for small min_sv (every second step)
+                if(niter % 2 == 1 and min_sv < 0.5): 
+                    N += 4
+                else:
+                    N += 2
+                xold = copy.copy(x)
                 if(self._verbose):
-                    print(" finished!\n\n", end = "")
+                    # Output
+                    print("    N = " + str(N), end = "")
                     sys.stdout.flush()
-                break
-            if(niter > self._max_iter): # failure
-                if(self._verbose):
-                    print("failed to converge!\n\n", end = "")
-                    sys.stdout.flush()
-                break
+                x, min_sv = self._trywcc(self._M_handle(kx, N))
+                niter += 1
 
+                # break conditions
+                if(self._convcheck(x, xold)): # success
+                    if(self._verbose):
+                        print("finished!\n\n", end = "")
+                        sys.stdout.flush()
+                    break
+                if(niter > self._max_iter): # failure
+                    if(self._verbose):
+                        print("failed to converge!\n\n", end = "")
+                        sys.stdout.flush()
+                    break
         return sorted(x)
     
+    def _print_wcc(func):
+        def inner(*args, **kwargs):
+            res = func(*args, **kwargs)
+            wcc = sorted(res[0])
+            if(args[0]._verbose):
+                print(" (" + "%.3f" % res[1] + ")", end = '\n        ')
+                print('WCC positions: ' , end = '\n        ')
+                print('[', end='')
+                line_length = 0
+                for i, val in enumerate(wcc[:-1]):
+                    line_length += len(str(val)) + 2
+                    if(line_length > 60):
+                        print('', end = '\n        ')
+                        line_length = len(str(val)) + 2
+                    print(val, end = ', ')
+                line_length += len(str(wcc[-1])) + 2
+                if(line_length > 60):
+                    print('', end = '\n        ')
+                print(wcc[-1], end=']\n')
+                sys.stdout.flush
+            return res
+        return inner
+    
+    @_print_wcc
     def _trywcc(self, allM):
         """
         Calculates the WCC from the MMN matrices
@@ -339,10 +383,6 @@ class Z2PackPlane:
             min_sv = min(min(E), min_sv)
         # getting the wcc from the eigenvalues of gamma
         [eigs, _] = la.eig(Gamma)
-        if(self._verbose):
-            if(self._verbose):
-                print(" (" + "%.3f" % min_sv + ")", end= "")
-                sys.stdout.flush()
         return [(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs], min_sv
     
 
@@ -474,6 +514,8 @@ class Abinit(Z2PackSystem):
                     num_occupied,
                     abinit_command = "abinit",
                     nscf_args = {},
+                    nscf_args_path = None,
+                    nscf_defaults = False,
                     **kwargs
                     ):
         """
@@ -493,6 +535,10 @@ class Abinit(Z2PackSystem):
         ~~~~~~
         abinit_command:         command to call abinit
         nscf_args:              passed to AbinitRun.nscf
+        nscf_args_path:         path to nscf args file (nscf_args take
+                                precedence)
+        nscf_defaults:          toggle default values for NSCF on/off
+                                default: False
         other kwargs:           are passed to the Z2PackPlane 
                                 constructor via .plane(), which passes 
                                 them to wcc_calc()
@@ -507,19 +553,23 @@ class Abinit(Z2PackSystem):
                                             working_folder, 
                                             num_occupied,
                                             abinit_command = abinit_command)
+        self._nscf_args = copy.copy(nscf_args)
+        if(nscf_args_path is not None):
+            self._nscf_args.update(io.parse_input(nscf_args_path))
+            
         def _M_handle_creator_abinit(string_dir, plane_pos_dir, plane_pos):
             # check if kx is before or after plane_pos_dir
             if(3 - string_dir > 2 * plane_pos_dir):
-                return lambda kx, N: self._abinit_system.nscf(string_dir, [plane_pos, kx], N, **nscf_args)
+                return lambda kx, N: self._abinit_system.nscf(string_dir, [plane_pos, kx], N, default_values = nscf_defaults, nscf_args = self._nscf_args)
             else:
-                return lambda kx, N: self._abinit_system.nscf(string_dir, [kx, plane_pos], N, **nscf_args)
+                return lambda kx, N: self._abinit_system.nscf(string_dir, [kx, plane_pos], N, default_values = nscf_defaults, nscf_args = self._nscf_args)
         self._M_handle_creator = _M_handle_creator_abinit
         
-    def scf(self, scf_vars_path, verbose = True, **kwargs):
+    def scf(self, scf_args_path, verbose = True, **kwargs):
         """
         args:
         ~~~~
-        scf_vars_path:          path to SCF - specific input file
+        scf_args_path:          path to SCF - specific input file
         verbose:                toggles printing
         
         kwargs:
@@ -547,7 +597,7 @@ class Abinit(Z2PackSystem):
             if(self._verbose):
                 print("starting SCF calculation for " + self._name)
         
-        self._abinit_system.scf(io.parse_input(scf_vars_path), **kwargs)
+        self._abinit_system.scf(io.parse_input(scf_args_path), **kwargs)
         if(self._verbose):
             print("")
         

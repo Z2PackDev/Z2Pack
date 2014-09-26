@@ -32,6 +32,6 @@ if __name__ == "__main__":
     # call to Z2Pack
     tb_system = z2pack.TightBinding(tb)
     tb_plane = tb_system.plane(1, 2, 0, pickle_file = './results/quasi_2D.txt')
-    tb_plane.wcc_calc(verbose = True, Nstrings=40)
+    tb_plane.wcc_calc(verbose = True, Nstrings=40, no_neighbour_check = True, no_iter = False)
     tb_plane.plot()
     print("invariant: " + str(tb_plane.invariant()))

@@ -1,0 +1,6 @@
+iscf -2
+tolwfr 1e-21
+irdwfk 1
+irdden 1
+prtwant 2
+nstep 100

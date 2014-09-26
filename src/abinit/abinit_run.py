@@ -150,7 +150,8 @@ class AbinitRun:
                 string_dir, 
                 string_pos, 
                 string_N, 
-                **kwargs 
+                nscf_args = {},
+                default_values = False,
                 ):
         """
         creates input for NSCF run and executes it
@@ -162,8 +163,10 @@ class AbinitRun:
                             [a, 0, b] if string_dir = 1, 
                             [a, b, 0] if string_dir = 2
         
-        kwargs:             additional variables passed to ABINIT
+        kwargs:
         ~~~~~~
+        default_values:     toggles use of default variables
+        nscf_args:          ABINIT variables
         """
                     
         # prepare additional_args
@@ -179,17 +182,18 @@ class AbinitRun:
         string_args.update({"nshiftk": 1})
         string_args.update({"shiftk": string_pos})
         
+        args = {}
         # global nscf variables
-        nscf_args = {}
-        nscf_args.update({"iscf": -2})
-        nscf_args.update({"tolwfr": 1e-21})
-        nscf_args.update({"irdwfk": 1})
-        nscf_args.update({"irdden": 1})
-        nscf_args.update({"prtwant": 2})
-        nscf_args.update({"nstep": 100})
+        if (default_values):
+            args.update({"iscf": -2})
+            args.update({"tolwfr": 1e-21})
+            args.update({"irdwfk": 1})
+            args.update({"irdden": 1})
+            args.update({"prtwant": 2})
+            args.update({"nstep": 100})
         
-        nscf_args.update(string_args)
-        nscf_args.update(kwargs)
+        args.update(string_args)
+        args.update(nscf_args)
         
 
         # clean out working directory
@@ -200,7 +204,7 @@ class AbinitRun:
                     subfolder,
                     tag = "_nscf",
                     input_wfct_path = "work_scf_" + self._name + "/" + self._name + "_scf_o", 
-                    additional_args = nscf_args, 
+                    additional_args = args, 
                     create_wannier90_input = True,
                     clean_subfolder = True
                     )

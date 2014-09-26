@@ -19,7 +19,9 @@ Bi = z2pack.Abinit( "Bi",
                     "../Psps/83bi.5.hgh", 
                     "./build", 
                     10, 
-                    abinit_command = "mpirun -np 7 abinit")
+                    abinit_command = "mpirun -np 7 abinit",
+                    nscf_args_path = './Bi_nscf.in'
+                    )
     
     
 # SCF run - comment if necessary (SCF needs to be run only once)

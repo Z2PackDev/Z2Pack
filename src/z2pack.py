@@ -500,128 +500,7 @@ class Z2PackPlane:
         return np.copysign(1,np.sin(2*np.pi*(zplus - z)) + np.sin(2*np.pi*(x-zplus)) + np.sin(2*np.pi*(z-x)))
     #----------------END SUPPORT FUNCTIONS FOR INVARIANTS---------------#
     
-        
-#-----------------------------------------------------------------------#
-#-----------------------------------------------------------------------#
-#                       ABINIT SPECIALISATION                           #
-#-----------------------------------------------------------------------#
-#-----------------------------------------------------------------------#
-class Abinit(Z2PackSystem):
-    """
-    Abinit Class
-    ~~~~~~~~~~~~
-    Subclass of Z2PackSystem used for calculating systems using ABINIT
-    
-    methods: scf, inherits plane
-    
-    """
-    
-    def __init__(   self, 
-                    name,
-                    common_vars_path,
-                    psps_files,
-                    working_folder,
-                    num_occupied,
-                    abinit_command = "abinit",
-                    nscf_args = {},
-                    nscf_args_path = None,
-                    nscf_defaults = False,
-                    wannier90_defaults = True,
-                    wannier90_file = None,
-                    **kwargs
-                    ):
-        """
-        args:
-        ~~~~
-        name:
-        common_vars_path:       path to ABINIT input file with variables
-                                for SCF and NSCF (common variables)
-        psps_files:             path to pseudopotential file or list
-                                of paths to pseudopotential files
-                                MUST BE in the SAME ORDER as the atom
-                                types in the common input file
-        working_folder:         path to 'build' folder
-        num_occupied:           number of occupied bands
-        
-        kwargs:
-        ~~~~~~
-        abinit_command:         command to call abinit
-        nscf_args:              passed to AbinitRun.nscf
-        nscf_args_path:         path to nscf args file (nscf_args take
-                                precedence)
-        nscf_defaults:          toggle default values for NSCF on/off
-                                default: False
-        other kwargs:           are passed to the Z2PackPlane 
-                                constructor via .plane(), which passes 
-                                them to wcc_calc()
-                                precedence: wcc_calc > plane > this
-                                (newer kwargs take precedence)
-        """
-        self._defaults = kwargs
-        self._name = name
-        self._abinit_system = ar.AbinitRun( name, 
-                                            io.parse_input(common_vars_path) , 
-                                            psps_files, 
-                                            working_folder, 
-                                            num_occupied,
-                                            abinit_command = abinit_command)
-        self._nscf_args = copy.copy(nscf_args)
-        if(nscf_args_path is not None):
-            self._nscf_args.update(io.parse_input(nscf_args_path))
-        self._wannier90_defaults = wannier90_defaults
-        self._wannier90_file = wannier90_file
-            
-        def _M_handle_creator_abinit(string_dir, plane_pos_dir, plane_pos):
-            # check if kx is before or after plane_pos_dir
-            if(3 - string_dir > 2 * plane_pos_dir):
-                return lambda kx, N: self._abinit_system.nscf(  string_dir, 
-                                                                [plane_pos, kx], 
-                                                                N, 
-                                                                self._nscf_args,
-                                                                nscf_defaults,
-                                                                wannier90_defaults,
-                                                                wannier90_file 
-                                                                )
-            else:
-                return lambda kx, N: self._abinit_system.nscf(string_dir, [kx, plane_pos], N, default_values = nscf_defaults, nscf_args = self._nscf_args)
-        self._M_handle_creator = _M_handle_creator_abinit
-        
-    def scf(self, scf_args_path, verbose = True, **kwargs):
-        """
-        args:
-        ~~~~
-        scf_args_path:          path to SCF - specific input file
-        verbose:                toggles printing
-        
-        kwargs:
-        ~~~~~~
-        passed to AbinitRun.scf()
-        abinit_args:            ABINIT variables (as dict), will be 
-                                added to SCF input file
-        
-            passed on further to _abinit_run()
-            setup_only:             suppresses call to ABINIT, only 
-                                    creates input files
-            clean_working_folder:   toggles deletion of old data when 
-                                    starting a new calculation 
-                                    default: True
-        """
-        self._verbose = verbose
-        try:
-            if not(kwargs['setup_only']): 
-                if(self._verbose):
-                    print("starting SCF calculation for " + self._name)
-            else:
-                if(self._verbose):
-                    print("setting up SCF calculation for " + self._name)
-        except:
-            if(self._verbose):
-                print("starting SCF calculation for " + self._name)
-        
-        self._abinit_system.scf(io.parse_input(scf_args_path), **kwargs)
-        if(self._verbose):
-            print("")
-        
+
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
 #                    GENERIC FIRST PRINCIPLES CODE                      #
@@ -659,7 +538,6 @@ class Generic(Z2PackSystem):
                 return lambda kx, N: self._system._run(string_dir, [kx, plane_pos], N)
         self._M_handle_creator = _M_handle_creator_generic
         
-
 
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#

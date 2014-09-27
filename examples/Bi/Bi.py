@@ -13,22 +13,28 @@ import z2pack
 Bismuth example
 """
 
+def k_points(start_point, last_point, end_point, N):
+    string = "\nkptopt -1\nndivk " + str(N - 1) + '\nkptbounds '
+    for coord in start_point:
+        string += str(coord).replace('e','d') + ' '
+    string += '\n'
+    for coord in last_point:
+        string += str(coord).replace('e','d') + ' '
+    string += '\n'
+    return string
+    
+    
 # creating the z2pack.abinit object
-Bi = z2pack.Abinit( "Bi", 
-                    "Bi_common.in", 
-                    "../Psps/83bi.5.hgh", 
-                    "./build", 
-                    10, 
-                    abinit_command = "mpirun -np 7 abinit",
-                    nscf_args_path = './Bi_nscf.in'
+Bi = z2pack.FirstPrinciples(    ["Bi_nscf.files", "Bi_nscf.in", "wannier90.win" ],
+                                k_points,
+                                "Bi_nscf.in",
+                                "build",
+                                "mpirun -np 7 abinit < Bi_nscf.files >& log"
                     )
     
-    
-# SCF run - comment if necessary (SCF needs to be run only once)
-#~ Bi.scf("Bi_scf.in", clean_subfolder = True)
 
 # creating the z2pack.plane object
-Bi_plane = Bi.plane(2, 0, 0, pickle_file = 'build/Bi_01_pickle.txt')
+Bi_plane = Bi.plane(2, 0, 0, pickle_file = 'Bi_01_pickle.txt')
 
 # WCC calculation
 Bi_plane.wcc_calc(no_iter = True, no_neighbour_check = True)

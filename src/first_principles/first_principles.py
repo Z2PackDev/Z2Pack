@@ -3,7 +3,7 @@
 #
 # Author:  Dominik Gresch <greschd@ethz.ch>
 # Date:    26.09.2014 22:44:18 CEST
-# File:    generic.py
+# File:    first_principles.py
 
 import read_mmn as mmn
 
@@ -13,7 +13,7 @@ import copy
 import shutil
 import subprocess
 
-class GenericSystem:
+class FirstPrinciplesSystem:
     
     def __init__(   self,
                     input_files, 
@@ -29,7 +29,7 @@ class GenericSystem:
         ~~~~
         input_files:            path(s) of the input file(s) (str or list)
         k_points_fct:           fct that creates k_point string, given
-                                starting point, end point and N
+                                starting point, last_point, end point, N
         k_points_path:          name of the file where k_points belong
                                 will append to a file if it matches one
                                 of file_names, create a separate file
@@ -100,7 +100,7 @@ class GenericSystem:
         # working folder given as a function of counter
         else:
             self._counter = 0
-            self._create_working_folder(working_folder(self._counter))
+            self._working_folder_fct = working_folder
         
     def _create_working_folder(self, working_folder):
         # check all paths: absolute / relative?
@@ -123,7 +123,7 @@ class GenericSystem:
     def _create_input(self, *args):
         try:
             self._counter += 1
-            self._create_working_folder(working_folder(self._counter))
+            self._create_working_folder(self._working_folder_fct(self._counter))
         except: pass
         
         if(self._clean_subfolder):
@@ -170,5 +170,5 @@ def _copy(initial_paths, final_names):
         
 
 if __name__ == "__main__":
-    print("generic.py")
+    print("first_principles.py")
     

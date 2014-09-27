@@ -5,12 +5,13 @@
 # Date:    13.08.2014 12:02:54 CEST
 # File:    abinit_run.py
 
-import abinit.read_mmn as mmn
+import generic.read_mmn as mmn
 import abinit.abinit_input_io as io
 import abinit.wannier90_input as wannier90_input
 
 import os
 import sys
+import shutil
 import subprocess
 
 #-----------------------------------------------------------------------#
@@ -76,8 +77,9 @@ class AbinitRun:
                             tag = "", 
                             input_wfct_path = None,
                             additional_args = {},
-                            create_wannier90_input = False,
-                            clean_subfolder = True,
+                            wannier90_defaults = False,
+                            wannier90_file = None,
+                            clean_working_folder = True,
                             setup_only = False
                         ):
         data = {}
@@ -87,7 +89,7 @@ class AbinitRun:
         run_name = self._name + tag
         
         # print input file(s) to working_folder
-        if(clean_subfolder):
+        if(clean_working_folder):
             try:
                 subprocess.call("rm -rf " + subfolder +  "/*", shell = True) 
             except:
@@ -97,10 +99,12 @@ class AbinitRun:
             subprocess.call("mkdir " + subfolder, shell = True)
         io.produce_input(data, subfolder + "/" + run_name + ".in")
         
-        if(create_wannier90_input):
+        if(wannier90_defaults and wannier90_file is None):
             if(self.num_occupied is None):
                 raise ValueError('number of occupied bands not set')
             wannier90_input.write_input(self.num_occupied, data['nband'], subfolder + '/wannier90.win')
+        if(wannier90_file is not None):
+            shutil.copyfile(wannier90_file, subfolder + '/wannier90.win')
             
         # get correct runtime input
         abinit_runtime_input = run_name + ".in\n" + run_name + ".out\n"
@@ -152,6 +156,8 @@ class AbinitRun:
                 string_N, 
                 nscf_args = {},
                 default_values = False,
+                wannier90_defaults = True,
+                wannier90_file = False
                 ):
         """
         creates input for NSCF run and executes it
@@ -170,10 +176,6 @@ class AbinitRun:
         """
                     
         # prepare additional_args
-        string_begin = list(string_pos) # avoid immutables
-        string_end = list(string_pos)
-        string_begin.insert(string_dir, 0)
-        string_end.insert(string_dir, 1)
         ngkpt = [1, 1, 1]
         ngkpt[string_dir] = string_N
         string_pos.insert(string_dir,0.0)
@@ -205,8 +207,9 @@ class AbinitRun:
                     tag = "_nscf",
                     input_wfct_path = "work_scf_" + self._name + "/" + self._name + "_scf_o", 
                     additional_args = args, 
-                    create_wannier90_input = True,
-                    clean_subfolder = True
+                    wannier90_defaults = wannier90_defaults,
+                    wannier90_file = wannier90_file,
+                    clean_working_folder = True
                     )
         # read in mmn
         M = mmn.getM(self._working_folder + '/' + subfolder + "/wannier90.mmn")

@@ -1,0 +1,6 @@
+num_wann 10
+num_bands 10
+spinors : true
+num_iter 0
+shell_list 1
+exclude_bands 11 - 16

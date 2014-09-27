@@ -7,3 +7,5 @@ src/python_tools/.gitignore
 build
 website/venv
 quasi_2D.txt
+**/scf_files
+.fuse*

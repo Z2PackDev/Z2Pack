@@ -13,6 +13,9 @@ import python_tools.string_tools as string_tools
 import abinit.abinit_run as ar
 import abinit.abinit_input_io as io
 
+# for the Generic first-principles Code
+from generic.generic import GenericSystem
+
 # for the tight-binding specialisation
 import tight_binding.tb_vectors as TbVectors 
 from tight_binding.tight_binding import TbSystem
@@ -82,7 +85,7 @@ class Z2PackPlane:
     The M_handle is created by Z2PackSystem.plane(), and as such is 
     specific to the type of Z2Pack calculation (ABINIT, Tb, ...)
     
-    methods: wcc_calc, load, plot, invariant
+    methods: wcc_calc, load, plot, invariant, wcc, gaps
     """
     
     def __init__(   self, 
@@ -158,14 +161,12 @@ class Z2PackPlane:
 
         # initial output 
         if(self._verbose):
-            print(string_tools.cbox( "starting wcc calculation\n\n" +\
-                                "kwargs:\n" +\
-                                "wcc_tol" + "     " + str(self._wcc_tol) + "\n" +\
-                                "gap_tol" + "     " + str(self._gap_tol) + "\n" +\
-                                "max_iter" + "    " + str(self._max_iter) + "\n" +\
-                                "use_pickle" + "  " + str(self._use_pickle) + "\n" +\
-                                "Nstrings" + "    " + str(self._Nstrings) 
-                                ) + "\n")
+            string = "starting wcc calculation\n\n"
+            length = max(len(key) for key in kwarguments.keys()) + 2
+            for key in sorted(kwarguments.keys()):
+                string += key.ljust(length) + str(kwarguments[key]) + '\n'
+            string = string[:-1]
+            print(string_tools.cbox(string))
             
         start_time = time.time()
 
@@ -255,7 +256,6 @@ class Z2PackPlane:
                 else:
                     return False
         return True
-        
     
     def _check_single_neighbour(self, i, j):
         """
@@ -402,7 +402,6 @@ class Z2PackPlane:
             return False
         else:
             return self._convsum(x, y, self._wcc_tol) < 1 
-    
 
     def _convsum(self, listA, listB, epsilon = 1e-2, N0 = 7):
         """
@@ -467,6 +466,17 @@ class Z2PackPlane:
             plt.plot([kpt] * len(self._wcc_list[i]), [(x + shift) % 1 - 1 for x in self._wcc_list[i]], "ro")
         plt.show()
         
+    def wcc(self):
+        try:
+            return self._wcc_list
+        except:
+            print('WCC not yet calculated')
+    
+    def gaps(self):
+        try:
+            return self._gaps
+        except:
+            print('WCC not yet calculated')
     
     def invariant(self):
         """
@@ -516,6 +526,8 @@ class Abinit(Z2PackSystem):
                     nscf_args = {},
                     nscf_args_path = None,
                     nscf_defaults = False,
+                    wannier90_defaults = True,
+                    wannier90_file = None,
                     **kwargs
                     ):
         """
@@ -556,11 +568,20 @@ class Abinit(Z2PackSystem):
         self._nscf_args = copy.copy(nscf_args)
         if(nscf_args_path is not None):
             self._nscf_args.update(io.parse_input(nscf_args_path))
+        self._wannier90_defaults = wannier90_defaults
+        self._wannier90_file = wannier90_file
             
         def _M_handle_creator_abinit(string_dir, plane_pos_dir, plane_pos):
             # check if kx is before or after plane_pos_dir
             if(3 - string_dir > 2 * plane_pos_dir):
-                return lambda kx, N: self._abinit_system.nscf(string_dir, [plane_pos, kx], N, default_values = nscf_defaults, nscf_args = self._nscf_args)
+                return lambda kx, N: self._abinit_system.nscf(  string_dir, 
+                                                                [plane_pos, kx], 
+                                                                N, 
+                                                                self._nscf_args,
+                                                                nscf_defaults,
+                                                                wannier90_defaults,
+                                                                wannier90_file 
+                                                                )
             else:
                 return lambda kx, N: self._abinit_system.nscf(string_dir, [kx, plane_pos], N, default_values = nscf_defaults, nscf_args = self._nscf_args)
         self._M_handle_creator = _M_handle_creator_abinit
@@ -579,11 +600,11 @@ class Abinit(Z2PackSystem):
                                 added to SCF input file
         
             passed on further to _abinit_run()
-            setup_only:         suppresses call to ABINIT, only 
-                                creates input files
-            clean_subfolder:    toggles deletion of old data when 
-                                starting a new calculation 
-                                default: True
+            setup_only:             suppresses call to ABINIT, only 
+                                    creates input files
+            clean_working_folder:   toggles deletion of old data when 
+                                    starting a new calculation 
+                                    default: True
         """
         self._verbose = verbose
         try:
@@ -601,6 +622,45 @@ class Abinit(Z2PackSystem):
         if(self._verbose):
             print("")
         
+#-----------------------------------------------------------------------#
+#-----------------------------------------------------------------------#
+#                    GENERIC FIRST PRINCIPLES CODE                      #
+#-----------------------------------------------------------------------#
+#-----------------------------------------------------------------------#
+class Generic(Z2PackSystem):
+    def __init__(   self,
+                    input_files, 
+                    k_points_fct, 
+                    k_points_path,
+                    working_folder,
+                    command,
+                    file_names = 'copy', 
+                    mmn_path = 'wannier90.mmn', 
+                    clean_working_folder = True,
+                    **kwargs
+                ):
+                    
+        self._system = GenericSystem(   input_files,
+                                        k_points_fct, 
+                                        k_points_path,
+                                        working_folder,
+                                        command,
+                                        file_names, 
+                                        mmn_path, 
+                                        clean_working_folder
+                                    )
+        self._defaults = kwargs
+                                    
+        def _M_handle_creator_generic(string_dir, plane_pos_dir, plane_pos):
+            # check if kx is before or after plane_pos_dir
+            if(3 - string_dir > 2 * plane_pos_dir):
+                return lambda kx, N: self._system._run(string_dir, [plane_pos, kx], N)
+            else:
+                return lambda kx, N: self._system._run(string_dir, [kx, plane_pos], N)
+        self._M_handle_creator = _M_handle_creator_generic
+        
+
+
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
 #                    TIGHT BINDING SPECIALISATION                       #

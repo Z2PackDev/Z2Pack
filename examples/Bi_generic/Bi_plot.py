@@ -14,23 +14,25 @@ Bismuth example
 """
 
 # creating the z2pack.abinit object
-Bi = z2pack.Abinit( "Bi", 
-                    "Bi_common.in", 
-                    "../Psps/83bi.5.hgh", 
-                    "./build", 
-                    10, 
-                    abinit_command = "mpirun -np 7 abinit",
-                    nscf_args_path = './Bi_nscf.in'
-                    )
+Bi = z2pack.Abinit( "Bi", "Bi_common.in", "../Psps/83bi.5.hgh", './build', 10, abinit_command = "mpirun -np 7 abinit")
     
     
 # SCF run - comment if necessary (SCF needs to be run only once)
-#~ Bi.scf("Bi_scf.in", clean_subfolder = True)
+"""
+we don't need to do the calculations again
+"""
+#~ Bi.scf("Bi_scf.in")
 
 # creating the z2pack.plane object
 Bi_plane = Bi.plane(2, 0, 0, pickle_file = 'build/Bi_01_pickle.txt')
 
 # WCC calculation
-Bi_plane.wcc_calc(no_iter = True, no_neighbour_check = True)
+"""
+we don't need to do the calculations again
+"""
+#~ Bi_plane.wcc_calc()
     
+Bi_plane.load()
+Bi_plane.plot()
+print("The Z2 topological invariant for this plane is " + str(Bi_plane.invariant()))
 

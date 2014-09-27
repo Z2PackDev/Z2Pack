@@ -10,6 +10,7 @@ from __future__ import print_function
 import python_tools.string_tools as string_tools
 
 # for the first-principles Code
+from first_principles import k_points
 from first_principles.first_principles import FirstPrinciplesSystem
 
 # for the tight-binding specialisation

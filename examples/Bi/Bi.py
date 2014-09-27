@@ -13,20 +13,9 @@ import z2pack
 Bismuth example
 """
 
-def k_points(start_point, last_point, end_point, N):
-    string = "\nkptopt -1\nndivk " + str(N - 1) + '\nkptbounds '
-    for coord in start_point:
-        string += str(coord).replace('e','d') + ' '
-    string += '\n'
-    for coord in last_point:
-        string += str(coord).replace('e','d') + ' '
-    string += '\n'
-    return string
-    
-    
 # creating the z2pack.abinit object
 Bi = z2pack.FirstPrinciples(    ["Bi_nscf.files", "Bi_nscf.in", "wannier90.win" ],
-                                k_points,
+                                z2pack.k_points.abinit,
                                 "Bi_nscf.in",
                                 "build",
                                 "mpirun -np 7 abinit < Bi_nscf.files >& log"

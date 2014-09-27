@@ -120,7 +120,7 @@ class GenericSystem:
         if not(os.path.isdir(self._working_folder)):
             subprocess.call("mkdir " + self._working_folder, shell = True)
             
-    def _create_input(self, start_point, end_point, N):
+    def _create_input(self, *args):
         try:
             self._counter += 1
             self._create_working_folder(working_folder(self._counter))
@@ -134,7 +134,7 @@ class GenericSystem:
             f = open(self._k_points_path_abs, "a")
         else:
             f = open(self._k_points_path_abs, "w")
-        f.write(self._k_points_fct(start_point, end_point, N))
+        f.write(self._k_points_fct(*args))
         
     def _run(self, string_dir, string_pos, N):
         # create input
@@ -142,7 +142,8 @@ class GenericSystem:
         start_point.insert(string_dir, 0)
         end_point = copy.copy(string_pos)
         end_point.insert(string_dir, 1)
-        self._create_input(start_point, end_point, N)
+        last_point = [1./ N * start_point[i] + (N - 1.)/float(N) * end_point[i] for i in range(3)]
+        self._create_input(start_point, last_point, end_point, N)
         
         # execute command
         subprocess.call(self._command, cwd = self._working_folder, shell = True)

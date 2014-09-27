@@ -13,12 +13,12 @@ import z2pack
 Bismuth example
 """
 
-def k_points(start_point, end_point, N):
+def k_points(start_point, last_point, end_point, N):
     string = "\nkptopt -1\nndivk " + str(N - 1) + '\nkptbounds '
     for coord in start_point:
         string += str(coord).replace('e','d') + ' '
     string += '\n'
-    for coord in end_point:
+    for coord in last_point:
         string += str(coord).replace('e','d') + ' '
     string += '\n'
     return string
@@ -37,11 +37,11 @@ Bi = z2pack.Generic(    ["Bi_nscf.files", "Bi_nscf.in", "wannier90.win" ],
 #~ Bi.scf("Bi_scf.in", clean_subfolder = True)
 
 # creating the z2pack.plane object
-Bi_plane = Bi.plane(2, 0, 0, pickle_file = 'Bi_01_pickle.txt', no_iter = True, no_neighbour_check = True)
+Bi_plane = Bi.plane(2, 0, 0, pickle_file = 'Bi_01_pickle.txt')
 
 # WCC calculation
-#~ Bi_plane.wcc_calc()
-Bi_plane.load()
+Bi_plane.wcc_calc(no_iter = True, no_neighbour_check = True)
+#~ Bi_plane.load()
 Bi_plane.plot(shift = 0.5)
     
 

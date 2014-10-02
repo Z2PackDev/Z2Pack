@@ -110,6 +110,7 @@ class Z2PackPlane:
                             'wcc_tol': 1e-2,
                             'gap_tol': 2e-2,
                             'max_iter': 10,
+                            'min_neighbour_dist': 0.01,
                             'use_pickle': True,
                             'Nstrings': 11,
                             'verbose': True
@@ -132,7 +133,8 @@ class Z2PackPlane:
         gap_tol:            minimum size of gap between the largest gap
                             and the closest wcc at neighbouring strings
         max_iter:           max. number of iterations for 1 string
-        
+        min_neighbour_dist  minimum distance between neighbours when doing
+                            the neighbour checks
         use_pickle:         toggles use of pickle for saving
         Nstrings:           number of strings at the beginning (should be 
                             >= 8 for good results)
@@ -146,6 +148,7 @@ class Z2PackPlane:
         self._wcc_tol = kwarguments['wcc_tol']
         self._gap_tol = kwarguments['gap_tol']
         self._max_iter = kwarguments['max_iter']
+        self._min_neighbour_dist = kwarguments['min_neighbour_dist']
         self._use_pickle = kwarguments['use_pickle']
         self._Nstrings = kwarguments['Nstrings']
         self._verbose = kwarguments['verbose']
@@ -176,6 +179,9 @@ class Z2PackPlane:
         
                 
         # main calculation part
+        # all neighbour checks can be true even if it did not converge!
+        # a failed convergence (reaching lower limit) also produces
+        # 'true'
         while not (all(self._neighbour_check)):
             for i, kx in enumerate(self._k_points):
                 if not(self._string_status[i]):
@@ -235,21 +241,27 @@ class Z2PackPlane:
                             sys.stdout.flush()
                         self._neighbour_check[i] = True
                     else:
-                        if(self._verbose):
-                            print("Condition not fulfilled\n\n", end = "")
-                            sys.stdout.flush()
-                        # add entries to neighbour_check, k_point and string_status
-                        self._neighbour_check.insert(i + 1, False)
-                        self._string_status.insert(i + 1, False)
-                        self._k_points.insert(i + 1, (self._k_points[i] + self._k_points[i+1]) / 2)
-                        self._wcc_list.insert(i + 1, [])
-                        self._gaps.insert(i + 1, None)
-                        # check length of the variables
-                        assert len(self._k_points) == len(self._wcc_list)
-                        assert len(self._k_points) - 1 == len(self._neighbour_check)
-                        assert len(self._k_points) == len(self._string_status)
-                        assert len(self._k_points) == len(self._gaps)
-                        return False
+                        if(self._k_points[i + 1] - self._k_points[i] < self._min_neighbour_dist):
+                            if(self._verbose):
+                                print("Reched minimum distance between neighbours, did not converge\n\n", end = "")
+                                sys.stdout.flush()
+                            self._neighbour_check[i] = True # convergence failed
+                        else:
+                            if(self._verbose):
+                                print("Condition not fulfilled\n\n", end = "")
+                                sys.stdout.flush()
+                            # add entries to neighbour_check, k_point and string_status
+                            self._neighbour_check.insert(i + 1, False)
+                            self._string_status.insert(i + 1, False)
+                            self._k_points.insert(i + 1, (self._k_points[i] + self._k_points[i+1]) / 2)
+                            self._wcc_list.insert(i + 1, [])
+                            self._gaps.insert(i + 1, None)
+                            # check length of the variables
+                            assert len(self._k_points) == len(self._wcc_list)
+                            assert len(self._k_points) - 1 == len(self._neighbour_check)
+                            assert len(self._k_points) == len(self._string_status)
+                            assert len(self._k_points) == len(self._gaps)
+                            return False
                 else:
                     return False
         return True

@@ -70,7 +70,6 @@ class TbSystem:
                                     or list of factors (one for each
                                     rec_lattice_vec)
         """
-        
         # check if there are multiple orbital pairs
         try:
             orbital_pairs[0][0][0]
@@ -90,10 +89,14 @@ class TbSystem:
             if(hasattr(rec_lattice_vec[0], '__getitem__') and hasattr(rec_lattice_vec[0], '__iter__')):
                 if(phase is None):
                     phase = 1
-                try:
-                    for i, vec in enumerate(rec_lattice_vec):
-                        self.add_hopping(orbital_pairs, vec, overlap * phase[i])
-                except:
+                if(hasattr(phase, '__getitem__') and hasattr(phase, '__iter__')):
+                    if(len(phase) == 1):
+                        for vec in rec_lattice_vec:
+                            self.add_hopping(orbital_pairs, vec, overlap * phase[0])
+                    else:
+                        for i, vec in enumerate(rec_lattice_vec):
+                            self.add_hopping(orbital_pairs, vec, overlap * phase[i])
+                else:
                     for vec in rec_lattice_vec:
                         self.add_hopping(orbital_pairs, vec, overlap * phase)
                         

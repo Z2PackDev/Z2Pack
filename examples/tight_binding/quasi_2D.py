@@ -11,7 +11,7 @@ import z2pack
 
 if __name__ == "__main__":
     
-    tb = z2pack.TbSystem([1, 0, 0], [0, 1, 0], [0, 0, 1])
+    tb = z2pack.TbHamilton([1, 0, 0], [0, 1, 0], [0, 0, 1])
     
     # create the two atoms
     tb.add_atom(([1, 1], 1), [0, 0, 0])
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     tb.add_hopping((((1, 1), (1, 1)),((1, 0), (1, 0))), z2pack.TbVectors.neighbour_uc([0,1]), -t2, phase = [1])
 
     # call to Z2Pack
-    tb_system = z2pack.TightBinding(tb)
+    tb_system = z2pack.TbSystem(tb)
     tb_plane = tb_system.plane(1, 2, 0, pickle_file = './results/quasi_2D.txt')
     tb_plane.wcc_calc(verbose = True, Nstrings=40, no_neighbour_check = False, no_iter = False)
     tb_plane.plot()

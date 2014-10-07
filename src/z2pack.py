@@ -15,7 +15,7 @@ from first_principles.first_principles import FirstPrinciplesSystem
 
 # for the tight-binding specialisation
 import tight_binding.tb_vectors as TbVectors 
-from tight_binding.tight_binding import TbSystem
+from tight_binding.tb_hamilton import TbHamilton
 
 import sys
 import time
@@ -117,7 +117,6 @@ class Z2PackPlane:
                             }
         self._defaults.update(kwargs)
         
-    # TODO: Convergence on/off
     def wcc_calc(self, **kwargs):
         """
         calculating the wcc of the system
@@ -456,24 +455,27 @@ class Z2PackPlane:
         return (x[gappos] + gapsize / 2) % 1
     #----------------END OF SUPPORT FUNCTIONS---------------------------#        
     
-    def plot(self, shift = 0):
+    def plot(self, shift = 0, show = True):
         """
         plot WCC and largest gaps (with a shift modulo 1)
         """
         shift = shift % 1
-        plt.figure()
-        plt.ylim(0,1)
-        plt.xlim(-0.01, 0.51)
-        plt.plot(self._k_points, [(x + shift) % 1 for x in self._gaps], 'bD')
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.set_ylim(0,1)
+        ax.set_xlim(-0.01, 0.51)
+        ax.plot(self._k_points, [(x + shift) % 1 for x in self._gaps], 'bD')
         # add plots with +/- 1 to ensure periodicity
-        plt.plot(self._k_points, [(x + shift) % 1 + 1 for x in self._gaps], 'bD')
-        plt.plot(self._k_points, [(x + shift) % 1 - 1 for x in self._gaps], 'bD')
+        ax.plot(self._k_points, [(x + shift) % 1 + 1 for x in self._gaps], 'bD')
+        ax.plot(self._k_points, [(x + shift) % 1 - 1 for x in self._gaps], 'bD')
         for i, kpt in enumerate(self._k_points):
-            plt.plot([kpt] * len(self._wcc_list[i]), [(x + shift) % 1 for x in self._wcc_list[i]], "ro")
+            ax.plot([kpt] * len(self._wcc_list[i]), [(x + shift) % 1 for x in self._wcc_list[i]], "ro")
             # add plots with +/- 1 to ensure periodicity
-            plt.plot([kpt] * len(self._wcc_list[i]), [(x + shift) % 1 + 1 for x in self._wcc_list[i]], "ro")
-            plt.plot([kpt] * len(self._wcc_list[i]), [(x + shift) % 1 - 1 for x in self._wcc_list[i]], "ro")
-        plt.show()
+            ax.plot([kpt] * len(self._wcc_list[i]), [(x + shift) % 1 + 1 for x in self._wcc_list[i]], "ro")
+            ax.plot([kpt] * len(self._wcc_list[i]), [(x + shift) % 1 - 1 for x in self._wcc_list[i]], "ro")
+        if(show):
+            plt.show()
+        return fig
         
     def wcc(self):
         try:
@@ -515,7 +517,7 @@ class Z2PackPlane:
 #                    FIRST PRINCIPLES SPECIALISATION                    #
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
-class FirstPrinciples(Z2PackSystem):
+class FpSystem(Z2PackSystem):
     """
     FirstPrinciples Class:
     ~~~~~~~~~~~~~~~~~~~~~
@@ -596,7 +598,7 @@ class FirstPrinciples(Z2PackSystem):
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
 
-class TightBinding(Z2PackSystem):
+class TbSystem(Z2PackSystem):
     """
     TightBinding Class
     ~~~~~~~~~~~~~~~~~~
@@ -612,7 +614,7 @@ class TightBinding(Z2PackSystem):
         """
         args:
         ~~~~
-        tbsystem:               TbSystem object
+        tbsystem:               TbHamilton object
         
         kwargs:
         ~~~~~~

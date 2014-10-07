@@ -3,7 +3,7 @@
 #
 # Author:  Dominik Gresch <greschd@ethz.ch>
 # Date:    17.09.2014 10:25:24 CEST
-# File:    tight_binding.py
+# File:    tb_hamilton.py
 
 import sys
 import copy
@@ -11,9 +11,9 @@ import numpy as np
 import sympy as sp
 import scipy.linalg as la
 
-class TbSystem:
+class TbHamilton:
     """
-    TbSystem Class
+    TbHamilton Class
     ~~~~~~~~~~~~~~
     Describes a tight-binding system
     

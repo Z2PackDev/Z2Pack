@@ -5,7 +5,7 @@
 # Date:    26.09.2014 22:44:18 CEST
 # File:    first_principles.py
 
-import read_mmn as mmn
+from . import read_mmn as mmn
 
 import os
 import sys

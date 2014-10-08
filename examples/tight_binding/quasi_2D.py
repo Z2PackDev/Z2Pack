@@ -26,12 +26,13 @@ if __name__ == "__main__":
     tb.add_hopping(((0, 1), (1, 0)), z2pack.TbVectors.combine([0,-1],[0,-1],0), t1, phase = [1, 1j, -1j, -1])
     
     # add hopping between neighbouring orbitals of the same type
-    tb.add_hopping((((0, 0), (0, 0)),((0, 1), (0, 1))), z2pack.TbVectors.neighbour_uc([0,1]), t2, phase = [1])
-    tb.add_hopping((((1, 1), (1, 1)),((1, 0), (1, 0))), z2pack.TbVectors.neighbour_uc([0,1]), -t2, phase = [1])
+    tb.add_hopping((((0, 0), (0, 0)),((0, 1), (0, 1))), z2pack.TbVectors.neighbours([0,1]), t2, phase = [1])
+    tb.add_hopping((((1, 1), (1, 1)),((1, 0), (1, 0))), z2pack.TbVectors.neighbours([0,1]), -t2, phase = [1])
 
     # call to Z2Pack
     tb_system = z2pack.TbSystem(tb)
     tb_plane = tb_system.plane(1, 2, 0, pickle_file = './results/quasi_2D.txt')
-    tb_plane.wcc_calc(verbose = True, Nstrings=40, no_neighbour_check = False, no_iter = False)
+    tb_plane.wcc_calc(verbose = True, num_strings=40, no_neighbour_check = False, no_iter = False)
+    tb_plane.get_res()
     tb_plane.plot()
     print("invariant: " + str(tb_plane.invariant()))

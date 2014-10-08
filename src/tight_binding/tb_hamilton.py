@@ -75,7 +75,7 @@ class TbHamilton:
             orbital_pairs[0][0][0]
             for pair in orbital_pairs:
                 self.add_hopping(pair, rec_lattice_vec, overlap, phase)
-        except:
+        except TypeError:
             # check if the orbitals exist
             num_atoms = len(self._atoms)
             if not(orbital_pairs[0][0] < num_atoms and orbital_pairs[1][0] < num_atoms):
@@ -165,7 +165,7 @@ class TbHamilton:
         # check if hamiltonian exists - else create it
         try:
             self.hamiltonian
-        except:
+        except AttributeError, NameError:
             self.create_hamiltonian()
         
         # create k-points for string

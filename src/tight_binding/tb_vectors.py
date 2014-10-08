@@ -12,10 +12,10 @@ TbVectors module
 ~~~~~~~~~~~~~
 Tool to easily create multiple reciprocal lattice vectors
 
-methods: neighbour_uc, combine
+methods: neighbours, combine
 """
 
-def neighbour_uc(axes):
+def neighbours(axes):
     """
     adds two vectors for every axis, with +-1 in that axis (0 on 
     other coordinates)
@@ -29,9 +29,9 @@ def neighbour_uc(axes):
     # if axes is an iterable (list, tuple,...)
     try:
         for axis in axes:
-            res.extend(neighbour_uc(axis))
+            res.extend(neighbours(axis))
 
-    except:
+    except TypeError:
         res.append([1 if(i==axes) else 0 for i in range(3)])
         res.append([-1 if(i==axes) else 0 for i in range(3)])
     return res
@@ -50,15 +50,15 @@ def combine(x_vals, y_vals, z_vals):
     try:
         for x in x_vals:
             res.extend(combine(x, y_vals, z_vals))
-    except:
+    except TypeError:
         try:
             for y in y_vals:
                 res.extend(combine(x_vals, y, z_vals))
-        except:
+        except TypeError:
             try:
                 for z in z_vals:
                     res.extend(combine(x_vals, y_vals, z))
-            except:
+            except TypeError:
                 res.append([x_vals, y_vals, z_vals])
     return res
 

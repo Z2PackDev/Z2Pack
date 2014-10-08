@@ -1,4 +1,4 @@
-#!/usr/bin/python3.2
+#!/usr/bin/python3.3
 # -*- coding: utf-8 -*-
 #
 # Author:  Dominik Gresch <greschd@ethz.ch>
@@ -11,7 +11,7 @@ import python_tools.string_tools as string_tools
 
 # for the first-principles Code
 from first_principles import k_points
-from first_principles.first_principles import FirstPrinciplesSystem
+from first_principles.fp_system import FirstPrinciplesSystem
 
 # for the tight-binding specialisation
 import tight_binding.tb_vectors as TbVectors 
@@ -112,7 +112,7 @@ class Z2PackPlane:
                             'max_iter': 10,
                             'min_neighbour_dist': 0.01,
                             'use_pickle': True,
-                            'Nstrings': 11,
+                            'num_strings': 11,
                             'verbose': True
                             }
         self._defaults.update(kwargs)
@@ -135,7 +135,7 @@ class Z2PackPlane:
         min_neighbour_dist  minimum distance between neighbours when doing
                             the neighbour checks
         use_pickle:         toggles use of pickle for saving
-        Nstrings:           number of strings at the beginning (should be 
+        num_strings:           number of strings at the beginning (should be 
                             >= 8 for good results)
         verbose:            toggles output printed
         """
@@ -149,14 +149,14 @@ class Z2PackPlane:
         self._max_iter = kwarguments['max_iter']
         self._min_neighbour_dist = kwarguments['min_neighbour_dist']
         self._use_pickle = kwarguments['use_pickle']
-        self._Nstrings = kwarguments['Nstrings']
+        self._num_strings = kwarguments['num_strings']
         self._verbose = kwarguments['verbose']
             
-        # checking Nstrings
-        if(self._Nstrings < 2):
-            raise ValueError("Nstrings must be at least 2")
-        elif(self._Nstrings < 8):
-            warnings.warn("Nstrings should usually be >= 8 for good results", UserWarning)
+        # checking num_strings
+        if(self._num_strings < 2):
+            raise ValueError("num_strings must be at least 2")
+        elif(self._num_strings < 8):
+            warnings.warn("num_strings should usually be >= 8 for good results", UserWarning)
 
         # initial output 
         if(self._verbose):
@@ -170,11 +170,11 @@ class Z2PackPlane:
         start_time = time.time()
 
         # initialising
-        self._k_points = list(np.linspace(0, 0.5, self._Nstrings, endpoint = True))
-        self._gaps = [None for i in range(self._Nstrings)]
-        self._wcc_list = [[] for i in range(self._Nstrings)] 
-        self._neighbour_check = [False for i in range(self._Nstrings - 1)]
-        self._string_status = [False for i in range(self._Nstrings)]
+        self._k_points = list(np.linspace(0, 0.5, self._num_strings, endpoint = True))
+        self._gaps = [None for i in range(self._num_strings)]
+        self._wcc_list = [[] for i in range(self._num_strings)] 
+        self._neighbour_check = [False for i in range(self._num_strings - 1)]
+        self._string_status = [False for i in range(self._num_strings)]
         
                 
         # main calculation part
@@ -214,7 +214,7 @@ class Z2PackPlane:
                             + duration_string))
         
         # return value
-        return [self._k_points, self._wcc_list]
+        return (self._k_points, self._wcc_list, self._gaps)
             
     #-------------------------------------------------------------------#
     #                support functions for wcc                          #
@@ -477,29 +477,29 @@ class Z2PackPlane:
             plt.show()
         return fig
         
-    def wcc(self):
+    def get_res(self):
+        """
+        returns (k - points used, wcc calculated , largest gaps)
+        """
         try:
-            return self._wcc_list
-        except:
-            print('WCC not yet calculated')
-    
-    def gaps(self):
-        try:
-            return self._gaps
-        except:
-            print('WCC not yet calculated')
+            return (self._k_points, self._wcc_list, self._gaps)
+        except (NameError, AttributeError) as exception:
+            raise RuntimeError('WCC not yet calculated')
     
     def invariant(self):
         """
         calculate the Z2 topological invariant
         """
+        try:
+            inv = 1
+            for i in range(0, len(self._wcc_list)-1):
+                for j in range(0, len(self._wcc_list[0])):
+                    inv *= self._sgng(self._gaps[i], self._gaps[i+1], self._wcc_list[i+1][j])
             
-        inv = 1
-        for i in range(0, len(self._wcc_list)-1):
-            for j in range(0, len(self._wcc_list[0])):
-                inv *= self._sgng(self._gaps[i], self._gaps[i+1], self._wcc_list[i+1][j])
-        
-        return 1 if inv == -1 else 0
+            return 1 if inv == -1 else 0
+        except (NameError, AttributeError) as exception:
+            raise RuntimeError('WCC not yet calculated')
+
         
     #-------------------------------------------------------------------#
     #                support functions for invariants                   #
@@ -608,13 +608,13 @@ class TbSystem(Z2PackSystem):
     method: inherits plane
     """
     def __init__(   self,
-                    tbsystem,
+                    tb_hamilton,
                     **kwargs
                     ):
         """
         args:
         ~~~~
-        tbsystem:               TbHamilton object
+        tb_hamilton:             TbHamilton object
         
         kwargs:
         ~~~~~~
@@ -626,13 +626,13 @@ class TbSystem(Z2PackSystem):
                                 (newer kwargs take precedence)
         """
         self._defaults = kwargs
-        self._tbsystem = tbsystem
+        self._tb_hamilton = tb_hamilton
         def _M_handle_creator_tb(string_dir, plane_pos_dir, plane_pos):
             # check if kx is before or after plane_pos_dir
             if(3 - string_dir > 2 * plane_pos_dir):
-                return lambda kx, N: self._tbsystem._getM(string_dir, [plane_pos, kx], N)
+                return lambda kx, N: self._tb_hamilton._getM(string_dir, [plane_pos, kx], N)
             else:
-                return lambda kx, N: self._tbsystem._getM(string_dir, [kx, plane_pos], N)
+                return lambda kx, N: self._tb_hamilton._getM(string_dir, [kx, plane_pos], N)
         self._M_handle_creator = _M_handle_creator_tb
         
     

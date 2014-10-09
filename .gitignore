@@ -14,3 +14,4 @@ tests
 src/python_tools/progressbar.py
 src/python_tools/py2tex.py
 src/python_tools/debug.py
+*.pdf

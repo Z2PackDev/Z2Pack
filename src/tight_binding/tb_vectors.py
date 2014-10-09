@@ -5,8 +5,6 @@
 # Date:    25.09.2014 13:46:52 CEST
 # File:    tb_vectors.py
 
-import sys
-
 """
 TbVectors module
 ~~~~~~~~~~~~~

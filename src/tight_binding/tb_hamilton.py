@@ -5,7 +5,6 @@
 # Date:    17.09.2014 10:25:24 CEST
 # File:    tb_hamilton.py
 
-import sys
 import copy
 import numpy as np
 import sympy as sp
@@ -34,7 +33,8 @@ class TbHamilton:
         element: a tuple (orbitals, num_electrons)
             orbitals: orbitals of the element (a list of their energies)
             num_electrons: number of electrons in the atom
-        position: position relative to the unit cell (3-entry list)
+        position: position relative to the unit cell in reciprocal space
+            (3-entry list)
             the position will be mapped into the unit cell (coordinates
             in [0,1])
         """

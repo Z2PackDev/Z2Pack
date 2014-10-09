@@ -58,7 +58,7 @@ class FirstPrinciplesSystem:
         try:
             input_files[0]
             self._input_files = list(input_files)
-        except:
+        except TypeError:
             self._input_files = [input_files]
         
         if(file_names == 'copy'):
@@ -67,7 +67,7 @@ class FirstPrinciplesSystem:
             try:
                 file_names[0]
                 self._file_names = list(file_names)
-            except:
+            except TypeError:
                 self._file_names = [file_names]
 
         # check whether to append k-points or write separate file
@@ -124,7 +124,7 @@ class FirstPrinciplesSystem:
         try:
             self._counter += 1
             self._create_working_folder(self._working_folder_fct(self._counter))
-        except: pass
+        except AttributeError, NameError: pass
         
         if(self._clean_subfolder):
             subprocess.call("rm -rf " + self._working_folder + "/*", shell = True)

@@ -14,11 +14,11 @@ Bismuth example
 """
 
 # creating the z2pack.abinit object
-Bi = z2pack.FirstPrinciples(    ["Bi_nscf.files", "Bi_nscf.in", "wannier90.win" ],
-                                z2pack.k_points.abinit,
-                                "Bi_nscf.in",
-                                "build",
-                                "mpirun -np 7 abinit < Bi_nscf.files >& log"
+Bi = z2pack.FpSystem(   ["Bi_nscf.files", "Bi_nscf.in", "wannier90.win" ],
+                        z2pack.FpKpoints.abinit,
+                        "Bi_nscf.in",
+                        "build",
+                        "mpirun -np 7 abinit < Bi_nscf.files >& log"
                     )
     
 

@@ -34,5 +34,6 @@ if __name__ == "__main__":
     tb_plane = tb_system.plane(1, 2, 0, pickle_file = './results/quasi_2D.txt')
     tb_plane.wcc_calc(verbose = True, num_strings=40, no_neighbour_check = False, no_iter = False)
     tb_plane.get_res()
-    tb_plane.plot()
+    plot = tb_plane.plot(show = False)
+    plot.savefig('quasi2D.pdf', bbox_inches = 'tight')
     print("invariant: " + str(tb_plane.invariant()))

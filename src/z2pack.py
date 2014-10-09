@@ -10,7 +10,7 @@ from __future__ import print_function
 import python_tools.string_tools as string_tools
 
 # for the first-principles Code
-from first_principles import k_points
+from first_principles import k_points as FpKpoints
 from first_principles.fp_system import FirstPrinciplesSystem
 
 # for the tight-binding specialisation
@@ -473,6 +473,8 @@ class Z2PackPlane:
             # add plots with +/- 1 to ensure periodicity
             ax.plot([kpt] * len(self._wcc_list[i]), [(x + shift) % 1 + 1 for x in self._wcc_list[i]], "ro")
             ax.plot([kpt] * len(self._wcc_list[i]), [(x + shift) % 1 - 1 for x in self._wcc_list[i]], "ro")
+        ax.set_xlabel(r'$k$')
+        ax.set_ylabel(r'$x$', rotation = 'horizontal')
         if(show):
             plt.show()
         return fig
@@ -483,8 +485,11 @@ class Z2PackPlane:
         """
         try:
             return (self._k_points, self._wcc_list, self._gaps)
-        except (NameError, AttributeError) as exception:
+        except (NameError, AttributeError):
             raise RuntimeError('WCC not yet calculated')
+        # for a potential Python3 - only version
+        #~ except (NameError, AttributeError) as e:
+            #~ raise RuntimeError('WCC not yet calculated') from e
     
     def invariant(self):
         """
@@ -497,8 +502,10 @@ class Z2PackPlane:
                     inv *= self._sgng(self._gaps[i], self._gaps[i+1], self._wcc_list[i+1][j])
             
             return 1 if inv == -1 else 0
-        except (NameError, AttributeError) as exception:
+        except (NameError, AttributeError):
             raise RuntimeError('WCC not yet calculated')
+        #~ except (NameError, AttributeError) as e:
+            #~ raise RuntimeError('WCC not yet calculated') from e
 
         
     #-------------------------------------------------------------------#

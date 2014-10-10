@@ -32,32 +32,27 @@ import matplotlib.pyplot as plt
 #-----------------------------------------------------------------------#
 class Z2PackSystem:
     """
-    Z2PackSystem Class
-    ~~~~~~~~~~~~~~~~~~
     abstract Base Class for Z2Pack systems (Interface definition)
-    method: plane
+    
+    :param M_handle_creator: takes (string_dir, plane_pos_dir, plane_pos) and creates an M_handle --> M_handle(kx, N): creates M-matrices
+    
+    :param kwargs: passed to Z2PackPlane constructor unless overwritten by plane() kwargs
     """
     
     def __init__(self, M_handle_creator, **kwargs):
-        """
-        M_handle_creator: takes (string_dir, plane_pos_dir, plane_pos)
-            and creates an M_handle
-            --> M_handle(kx, N): creates M-matrices
-        
-        kwargs: passed to Z2PackPlane constructor unless overwritten
-            by plane() kwargs
-        """
         self._defaults = kwargs
         self._M_handle_creator = M_handle_creator
     
 
     def plane(self, string_dir, plane_pos_dir, plane_pos, **kwargs):
         """
-        plane position: orthogonal to plane_pos_dir, at plane_pos
-        strings: along string_dir
-        
-        kwargs: passed to Z2PackPlane constructor. Take precedence
-            over kwargs from Z2PackSystem constructor.
+        :param string_dir: direction of the string of k-points
+        :type string_dir: int
+        :param plane_pos_dir: index of the reciprocal lattice vector not in the plane
+        :type plane_pos_dir: int
+        :param plane_pos: position of the plane along ``plane_pos_dir``
+        :type plane_pos: float
+        :param kwargs: passed to Z2PackPlane constructor. Take precedence over kwargs from Z2PackSystem constructor.
         """
         # updating keyword arguments
         kw_arguments = copy.copy(self._defaults)
@@ -74,34 +69,21 @@ class Z2PackSystem:
 
 class Z2PackPlane:
     """
-    Z2PackPlane Class:
-    ~~~~~~~~~~~~~~~~~
-    specifies a plane in the 3D system, on which to calculate the 
-    topological invariant. This is achieved via the M_handle input
-    variable. 
-    The M_handle is created by Z2PackSystem.plane(), and as such is 
-    specific to the type of Z2Pack calculation (ABINIT, Tb, ...)
+    Specifies a plane in the 3D system, on which to calculate the topological invariant. This is achieved via the M_handle input variable. The M_handle is created by Z2PackSystem.plane(), and as such is specific to the type of Z2Pack calculation (Fp, Tb, ...)
+
+    :param M_handle:        should create a list of MMN given (k, N)
+    :type M_handle:         function
     
-    methods: wcc_calc, load, plot, invariant, wcc, gaps
+    :param pickle_file:     path to file for saving using pickle
+    :type pickle_file:      str
+        
+    :param kwargs: Are passed to ``wcc_calc``. Kwargs specified in ``wcc_calc`` take precedence
     """
     
     def __init__(   self, 
                     M_handle, 
                     pickle_file = "res_pickle.txt", 
                     **kwargs):
-        """
-        constructor
-        parses the input variables
-        
-        args:
-        ~~~~
-        M_handle:           should create a list of MMN given (k, N)
-        pickle_file:        path to file for saving using pickle
-        
-        kwargs:
-        ~~~~~~
-        same as for wcc_calc. kwargs for wcc_calc take precedence
-        """
         self._M_handle = M_handle
         self._pickle_file = pickle_file
         self._defaults = {  
@@ -455,13 +437,17 @@ class Z2PackPlane:
         return (x[gappos] + gapsize / 2) % 1
     #----------------END OF SUPPORT FUNCTIONS---------------------------#        
     
-    def plot(self, shift = 0, show = True):
+    def plot(self, shift = 0, show = True, ax = None):
         """
         plot WCC and largest gaps (with a shift modulo 1)
         """
         shift = shift % 1
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
+        if not ax:
+            return_fig = True
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
+        else: 
+            return_fig = False
         ax.set_ylim(0,1)
         ax.set_xlim(-0.01, 0.51)
         ax.plot(self._k_points, [(x + shift) % 1 for x in self._gaps], 'bD')
@@ -477,7 +463,8 @@ class Z2PackPlane:
         ax.set_ylabel(r'$x$', rotation = 'horizontal')
         if(show):
             plt.show()
-        return fig
+        if return_fig:
+            return fig
         
     def get_res(self):
         """
@@ -526,12 +513,22 @@ class Z2PackPlane:
 #-----------------------------------------------------------------------#
 class FpSystem(Z2PackSystem):
     """
-    FirstPrinciples Class:
-    ~~~~~~~~~~~~~~~~~~~~~
+
     Subclass of Z2PackSystem designed to work with various first - 
     principles codes.
-    
-    method: inherits plane
+
+    :param input_files:             path(s) of the input file(s)
+    :type input_files:              str or list
+    :param k_points_fct:            fct that creates k_point string, given starting point, last_point, end point, N
+    :param k_points_path:           name of the file where k_points belong will append to a file if it matches one of file_names, create a separate file else
+    :param working_folder:          folder where the created input files go
+    :param command:                command to execute the first principles code
+    :param file_names:             name(s) the input file(s) should get put 'copy' -> same as input_files
+    :param mmn_path:                path of the .mmn file 
+    :param clean_subfolder:        toggles deleting content of working_folder before starting a new calculation
+    :param kwargs:            are passed to the Z2PackPlane constructor via .plane(), which passes them to wcc_calc() precedence: wcc_calc > plane > this (newer kwargs take precedence)
+                            
+    .. note:: input_files and working_folder can be absolute or relative paths, the rest is relative to working_folder
     """
     def __init__(   self,
                     input_files, 
@@ -544,40 +541,6 @@ class FpSystem(Z2PackSystem):
                     clean_working_folder = True,
                     **kwargs
                 ):
-        """
-        args:
-        ~~~~
-        input_files:            path(s) of the input file(s) (str or list)
-        k_points_fct:           fct that creates k_point string, given
-                                starting point, last_point, end point, N
-        k_points_path:          name of the file where k_points belong
-                                will append to a file if it matches one
-                                of file_names, create a separate file
-                                else
-        working_folder:         folder where the created input files go
-        command:                command to execute the first principles 
-                                code
-        
-        kwargs:                 
-        ~~~~~~
-        file_names:             name(s) the input file(s) should get 
-                                put 'copy' -> same as input_files
-        mmn_path:               path of the .mmn file (default: 
-                                wannier90.mmn)
-        clean_subfolder:        toggles deleting content of 
-                                working_folder before starting a new
-                                calculation
-        other kwargs:           are passed to the Z2PackPlane 
-                                constructor via .plane(), which passes 
-                                them to wcc_calc()
-                                precedence: wcc_calc > plane > this
-                                (newer kwargs take precedence)
-                                
-        file paths:             
-        ~~~~~~~~~~
-        input_files and working_folder can be absolute or relative 
-        paths, the rest is relative to working_folder
-        """
                     
         self._system = FirstPrinciplesSystem(   input_files,
                                         k_points_fct, 
@@ -607,31 +570,17 @@ class FpSystem(Z2PackSystem):
 
 class TbSystem(Z2PackSystem):
     """
-    TightBinding Class
-    ~~~~~~~~~~~~~~~~~~
     Subclass of Z2PackSystem used for calculating system with a tight-
     binding model
     
-    method: inherits plane
+    :param tb_hamilton:     system being calculated
+    :type tb_hamilton:     :class:`z2pack.TbHamilton`  object
+    :param kwargs:          are passed to the Z2PackPlane constructor via .plane(), which passes them to wcc_calc(), precedence: wcc_calc > plane > this (newer kwargs take precedence)
     """
     def __init__(   self,
                     tb_hamilton,
                     **kwargs
                     ):
-        """
-        args:
-        ~~~~
-        tb_hamilton:             TbHamilton object
-        
-        kwargs:
-        ~~~~~~
-        no TightBinding - specific kwargs
-        other kwargs:           are passed to the Z2PackPlane 
-                                constructor via .plane(), which passes 
-                                them to wcc_calc()
-                                precedence: wcc_calc > plane > this
-                                (newer kwargs take precedence)
-        """
         self._defaults = kwargs
         self._tb_hamilton = tb_hamilton
         def _M_handle_creator_tb(string_dir, plane_pos_dir, plane_pos):

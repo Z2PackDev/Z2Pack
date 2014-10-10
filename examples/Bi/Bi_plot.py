@@ -8,6 +8,7 @@
 import sys
 sys.path.append("../../src/")
 import z2pack
+import matplotlib.pyplot as plt
 
 """
 Bismuth example
@@ -25,7 +26,7 @@ def k_points(start_point, last_point, end_point, N):
     
     
 # creating the z2pack.abinit object
-Bi = z2pack.FirstPrinciples(    ["Bi_nscf.files", "Bi_nscf.in", "wannier90.win" ],
+Bi = z2pack.FpSystem(    ["Bi_nscf.files", "Bi_nscf.in", "wannier90.win" ],
                                 k_points,
                                 "Bi_nscf.in",
                                 "build",
@@ -43,7 +44,10 @@ no need to re-do the calculation
 #~ Bi_plane.wcc_calc(no_iter = True, no_neighbour_check = True)
 
 Bi_plane.load()
-Bi_plane.plot()
+fig, ax = plt.subplots(1, figsize = (9,5))
+Bi_plane.plot(show = False, ax = ax)
+plt.savefig('Bi.pdf', bbox_inches = 'tight')
+
 print('Z2 topological invariant: {0}'.format(Bi_plane.invariant()))
     
 

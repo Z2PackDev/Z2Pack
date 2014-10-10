@@ -17,6 +17,7 @@ import numpy as np
 import scipy.linalg as la
 import matplotlib.pyplot as plt
 
+
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
 #                           LIBRARY CORE                                #
@@ -26,9 +27,10 @@ class Z2PackSystem:
     """
     abstract Base Class for Z2Pack systems (Interface definition)
     
-    :param M_handle_creator: takes (string_dir, plane_pos_dir, plane_pos) and creates an M_handle --> M_handle(kx, N): creates M-matrices
+    :param M_handle_creator: Takes (``string_dir``, ``plane_pos_dir``, ``plane_pos``) and creates an ``M_handle`` s.t. ``M_handle(kx, N)`` returns the overlap matrices
+    :type M_handle_creator: function
     
-    :param kwargs: passed to Z2PackPlane constructor unless overwritten by plane() kwargs
+    :param kwargs: Passed to the :class:`Z2PackPlane` constructor unless overwritten by kwargs to :func:`plane`
     """
     
     def __init__(self, M_handle_creator, **kwargs):
@@ -38,13 +40,20 @@ class Z2PackSystem:
 
     def plane(self, string_dir, plane_pos_dir, plane_pos, **kwargs):
         """
+        Creates a :class:`Z2PackPlane` object. The directions are given w.r.t. the inverse lattice vectors.
+        
         :param string_dir: direction of the string of k-points
         :type string_dir: int
+        
         :param plane_pos_dir: index of the reciprocal lattice vector not in the plane
         :type plane_pos_dir: int
+        
         :param plane_pos: position of the plane along ``plane_pos_dir``
         :type plane_pos: float
-        :param kwargs: passed to Z2PackPlane constructor. Take precedence over kwargs from Z2PackSystem constructor.
+        
+        :param kwargs: passed to :class:`Z2PackPlane` constructor. Take precedence over kwargs from class:`Z2PackSystem` constructor.
+        
+        :rtype: :class:`Z2PackPlane`
         """
         # updating keyword arguments
         kw_arguments = copy.copy(self._defaults)
@@ -61,12 +70,12 @@ class Z2PackSystem:
 
 class Z2PackPlane:
     """
-    Specifies a plane in the 3D system, on which to calculate the topological invariant. This is achieved via the M_handle input variable. The M_handle is created by Z2PackSystem.plane(), and as such is specific to the type of Z2Pack calculation (Fp, Tb, ...)
-
-    :param M_handle:        should create a list of MMN given (k, N)
+    Describes a plane in reciprocal space where to calculate the :math:`\mathbb{Z}_2` topological invariant.
+    
+    :param M_handle:        Function that returns a list of overlap matrices given the position of the string in the plane ``k`` and the number of k-points on the string ``N``.
     :type M_handle:         function
     
-    :param pickle_file:     path to file for saving using pickle
+    :param pickle_file:     Path to a file where the results are stored using the :py:mod:`pickle` module.
     :type pickle_file:      str
         
     :param kwargs: Are passed to ``wcc_calc``. Kwargs specified in ``wcc_calc`` take precedence
@@ -93,25 +102,39 @@ class Z2PackPlane:
         
     def wcc_calc(self, **kwargs):
         """
-        calculating the wcc of the system
-        - automated convergence in string direction
-        - automated check for distance between gap and wcc -> add string
+        Calculates the Wannier charge centers in the given plane
         
-        kwargs:
-        ~~~~~~
-        no_iter:            turns iterations off
-        no_neighbour_check: turns neighbour checks off
-        wcc_tol:            maximum movement of wcc between two steps 
-                            for convergence
-        gap_tol:            minimum size of gap between the largest gap
-                            and the closest wcc at neighbouring strings
-        max_iter:           max. number of iterations for 1 string
-        min_neighbour_dist  minimum distance between neighbours when doing
-                            the neighbour checks
-        use_pickle:         toggles use of pickle for saving
-        num_strings:           number of strings at the beginning (should be 
-                            >= 8 for good results)
-        verbose:            toggles output printed
+        * automated convergence in string direction
+        * automated check for distance between gap and wcc -> add string
+        
+        :param no_iter:             Turns the automated iteration of the number of k-points in a string off
+        :type no_iter:              bool
+        
+        :param no_neighbour_check:  Turns the automated check for missing strings (by distance between gaps and WCCs) off
+        :type no_neighbour_check:   bool
+        
+        :param wcc_tol:             Maximum movement of a WCC between two steps for convergence
+        :type wcc_tol:              float
+        
+        :param gap_tol:             Smallest tolerated distance between the gap and neighbouring WCCs
+        :type gap_tol:              float
+        
+        :param max_iter:            Maximum number of iterations for one string
+        :type max_iter:             int
+        
+        :param min_neighbour_dist:  Minimum distance between two strings (no new strings will be added, even if the neighbour check fails)
+        :type min_neighbour_dist:   float
+        
+        :param use_pickle:          Toggles using the :mod:`pickle` module for saving
+        :type use_pickle:           bool
+        
+        :param num_strings:         Initial number of strings
+        :type num_strings:          int
+        
+        :param verbose:             Toggles printed output
+        :type verbose:              bool
+        
+        :returns:                   ``tuple (k_points, wcc, gaps)``, ``k_points`` being the positions of the strings of k-points used in the calculation; ``wcc`` the Wannier charge center positions and ``gaps`` the position of the largest gap, both for each of the k-point strings.
         """
         kwarguments = copy.copy(self._defaults)
         kwarguments.update(kwargs)
@@ -269,8 +292,7 @@ class Z2PackPlane:
             
     def load(self):
         """
-        load k_points, wcc and gaps from pickle file
-        only works if pickle_file exists
+        Loads the data (e.g. from a previous run) from the :mod:`pickle` file.
         """
         f = open(self._pickle_file, "rb")
         [self._k_points, self._wcc_list, self._gaps] = pickle.load(f)
@@ -431,7 +453,18 @@ class Z2PackPlane:
     
     def plot(self, shift = 0, show = True, ax = None):
         """
-        plot WCC and largest gaps (with a shift modulo 1)
+        Plots the WCCs and the largest gaps (y-axis) against the k-points (x-axis).
+        
+        :param shift:   Shifts the plot in the y-axis
+        :type shift:    float
+        
+        :param show:    Toggles showing the plot    
+        :type show:     bool
+        
+        :param ax:      Axis where the plot is drawn
+        :type ax:       :mod:`matplotlib` ``axis``
+        
+        :returns:       :class:`matplotlib figure` object (only if ``ax == None``)
         """
         shift = shift % 1
         if not ax:
@@ -460,7 +493,7 @@ class Z2PackPlane:
         
     def get_res(self):
         """
-        returns (k - points used, wcc calculated , largest gaps)
+        Returns a ``tuple`` ``(k_points, wcc, gaps)``, ``k_points`` being the positions of the k-point strings used (at which the WCCs were computed), ``wcc`` the WCC positions at each of those positions, and ``gaps`` the positions of the largest gap in each string.
         """
         try:
             return (self._k_points, self._wcc_list, self._gaps)

@@ -228,7 +228,7 @@ class System(Z2PackSystem):
     binding model
     
     :param tb_hamilton:     system being calculated
-    :type tb_hamilton:     :class:`z2pack.TbHamilton`  object
+    :type tb_hamilton:     :class:`z2pack.tb.Hamilton` object
     :param kwargs:          are passed to the Z2PackPlane constructor via .plane(), which passes them to wcc_calc(), precedence: wcc_calc > plane > this (newer kwargs take precedence)
     """
     def __init__(   self,

@@ -11,10 +11,20 @@ Welcome to Z2Pack's documentation!
 .. ~ .. toctree::
 .. ~    :maxdepth: 2
 
-.. automodule:: src.z2pack
+Z2Pack Core
+-----------
+.. automodule:: z2pack
     :members:
     
-.. automodule:: src.z2pack.TbHamilton
+Z2Pack for Tight-Binding Models
+-------------------------------
+    
+.. automodule:: z2pack.tb
+    :members:
+    
+Z2Pack for First-Principles Systems
+-----------------------------------
+.. automodule:: z2pack.fp
     :members:
 
 

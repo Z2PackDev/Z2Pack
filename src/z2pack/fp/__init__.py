@@ -23,20 +23,33 @@ import subprocess
 #-----------------------------------------------------------------------#
 class System(Z2PackSystem):
     """
-
     Subclass of Z2PackSystem designed to work with various first - 
     principles codes.
 
-    :param input_files:             path(s) of the input file(s)
+    :param input_files:             Path(s) of the input file(s)
     :type input_files:              str or list
-    :param k_points_fct:            fct that creates k_point string, given starting point, last_point, end point, N
-    :param k_points_path:           name of the file where k_points belong will append to a file if it matches one of file_names, create a separate file else
-    :param working_folder:          folder where the created input files go
-    :param command:                command to execute the first principles code
-    :param file_names:             name(s) the input file(s) should get put 'copy' -> same as input_files
-    :param mmn_path:                path of the .mmn file 
-    :param clean_subfolder:        toggles deleting content of working_folder before starting a new calculation
-    :param kwargs:            are passed to the Z2PackPlane constructor via .plane(), which passes them to wcc_calc() precedence: wcc_calc > plane > this (newer kwargs take precedence)
+
+    :param k_points_fct:            Fct that creates a ``str`` specifying the k-points (in the language of the first-principles code used), given a ``starting_point``, ``last_point``, end point and number of k-points ``N``.
+    
+    :param k_points_path:           Name of the file where the k-points ``str`` belongs. Will append to a file if it matches one of the ``file_names``, and create a separate file else.
+    :type k_points_path:            str
+    
+    :param working_folder:          Folder where the created input files go
+    :type working_folder:           str
+    
+    :param command:                 Command to execute the first principles code
+    :type command:                  str
+    
+    :param file_names:              Name(s) the input file(s) should get in the ``working_folder``. Default behaviour is taking the filenames from the input files.
+    :type file_names:               str or list
+    
+    :param mmn_path:                Path to the ``.mmn`` output file of ``Wannier90``
+    :type mmn_path:                 str
+    
+    :param clean_subfolder:         Toggles deleting the content of ``working_folder`` before starting a new calculation.
+    :type clean_subfolder:          bool
+    
+    :param kwargs:                  Are passed to the :class:`Z2PackPlane` constructor via :func:`plane`. More recent arguments take precendence.
                             
     .. note:: input_files and working_folder can be absolute or relative paths, the rest is relative to working_folder
     """

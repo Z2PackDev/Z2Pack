@@ -5,6 +5,8 @@
 # Date:    26.09.2014 22:44:18 CEST
 # File:    first_principles.py
 
+import kpts
+from .. import Z2PackSystem
 from . import read_mmn as mmn
 
 import os
@@ -13,7 +15,65 @@ import copy
 import shutil
 import subprocess
 
-class FirstPrinciplesSystem:
+
+#-----------------------------------------------------------------------#
+#-----------------------------------------------------------------------#
+#                    FIRST PRINCIPLES SPECIALISATION                    #
+#-----------------------------------------------------------------------#
+#-----------------------------------------------------------------------#
+class System(Z2PackSystem):
+    """
+
+    Subclass of Z2PackSystem designed to work with various first - 
+    principles codes.
+
+    :param input_files:             path(s) of the input file(s)
+    :type input_files:              str or list
+    :param k_points_fct:            fct that creates k_point string, given starting point, last_point, end point, N
+    :param k_points_path:           name of the file where k_points belong will append to a file if it matches one of file_names, create a separate file else
+    :param working_folder:          folder where the created input files go
+    :param command:                command to execute the first principles code
+    :param file_names:             name(s) the input file(s) should get put 'copy' -> same as input_files
+    :param mmn_path:                path of the .mmn file 
+    :param clean_subfolder:        toggles deleting content of working_folder before starting a new calculation
+    :param kwargs:            are passed to the Z2PackPlane constructor via .plane(), which passes them to wcc_calc() precedence: wcc_calc > plane > this (newer kwargs take precedence)
+                            
+    .. note:: input_files and working_folder can be absolute or relative paths, the rest is relative to working_folder
+    """
+    def __init__(   self,
+                    input_files, 
+                    k_points_fct, 
+                    k_points_path,
+                    working_folder,
+                    command,
+                    file_names = 'copy', 
+                    mmn_path = 'wannier90.mmn', 
+                    clean_working_folder = True,
+                    **kwargs
+                ):
+                    
+        self._system = _FirstPrinciplesSystem(   input_files,
+                                        k_points_fct, 
+                                        k_points_path,
+                                        working_folder,
+                                        command,
+                                        file_names, 
+                                        mmn_path, 
+                                        clean_working_folder
+                                    )
+        self._defaults = kwargs
+                                    
+        def _M_handle_creator_first_principles(string_dir, plane_pos_dir, plane_pos):
+            # check if kx is before or after plane_pos_dir
+            if(3 - string_dir > 2 * plane_pos_dir):
+                return lambda kx, N: self._system._run(string_dir, [plane_pos, kx], N)
+            else:
+                return lambda kx, N: self._system._run(string_dir, [kx, plane_pos], N)
+        self._M_handle_creator = _M_handle_creator_first_principles
+        
+
+
+class _FirstPrinciplesSystem:
     
     def __init__(   self,
                     input_files, 

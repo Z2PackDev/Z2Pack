@@ -5,14 +5,16 @@
 # Date:    17.09.2014 10:25:24 CEST
 # File:    tb_hamilton.py
 
+import vectors
+
 import copy
 import numpy as np
 import sympy as sp
 import scipy.linalg as la
 
-class TbHamilton:
+class Hamilton:
     """
-    TbHamilton Class
+    Hamilton Class
     ~~~~~~~~~~~~~~
     Describes a tight-binding system
     
@@ -211,6 +213,38 @@ class TbHamilton:
             raise ValueError('k_vec and x_vec must be of the same size')
         return 2 * np.pi * sum(x_vec[i]*k_vec[i] for i in range(n))
     
+
+#-----------------------------------------------------------------------#
+#-----------------------------------------------------------------------#
+#                    TIGHT BINDING SPECIALISATION                       #
+#-----------------------------------------------------------------------#
+#-----------------------------------------------------------------------#
+
+from .. import Z2PackSystem
+
+class System(Z2PackSystem):
+    """
+    Subclass of Z2PackSystem used for calculating system with a tight-
+    binding model
+    
+    :param tb_hamilton:     system being calculated
+    :type tb_hamilton:     :class:`z2pack.TbHamilton`  object
+    :param kwargs:          are passed to the Z2PackPlane constructor via .plane(), which passes them to wcc_calc(), precedence: wcc_calc > plane > this (newer kwargs take precedence)
+    """
+    def __init__(   self,
+                    tb_hamilton,
+                    **kwargs
+                    ):
+        self._defaults = kwargs
+        self._tb_hamilton = tb_hamilton
+        def _M_handle_creator_tb(string_dir, plane_pos_dir, plane_pos):
+            # check if kx is before or after plane_pos_dir
+            if(3 - string_dir > 2 * plane_pos_dir):
+                return lambda kx, N: self._tb_hamilton._getM(string_dir, [plane_pos, kx], N)
+            else:
+                return lambda kx, N: self._tb_hamilton._getM(string_dir, [kx, plane_pos], N)
+        self._M_handle_creator = _M_handle_creator_tb
+        
         
 if __name__ == "__main__":
     print("tight_binding.py")

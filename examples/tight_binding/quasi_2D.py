@@ -7,28 +7,28 @@
 
 import sys
 sys.path.append("../../src/")
-import z2pack
+import z2pack.tb as tb
 
 import matplotlib.pyplot as plt
 
 def quasi2D(ax, t1, t2):
     
-    tb = z2pack.TbHamilton([1, 0, 0], [0, 1, 0], [0, 0, 1])
+    H = tb.Hamilton([1, 0, 0], [0, 1, 0], [0, 0, 1])
     
     # create the two atoms
-    tb.add_atom(([1, 1], 1), [0, 0, 0])
-    tb.add_atom(([-1, -1], 1), [0.5, 0.5, 0])
+    H.add_atom(([1, 1], 1), [0, 0, 0])
+    H.add_atom(([-1, -1], 1), [0.5, 0.5, 0])
     
     # add hopping between different atoms
-    tb.add_hopping(((0, 0), (1, 1)), z2pack.TbVectors.combine([0,-1],[0,-1],0), t1, phase = [1, -1j, 1j, -1])
-    tb.add_hopping(((0, 1), (1, 0)), z2pack.TbVectors.combine([0,-1],[0,-1],0), t1, phase = [1, 1j, -1j, -1])
+    H.add_hopping(((0, 0), (1, 1)), tb.vectors.combine([0,-1],[0,-1],0), t1, phase = [1, -1j, 1j, -1])
+    H.add_hopping(((0, 1), (1, 0)), tb.vectors.combine([0,-1],[0,-1],0), t1, phase = [1, 1j, -1j, -1])
     
     # add hopping between neighbouring orbitals of the same type
-    tb.add_hopping((((0, 0), (0, 0)),((0, 1), (0, 1))), z2pack.TbVectors.neighbours([0,1]), t2, phase = [1])
-    tb.add_hopping((((1, 1), (1, 1)),((1, 0), (1, 0))), z2pack.TbVectors.neighbours([0,1]), -t2, phase = [1])
+    H.add_hopping((((0, 0), (0, 0)),((0, 1), (0, 1))), tb.vectors.neighbours([0,1]), t2, phase = [1])
+    H.add_hopping((((1, 1), (1, 1)),((1, 0), (1, 0))), tb.vectors.neighbours([0,1]), -t2, phase = [1])
 
     # call to Z2Pack
-    tb_system = z2pack.TbSystem(tb)
+    tb_system = tb.System(H)
     tb_plane = tb_system.plane(1, 2, 0, pickle_file = './results/quasi_2D.txt')
     tb_plane.wcc_calc(verbose = True, num_strings=20, no_neighbour_check = False, no_iter = False)
     tb_plane.get_res()

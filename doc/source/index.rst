@@ -26,7 +26,12 @@ Z2Pack for First-Principles Systems
 -----------------------------------
 .. automodule:: z2pack.fp
     :members:
+    
+Functions creating k-points input
++++++++++++++++++++++++++++++++++
 
+.. automodule:: z2pack.fp.kpts
+    :members:
 
 Indices and tables
 ==================

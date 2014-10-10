@@ -14,12 +14,18 @@ import scipy.linalg as la
 
 class Hamilton:
     """
-    Hamilton Class
-    ~~~~~~~~~~~~~~
-    Describes a tight-binding system
+    Describes a tight-binding model for use with :class:`z2pack.tb.System`.
     
-    members: hamiltonian
-    methods: add_atom, add_hopping, create_hamiltonian
+    :param a_1:         First reciprocal lattice vector
+    :type a_1:          list
+    
+    :param a_2:         Second reciprocal lattice vector
+    :type a_2:          list
+    
+    :param a_3:         Third reciprocal lattice vector
+    :type a_3:          list
+    
+    
     """
     def __init__(self, a_1, a_2, a_3):
         self._unit_cell = [a_1, a_2, a_3]
@@ -32,13 +38,13 @@ class Hamilton:
 
     def add_atom(self, element, position):
         """
-        element: a tuple (orbitals, num_electrons)
-            orbitals: orbitals of the element (a list of their energies)
-            num_electrons: number of electrons in the atom
-        position: position relative to the unit cell in reciprocal space
-            (3-entry list)
-            the position will be mapped into the unit cell (coordinates
-            in [0,1])
+        :param element:     A tuple ``(orbitals, num_electrons)``, where ``orbitals`` is the list of orbital energies and ``num_electrons`` the number of electrons.
+        
+        :param position:    Position relative to the reciprocal lattice vector
+        :type position:     list of length 3
+        
+        :returns:           Index of the atom
+        :rtype:             int
         """
         
         # check input
@@ -56,21 +62,12 @@ class Hamilton:
         
     def add_hopping(self,  orbital_pairs, rec_lattice_vec, overlap, phase = None):
         """
-        adds an hopping of value 'overlap' between atom_1 and atom_2
-        while atom_1 is in the unit cell at the origin, 
-        atom_2 is in the unit cell at rec_lattice_vec
-        
-        args:
-        ~~~~
-        orbital_pairs:              tuple (orbital_1, orbital_2)
-                                    or list of those
-            orbital_1, orbital_2:   tuple (atom_index, orbital_index)
-        rec_lattice_vec:            vector connecting unit cells
-                                    or list of those
-        overlap:                    strength of hopping
-        phase:                      multiplicative factor for overlap
-                                    or list of factors (one for each
-                                    rec_lattice_vec)
+        Adds a hopping term between orbitals. If the orbitals are not equal, the complex conjugate term is also added.
+
+        :param orbital_pairs:       A tuple ``(orbital_1, orbital_2)``, where ``orbital_*`` is again a tuple ``(atom_index, orbital_index)``. Can also be a list of orbital pairs.
+        :param rec_lattice_vec:     Vector connecting unit cells (``list`` of length 3), or list of such vectors
+        :param overlap:             Strength of the hopping
+        :param phase:               Multiplicative factor for the overlap or a ``list`` of factors (one for each ``rec_lattice_vec``)
         """
         # check if there are multiple orbital pairs
         try:
@@ -117,9 +114,9 @@ class Hamilton:
     
     def create_hamiltonian(self):
         """
-        creates the self.hamiltonian object
-        self.hamiltonian returns the matrix hamiltonian as a function of
-        k (list of length 3)
+        Creates the ``hamiltonian`` member, which returns the Hamiltonian matrix as a function of k (as a ``list`` of lenth 3).
+        
+        :returns: ``self.hamiltonian``
         """
         # create conversion from index to orbital/vice versa
         count = 0

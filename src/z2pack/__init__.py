@@ -70,7 +70,7 @@ class Z2PackSystem:
 
 class Z2PackPlane:
     """
-    Describes a plane in reciprocal space where to calculate the :math:`\mathbb{Z}_2` topological invariant.
+    Describes a plane in reciprocal space where to calculate the Z2 topological invariant.
     
     :param M_handle:        Function that returns a list of overlap matrices given the position of the string in the plane ``k`` and the number of k-points on the string ``N``.
     :type M_handle:         function

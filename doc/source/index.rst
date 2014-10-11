@@ -1,15 +1,8 @@
-.. Z2Pack documentation master file, created by
-   sphinx-quickstart on Fri Oct 10 02:14:52 2014.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to Z2Pack's documentation!
 ==================================
+created by `Dominik Gresch`_
 
-.. ~ Contents:
-.. ~ 
-.. ~ .. toctree::
-.. ~    :maxdepth: 2
+.. _Dominik Gresch: http://github.com/greschd
 
 Z2Pack Core
 -----------

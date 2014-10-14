@@ -14,7 +14,12 @@ Z2Pack for Tight-Binding Models
     
 .. automodule:: z2pack.tb
     :members:
-    
+
+Functions for creating connecting vectors
++++++++++++++++++++++++++++++++++++++++++
+.. automodule:: z2pack.tb.vectors
+    :members:
+
 Z2Pack for First-Principles Systems
 -----------------------------------
 .. automodule:: z2pack.fp

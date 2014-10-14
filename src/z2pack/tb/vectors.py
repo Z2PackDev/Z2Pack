@@ -6,21 +6,16 @@
 # File:    tb_vectors.py
 
 """
-TbVectors module
-~~~~~~~~~~~~~
-Tool to easily create multiple reciprocal lattice vectors
-
-methods: neighbours, combine
+A collection of functions to easily create multiple reciprocal lattice vectors
 """
 
 def neighbours(*args):
     """
-    adds two vectors for every axis, with +-1 in that axis (0 on 
-    other coordinates)
+    Adds two vectors for every axis, with +-1 in that axis (0 on 
+    the other coordinates).
     
-    args:
-    ~~~~
-    axes:               list of axes for which to add neighbours
+    :param args:        axes for which neighbours are to be added, either as different arguments or as a list
+    :type args:         int or list(int)
     """
     res = []
     
@@ -44,13 +39,14 @@ def neighbours(*args):
     
 def combine(x_vals, y_vals, z_vals):
     """
-    creates all combinations of values. z changes fastest, x slowest
-    x_vals, y_vals, z_vals can be an iterable or a number
-    order from the lists is preserved
+    Creates all possible combinations of the given values. ``z`` changes fastest, ``x`` slowest.
     
-    args:
-    ~~~~
-    x_vals, y_vals, z_vals:     values to combine for x,y,z
+    :param x_vals:      Possible values for ``x``
+    :type x_vals:       int or list(int)
+    :param y_vals:      Possible values for ``y``
+    :type y_vals:       int or list(int)
+    :param z_vals:      Possible values for ``z``
+    :type z_vals:       int or list(int)
     """
     res = []
     try:

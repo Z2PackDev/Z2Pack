@@ -5,7 +5,7 @@
 # Date:    26.09.2014 22:44:18 CEST
 # File:    first_principles.py
 
-import kpts
+from . import kpts
 from .. import Z2PackSystem
 from . import read_mmn as mmn
 
@@ -197,7 +197,7 @@ class _FirstPrinciplesSystem:
         try:
             self._counter += 1
             self._create_working_folder(self._working_folder_fct(self._counter))
-        except AttributeError, NameError: pass
+        except (AttributeError, NameError): pass
         
         if(self._clean_subfolder):
             subprocess.call("rm -rf " + self._working_folder + "/*", shell = True)
@@ -235,7 +235,9 @@ def _copy(initial_paths, final_names):
                                 where to copy to
     folder:                     folder to copy into 
     """
-    if(hasattr(initial_paths, '__iter__') and hasattr(initial_paths, '__getitem__')):
+    if( hasattr(initial_paths, '__iter__') and 
+        hasattr(initial_paths, '__getitem__') and
+        not isinstance(initial_paths, str)):
         for i, initial_path in enumerate(initial_paths):
             _copy(initial_path, final_names[i])
     else:

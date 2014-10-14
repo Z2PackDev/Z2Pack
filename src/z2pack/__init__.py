@@ -7,7 +7,7 @@
 
 from __future__ import print_function
 
-import python_tools.string_tools as string_tools
+from .python_tools import string_tools 
 
 import sys
 import time

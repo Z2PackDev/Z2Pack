@@ -5,7 +5,7 @@
 # Date:    17.09.2014 10:25:24 CEST
 # File:    tb_hamilton.py
 
-import vectors
+from . import vectors
 
 import copy
 import numpy as np
@@ -164,7 +164,7 @@ class Hamilton:
         # check if hamiltonian exists - else create it
         try:
             self.hamiltonian
-        except AttributeError, NameError:
+        except (AttributeError, NameError):
             self.create_hamiltonian()
         
         # create k-points for string

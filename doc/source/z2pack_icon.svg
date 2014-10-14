@@ -9,13 +9,13 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="406.4754"
-   height="100.39621"
+   width="148.9375"
+   height="103.28125"
    id="svg3260"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="z2pack_logo.svg"
-   inkscape:export-filename="/media/Data/programming/Z2Pack/doc/source/z2pack_logo.png"
+   sodipodi:docname="z2pack_icon.svg"
+   inkscape:export-filename="/media/Data/programming/Z2Pack/doc/source/z2pack_icon.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -55,9 +55,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="10.896876"
-     inkscape:cx="175.88445"
-     inkscape:cy="10.842222"
+     inkscape:zoom="1.9131456"
+     inkscape:cx="386.63085"
+     inkscape:cy="-33.822073"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -86,7 +86,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-94.193375,-42.200096)">
+     transform="translate(-91.099625,-40.856346)">
     <g
        id="g3212"
        transform="matrix(0.36166522,0,0,0.39117881,132.4297,-99.780932)"

@@ -13,7 +13,7 @@ Tool to easily create multiple reciprocal lattice vectors
 methods: neighbours, combine
 """
 
-def neighbours(axes):
+def neighbours(*args):
     """
     adds two vectors for every axis, with +-1 in that axis (0 on 
     other coordinates)
@@ -24,14 +24,22 @@ def neighbours(axes):
     """
     res = []
     
-    # if axes is an iterable (list, tuple,...)
-    try:
-        for axis in axes:
-            res.extend(neighbours(axis))
+    axes = []
+    for arg in args:
+        # if arg is an iterable (list, tuple,...)
+        try:
+            for val in arg:
+                axes.append(val)
+        # if arg is a single value (type safety not guaranteed)
+        except TypeError:
+            axes.append(arg)
 
-    except TypeError:
-        res.append([1 if(i==axes) else 0 for i in range(3)])
-        res.append([-1 if(i==axes) else 0 for i in range(3)])
+    for axis in axes:
+        if not(isinstance(axis, int)):
+            raise TypeError('axis must be an int')
+        res.append([1 if(i==axis) else 0 for i in range(3)])
+        res.append([-1 if(i==axis) else 0 for i in range(3)])
+
     return res
     
 def combine(x_vals, y_vals, z_vals):

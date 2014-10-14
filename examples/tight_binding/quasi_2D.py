@@ -31,7 +31,6 @@ def quasi2D(ax, t1, t2):
     tb_system = tb.System(H)
     tb_plane = tb_system.plane(1, 2, 0, pickle_file = './results/quasi_2D.txt')
     tb_plane.wcc_calc(verbose = True, num_strings=20, no_neighbour_check = False, no_iter = False)
-    tb_plane.get_res()
     plot = tb_plane.plot(show = False, ax = ax)
     print("t1: {0}, t2: {1}, invariant: {2}".format(t1, t2, tb_plane.invariant()))
     return plot

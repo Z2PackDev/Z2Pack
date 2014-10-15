@@ -191,7 +191,7 @@ class Z2PackPlane:
             else:
                 if(self._verbose):
                     print('skipping neighbour checks')
-                    break
+                break
 
         # dump results into pickle file
         self._save()

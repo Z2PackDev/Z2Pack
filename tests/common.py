@@ -5,6 +5,9 @@
 # Date:    15.10.2014 10:18:11 CEST
 # File:    common.py
 
+import types
+import unittest
+
 """assert functions for all tests"""
 
 def assertIterAlmostEqual(TestCase, x, y, iter_type = list):
@@ -30,6 +33,13 @@ def assertContainerAlmostEqual(TestCase, x, y):
             TestCase.assertContainerAlmostEqual(x[i], y[i])
     except TypeError:
         TestCase.assertAlmostEqual(x, y)
+        
+        
+class CommonTestCase(unittest.TestCase):
+    def __init__(self, *args, **kwargs):
+        super(CommonTestCase, self).__init__(*args, **kwargs)
+        self.assertIterAlmostEqual = types.MethodType(assertIterAlmostEqual, self)
+        self.assertContainerAlmostEqual = types.MethodType(assertContainerAlmostEqual, self)
         
 if __name__ == "__main__":
     print("common.py")

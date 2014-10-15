@@ -3,7 +3,7 @@
 #
 # Author:  Dominik Gresch <greschd@gmx.ch>
 # Date:    15.10.2014 10:20:25 CEST
-# File:    vectorstest.py
+# File:    vectors.py
 
 import sys
 sys.path.append('../src')

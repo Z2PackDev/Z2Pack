@@ -29,7 +29,7 @@ class System(Z2PackSystem):
     :param input_files:             Path(s) of the input file(s)
     :type input_files:              str or list
 
-    :param k_points_fct:            Fct that creates a ``str`` specifying the k-points (in the language of the first-principles code used), given a ``starting_point``, ``last_point``, end point and number of k-points ``N``.
+    :param k_points_fct:            Fct that creates a ``str`` specifying the k-points (in the language of the first-principles code used), given a ``starting_point``, ``last_point``, ``end point`` and number of k-points ``N``.
     
     :param k_points_path:           Name of the file where the k-points ``str`` belongs. Will append to a file if it matches one of the ``file_names``, and create a separate file else.
     :type k_points_path:            str

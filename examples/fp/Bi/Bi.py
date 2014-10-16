@@ -6,12 +6,17 @@
 # File:    Bi.py
 
 import sys
-sys.path.append("../../src/")
+sys.path.append("../../../src/")
 import z2pack
+
+import os
 
 """
 Bismuth example
 """
+
+if not os.path.exists('./results'):
+    os.makedirs('./results')
 
 # creating the z2pack.abinit object
 Bi = z2pack.fp.System(   ["Bi_nscf.files", "Bi_nscf.in", "wannier90.win" ],
@@ -23,7 +28,7 @@ Bi = z2pack.fp.System(   ["Bi_nscf.files", "Bi_nscf.in", "wannier90.win" ],
     
 
 # creating the z2pack.plane object
-Bi_plane = Bi.plane(2, 0, 0, pickle_file = 'Bi_01_pickle.txt')
+Bi_plane = Bi.plane(2, 0, 0, pickle_file = 'results/res.txt')
 
 # WCC calculation
 Bi_plane.wcc_calc(no_iter = True, no_neighbour_check = True)

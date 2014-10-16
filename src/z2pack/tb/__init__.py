@@ -15,23 +15,8 @@ import scipy.linalg as la
 class Hamilton:
     """
     Describes a tight-binding model for use with :class:`z2pack.tb.System`.
-    
-    :param a_1:         First reciprocal lattice vector
-    :type a_1:          list
-    
-    :param a_2:         Second reciprocal lattice vector
-    :type a_2:          list
-    
-    :param a_3:         Third reciprocal lattice vector
-    :type a_3:          list
-    
-    
     """
-    def __init__(self, a_1, a_2, a_3):
-        self._unit_cell = [a_1, a_2, a_3]
-        for vec in self._unit_cell:
-            if(len(vec) != 3):
-                raise ValueError('invalid argument: length of vector != 3')
+    def __init__(self):
         self._atoms = []
         self._hoppings = []
         self._electrons = 0

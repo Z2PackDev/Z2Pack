@@ -6,13 +6,18 @@
 # File:    Bi_plot.py
 
 import sys
-sys.path.append("../../src/")
+sys.path.append("../../../src/")
 import z2pack
 import matplotlib.pyplot as plt
+
+import os
 
 """
 Bismuth example
 """
+
+if not os.path.exists('./results'):
+    os.makedirs('./results')
 
 def k_points(start_point, last_point, end_point, N):
     string = "\nkptopt -1\nndivk " + str(N - 1) + '\nkptbounds '
@@ -26,7 +31,7 @@ def k_points(start_point, last_point, end_point, N):
     
     
 # creating the z2pack.abinit object
-Bi = z2pack.FpSystem(    ["Bi_nscf.files", "Bi_nscf.in", "wannier90.win" ],
+Bi = z2pack.fp.System(    ["Bi_nscf.files", "Bi_nscf.in", "wannier90.win" ],
                                 k_points,
                                 "Bi_nscf.in",
                                 "build",
@@ -35,7 +40,7 @@ Bi = z2pack.FpSystem(    ["Bi_nscf.files", "Bi_nscf.in", "wannier90.win" ],
     
 
 # creating the z2pack.plane object
-Bi_plane = Bi.plane(2, 0, 0, pickle_file = 'Bi_01_pickle.txt')
+Bi_plane = Bi.plane(2, 0, 0, pickle_file = './results/res.txt')
 
 # WCC calculation
 """
@@ -46,7 +51,7 @@ no need to re-do the calculation
 Bi_plane.load()
 fig, ax = plt.subplots(1, figsize = (9,5))
 Bi_plane.plot(show = False, ax = ax)
-plt.savefig('Bi.pdf', bbox_inches = 'tight')
+plt.savefig('./results/Bi.pdf', bbox_inches = 'tight')
 
 print('Z2 topological invariant: {0}'.format(Bi_plane.invariant()))
     

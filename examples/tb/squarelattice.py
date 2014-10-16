@@ -3,17 +3,18 @@
 #
 # Author:  Dominik Gresch <greschd@ethz.ch>
 # Date:    22.09.2014 14:23:12 CEST
-# File:    quasi_2D.py
+# File:    squarelattice.py
 
 import sys
 sys.path.append("../../src/")
 import z2pack.tb as tb
 
+import os
 import matplotlib.pyplot as plt
 
-def quasi2D(ax, t1, t2):
+def calculate_system(ax, t1, t2):
     
-    H = tb.Hamilton([1, 0, 0], [0, 1, 0], [0, 0, 1])
+    H = tb.Hamilton()
     
     # create the two atoms
     H.add_atom(([1, 1], 1), [0, 0, 0])
@@ -29,16 +30,19 @@ def quasi2D(ax, t1, t2):
 
     # call to Z2Pack
     tb_system = tb.System(H)
-    tb_plane = tb_system.plane(1, 2, 0, pickle_file = './results/quasi_2D.txt')
+    tb_plane = tb_system.plane(1, 2, 0, pickle_file = './results/res.txt')
     tb_plane.wcc_calc(verbose = True, num_strings=20, no_neighbour_check = True, no_iter = False)
     plot = tb_plane.plot(show = False, ax = ax)
-    #~ print(tb_plane.get_res())
     print("t1: {0}, t2: {1}, invariant: {2}".format(t1, t2, tb_plane.invariant()))
     return plot
 
 if __name__ == "__main__":
+    if not os.path.exists('./results'):
+        os.makedirs('./results')
+        
+    t_values = [[0.2, 0.3], [0.1, 0.4], [-0.2, -0.3], [0.1, 0.3]]
+    
     fig, axes = plt.subplots(2,2)
-    t_values = [[0.2, 0.3], [0.1, 0.4], [-0.2, -0.3], [0, 0.3]]
     for i, ax in enumerate(axes.flatten()):
-        quasi2D(ax, *t_values[i])
-    plt.savefig('quasi2D.pdf', bbox_inches = 'tight')
+        calculate_system(ax, *t_values[i])
+    plt.savefig('./results/squarelattice.pdf', bbox_inches = 'tight')

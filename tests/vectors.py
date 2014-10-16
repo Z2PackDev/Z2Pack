@@ -29,20 +29,24 @@ class TbVectorsTestCase(unittest.TestCase):
             
     def test_neighbours(self):
         self.assertListEqual(z2pack.tb.vectors.neighbours([0,1]), 
+        [[1, 0, 0], [0, 1, 0]])
+        
+        self.assertListEqual(z2pack.tb.vectors.neighbours([0,1], forward_only = False), 
         [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0]])
         
-        self.assertListEqual(z2pack.tb.vectors.neighbours(0, 1), 
-        [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0]])
-        
-        self.assertListEqual(z2pack.tb.vectors.neighbours(2, 0, 1), 
+        self.assertListEqual(z2pack.tb.vectors.neighbours([2, 0, 1], forward_only = False), 
         [[0, 0, 1], [0, 0, -1], [1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0]])
         
         self.assertListEqual(z2pack.tb.vectors.neighbours([2, 0, 1]), 
-        [[0, 0, 1], [0, 0, -1], [1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0]])
+        [[0, 0, 1], [1, 0, 0], [0, 1, 0]])
         
-        self.assertRaises(TypeError, z2pack.tb.vectors.neighbours(), [2, 0, 1.])
+        self.assertListEqual(z2pack.tb.vectors.neighbours(1), 
+        [[0, 1, 0]])
         
-        self.assertRaises(TypeError, z2pack.tb.vectors.neighbours(), 'str')
+        
+        self.assertRaises(TypeError, z2pack.tb.vectors.neighbours, [2, 0, 1.])
+        
+        self.assertRaises(TypeError, z2pack.tb.vectors.neighbours, 'str')
 
 if __name__ == "__main__":
     unittest.main()

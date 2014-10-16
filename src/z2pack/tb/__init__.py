@@ -127,8 +127,7 @@ class Hamilton:
                 H[index_1][index_2] += hopping[0] * phase
 
                 # add conjugate if hopping is not on the diagonal
-                if not(index_1 == index_2):
-                    H[index_2][index_1] += (hopping[0] * phase).conjugate()
+                H[index_2][index_1] += (hopping[0] * phase).conjugate()
             return H
                 
         self._num_electrons = sum(atom[1] for atom in self._atoms) # needed for _getM

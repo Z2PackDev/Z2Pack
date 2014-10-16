@@ -9,31 +9,26 @@
 A collection of functions to easily create multiple reciprocal lattice vectors
 """
 
-def neighbours(*args):
+def neighbours(axes, forward_only = True):
     """
-    Adds two vectors for every axis, with +-1 in that axis (0 on 
+    Adds vectors for every axis, either two (with +-1) or one (with +1, default) in that axis (0 on 
     the other coordinates).
     
-    :param args:        axes for which neighbours are to be added, either as different arguments or as a list
-    :type args:         int or list(int)
+    :param axes:            Axes for which neighbours are to be added, either as different arguments or as a list
+    :type args:             int or list(int)
+    :param forward_only:    If True, adds only the neighbour in positive direction (+1) instead of both directions (+-1)
+    :type forward_only:     Boolean
     """
     res = []
+    if(isinstance(axes, int)):
+        axes = [axes]
     
-    axes = []
-    for arg in args:
-        # if arg is an iterable (list, tuple,...)
-        try:
-            for val in arg:
-                axes.append(val)
-        # if arg is a single value (type safety not guaranteed)
-        except TypeError:
-            axes.append(arg)
-
     for axis in axes:
         if not(isinstance(axis, int)):
             raise TypeError('axis must be an int')
         res.append([1 if(i==axis) else 0 for i in range(3)])
-        res.append([-1 if(i==axis) else 0 for i in range(3)])
+        if not forward_only:
+            res.append([-1 if(i==axis) else 0 for i in range(3)])
 
     return res
     

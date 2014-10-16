@@ -87,8 +87,7 @@ class Z2PackPlane:
                     **kwargs):
         self._M_handle = M_handle
         self._pickle_file = pickle_file
-        self._defaults = {  
-                            'no_iter': False,
+        self._defaults = {  'no_iter': False,
                             'no_neighbour_check': False,
                             'wcc_tol': 1e-2,
                             'gap_tol': 2e-2,
@@ -96,8 +95,7 @@ class Z2PackPlane:
                             'min_neighbour_dist': 0.01,
                             'use_pickle': True,
                             'num_strings': 11,
-                            'verbose': True
-                            }
+                            'verbose': True }
         self._defaults.update(kwargs)
         
     def wcc_calc(self, **kwargs):

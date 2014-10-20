@@ -10,3 +10,4 @@ doc/build
 examples/tb/results/*
 examples/fp/**/results/*
 MANIFEST
+dist

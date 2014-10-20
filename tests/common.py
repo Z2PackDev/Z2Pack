@@ -39,7 +39,8 @@ class CommonTestCase(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(CommonTestCase, self).__init__(*args, **kwargs)
         self.assertIterAlmostEqual = types.MethodType(assertIterAlmostEqual, self)
-        self.assertContainerAlmostEqual = types.MethodType(assertContainerAlmostEqual, self)
+        self.assertContainerAlmostEqual = types.MethodType(
+        assertContainerAlmostEqual, self)
         
 if __name__ == "__main__":
     print("common.py")

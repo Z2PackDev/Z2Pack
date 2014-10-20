@@ -6,7 +6,7 @@
 # File:    read_mmn.py
 
 import sys
-sys.path.append('../src')
+sys.path.append('../')
 import z2pack
 
 from common import *

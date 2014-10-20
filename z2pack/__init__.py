@@ -103,7 +103,7 @@ class Z2PackPlane(object):
             text = 'kpts:\n' + str(self._k_points)
             text += '\nwcc:\n' + str(self._wcc_list)
             text += '\ngaps:\n' + str(self._gaps)
-            text += '\ninvariant:\n' + str(self.invariant()4)
+            text += '\ninvariant:\n' + str(self.invariant())
             return text
         except:
             return super(Z2PackPlane, self).__str__()

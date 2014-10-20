@@ -1,0 +1,4 @@
+recursive-include examples *.py *.in *.files *.win
+recursive-include tests *.py *.txt *.mmn
+include doc/build/text/index.txt
+prune examples/fp/*/build

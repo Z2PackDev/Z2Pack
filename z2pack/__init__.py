@@ -351,7 +351,7 @@ class Z2PackPlane(object):
         niter = 0
         if(self._verbose):
             print('    N = ' + str(N), end='')
-            sys.stdout.flush()  # Output
+            sys.stdout.flush()
         x, min_sv = self._trywcc(self._M_handle(kx, N))
 
         # no iteration

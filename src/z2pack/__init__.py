@@ -68,7 +68,7 @@ class Z2PackSystem:
                                     **kw_arguments
                                 )
 
-class Z2PackPlane:
+class Z2PackPlane(object):
     """
     Describes a plane in reciprocal space where to calculate the Z2 topological invariant.
     
@@ -97,6 +97,16 @@ class Z2PackPlane:
                             'num_strings': 11,
                             'verbose': True }
         self._defaults.update(kwargs)
+
+    def __str__(self):
+        try:
+            text = 'kpts:\n' + str(self._k_points)
+            text += '\nwcc:\n' + str(self._wcc_list)
+            text += '\ngaps:\n' + str(self._gaps)
+            text += '\ninvariant:\n' + str(self.invariant()4)
+            return text
+        except:
+            return super(Z2PackPlane, self).__str__()
         
     def wcc_calc(self, **kwargs):
         """

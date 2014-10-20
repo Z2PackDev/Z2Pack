@@ -287,11 +287,11 @@ class Z2PackPlane(object):
                             self._wcc_list.insert(i + 1, [])
                             self._gaps.insert(i + 1, None)
                             # check length of the variables
-                            assert len(self._k_points) == len(self._wcc_list)
-                            assert len(self._k_points) - 1 ==
-                            len(self._neighbour_check)
-                            assert len(self._k_points) ==
-                            len(self._string_status)
+                            assert(len(self._k_points) == len(self._wcc_list))
+                            assert(len(self._k_points) - 1 ==
+                                   len(self._neighbour_check))
+                            assert(len(self._k_points) ==
+                                   len(self._string_status))
                             assert len(self._k_points) == len(self._gaps)
                             return False
                 else:

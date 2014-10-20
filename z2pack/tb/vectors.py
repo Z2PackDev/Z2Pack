@@ -9,33 +9,39 @@
 A collection of functions to easily create multiple reciprocal lattice vectors
 """
 
-def neighbours(axes, forward_only = True):
+
+def neighbours(axes, forward_only=True):
     """
-    Adds vectors for every axis, either two (with +-1) or one (with +1, default) in that axis (0 on 
+    Adds vectors for every axis, either two (with +-1) or one (with +1, \
+    default) in that axis (0 on
     the other coordinates).
-    
-    :param axes:            Axes for which neighbours are to be added, either as different arguments or as a list
+
+    :param axes:            Axes for which neighbours are to be added, \
+    either as different arguments or as a list
     :type args:             int or list(int)
-    :param forward_only:    If True, adds only the neighbour in positive direction (+1) instead of both directions (+-1)
+    :param forward_only:    If True, adds only the neighbour in positive \
+    direction (+1) instead of both directions (+-1)
     :type forward_only:     Boolean
     """
     res = []
     if(isinstance(axes, int)):
         axes = [axes]
-    
+
     for axis in axes:
         if not(isinstance(axis, int)):
             raise TypeError('axis must be an int')
-        res.append([1 if(i==axis) else 0 for i in range(3)])
+        res.append([1 if(i == axis) else 0 for i in range(3)])
         if not forward_only:
-            res.append([-1 if(i==axis) else 0 for i in range(3)])
+            res.append([-1 if(i == axis) else 0 for i in range(3)])
 
     return res
-    
+
+
 def combine(x_vals, y_vals, z_vals):
     """
-    Creates all possible combinations of the given values. ``z`` changes fastest, ``x`` slowest.
-    
+    Creates all possible combinations of the given values. ``z`` changes \
+    fastest, ``x`` slowest.
+
     :param x_vals:      Possible values for ``x``
     :type x_vals:       int or list(int)
     :param y_vals:      Possible values for ``y``
@@ -61,4 +67,3 @@ def combine(x_vals, y_vals, z_vals):
 
 if __name__ == "__main__":
     print("tb_vectors.py")
-    

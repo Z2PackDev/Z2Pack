@@ -4,6 +4,7 @@
 # Author:  Dominik Gresch <greschd@ethz.ch>
 # Date:    21.03.2014 11:46:38 CET
 # File:    z2pack.py
+"""A tool for calculating topological invariants"""
 
 from __future__ import print_function
 
@@ -182,9 +183,6 @@ class Z2PackPlane(object):
         # checking num_strings
         if(self._num_strings < 2):
             raise ValueError("num_strings must be at least 2")
-        elif(self._num_strings < 8):
-            warnings.warn("num_strings should be >= 8 for good results",
-                          UserWarning)
 
         # initial output
         if(self._verbose):

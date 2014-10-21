@@ -3,14 +3,12 @@
 #
 # Author:  Dominik Gresch <greschd@ethz.ch>
 # Date:    27.09.2014 21:27:27 CEST
-# File:    k_points.py
+# File:    kpts.py
 """
 Collection of functions for creating k-points input for different \
 first-principles codes.
 All functions have the same calling structure as :func:`prototype`.
 """
-
-import sys
 
 
 def prototype(start_point, last_point, end_point, N):
@@ -29,6 +27,7 @@ def prototype(start_point, last_point, end_point, N):
     :param N:               Number of k-points in the string
     :type N:                int
     """
+    raise NotImplementedError('This is only the prototype for kpts')
 
 
 def abinit(start_point, last_point, end_point, N):

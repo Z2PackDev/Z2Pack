@@ -5,8 +5,6 @@
 # Date:    11.04.2014 13:08:23 CEST
 # File:    read_mmn.py
 
-import numpy as np
-
 
 def getM(mmn_file):
     """
@@ -20,24 +18,25 @@ def getM(mmn_file):
     f.readline()
 
     # read the first line
-    line = list(filter(None, f.readline().split(" ")))
-    num_bands, num_kpts, nntot = [int(l) for l in line]
+    line = [entry for entry in f.readline().split(" ") if entry]
+    num_bands, num_kpts, _ = [int(l) for l in line]
 
     # read the rest of the file
     data = f.read()
     f.close()
 
-    data = list(filter(None, data.split("\n")))
+    data = [entry for entry in data.split("\n") if entry]
     blocks = []
     step = num_bands * num_bands + 1
     for i in range(0, len(data), step):
-        blocks.append(list(filter(None, data[i:i + step])))
+        blocks.append([entry for entry in data[i:i + step] if entry])
 
     # extract k and k + b for each M
     idx_list = []
     for i in range(len(blocks)):
         idx_list.append([int(el) for el in
-                         list(filter(None, blocks[i][0].split(" ")))[:2]])
+                         [entry for entry in blocks[i][0].split(" ")
+                          if entry][:2]])
 
     # extract M
     M = []
@@ -49,7 +48,7 @@ def getM(mmn_file):
         temp = []
         for j in range(1, len(blocks[i])):
             temp2 = [float(k) for k in
-                     list(filter(None, blocks[i][j].split(" ")))]
+                     [entry for entry in blocks[i][j].split(" ") if entry]]
             temp.append(temp2[0] + 1j * temp2[1])
 
         temp2 = []

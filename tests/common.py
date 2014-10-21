@@ -15,9 +15,9 @@ def assertIterAlmostEqual(TestCase, x, y, iter_type = list):
     comparing iterables of numbers (float, int) for almost equality
     """
     if not(isinstance(x, iter_type) and isinstance(y, iter_type)):
-        unittest.fail(msg = 'type of compared input is not list')
+        TestCase.fail(msg = 'type of compared input is not list')
     if not(len(x) == len(y)):
-        fail(msg = 'length of objects not equal')
+        TestCase.fail(msg = 'length of objects not equal')
 
     for i in range(len(x)):
         TestCase.assertAlmostEqual(x[i], y[i])
@@ -28,7 +28,7 @@ def assertContainerAlmostEqual(TestCase, x, y):
     """
     try:
         if not(len(x) == len(y)):
-            fail(msg='length of objects not equal')
+            TestCase.fail(msg='length of objects not equal')
         for i in range(len(x)):
             TestCase.assertContainerAlmostEqual(x[i], y[i])
     except TypeError:

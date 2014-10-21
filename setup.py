@@ -7,12 +7,16 @@
 
 from distutils.core import setup
 
+with open('README.md', 'r') as f:
+    readme = f.read()
+
 setup(  name = 'z2pack',
         version = '0.1',
         url = '',
         author = 'Dominik Gresch',
         author_email = 'greschd@gmx.ch',
         description = 'A tool for calculating topological invariants',
+        long_description = readme,
         license = 'LICENSE.txt',
         packages = ['z2pack',
                     'z2pack.python_tools',

@@ -25,8 +25,8 @@ for filename in os.listdir(os.path.dirname(os.path.abspath(__file__))):
             try:
                 if(issubclass(val, unittest.TestCase)):
                     vars()[key] = val
-            except: pass
+            except:
+                pass
 
 if __name__ == "__main__":
     unittest.main()
-    

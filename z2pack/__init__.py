@@ -17,6 +17,7 @@ from __future__ import print_function
 
 from .python_tools import string_tools
 
+import re
 import sys
 import time
 import copy
@@ -129,6 +130,23 @@ class Z2PackPlane(object):
         except AttributeError:
             return super(Z2PackPlane, self).__str__()
 
+    def _validate_kwargs(fct):
+        """
+        checks if kwargs are in a fct's docstring
+        """
+        valid_kwargs = [text.lstrip(' ').split(':')[0]
+                        for text in fct.__doc__.split(':param')[1:]]
+        def inner(*args, **kwargs):
+            for key in kwargs.keys():
+                if key not in valid_kwargs:
+                    raise TypeError(fct.__name__ + ' got an unexpected keyword '
+                                    + key)
+
+            return fct(*args, **kwargs)
+        inner.__doc__ = fct.__doc__
+        return inner
+
+    @_validate_kwargs
     def wcc_calc(self, **kwargs):
         """
         Calculates the Wannier charge centers in the given plane
@@ -391,6 +409,9 @@ class Z2PackPlane(object):
         decorator to print wcc after a function call (if verbose)
         """
         def inner(*args, **kwargs):
+            """
+            decorated function
+            """
             res = func(*args, **kwargs)
             wcc = sorted(res[0])
             if(args[0]._current['verbose']):
@@ -460,8 +481,8 @@ class Z2PackPlane(object):
         :param ax:      Axis where the plot is drawn
         :type ax:       :mod:`matplotlib` ``axis``
 
-        :returns:       :class:`matplotlib figure` object (only if ``ax == \
-        None``)
+        :returns:       :class:`matplotlib figure` object (only if \
+        ``ax == None``)
         """
         shift = shift % 1
         if not axis:
@@ -526,8 +547,6 @@ class Z2PackPlane(object):
             return 1 if inv == -1 else 0
         except (NameError, AttributeError):
             raise RuntimeError('WCC not yet calculated')
-        #~ except (NameError, AttributeError) as e:
-            #~ raise RuntimeError('WCC not yet calculated') from e
 
 
 #-------------------------------------------------------------------#
@@ -586,6 +605,11 @@ def _gapfind(wcc):
         gapsize = temp
         gappos = N - 1
     return (wcc[gappos] + gapsize / 2) % 1
+
+
+
+
+
 #----------------END CLASS INDEPENDENT FUNCTIONS---------------------#
 
 from . import fp

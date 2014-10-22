@@ -22,6 +22,7 @@ import sys
 import time
 import copy
 import pickle
+import functools
 import numpy as np
 import scipy.linalg as la
 import matplotlib.pyplot as plt
@@ -102,49 +103,39 @@ class Z2PackPlane(object):
     ``wcc_calc`` take precedence
     """
 
-    def __init__(self,
-                 m_handle,
-                 pickle_file="res_pickle.txt",
-                 **kwargs):
-        self._m_handle = m_handle
-        self._pickle_file = pickle_file
-        self._defaults = {'no_iter': False,
-                          'no_neighbour_check': False,
-                          'wcc_tol': 1e-2,
-                          'gap_tol': 2e-2,
-                          'max_iter': 10,
-                          'min_neighbour_dist': 0.01,
-                          'use_pickle': True,
-                          'num_strings': 11,
-                          'verbose': True}
-        self._defaults.update(kwargs)
-        self._current = copy.copy(self._defaults)
-
-    def __str__(self):
-        try:
-            text = 'kpts:\n' + str(self._k_points)
-            text += '\nwcc:\n' + str(self._wcc_list)
-            text += '\ngaps:\n' + str(self._gaps)
-            text += '\ninvariant:\n' + str(self.invariant())
-            return text
-        except AttributeError:
-            return super(Z2PackPlane, self).__str__()
-
-    def _validate_kwargs(fct):
+    def _validate_kwargs(func=None, target=None):
         """
-        checks if kwargs are in a fct's docstring
+        checks if kwargs are in target's docstring
+        if no target is given, target = func
         """
-        valid_kwargs = [text.lstrip(' ').split(':')[0]
-                        for text in fct.__doc__.split(':param')[1:]]
-        def inner(*args, **kwargs):
-            for key in kwargs.keys():
-                if key not in valid_kwargs:
-                    raise TypeError(fct.__name__ + ' got an unexpected keyword '
-                                    + key)
+        def decorator(func):
 
-            return fct(*args, **kwargs)
-        inner.__doc__ = fct.__doc__
-        return inner
+            @functools.wraps(func)
+            def inner(*args, **kwargs):
+                if target is None:
+                    doc = func.__doc__
+                else:
+                    doc = target.__doc__
+                valid_kwargs = [text.lstrip(' ').split(':')[0]
+                                for text in doc.split(':param')[1:]]
+                for key in kwargs.keys():
+                    if key not in valid_kwargs:
+                        if target is None:
+                            raise TypeError(func.__name__ +
+                                            ' got an unexpected keyword ' +
+                                            key)
+                        else:
+                            raise TypeError(func.__name__ +
+                                            ' got an unexpected keyword \'' +
+                                            key + '\' for use in ' +
+                                            target.__name__)
+                return func(*args, **kwargs)
+            return inner
+
+        if func is None:
+            return decorator
+        else:
+            return decorator(func)
 
     @_validate_kwargs
     def wcc_calc(self, **kwargs):
@@ -253,8 +244,38 @@ class Z2PackPlane(object):
             print(string_tools.cbox("finished wcc calculation" + "\ntime: "
                                     + duration_string))
 
-        # return value
         return (self._k_points, self._wcc_list, self._gaps)
+
+    # has to be below wcc_calc because _validate_kwargs needs access to
+    # wcc_calc.__doc__
+    @_validate_kwargs(target=wcc_calc)
+    def __init__(self,
+                 m_handle,
+                 pickle_file="res_pickle.txt",
+                 **kwargs):
+        self._m_handle = m_handle
+        self._pickle_file = pickle_file
+        self._defaults = {'no_iter': False,
+                          'no_neighbour_check': False,
+                          'wcc_tol': 1e-2,
+                          'gap_tol': 2e-2,
+                          'max_iter': 10,
+                          'min_neighbour_dist': 0.01,
+                          'use_pickle': True,
+                          'num_strings': 11,
+                          'verbose': True}
+        self._defaults.update(kwargs)
+        self._current = copy.copy(self._defaults)
+
+    def __str__(self):
+        try:
+            text = 'kpts:\n' + str(self._k_points)
+            text += '\nwcc:\n' + str(self._wcc_list)
+            text += '\ngaps:\n' + str(self._gaps)
+            text += '\ninvariant:\n' + str(self.invariant())
+            return text
+        except AttributeError:
+            return super(Z2PackPlane, self).__str__()
 
     #-------------------------------------------------------------------#
     #                support functions for wcc                          #
@@ -605,9 +626,6 @@ def _gapfind(wcc):
         gapsize = temp
         gappos = N - 1
     return (wcc[gappos] + gapsize / 2) % 1
-
-
-
 
 
 #----------------END CLASS INDEPENDENT FUNCTIONS---------------------#

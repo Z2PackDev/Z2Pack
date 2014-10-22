@@ -168,6 +168,27 @@ class TbExampleTestCase(CommonTestCase):
 
         self.assertContainerAlmostEqual(tb_plane.get_res(), res)
 
+    def testkwargcheck1(self):
+        """ test kwarg check on wcc_calc """
+        self.createH(0, 0.3)
+        # call to Z2Pack
+        tb_system = z2pack.tb.System(self.H)
+        tb_plane = tb_system.plane(1, 2, 0)
+        self.assertRaises(
+            TypeError,
+            tb_plane.wcc_calc,
+            invalid_kwarg = 3)
+
+    def testkwargcheck2(self):
+        """ test kwarg check on __init__ """
+        self.createH(0, 0.3)
+        # call to Z2Pack
+        tb_system = z2pack.tb.System(self.H)
+        self.assertRaises(
+            TypeError,
+            tb_system.plane,
+            1, 2, 0, invalid_kwarg = 3)
+
 
 if __name__ == "__main__":
     unittest.main()

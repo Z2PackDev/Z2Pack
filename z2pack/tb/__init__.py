@@ -3,8 +3,12 @@
 #
 # Author:  Dominik Gresch <greschd@ethz.ch>
 # Date:    17.09.2014 10:25:24 CEST
-# File:    tb_hamilton.py
-
+# File:    __init__.py (z2pack.tb)
+"""
+The z2pack.tb module: Contains the classes Hamilton (for creating a \
+tight-binding model) and System (subclass of Z2PackSystem, for interfacing\
+to the Core).
+"""
 from . import vectors
 
 import copy
@@ -253,7 +257,7 @@ class System(Z2PackSystem):
         self._defaults = kwargs
         self._tb_hamilton = tb_hamilton
 
-        def _M_handle_creator_tb(string_dir, plane_pos_dir, plane_pos):
+        def _m_handle_creator_tb(string_dir, plane_pos_dir, plane_pos):
             # check if kx is before or after plane_pos_dir
             if(3 - string_dir > 2 * plane_pos_dir):
                 return lambda kx, N: self._tb_hamilton._getM(string_dir,
@@ -263,7 +267,7 @@ class System(Z2PackSystem):
                 return lambda kx, N: self._tb_hamilton._getM(string_dir,
                                                              [kx, plane_pos],
                                                              N)
-        self._M_handle_creator = _M_handle_creator_tb
+        self._m_handle_creator = _m_handle_creator_tb
 
 
 if __name__ == "__main__":

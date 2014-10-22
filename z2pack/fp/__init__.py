@@ -86,7 +86,7 @@ class System(Z2PackSystem):
                                               clean_working_folder)
         self._defaults = kwargs
 
-        def _M_handle_creator_first_principles(string_dir,
+        def _m_handle_creator_first_principles(string_dir,
                                                plane_pos_dir,
                                                plane_pos):
             # check if kx is before or after plane_pos_dir
@@ -98,7 +98,7 @@ class System(Z2PackSystem):
                 return lambda kx, N: self._system._run(string_dir,
                                                        [kx, plane_pos],
                                                        N)
-        self._M_handle_creator = _M_handle_creator_first_principles
+        self._m_handle_creator = _m_handle_creator_first_principles
 
 
 class _FirstPrinciplesSystem:

@@ -8,10 +8,9 @@ Z2Pack Core
 -----------
 .. automodule:: z2pack
     :members:
-    
+
 Z2Pack for Tight-Binding Models
 -------------------------------
-    
 .. automodule:: z2pack.tb
     :members:
 
@@ -24,7 +23,7 @@ Z2Pack for First-Principles Systems
 -----------------------------------
 .. automodule:: z2pack.fp
     :members:
-    
+
 Functions creating k-points input
 +++++++++++++++++++++++++++++++++
 

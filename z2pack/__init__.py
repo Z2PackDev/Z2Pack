@@ -22,6 +22,7 @@ import sys
 import time
 import copy
 import pickle
+import decorator
 import functools
 import numpy as np
 import scipy.linalg as la
@@ -108,34 +109,31 @@ class Z2PackPlane(object):
         checks if kwargs are in target's docstring
         if no target is given, target = func
         """
-        def decorator(func):
-
-            @functools.wraps(func)
-            def inner(*args, **kwargs):
-                if target is None:
-                    doc = func.__doc__
-                else:
-                    doc = target.__doc__
-                valid_kwargs = [text.lstrip(' ').split(':')[0]
-                                for text in doc.split(':param')[1:]]
-                for key in kwargs.keys():
-                    if key not in valid_kwargs:
-                        if target is None:
-                            raise TypeError(func.__name__ +
-                                            ' got an unexpected keyword ' +
-                                            key)
-                        else:
-                            raise TypeError(func.__name__ +
-                                            ' got an unexpected keyword \'' +
-                                            key + '\' for use in ' +
-                                            target.__name__)
-                return func(*args, **kwargs)
-            return inner
+        @decorator.decorator
+        def inner(func, *args, **kwargs):
+            if target is None:
+                doc = func.__doc__
+            else:
+                doc = target.__doc__
+            valid_kwargs = [text.lstrip(' ').split(':')[0]
+                            for text in doc.split(':param')[1:]]
+            for key in kwargs.keys():
+                if key not in valid_kwargs:
+                    if target is None:
+                        raise TypeError(func.__name__ +
+                                        ' got an unexpected keyword ' +
+                                        key)
+                    else:
+                        raise TypeError(func.__name__ +
+                                        ' got an unexpected keyword \'' +
+                                        key + '\' for use in ' +
+                                        target.__name__)
+            return func(*args, **kwargs)
 
         if func is None:
-            return decorator
+            return inner
         else:
-            return decorator(func)
+            return inner(func)
 
     @_validate_kwargs
     def wcc_calc(self, **kwargs):

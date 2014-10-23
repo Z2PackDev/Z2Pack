@@ -144,12 +144,12 @@ class _FirstPrinciplesSystem:
         paths, the rest is relative to working_folder
         """
         # catch Windows
-        if(re.match(platform.platform(), 'Windows', re.IGNORECASE)):
+        if(re.match('Windows', platform.platform(), re.IGNORECASE)):
             self._sep = '\\'
-            self._rmdir = 'rmdir '
+            self._is_windows = True
         else:
             self._sep = '/'
-            self._rmdir = 'rm -rf '
+            self._is_windows = False
 
         # convert to lists (input_files)
         if not isinstance(input_files, str):
@@ -235,8 +235,17 @@ class _FirstPrinciplesSystem:
             pass
 
         if(self._clean_subfolder):
-            subprocess.call(self._rmdir + self._working_folder + self._sep
-                            + "*", shell=True)
+            if not(self._is_windows):
+                subprocess.call('rm -rf ' + self._working_folder + self._sep
+                                + "*", shell=True)
+            else:
+                try:
+                    subprocess.call('del ' + self._working_folder + self._sep
+                                    + '* /S /Q', shell=True)
+                    subprocess.call('for /d %x in (' + self._working_folder
+                                    + self._sep + '*) do rd /S /Q "%x"')
+                except WindowsError:
+                    pass
         _copy(self._input_files, self._file_names_abs)
 
         if(self._k_mode == 'append'):

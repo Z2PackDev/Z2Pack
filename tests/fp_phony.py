@@ -10,12 +10,18 @@ import z2pack
 
 from common import *
 
+import re
+import platform
 import types
 import unittest
 
 
 class FpPhonyTestCase(CommonTestCase):
     def __init__(self, *args, **kwargs):
+        if(re.match('Windows', platform.platform(), re.IGNORECASE)):
+            self._sep = '\\'
+        else:
+            self._sep = '/'
         self._res = (
             [0.0, 0.050000000000000003, 0.10000000000000001,
              0.15000000000000002,  0.20000000000000001, 0.25,
@@ -86,10 +92,10 @@ class FpPhonyTestCase(CommonTestCase):
 
     def testphony1(self):
         sys = z2pack.fp.System(
-            'samples/wannier90.mmn',
+            'samples' + self._sep + 'wannier90.mmn',
             lambda x, y, z, N: '',
             "kpts",
-            "samples/build",
+            'samples' + self._sep + 'build',
             "")
 
         plane = sys.plane(2, 0, 0, use_pickle=False)
@@ -99,10 +105,10 @@ class FpPhonyTestCase(CommonTestCase):
 
     def testphony2(self):
         sys = z2pack.fp.System(
-            'samples/varw90.mmn',
+            'samples' + self._sep + 'varw90.mmn',
             lambda x, y, z, N: '',
             "kpts",
-            "samples/build",
+            'samples' + self._sep + 'build',
             "",
             file_names='wannier90.mmn')
 
@@ -113,10 +119,10 @@ class FpPhonyTestCase(CommonTestCase):
 
     def testphony3(self):
         sys = z2pack.fp.System(
-            'samples/varw90.mmn',
+            'samples' + self._sep + 'varw90.mmn',
             lambda x, y, z, N: '',
             "kpts",
-            "samples/build",
+            'samples' + self._sep + 'build',
             "",
             mmn_path='varw90.mmn')
 

@@ -13,7 +13,6 @@ from . import vectors
 
 import copy
 import numpy as np
-import sympy as sp
 import scipy.linalg as la
 
 

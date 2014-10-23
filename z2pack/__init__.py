@@ -23,7 +23,6 @@ import time
 import copy
 import pickle
 import decorator
-import functools
 import numpy as np
 import scipy.linalg as la
 import matplotlib.pyplot as plt
@@ -111,6 +110,7 @@ class Z2PackPlane(object):
         """
         @decorator.decorator
         def inner(func, *args, **kwargs):
+            """decorated function"""
             if target is None:
                 doc = func.__doc__
             else:

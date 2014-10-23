@@ -10,9 +10,11 @@ from .. import Z2PackSystem
 from . import read_mmn as mmn
 
 import os
+import re
 import sys
 import copy
 import shutil
+import platform
 import subprocess
 
 
@@ -141,22 +143,33 @@ class _FirstPrinciplesSystem:
         input_files and working_folder can be absolute or relative
         paths, the rest is relative to working_folder
         """
+        # catch Windows
+        if(re.match(platform.platform(), 'Windows', re.IGNORECASE)):
+            self._sep = '\\'
+            self._rmdir = 'rmdir '
+        else:
+            self._sep = '/'
+            self._rmdir = 'rm -rf '
 
-        # convert to lists (input_files, file_names)
-        try:
-            input_files[0]
+        # convert to lists (input_files)
+        if not isinstance(input_files, str):
             self._input_files = list(input_files)
-        except TypeError:
+        else:
             self._input_files = [input_files]
 
+        # copy to file_names and split off the name
         if(file_names == 'copy'):
             self._file_names = copy.copy(self._input_files)
+            for i in range(len(self._input_files)):
+                self._file_names[i] = self._input_files[i].split(self._sep)[-1]
         else:
-            try:
-                file_names[0]
-                self._file_names = list(file_names)
-            except TypeError:
-                self._file_names = [file_names]
+            self._file_names = file_names
+
+        # convert to list(file_names)
+        if not isinstance(self._file_names, str):
+            self._file_names = list(self._file_names)
+        else:
+            self._file_names = [self._file_names]
 
         # check whether to append k-points or write separate file
         if(k_points_path in self._file_names):
@@ -171,9 +184,9 @@ class _FirstPrinciplesSystem:
 
         # make input_files absolute (check if already absolute)
         for i in range(len(self._input_files)):
-            if not(self._input_files[i][0] == "/" or
+            if not(self._input_files[i][0] == self._sep or
                    self._input_files[i][0] == "~"):  # relative
-                self._input_files[i] = self._calling_path + '/' + \
+                self._input_files[i] = self._calling_path + self._sep + \
                     self._input_files[i]
 
         self._command = command
@@ -193,19 +206,21 @@ class _FirstPrinciplesSystem:
 
     def _create_working_folder(self, working_folder):
         # check all paths: absolute / relative?
-        if(working_folder[0] == "/" or working_folder[0] == "~"):  # absolute
+        # absolute
+        if(working_folder[0] == self._sep or working_folder[0] == "~"):
             self._working_folder = working_folder
         else:  # relative
-            self._working_folder = self._calling_path + '/' + working_folder
+            self._working_folder = (self._calling_path +
+                                    self._sep + working_folder)
         # make file_names absolute (assumed to be relative to working_folder)
         self._file_names_abs = []
         for i in range(len(self._file_names)):
-            self._file_names_abs.append(self._working_folder + '/' +
+            self._file_names_abs.append(self._working_folder + self._sep +
                                         self._file_names[i])
 
-        self._k_points_path_abs = (self._working_folder + '/' +
+        self._k_points_path_abs = (self._working_folder + self._sep +
                                    self._k_points_path)
-        self._mmn_path_abs = self._working_folder + '/' + self._mmn_path
+        self._mmn_path_abs = self._working_folder + self._sep + self._mmn_path
 
         # create working folder if it doesn't exist
         if not(os.path.isdir(self._working_folder)):
@@ -214,13 +229,14 @@ class _FirstPrinciplesSystem:
     def _create_input(self, *args):
         try:
             self._counter += 1
-            self._create_working_folder(self._working_folder_fct(self._counter))
+            self._create_working_folder(
+                self._working_folder_fct(self._counter))
         except (AttributeError, NameError):
             pass
 
         if(self._clean_subfolder):
-            subprocess.call("rm -rf " + self._working_folder + "/*",
-                            shell=True)
+            subprocess.call(self._rmdir + self._working_folder + self._sep
+                            + "*", shell=True)
         _copy(self._input_files, self._file_names_abs)
 
         if(self._k_mode == 'append'):
@@ -228,6 +244,7 @@ class _FirstPrinciplesSystem:
         else:
             f = open(self._k_points_path_abs, "w")
         f.write(self._k_points_fct(*args))
+        f.close()
 
     def _run(self, string_dir, string_pos, N):
         # create input

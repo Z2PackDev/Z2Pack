@@ -3,4 +3,5 @@ recursive-include examples/fp/Bi *.py *.in *.files *.win
 recursive-include tests *.py *.txt *.mmn
 include doc/build/text/doc.txt
 prune examples/fp/*/build
+prune tests/samples/build
 include README.md

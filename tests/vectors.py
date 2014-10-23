@@ -6,7 +6,7 @@
 # File:    vectors.py
 
 import sys
-sys.path.append('../')
+sys.path.insert(0, '../')
 import z2pack
 
 import unittest

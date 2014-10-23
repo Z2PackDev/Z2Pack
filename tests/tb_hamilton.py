@@ -6,12 +6,11 @@
 # File:    tb_hamilton.py
 
 import sys
-sys.path.append('../')
+sys.path.insert(0, '../')
 import z2pack
 
 from common import *
 
-import types
 import unittest
 
 

@@ -242,9 +242,12 @@ class _FirstPrinciplesSystem:
                 try:
                     subprocess.call('del ' + self._working_folder + self._sep
                                     + '* /S /Q', shell=True)
+                except OSError:  # if there is no file to delete
+                    pass
+                try:
                     subprocess.call('for /d %x in (' + self._working_folder
                                     + self._sep + '*) do rd /S /Q "%x"')
-                except WindowsError:
+                except OSError:  # if there is no folder to delete
                     pass
         _copy(self._input_files, self._file_names_abs)
 

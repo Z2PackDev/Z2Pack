@@ -12,3 +12,4 @@ examples/fp/**/results/*
 MANIFEST
 dist
 files*.txt
+*egg**

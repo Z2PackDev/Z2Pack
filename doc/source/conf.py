@@ -29,8 +29,7 @@ sys.path.insert(0, os.path.abspath('../../'))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'matplotlib.sphinxext.mathmpl',
+    'sphinx.ext.autodoc'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -43,7 +42,8 @@ source_suffix = '.rst'
 #source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+#~ master_doc = 'index'
+master_doc = 'doc'
 
 # General information about the project.
 project = u'Z2Pack'
@@ -73,7 +73,8 @@ language = None
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['doc.rst']
+#~ exclude_patterns = ['doc.rst']
+exclude_patterns = ['index.rst']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.

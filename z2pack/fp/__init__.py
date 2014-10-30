@@ -18,11 +18,6 @@ import platform
 import subprocess
 
 
-#-----------------------------------------------------------------------#
-#-----------------------------------------------------------------------#
-#                    FIRST PRINCIPLES SPECIALISATION                    #
-#-----------------------------------------------------------------------#
-#-----------------------------------------------------------------------#
 class System(Z2PackSystem):
     """
     Subclass of Z2PackSystem designed to work with various first - \
@@ -47,6 +42,9 @@ class System(Z2PackSystem):
     :param command:                 Command to execute the first principles \
     code
     :type command:                  str
+
+    :param executable:              Sets the executable executing the command\
+    :type executable:               str
 
     :param file_names:              Name(s) the input file(s) should get \
     in the ``working_folder``. Default behaviour is taking the filenames \
@@ -73,6 +71,7 @@ class System(Z2PackSystem):
                  k_points_path,
                  working_folder,
                  command,
+                 executable=None,
                  file_names='copy',
                  mmn_path='wannier90.mmn',
                  clean_working_folder=True,
@@ -83,6 +82,7 @@ class System(Z2PackSystem):
                                               k_points_path,
                                               working_folder,
                                               command,
+                                              executable,
                                               file_names,
                                               mmn_path,
                                               clean_working_folder)
@@ -111,6 +111,7 @@ class _FirstPrinciplesSystem:
                  k_points_path,
                  working_folder,
                  command,
+                 executable=None,
                  file_names='copy',
                  mmn_path='wannier90.mmn',
                  clean_subfolder=True):
@@ -190,6 +191,7 @@ class _FirstPrinciplesSystem:
                     self._input_files[i]
 
         self._command = command
+        self._executable = executable
         self._k_points_path = k_points_path
         self._mmn_path = mmn_path
         self._clean_subfolder = clean_subfolder
@@ -242,9 +244,12 @@ class _FirstPrinciplesSystem:
                 try:
                     subprocess.call('del ' + self._working_folder + self._sep
                                     + '* /S /Q', shell=True)
+                except OSError:  # if there is no file to delete
+                    pass
+                try:
                     subprocess.call('for /d %x in (' + self._working_folder
                                     + self._sep + '*) do rd /S /Q "%x"')
-                except WindowsError:
+                except OSError:  # if there is no folder to delete
                     pass
         _copy(self._input_files, self._file_names_abs)
 
@@ -267,7 +272,17 @@ class _FirstPrinciplesSystem:
         self._create_input(start_point, last_point, end_point, N)
 
         # execute command
-        subprocess.call(self._command, cwd=self._working_folder, shell=True)
+        if(self._executable is not None):
+            subprocess.call(
+                self._command,
+                cwd=self._working_folder,
+                shell=True,
+                executable=self._executable)
+        else:
+            subprocess.call(
+                self._command,
+                cwd=self._working_folder,
+                shell=True)
 
         # read mmn file
         return mmn.getM(self._mmn_path_abs)

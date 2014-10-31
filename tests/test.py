@@ -16,8 +16,9 @@ expr = re.compile(r'\.py$')
 imports all classes inherited from unittest.TestCase from modules located
 in the test folder
 """
+exclude_list = ['test.py', 'create_tests.py']
 for filename in os.listdir(os.path.dirname(os.path.abspath(__file__))):
-    if(filename == 'test.py'):
+    if(filename in exclude_list):
         continue
     match = expr.search(filename)
     if match is not None:
@@ -29,4 +30,6 @@ for filename in os.listdir(os.path.dirname(os.path.abspath(__file__))):
                 pass
 
 if __name__ == "__main__":
+    print("Note: failures in test_res1 due to small numerical " +
+    "differences are not a cause for concern.")
     unittest.main()

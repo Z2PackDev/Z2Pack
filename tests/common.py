@@ -5,11 +5,15 @@
 # Date:    15.10.2014 10:18:11 CEST
 # File:    common.py
 
+import sys
+sys.path.append('../')
+from z2pack.python_tools.replace import *
+
 import types
+import inspect
 import unittest
 
-"""assert functions for all tests"""
-
+# assert functions for all tests
 def assertIterAlmostEqual(TestCase, x, y, iter_type = list):
     """
     comparing iterables of numbers (float, int) for almost equality

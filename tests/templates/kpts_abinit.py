@@ -11,27 +11,28 @@ sys.path.insert(0, '../')
 import z2pack
 
 import unittest
+from common import *
 
 class KptsAbinitTestCase(unittest.TestCase):
     """TestCase for the z2pack.fp.kpts.abinit function"""
 
     def test1(self):
         """test basic functionality"""
-        self.assertEqual(z2pack.fp.kpts.abinit(
-            [0.2, 0, 0.5],
-            [0.2, 0.9, 0.5],
-            [0.2, 1, 0.5],
-            10),
-            '\nkptopt -1\nndivk 9\nkptbounds 0.2 0 0.5 \n0.2 0.9 0.5 \n')
+        self.assertEqual(
+            z2pack.fp.kpts.abinit(
+                [0.2, 0, 0.5], [0.2, 0.9, 0.5], [0.2, 1, 0.5], 10),
+            in_place_replace(
+                z2pack.fp.kpts.abinit(
+                    [0.2, 0, 0.5], [0.2, 0.9, 0.5], [0.2, 1, 0.5], 10)))
 
     def test2(self):
         """test basic functionality"""
-        self.assertEqual(z2pack.fp.kpts.abinit(
-            [0., 0.6, 0.5],
-            [0.99, 0.6, 0.5],
-            [1, 0.6, 0.5],
-            100),
-            '\nkptopt -1\nndivk 99\nkptbounds 0.0 0.6 0.5 \n0.99 0.6 0.5 \n')
+        self.assertEqual(
+            z2pack.fp.kpts.abinit(
+                [0., 0.6, 0.5], [0.99, 0.6, 0.5], [1, 0.6, 0.5], 100),
+            in_place_replace(
+                z2pack.fp.kpts.abinit(
+                    [0., 0.6, 0.5], [0.99, 0.6, 0.5], [1, 0.6, 0.5], 100)))
 
     def test3(self):
         """test for ValueError with wrong dimension of point"""

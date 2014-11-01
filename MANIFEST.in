@@ -4,4 +4,6 @@ recursive-include tests *.py *.txt *.mmn
 include doc/build/text/doc.txt
 prune examples/fp/*/build
 prune tests/samples/build
+prune tests/templates
+exclude tests/create_tests.py
 include README.md

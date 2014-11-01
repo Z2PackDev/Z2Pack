@@ -13,3 +13,6 @@ MANIFEST
 dist
 files*.txt
 *egg**
+z2pack/python_tools/.git
+z2pack/python_tools/.gitignore
+z2pack/python_tools/*.py

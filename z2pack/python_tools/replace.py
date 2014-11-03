@@ -18,12 +18,42 @@ class ChangeLog:
 
 ReplaceLog = ChangeLog()
 
+identifier = 'in_place_replace'
+
 class File:
     def __init__(self, name):
         self._name = name
         with open(name, "r") as f:
-            self._code = f.read().split('\n')
+            self._raw_code = f.read()
+            self._code = self._raw_code.split('\n')
         self._lines = list(range(0, len(self._code)))
+        self._positions = []
+        # indexing all occurrences of identifier
+        id_split = self._raw_code.split(identifier)
+        line_num = id_split[0].count('\n')
+        for line in id_split[1:]:
+            beginning = line_num
+            count = 0
+            first = True
+            found = False
+            for char in line:
+                if(char == '\n'):
+                    line_num += 1
+                if not(found): 
+                    if(char == '('):
+                        count += 1
+                        first = False
+                    elif(char == ')'):
+                        count -= 1
+                        if(count == 0 and not first):
+                            self._positions.append((beginning, line_num))
+                            found = True
+
+    def get_pos_delete(self, line_num):
+        for begin, end in self._positions:
+            if(begin <= line_num and end >= line_num):
+                self._positions.remove((begin, end))
+                return (begin, end)
 
     def delete_line(self, line_num):
         try:
@@ -36,54 +66,20 @@ class File:
         try:
             return self._code[self._lines.index(line_num)]
         except ValueError:
-            return ''
+            return self.get_line(line_num - 1)
 
     def set_line(self, line_num, string):
-        self._code[self._lines.index(line_num)] = string
+        try:
+            self._code[self._lines.index(line_num)] = string
+        except ValueError:
+            self.set_line(line_num - 1, string)
 
-    def replace_before(self, identifier, line_num, expr):
+    def replace_before(self, line_num, expr):
         """
         replaces the first identifier(*) in the last line before or
         at line_num containing the identifier
         """
-        last_line = line_num
-        first_line = line_num
-        # catch a trailing brace
-        trailing_brace = True
-        check_line = ''
-        for i in reversed(range(first_line)):
-            tmp_line = self.get_line(i)
-            if(identifier in tmp_line):
-                check_line = tmp_line.rsplit(identifier)[1] + check_line
-                break
-            else:
-                check_line = tmp_line + check_line
-            if(i == 0):
-                trailing_brace = False
-
-        # check if brace closes more than once
-        if(trailing_brace):
-            first_zero = True
-            brace_count = 0
-            for char in check_line:
-                if(char == '('):
-                    brace_count += 1
-                elif(char == ')'):
-                    brace_count -= 1
-                    if(brace_count == 0):
-                        first_zero = False
-                    if(brace_count == 0 and not first_zero):
-                        trailing_brace = False
-                        break
-
-        if(trailing_brace):
-            first_line -= 1
-            
-        
-        while(True):
-            if(identifier in self.get_line(first_line)):
-                break
-            first_line -= 1
+        first_line, last_line = self.get_pos_delete(line_num)
 
         curr_line = ''
         for i in range(first_line, last_line + 1):
@@ -101,8 +97,7 @@ class File:
             if(count == 0 and not first):
                 right = right[i + 1:]
                 break
-
-        self.set_line(first_line, left + str(expr) + right)
+        self.set_line(first_line, left + repr(expr) + right)
         for i in range(first_line + 1, last_line + 1):
             self.delete_line(i)
 
@@ -117,8 +112,8 @@ def in_place_replace(expr):
     lineno = frameinfo.lineno - 1
 
     if(mod in ReplaceLog.files):
-        ReplaceLog.files[mod].replace_before('in_place_replace', lineno, expr)
+        ReplaceLog.files[mod].replace_before(lineno, expr)
     else:
         ReplaceLog.files[mod] = File(mod)
-        ReplaceLog.files[mod].replace_before('in_place_replace', lineno, expr)
+        ReplaceLog.files[mod].replace_before(lineno, expr)
     return expr

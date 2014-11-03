@@ -52,7 +52,7 @@ class Z2PackSystem:
 
     def plane(self, string_dir, plane_pos_dir, plane_pos, **kwargs):
         """
-        Creates a :class:`Z2PackPlane` object. The directions are given \
+        Creates a :class:`Z2PackPlane` instance. The directions are given \
         w.r.t. the inverse lattice vectors.
 
         :param string_dir: direction of the string of k-points
@@ -66,7 +66,7 @@ class Z2PackSystem:
         :type plane_pos: float
 
         :param kwargs: passed to :class:`Z2PackPlane` constructor. Take \
-        precedence over kwargs from class:`Z2PackSystem` constructor.
+        precedence over kwargs from :class:`Z2PackSystem` constructor.
 
         :rtype: :class:`Z2PackPlane`
         """
@@ -220,7 +220,7 @@ class Z2PackPlane(object):
                     self._wcc_list[i] = self._getwcc(kx)
                     self._gaps[i] = _gapfind(self._wcc_list[i])
                     self._string_status[i] = True
-                    self._save()
+                    self.save()
 
             if not(self._current['no_neighbour_check']):
                 self._check_neighbours()
@@ -230,7 +230,7 @@ class Z2PackPlane(object):
                 break
 
         # dump results into pickle file
-        self._save()
+        self.save()
 
         # output to signal end of wcc calculation
         end_time = time.time()
@@ -352,10 +352,10 @@ class Z2PackPlane(object):
         return True
 
     # pickle: save and load
-    def _save(self):
+    def save(self):
         """
-        save k_points, wcc and gaps to pickle file
-        only works if use_pickle = True & path to pickle_file exists
+        Save ``k_points``, ``wcc`` and ``gaps`` to pickle file. 
+        Only works if ``use_pickle == True`` and the path to ``pickle_file`` exists.
         """
         if(self._current['use_pickle']):
             fstream = open(self._pickle_file, "wb")
@@ -500,7 +500,7 @@ class Z2PackPlane(object):
         :param ax:      Axis where the plot is drawn
         :type ax:       :mod:`matplotlib` ``axis``
 
-        :returns:       :class:`matplotlib figure` object (only if \
+        :returns:       :class:`matplotlib figure` instance (only if \
         ``ax == None``)
         """
         shift = shift % 1
@@ -553,7 +553,10 @@ class Z2PackPlane(object):
 
     def invariant(self):
         """
-        calculate the Z2 topological invariant
+        Calculates the Z2 topological invariant
+        
+        :returns:   Z2 topological invariant
+        :rtype:     int
         """
         try:
             inv = 1

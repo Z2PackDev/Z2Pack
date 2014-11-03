@@ -1,7 +1,11 @@
 recursive-include examples/tb *.py
 recursive-include examples/fp/Bi *.py *.in *.files *.win
 recursive-include tests *.py *.txt *.mmn
-include doc/build/text/doc.txt
+recursive-include doc/build/text *.txt
+recursive-include doc/build/html *
+recursive-include Wannier90 *.tar.gz
+exclude doc/Makefile
+prune doc/source
 prune examples/fp/*/build
 prune tests/samples/build
 prune tests/templates

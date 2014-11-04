@@ -11,3 +11,4 @@ prune tests/samples/build
 prune tests/templates
 exclude tests/create_tests.py
 include README.md
+include LICENSE.txt

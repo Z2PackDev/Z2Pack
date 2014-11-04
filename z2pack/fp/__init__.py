@@ -43,7 +43,7 @@ class System(Z2PackSystem):
     code
     :type command:                  str
 
-    :param executable:              Sets the executable executing the command\
+    :param executable:              Sets the executable executing the command
     :type executable:               str
 
     :param file_names:              Name(s) the input file(s) should get \

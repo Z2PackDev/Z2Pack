@@ -18,7 +18,7 @@ Quantum Espresso example
 if not os.path.exists('./results'):
     os.makedirs('./results')
 
-# creating the z2pack.abinit object
+# creating the System
 system = z2pack.fp.System(
     ["input_file_1", "input_file_2", "wannier90.win" ],
     z2pack.fp.kpts.quantum_espresso, # TO BE IMPLEMENTED
@@ -28,9 +28,10 @@ system = z2pack.fp.System(
 )
     
 
-# creating the z2pack.plane object
+# creating the plane
 plane = Bi.plane(2, 0, 0, pickle_file = 'results/res.txt')
 
+# reloading from pickle file
 plane.load()
 fig, ax = plt.subplots(1, figsize = (9,5))
 plane.plot(show = False, ax = ax)

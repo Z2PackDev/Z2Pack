@@ -29,12 +29,15 @@ class System(Z2PackSystem):
     :param k_points_fct:            Fct that creates a ``str`` specifying \
     the k-points (in the language of the first-principles code used), \
     given a ``starting_point``, ``last_point``, ``end point`` and number \
-    of k-points ``N``.
+    of k-points ``N``. Can also be a ``list`` of functions if k-points \
+    need to be written to more than one file.
 
     :param k_points_path:           Name of the file where the k-points \
     ``str`` belongs. Will append to a file if it matches one of the \
     ``file_names``, and create a separate file else. \
-    :type k_points_path:            str
+    If ``k_points_fct`` is a ``list``, ``k_points_path`` should also be \
+    a list, specifying the path for each of the functions.
+    :type k_points_path:            str or list of str
 
     :param working_folder:          Folder where the created input files go
     :type working_folder:           str
@@ -179,7 +182,10 @@ class _FirstPrinciplesSystem:
             self._k_mode = 'separate'
 
         # k_points_fct
-        self._k_points_fct = k_points_fct
+        if not(hasattr(k_points_fct, '__getitem__') and hasattr(k_points_fct, '__iter__')):
+            self._k_points_fct = [k_points_fct]
+        else:
+            self._k_points_fct = k_points_fct
 
         self._calling_path = os.getcwd()
 
@@ -192,7 +198,17 @@ class _FirstPrinciplesSystem:
 
         self._command = command
         self._executable = executable
-        self._k_points_path = k_points_path
+        if(isinstance(k_points_path, str)):
+            self._k_points_path = [k_points_path]
+        else:
+            self._k_points_path = k_points_path
+            
+        # check if the number of functions matches the number of paths
+        if(len(self._k_points_path) != len(self._k_points_fct)):
+            raise ValueError(
+                'k_points_fct ({0}) and k_points_path({1}) must have ' +
+                'the same length'.format(
+                    len(self._k_points_path), len(self._k_points_fct)))
         self._mmn_path = mmn_path
         self._clean_subfolder = clean_subfolder
 
@@ -220,8 +236,10 @@ class _FirstPrinciplesSystem:
             self._file_names_abs.append(self._working_folder + self._sep +
                                         self._file_names[i])
 
-        self._k_points_path_abs = (self._working_folder + self._sep +
-                                   self._k_points_path)
+        self._k_points_path_abs = []
+        for path in self._k_points_path:
+            self._k_points_path_abs.append(
+                self._working_folder + self._sep + path)
         self._mmn_path_abs = self._working_folder + self._sep + self._mmn_path
 
         # create working folder if it doesn't exist
@@ -253,12 +271,14 @@ class _FirstPrinciplesSystem:
                     pass
         _copy(self._input_files, self._file_names_abs)
 
-        if(self._k_mode == 'append'):
-            f = open(self._k_points_path_abs, "a")
-        else:
-            f = open(self._k_points_path_abs, "w")
-        f.write(self._k_points_fct(*args))
-        f.close()
+
+        for i, f_path in enumerate(self._k_points_path_abs):
+            if(self._k_mode == 'append'):
+                f = open(f_path, "a")
+            else:
+                f = open(f_path, "a")
+            f.write(self._k_points_fct[i](*args))
+            f.close()
 
     def _run(self, string_dir, string_pos, N):
         # create input

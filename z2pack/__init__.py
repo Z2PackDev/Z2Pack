@@ -346,8 +346,8 @@ class Z2PackPlane(object):
         checks if gap is too close to any of the elements in wcc
         """
         for wcc_val in wcc:
-            if(min(abs(1 + wcc_val - gap) % 1, abs(1 - gap + wcc_val) % 1) <
-               self._current['gap_tol']):
+            if(min(abs(1 + wcc_val - gap) % 1, abs(1 - wcc_val + gap) % 1) <
+                self._current['gap_tol']):
                 return False
         return True
 

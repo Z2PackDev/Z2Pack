@@ -24,6 +24,7 @@ import time
 import copy
 import pickle
 import decorator
+import itertools
 import numpy as np
 import scipy.linalg as la
 import matplotlib.pyplot as plt
@@ -270,7 +271,7 @@ class Z2PackPlane(object):
                           'wcc_tol': 1e-2,
                           'gap_tol': 2e-2,
                           'max_iter': 10,
-                          'iterator': string_iterators.constant_step(),
+                          'iterator': string_iterators.ConstantStep(),
                           'min_neighbour_dist': 0.01,
                           'use_pickle': True,
                           'num_strings': 11,
@@ -395,7 +396,8 @@ class Z2PackPlane(object):
             sys.stdout.flush()
 
         # get new generator
-        iterator = self._current['iterator']()
+        iterator, self._current['iterator'] = itertools.tee(
+            self._current['iterator'], 2)
 
         N = iterator.next()
         niter = 0
@@ -413,11 +415,6 @@ class Z2PackPlane(object):
         # iteration
         else:
             for niter, N in enumerate(iterator, 1):
-                # larger steps for small min_sv (every second step)
-                #~ if(niter % 2 == 1 and min_sv < 0.5):
-                    #~ N += 4
-                #~ else:
-                    #~ N += 2
                 xold = copy.copy(x)
                 if(self._current['verbose']):
                     # Output

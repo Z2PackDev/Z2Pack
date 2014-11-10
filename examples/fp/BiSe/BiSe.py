@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     # plane at k1=0
     plane_0 = BiSe.plane(2, 0, 0, pickle_file = 'results/res_0.txt')
-    plane_0.wcc_calc(no_iter=True, no_neighbour_check=False)
+    #~ plane_0.wcc_calc(no_iter=True, no_neighbour_check=False)
 
     # plane at k1=Pi
     plane_1 = BiSe.plane(2, 0, 0.5, pickle_file = 'results/res_1.txt')

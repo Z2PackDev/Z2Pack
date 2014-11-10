@@ -5,21 +5,23 @@
 # Date:    10.11.2014 11:36:50 CET
 # File:    string_iterators.py
 
-def wrap_iterator(func):
-    def outer(*args, **kwargs):
-        def inner():
-            return func(*args, **kwargs)
-        return inner
-    return outer
-    
-@wrap_iterator
-def constant_step(start=8, step=2):
-    """default generator for the number of points in the string"""
-    i = start
-    while(True):
-        yield(i)
-        i += step
-    
+
+class ConstantStep:
+    def __init__(self, start=8, step=2):
+        self._n = start
+        self._step = step
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        n = self._n
+        self._n += self._step
+        return n
+
+    def __str__(self):
+        return 'start: {0}, step: {1}'.format(self._n, self._step)
+
 if __name__ == "__main__":
     print("string_iterators.py")
     

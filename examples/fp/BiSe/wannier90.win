@@ -1,6 +1,7 @@
 num_wann 28
-num_bands 10
+num_bands 28
 spinors : true
 num_iter 0
+postproc_setup : true
 shell_list 1
-exclude_bands 27-38
+exclude_bands 29-38

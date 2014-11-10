@@ -15,6 +15,7 @@ plots etc.)
 
 from __future__ import print_function
 
+from . import string_iterators
 from .python_tools import string_tools
 
 import re
@@ -166,6 +167,10 @@ class Z2PackPlane(object):
         new strings will be added, even if the neighbour check fails)
         :type min_neighbour_dist:   float
 
+        :param iterator:            Function creating generator objects for \
+        creating the number of points on a string. Examples can be seen in \
+        ``z2pack.string_iterators``
+
         :param use_pickle:          Toggles using the :mod:`pickle` module \
         for saving
         :type use_pickle:           bool
@@ -188,6 +193,13 @@ class Z2PackPlane(object):
         # checking num_strings
         if(self._current['num_strings'] < 2):
             raise ValueError("num_strings must be at least 2")
+
+        if self._current['no_iter']:
+            del self._current['wcc_tol']
+            del self._current['max_iter']
+        if self._current['no_neighbour_check']:
+            del self._current['gap_tol']
+            del self._current['min_neighbour_dist']
 
         # initial output
         if(self._current['verbose']):
@@ -258,6 +270,7 @@ class Z2PackPlane(object):
                           'wcc_tol': 1e-2,
                           'gap_tol': 2e-2,
                           'max_iter': 10,
+                          'iterator': string_iterators.constant_step(),
                           'min_neighbour_dist': 0.01,
                           'use_pickle': True,
                           'num_strings': 11,
@@ -381,9 +394,12 @@ class Z2PackPlane(object):
             print("calculating string at kx = " + "%.4f" % kx)
             sys.stdout.flush()
 
-        # first two steps
-        N = 8
+        # get new generator
+        iterator = self._current['iterator']()
+
+        N = iterator.next()
         niter = 0
+        
         if(self._current['verbose']):
             print('    N = ' + str(N), end='')
             sys.stdout.flush()
@@ -396,19 +412,18 @@ class Z2PackPlane(object):
                 sys.stdout.flush()
         # iteration
         else:
-            while(True):
+            for niter, N in enumerate(iterator, 1):
                 # larger steps for small min_sv (every second step)
-                if(niter % 2 == 1 and min_sv < 0.5):
-                    N += 4
-                else:
-                    N += 2
+                #~ if(niter % 2 == 1 and min_sv < 0.5):
+                    #~ N += 4
+                #~ else:
+                    #~ N += 2
                 xold = copy.copy(x)
                 if(self._current['verbose']):
                     # Output
                     print("    N = " + str(N), end="")
                     sys.stdout.flush()
                 x, min_sv = self._trywcc(self._m_handle(kx, N))
-                niter += 1
 
                 # break conditions
                 if(self._convcheck(x, xold)):  # success

@@ -3,7 +3,7 @@
 #
 # Author:  Dominik Gresch <greschd@ethz.ch>
 # Date:    27.09.2014 15:39:41 CEST
-# File:    Bi_plot.py
+# File:    HgTe_plot.py
 
 import sys
 sys.path.append("../../../")
@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import os
 
 """
-Bismuth example
+HgTesmuth example
 """
 
 if not os.path.exists('./results'):
@@ -31,28 +31,28 @@ def k_points(start_point, last_point, end_point, N):
     
     
 # creating the z2pack.abinit object
-Bi = z2pack.fp.System(    ["Bi_nscf.files", "Bi_nscf.in", "wannier90.win" ],
+HgTe = z2pack.fp.System(    ["HgTe_nscf.files", "HgTe_nscf.in", "wannier90.win" ],
                                 k_points,
-                                "Bi_nscf.in",
+                                "HgTe_nscf.in",
                                 "build",
-                                "mpirun -np 7 abinit < Bi_nscf.files >& log"
+                                "mpirun -np 7 abinit < HgTe_nscf.files >& log"
                     )
     
 
 # creating the z2pack.plane object
-Bi_plane = Bi.plane(2, 0, 0, pickle_file = './results/res.txt')
+HgTe_plane = HgTe.plane(2, 0, 0, pickle_file = './results/res.txt')
 
 # WCC calculation
 """
 no need to re-do the calculation
 """
-#~ Bi_plane.wcc_calc(no_iter = True, no_neighbour_check = True)
+#~ HgTe_plane.wcc_calc(no_iter = True, no_neighbour_check = True)
 
-Bi_plane.load()
+HgTe_plane.load()
 fig, ax = plt.subplots(1, figsize = (9,5))
-Bi_plane.plot(show = False, ax = ax)
-plt.savefig('./results/Bi.pdf', bbox_inches = 'tight')
+HgTe_plane.plot(show = False, axis = ax)
+plt.savefig('./results/HgTe.pdf', bbox_inches = 'tight')
 
-print('Z2 topological invariant: {0}'.format(Bi_plane.invariant()))
+print('Z2 topological invariant: {0}'.format(HgTe_plane.invariant()))
     
 

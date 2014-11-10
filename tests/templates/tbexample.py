@@ -75,8 +75,8 @@ class TbExampleTestCase(CommonTestCase):
         self.assertContainerAlmostEqual(tb_plane.get_res(), res)
 
     def test_res3(self):
-        """ test no_iter=True """
-        self.createH(0, 0.3)
+        """ test no_neighbour_check=True """
+        self.createH(0.1, 0.3)
         # call to Z2Pack
         tb_system = z2pack.tb.System(self.H)
         tb_plane = tb_system.plane(1, 2, 0)
@@ -91,7 +91,7 @@ class TbExampleTestCase(CommonTestCase):
 
     def testkwargcheck1(self):
         """ test kwarg check on wcc_calc """
-        self.createH(0, 0.3)
+        self.createH(0.1, 0.3)
         # call to Z2Pack
         tb_system = z2pack.tb.System(self.H)
         tb_plane = tb_system.plane(1, 2, 0)

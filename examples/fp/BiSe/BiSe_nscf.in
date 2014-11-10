@@ -1,6 +1,5 @@
 acell 3*9.832628820807678 Angstrom
-angdeg 3*57.23338683919874
-diemac 113
+angdeg 3*24.27924918376835
 ecut 60
 enunit 2
 natom 5

@@ -29,10 +29,8 @@ if __name__ == "__main__":
                             executable='/bin/bash'
                             )
 
-    # plane at k1=0
-    plane_0 = BiSe.plane(2, 0, 0, pickle_file = 'results/res_0.txt')
-    plane_0.wcc_calc(no_iter=True, no_neighbour_check=False)
+    # creating the z2pack.plane object
+    BiSe_plane = BiSe.plane(2, 1, 0.5, pickle_file = 'results/res_2.txt')
 
-    # plane at k1=Pi
-    plane_1 = BiSe.plane(2, 0, 0.5, pickle_file = 'results/res_1.txt')
-    plane_1.wcc_calc(no_iter=True, no_neighbour_check=False)
+    # WCC calculation
+    BiSe_plane.wcc_calc(no_iter=True, no_neighbour_check=False)

@@ -40,7 +40,7 @@ if __name__ == "__main__":
     if not os.path.exists('./results'):
         os.makedirs('./results')
 
-    t_values = [[0.2, 0.3], [0.1, 0.4], [-0.2, -0.3], [0.1, 0.1]]
+    t_values = [[0.2, 0.3], [0.1, 0.4], [-0.2, -0.3], [0.0, 0.3]]
 
     fig, axes = plt.subplots(2,2)
     for i, ax in enumerate(axes.flatten()):

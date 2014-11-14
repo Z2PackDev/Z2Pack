@@ -168,9 +168,9 @@ class Z2PackPlane(object):
         new strings will be added, even if the neighbour check fails)
         :type min_neighbour_dist:   float
 
-        :param iterator:            Function creating generator objects for \
-        creating the number of points on a string. Examples can be seen in \
-        ``z2pack.string_iterators``
+        :param iterator:            Generator for the number of points in \
+        a k-point string. Default: starting with 8 points, increasing by \
+        2 with each step.
 
         :param use_pickle:          Toggles using the :mod:`pickle` module \
         for saving
@@ -433,6 +433,10 @@ class Z2PackPlane(object):
                         print("failed to converge!\n\n", end="")
                         sys.stdout.flush()
                     break
+            else:
+                if(self._current['verbose']):
+                    print('iterator ends, failed to converge!\n\n', end='')
+                    sys.stdout.flush()
         return sorted(x)
 
     def _print_wcc(func):

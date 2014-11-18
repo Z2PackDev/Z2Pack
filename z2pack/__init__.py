@@ -161,16 +161,14 @@ class Z2PackPlane(object):
         gap and neighbouring WCCs
         :type gap_tol:              float
 
-        :param max_iter:            Maximum number of iterations for one string
-        :type max_iter:             int
-
         :param min_neighbour_dist:  Minimum distance between two strings (no \
         new strings will be added, even if the neighbour check fails)
         :type min_neighbour_dist:   float
 
         :param iterator:            Generator for the number of points in \
-        a k-point string. Default: starting with 8 points, increasing by \
-        2 with each step.
+        a k-point string. The iterator should also take care of the maximum \
+        number of iterations. It is needed even when ``no_iter=True`, to \
+        provide a starting value. Default: range(2, 27, 2).
 
         :param use_pickle:          Toggles using the :mod:`pickle` module \
         for saving
@@ -196,8 +194,8 @@ class Z2PackPlane(object):
             raise ValueError("num_strings must be at least 2")
 
         if self._current['no_iter']:
+            # iterator shouldn't be deleted (used for first step also)
             del self._current['wcc_tol']
-            del self._current['max_iter']
         if self._current['no_neighbour_check']:
             del self._current['gap_tol']
             del self._current['min_neighbour_dist']
@@ -207,7 +205,10 @@ class Z2PackPlane(object):
             string = "starting wcc calculation\n\n"
             length = max(len(key) for key in self._current.keys()) + 2
             for key in sorted(self._current.keys()):
-                string += key.ljust(length) + str(self._current[key]) + '\n'
+                value = str(self._current[key])
+                if(len(value) > 48):
+                    value = value[:45] + '...'
+                string += key.ljust(length) + value + '\n'
             string = string[:-1]
             print(string_tools.cbox(string))
 
@@ -270,8 +271,7 @@ class Z2PackPlane(object):
                           'no_neighbour_check': False,
                           'wcc_tol': 1e-2,
                           'gap_tol': 2e-2,
-                          'max_iter': 10,
-                          'iterator': string_iterators.ConstantStep(),
+                          'iterator': range(8, 27, 2),
                           'min_neighbour_dist': 0.01,
                           'use_pickle': True,
                           'num_strings': 11,
@@ -400,7 +400,6 @@ class Z2PackPlane(object):
             self._current['iterator'], 2)
 
         N = iterator.next()
-        niter = 0
         
         if(self._current['verbose']):
             print('    N = ' + str(N), end='')
@@ -414,7 +413,7 @@ class Z2PackPlane(object):
                 sys.stdout.flush()
         # iteration
         else:
-            for niter, N in enumerate(iterator, 1):
+            for N in iterator:
                 xold = copy.copy(x)
                 if(self._current['verbose']):
                     # Output
@@ -428,11 +427,7 @@ class Z2PackPlane(object):
                         print("finished!\n\n", end="")
                         sys.stdout.flush()
                     break
-                if(niter > self._current['max_iter']):  # failure
-                    if(self._current['verbose']):
-                        print("failed to converge!\n\n", end="")
-                        sys.stdout.flush()
-                    break
+            # iterator ended
             else:
                 if(self._current['verbose']):
                     print('iterator ends, failed to converge!\n\n', end='')

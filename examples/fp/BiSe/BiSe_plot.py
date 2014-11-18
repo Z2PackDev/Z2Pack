@@ -29,18 +29,18 @@ BiSe = z2pack.fp.System(["BiSe_nscf.files", "BiSe_nscf.in", "wannier90.win" ],
 
 
 # creating the z2pack.plane object
-BiSe_plane = BiSe.plane(2, 0, 0, pickle_file = './results/res.txt')
-BiSe_plane_2 = BiSe.plane(2, 0, 0.5, pickle_file = './results/res_2.txt')
+plane_0 = BiSe.plane(2, 0, 0, pickle_file = './results/res_0.txt')
+plane_1 = BiSe.plane(2, 0, 0.5, pickle_file = './results/res_1.txt')
 
 
-BiSe_plane.load()
-BiSe_plane_2.load()
+plane_0.load()
+plane_1.load()
 fig, ax = plt.subplots(2, sharex=True, figsize = (9,5))
-BiSe_plane.plot(show = False, axis=ax[0], shift=0.5)
-BiSe_plane_2.plot(show = False, axis=ax[1], shift=0.5)
+plane_0.plot(show = False, axis=ax[0], shift=0.5)
+plane_1.plot(show = False, axis=ax[1], shift=0.5)
 plt.savefig('./results/BiSe.pdf', bbox_inches = 'tight')
 
-print('Z2 topological invariant: {0}'.format(BiSe_plane.invariant()))
-print('Z2 topological invariant: {0}'.format(BiSe_plane_2.invariant()))
+print('Z2 topological invariant: {0}'.format(plane_0.invariant()))
+print('Z2 topological invariant: {0}'.format(plane_1.invariant()))
 
 

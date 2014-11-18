@@ -40,19 +40,17 @@ HgTe = z2pack.fp.System(    ["HgTe_nscf.files", "HgTe_nscf.in", "wannier90.win" 
     
 
 # creating the z2pack.plane object
-HgTe_plane = HgTe.plane(2, 0, 0, pickle_file = './results/res.txt')
+plane_0 = HgTe.plane(2, 0, 0, pickle_file = './results/res.txt')
+plane_1 = HgTe.plane(2, 0, 0.5, pickle_file = './results/res.txt')
 
-# WCC calculation
-"""
-no need to re-do the calculation
-"""
-#~ HgTe_plane.wcc_calc(no_iter = True, no_neighbour_check = True)
 
-HgTe_plane.load()
-fig, ax = plt.subplots(1, figsize = (9,5))
-HgTe_plane.plot(show = False, axis = ax)
+plane_0.load()
+plane_1.load()
+fig, ax = plt.subplots(2, 1, sharey=True, figsize = (9,5))
+plane_0.plot(show=False, axis=ax[0])
+plane_1.plot(show=False, axis=ax[0])
 plt.savefig('./results/HgTe.pdf', bbox_inches = 'tight')
 
-print('Z2 topological invariant: {0}'.format(HgTe_plane.invariant()))
+print('Z2 topological invariant: {0}'.format(plane_0.invariant()))
     
 

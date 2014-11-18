@@ -15,7 +15,6 @@ plots etc.)
 
 from __future__ import print_function
 
-from . import string_iterators
 from .python_tools import string_tools
 
 import re
@@ -193,8 +192,13 @@ class Z2PackPlane(object):
         if(self._current['num_strings'] < 2):
             raise ValueError("num_strings must be at least 2")
 
+        if not(hasattr(self._current['iterator'], '__next__')):
+            self._current['iterator'] = iter(self._current['iterator'])
+
         if self._current['no_iter']:
             # iterator shouldn't be deleted (used for first step also)
+            # instead, it is modified to reflect no_iter=True
+            self._current['iterator'] = [self._current['iterator'].next()]
             del self._current['wcc_tol']
         if self._current['no_neighbour_check']:
             del self._current['gap_tol']

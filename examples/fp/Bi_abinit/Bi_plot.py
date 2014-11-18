@@ -40,19 +40,22 @@ Bi = z2pack.fp.System(    ["Bi_nscf.files", "Bi_nscf.in", "wannier90.win" ],
     
 
 # creating the z2pack.plane object
-Bi_plane = Bi.plane(2, 0, 0, pickle_file = './results/res.txt')
+plane_0 = Bi.plane(2, 0, 0, pickle_file = './results/res_0.txt')
+plane_1 = Bi.plane(2, 0, 0.5, pickle_file = './results/res_1.txt')
 
 # WCC calculation
 """
 no need to re-do the calculation
 """
-#~ Bi_plane.wcc_calc(no_iter = True, no_neighbour_check = True)
 
-Bi_plane.load()
-fig, ax = plt.subplots(1, figsize = (9,5))
-Bi_plane.plot(show = False, ax = ax)
+plane_0.load()
+plane_1.load()
+fig, ax = plt.subplots(1, 2, sharey=True, figsize = (9,5))
+plane_0.plot(show=False, axis=ax[0])
+plane_1.plot(show=False, axis=ax[1])
 plt.savefig('./results/Bi.pdf', bbox_inches = 'tight')
 
-print('Z2 topological invariant: {0}'.format(Bi_plane.invariant()))
+print('Z2 topological invariant: {0}'.format(plane_0.invariant()))
+print('Z2 topological invariant: {0}'.format(plane_1.invariant()))
     
 

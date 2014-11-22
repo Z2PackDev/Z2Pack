@@ -198,7 +198,7 @@ class Z2PackPlane(object):
         if self._current['no_iter']:
             # iterator shouldn't be deleted (used for first step also)
             # instead, it is modified to reflect no_iter=True
-            self._current['iterator'] = [self._current['iterator'].next()]
+            self._current['iterator'] = [next(self._current['iterator'])]
             del self._current['wcc_tol']
         if self._current['no_neighbour_check']:
             del self._current['gap_tol']
@@ -403,7 +403,7 @@ class Z2PackPlane(object):
         iterator, self._current['iterator'] = itertools.tee(
             self._current['iterator'], 2)
 
-        N = iterator.next()
+        N = next(iterator)
         
         if(self._current['verbose']):
             print('    N = ' + str(N), end='')

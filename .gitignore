@@ -16,3 +16,5 @@ files*.txt
 z2pack/python_tools/.git
 z2pack/python_tools/.gitignore
 z2pack/python_tools/*.py
+results*
+*.tar.gz

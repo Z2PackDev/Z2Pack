@@ -192,10 +192,9 @@ class Z2PackPlane(object):
         if(self._current['num_strings'] < 2):
             raise ValueError("num_strings must be at least 2")
 
-        if not(hasattr(self._current['iterator'], '__next__')):
-            self._current['iterator'] = iter(self._current['iterator'])
-
         if self._current['no_iter']:
+            if not(hasattr(self._current['iterator'], '__next__')):
+                self._current['iterator'] = iter(self._current['iterator'])
             # iterator shouldn't be deleted (used for first step also)
             # instead, it is modified to reflect no_iter=True
             self._current['iterator'] = [next(self._current['iterator'])]

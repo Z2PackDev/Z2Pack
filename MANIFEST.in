@@ -1,8 +1,10 @@
 recursive-include examples/tb *.py
-recursive-include examples/fp/Bi *.py *.in *.files *.win
+recursive-include examples/fp/Bi_abinit *.py *.files *.win
+recursive-include examples/fp/Bi_abinit/scf_files *
 recursive-include tests *.py *.txt *.mmn
 include doc/build/text/doc.txt
-prune examples/fp/*/build
+recursive-include doc/build/html *
+prune examples/fp/Bi_abinit/build
 prune tests/samples/build
 prune tests/templates
 exclude tests/create_tests.py

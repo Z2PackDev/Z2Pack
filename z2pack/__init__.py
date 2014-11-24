@@ -166,7 +166,7 @@ class Z2PackPlane(object):
 
         :param iterator:            Generator for the number of points in \
         a k-point string. The iterator should also take care of the maximum \
-        number of iterations. It is needed even when ``no_iter=True`, to \
+        number of iterations. It is needed even when ``no_iter=True``, to \
         provide a starting value. Default: range(2, 27, 2).
 
         :param use_pickle:          Toggles using the :mod:`pickle` module \

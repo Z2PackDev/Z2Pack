@@ -23,8 +23,7 @@ Bi = z2pack.fp.System(   ["Bi_nscf.files", "Bi_nscf.in", "wannier90.win" ],
                         z2pack.fp.kpts.abinit,
                         "Bi_nscf.in",
                         "build",
-                        "mpirun -np 7 abinit < Bi_nscf.files >& log",
-                        executable='/bin/bash'
+                        "mpirun ~/software/abinit-7.8.2/src/98_main/abinit < Bi_nscf.files >& log"
                     )
     
 

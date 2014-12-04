@@ -618,9 +618,13 @@ def _sgng(z, zplus, x):
     """
     calculates the invariant between two WCC strings
     """
-    return np.copysign(1, np.sin(2*np.pi*(zplus - z)) +
-                       np.sin(2*np.pi*(x-zplus)) +
-                       np.sin(2*np.pi*(z-x)))
+    #~ return np.copysign(1, np.sin(2*np.pi*(zplus - z)) +
+                       #~ np.sin(2*np.pi*(x-zplus)) +
+                       #~ np.sin(2*np.pi*(z-x)))
+    if(max(zplus, z) > x and min(zplus, z) < x):
+        return -1
+    else:
+        return 1
 
 
 def _gapfind(wcc):

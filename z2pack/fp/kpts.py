@@ -83,3 +83,21 @@ def wannier90(start_point, last_point, end_point, N):
             string += str(coord).replace('e', 'd') + ' '
     string += '\nend kpoints\n'
     return string
+
+def vasp(start_point, last_point, end_point, N):
+    """
+    For use with VASP
+    """
+    # N or N - 1?
+    string = 'Automatic mesh\n0              ! number of k-points = 0 ->automatic generation scheme\nGamma          ! generate a Gamma centered grid\n'
+    for i in range(3):
+        if(abs(end_point[i] - start_point[i]) > 0.8):
+            string += str(N)
+        else:
+            string += '1'
+        string += ' '
+    string += '        ! subdivisions\n'
+    for coord in start_point:
+            string += str(coord).replace('e', 'd') + ' '
+    string += '         ! shift\n'
+    return string

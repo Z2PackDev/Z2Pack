@@ -153,8 +153,6 @@ class Hamilton:
                 index_2 = orbital_to_index[hopping[2][0]][hopping[2][1]]
                 phase = np.exp(1j * self._dot_prod(hopping[3], k))
                 H[index_1][index_2] += hopping[0] * phase
-
-                # add conjugate if hopping is not on the diagonal
                 H[index_2][index_1] += (hopping[0] * phase).conjugate()
             return H
 

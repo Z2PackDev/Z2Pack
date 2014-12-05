@@ -321,8 +321,8 @@ class Z2PackPlane(object):
                         if(self._k_points[i + 1] - self._k_points[i] <
                            self._current['min_neighbour_dist']):
                             if(self._current['verbose']):
-                                print("Reched minimum distance between \
-                                neighbours, did not converge\n\n", end="")
+                                print('Reched minimum distance between ' + 
+                                'neighbours, did not converge\n\n', end="")
                                 sys.stdout.flush()
                             # convergence failed
                             self._neighbour_check[i] = True
@@ -492,8 +492,8 @@ class Z2PackPlane(object):
         """
         if(len(x) != len(y)):
             if(self._current['verbose']):
-                print("Warning: consecutive strings don't have the same \
-                      amount of WCC")
+                print("Warning: consecutive strings don't have the same " + 
+                      "amount of WCC")
             return False
         else:
             return _convsum(x, y, self._current['wcc_tol']) < 1

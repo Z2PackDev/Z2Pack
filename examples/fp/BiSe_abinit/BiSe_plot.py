@@ -36,11 +36,16 @@ plane_1 = BiSe.plane(2, 0, 0.5, pickle_file = './results/res_1.txt')
 plane_0.load()
 plane_1.load()
 fig, ax = plt.subplots(2, sharex=True, figsize = (9,5))
+fig.subplots_adjust(hspace=0.4)
 plane_0.plot(show = False, axis=ax[0], shift=0.5)
+ax[0].set_title(r'$k_1 = 0,$ $\Delta = {}$'.format(plane_0.invariant()))
+ax[0].set_ylabel(r'$x_3$')
+ax[0].set_xlabel('')
 plane_1.plot(show = False, axis=ax[1], shift=0.5)
+ax[1].set_title(r'$k_1 = 0.5,$ $\Delta = {}$'.format(plane_1.invariant()))
+ax[1].set_ylabel(r'$x_3$')
+ax[1].set_xlabel(r'$k_2$')
 plt.savefig('./results/BiSe.pdf', bbox_inches = 'tight')
 
-print('Z2 topological invariant: {0}'.format(plane_0.invariant()))
-print('Z2 topological invariant: {0}'.format(plane_1.invariant()))
 
 

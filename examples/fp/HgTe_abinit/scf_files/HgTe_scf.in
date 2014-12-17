@@ -1,0 +1,50 @@
+#COMMON variables
+#Definition of the unit cell
+# Landolt-Bornstein
+
+acell  3*4.613404207636881 Angstroms    
+angdeg 3*58.6944
+
+#Definition of the atom types
+
+ntypat 2          
+znucl 80 52       
+                  
+#Definition of the atoms
+natom 2           # There are two atoms
+typat 1 2     # They are Hg Te.
+xred          0.0000000000d0  0.0000000000d0  0.0000000000d0
+              0.25d0          0.25d0          0.25d0
+
+#Definition of the planewave basis set
+ecut  70.0         # Maximal kinetic energy cut-off, in Hartree
+enunit 2
+#Definition of the SCF procedure
+nstep 100          # Maximal number of SCF cycles
+
+                  # between two consecutive evaluations of total energy 
+                  # differ by less than toldfe (in Hartree) 
+                  # This value is way too large for most realistic studies of materials
+diemac 20.0       # Although this is not mandatory, it is worth to
+                  # precondition the SCF cycle. The model dielectric
+                  # function used as the standard preconditioner
+                  # is described in the "dielng" input variable section.
+                  # Here, we follow the prescription for bulk silicon.
+nband 28 # 18 occupied and 10 unoccupied
+#Adding spin-orbit interaction
+nsppol 1
+nspinor 2 
+so_psp 2 2
+istwfk *1
+
+kptopt 1
+nshiftk 4
+shiftk
+      0.5 0.5 0.5
+      0.5 0.0 0.0
+      0.0 0.5 0.0
+      0.0 0.0 0.5
+ngkpt
+      8 8 8 
+prtden 1
+toldfe 1.d-12

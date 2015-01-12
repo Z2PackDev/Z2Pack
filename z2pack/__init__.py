@@ -51,10 +51,14 @@ class Z2PackSystem:
         self._defaults = kwargs
         self._m_handle_creator = m_handle_creator
 
-    def plane(self, string_dir, plane_pos_dir, plane_pos, **kwargs):
+    def plane(self, string_dir=None, plane_pos_dir=None, plane_pos=None,
+              plane_edge_start=None, plane_edge_end=None, string_vec=None, **kwargs):
         """
         Creates a :class:`Z2PackPlane` instance. The directions are given \
-        w.r.t. the inverse lattice vectors.
+        w.r.t. the inverse lattice vectors. The plane can be specified \
+        either with the three parameters string_dir, plane_pos_dir, \
+        plane_pos (easier option) or with the the parameters plane_edge_start, \
+        plane_edge_end, string_vec (more flexible).
 
         :param string_dir: direction of the string of k-points
         :type string_dir: int
@@ -66,6 +70,22 @@ class Z2PackSystem:
         :param plane_pos: position of the plane along ``plane_pos_dir``
         :type plane_pos: float
 
+        :param plane_edge_start: First point in the first k-point string \
+        that is to be computed (i.e. the start of the edge of the plane \
+        in k-space).
+        :type plane_edge_start: list (float)
+        
+        :param plane_edge_end: First point in the last k-point string \
+        that is to be computed (i.e. the end of the edge of the plane \
+        in k-space). Note that the plane should typically only span \
+        half the BZ.
+        :type plane_edge_end: list (float)
+
+        :param string_vec: Direction of the individual k-point strings. \
+        Having ``string_dir`` set as ``0, 1, 2`` corresponds to ``string_vec``\
+        being ``{1, 0, 0}, {0, 1, 0}, {0, 0, 1}``.
+        :type string_vec: list (float)
+
         :param kwargs: passed to :class:`Z2PackPlane` constructor. Take \
         precedence over kwargs from :class:`Z2PackSystem` constructor.
 
@@ -75,15 +95,28 @@ class Z2PackSystem:
         kw_arguments = copy.copy(self._defaults)
         kw_arguments.update(kwargs)
 
-        # creating m_handle
-        if(string_dir == plane_pos_dir):
-            raise ValueError('strings cannot be perpendicular to the plane')
+        # distinguishing the two input cases
+        if(string_dir is not None):
+            if any(var is None for var in [string_dir, plane_pos_dir, plane_pos]):
+                raise ValueError('Incomplete input set for [string_dir, plane_pos_dir, plane_pos].')
+            if not all(var is None for var in [plane_edge_start, plane_edge_end, string_vec]):
+                raise ValueError('Confusing input. Use either [string_dir, plane_pos_dir, plane_pos] or [plane_edge_start, plane_edge_end, string_vec], not both.')
+            return Z2PackPlane(self._m_handle_creator(string_dir,
+                                                      plane_pos_dir,
+                                                      plane_pos),
+                               **kw_arguments
+                               )
+        else:
+            if any(var is None for var in [plane_edge_start, plane_edge_end, string_vec]):
+                raise ValueError('Incomplete input set for [plane_edge_start, plane_edge_end, string_vec].')
+            if not all(var is None for var in {string_dir, plane_pos_dir, plane_pos}):
+                raise ValueError('Confusing input. Use either [string_dir, plane_pos_dir, plane_pos] or [plane_edge_start, plane_edge_end, string_vec], not both.')
+            return Z2PackPlane(self._m_handle_creator(plane_edge_start,
+                                                      plane_edge_end,
+                                                      string_vec),
+                               **kw_arguments
+                               )
 
-        return Z2PackPlane(self._m_handle_creator(string_dir,
-                                                  plane_pos_dir,
-                                                  plane_pos),
-                           **kw_arguments
-                           )
 
 
 class Z2PackPlane(object):

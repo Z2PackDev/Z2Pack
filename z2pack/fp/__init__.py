@@ -91,9 +91,9 @@ class System(Z2PackSystem):
                                               clean_working_folder)
         self._defaults = kwargs
 
-        def _m_handle_creator_first_principles(string_dir,
-                                               plane_pos_dir,
-                                               plane_pos):
+        def _m_handle_creator_static(string_dir,
+                                     plane_pos_dir,
+                                     plane_pos):
             # check if kx is before or after plane_pos_dir
             if(3 - string_dir > 2 * plane_pos_dir):
                 return lambda kx, N: self._system._run(string_dir,
@@ -103,6 +103,18 @@ class System(Z2PackSystem):
                 return lambda kx, N: self._system._run(string_dir,
                                                        [kx, plane_pos],
                                                        N)
+
+        def _m_handle_creator_flexible(plane_edge_start,
+                                       plane_edge_end,
+                                       string_vec):
+            pass
+
+        def _m_handle_creator_first_principles(*args, **kwargs):
+            if(hasattr(args[0], '__getitem__')):
+                return _m_handle_creator_flexible(*args, **kwargs)
+            else:
+                return _m_handle_creator_static(*args, **kwargs)
+        
         self._m_handle_creator = _m_handle_creator_first_principles
 
 

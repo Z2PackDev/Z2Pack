@@ -2,11 +2,8 @@
 #Definition of the unit cell
 # Landolt-Bornstein
 
-acell  3*6.4588 Angstroms    
-angdeg 3*90
-rprim  0.0 0.5 0.5
-       0.5 0.0 0.5
-       0.5 0.5 0.0
+acell  3*4.613404207636881 Angstroms    
+angdeg 3*58.6944
 
 #Definition of the atom types
 

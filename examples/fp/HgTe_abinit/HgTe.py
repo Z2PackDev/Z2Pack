@@ -33,7 +33,7 @@ plane_0 = HgTe.plane(2, 0, 0, pickle_file = 'results/res_0.txt')
 plane_1 = HgTe.plane(2, 0, 0.5, pickle_file = 'results/res_1.txt')
 
 # WCC calculation
-plane_0.wcc_calc(no_iter=True)
-plane_1.wcc_calc(no_iter=True)
+plane_0.wcc_calc()
+plane_1.wcc_calc()
     
 

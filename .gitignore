@@ -18,3 +18,9 @@ z2pack/python_tools/.gitignore
 z2pack/python_tools/*.py
 results*
 *.tar.gz
+z2pack/decorator.py
+lsf.*
+*EIG
+*DDB
+status.txt
+*.pyc

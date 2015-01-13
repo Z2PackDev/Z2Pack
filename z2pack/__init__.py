@@ -145,38 +145,39 @@ class Z2PackPlane(object):
         * automated check for distance between gap and wcc -> add string
 
         :param no_iter:             Turns the automated iteration of the  \
-        number of k-points in a string off
+        number of k-points in a string off ``Default: False``
         :type no_iter:              bool
 
         :param no_neighbour_check:  Turns the automated check for missing  \
-        strings (by distance between gaps and WCCs) off
+        strings (by distance between gaps and WCCs) off ``Default: False``
         :type no_neighbour_check:   bool
 
         :param wcc_tol:             Maximum movement of a WCC between two  \
-        steps for convergence
+        steps for convergence. ``Default: 1e-2``
         :type wcc_tol:              float
 
         :param gap_tol:             Smallest tolerated distance between the \
-        gap and neighbouring WCCs
+        gap and neighbouring WCCs ``Default: 2e-2``
         :type gap_tol:              float
 
         :param min_neighbour_dist:  Minimum distance between two strings (no \
-        new strings will be added, even if the neighbour check fails)
+        new strings will be added, even if the neighbour check fails). \
+        ``Default: 0.01``
         :type min_neighbour_dist:   float
 
         :param iterator:            Generator for the number of points in \
         a k-point string. The iterator should also take care of the maximum \
         number of iterations. It is needed even when ``no_iter=True``, to \
-        provide a starting value. Default: range(2, 27, 2).
+        provide a starting value. ``Default: range(2, 27, 2)``.
 
         :param use_pickle:          Toggles using the :mod:`pickle` module \
-        for saving
+        for saving ``Default: True``
         :type use_pickle:           bool
 
-        :param num_strings:         Initial number of strings
+        :param num_strings:         Initial number of strings ``Default: 11``
         :type num_strings:          int
 
-        :param verbose:             Toggles printed output
+        :param verbose:             Toggles printed output ``Default: True``
         :type verbose:              bool
 
         :returns:                   ``tuple (k_points, wcc, gaps)``, \
@@ -321,8 +322,8 @@ class Z2PackPlane(object):
                         if(self._k_points[i + 1] - self._k_points[i] <
                            self._current['min_neighbour_dist']):
                             if(self._current['verbose']):
-                                print("Reched minimum distance between \
-                                neighbours, did not converge\n\n", end="")
+                                print('Reched minimum distance between ' + 
+                                'neighbours, did not converge\n\n', end="")
                                 sys.stdout.flush()
                             # convergence failed
                             self._neighbour_check[i] = True
@@ -492,8 +493,8 @@ class Z2PackPlane(object):
         """
         if(len(x) != len(y)):
             if(self._current['verbose']):
-                print("Warning: consecutive strings don't have the same \
-                      amount of WCC")
+                print("Warning: consecutive strings don't have the same " + 
+                      "amount of WCC")
             return False
         else:
             return _convsum(x, y, self._current['wcc_tol']) < 1

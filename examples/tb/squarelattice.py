@@ -45,4 +45,4 @@ if __name__ == "__main__":
     fig, axes = plt.subplots(2,2)
     for i, ax in enumerate(axes.flatten()):
         calculate_system(ax, *t_values[i])
-    #~ plt.savefig('./results/squarelattice.pdf', bbox_inches = 'tight')
+    plt.savefig('./results/squarelattice.pdf', bbox_inches = 'tight')

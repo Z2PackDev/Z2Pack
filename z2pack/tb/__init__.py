@@ -161,7 +161,7 @@ class Hamilton:
         self.hamiltonian = _H
         return self.hamiltonian
 
-    def _getM(self, string_dir, string_pos, N):
+    def _getM(self, start_point, end_point, N):
         """
         returns:        M-matrices
 
@@ -179,10 +179,9 @@ class Hamilton:
             self.create_hamiltonian()
 
         # create k-points for string
-        k_points = [copy.copy(string_pos) for i in range(N - 1)]
         ky = np.linspace(0, 1, N - 1, endpoint=False)
-        for i, step in enumerate(k_points):
-            step.insert(string_dir, ky[i])
+        k_points = [[(1 - k) * start_point[i] + k * end_point[i]
+                     for i in range(len(start_point))] for k in ky]
 
         # get eigenvectors corr. to occupied states
         eigs = []
@@ -202,8 +201,7 @@ class Hamilton:
 
         # create M - matrices
         M = []
-        deltak = [0, 0]
-        deltak.insert(string_dir, 1./(N-1))
+        deltak = [1./(N - 1) * (end_point[i] - start_point[i]) for i in range(len(start_point))]
         for i in range(0, N - 1):
             Mnew = [[sum(np.conjugate(eigs[i][j, m]) *
                      eigs[i + 1][j, n] *
@@ -254,16 +252,38 @@ class System(Z2PackSystem):
         self._defaults = kwargs
         self._tb_hamilton = tb_hamilton
 
-        def _m_handle_creator_tb(string_dir, plane_pos_dir, plane_pos):
-            # check if kx is before or after plane_pos_dir
-            if(3 - string_dir > 2 * plane_pos_dir):
-                return lambda kx, N: self._tb_hamilton._getM(string_dir,
-                                                             [plane_pos, kx],
-                                                             N)
+        def _m_handle_creator_static(string_dir, plane_pos_dir, plane_pos):
+            def inner(kx, N):
+                if(3 - string_dir > 2 * plane_pos_dir):
+                    start_point = [plane_pos, kx]
+                else:
+                    start_point = [kx, plane_pos]
+                end_point = copy.copy(start_point)
+                start_point.insert(string_dir, 0.)
+                end_point.insert(string_dir, 1.)
+                return self._tb_hamilton._getM(start_point, end_point, N)
+                
+            return inner
+
+        def _m_handle_creator_flexible(plane_edge_start,
+                                       plane_edge_end,
+                                       string_vec):
+            def inner(kx, N):
+                start_point = [(1 - kx) * plane_edge_start[i] +
+                               kx * plane_edge_end[i]
+                               for i in range(len(plane_edge_start))]
+                end_point = [start_point[i] + string_vec[i]
+                             for i in range(len(start_point))]
+                return self._tb_hamilton._getM(start_point, end_point, N)
+            return inner
+                                                             
+        def _m_handle_creator_tb(*args, **kwargs):
+            if(hasattr(args[0], '__getitem__')):
+                return _m_handle_creator_flexible(*args, **kwargs)
             else:
-                return lambda kx, N: self._tb_hamilton._getM(string_dir,
-                                                             [kx, plane_pos],
-                                                             N)
+                return _m_handle_creator_static(*args, **kwargs)
+                
+        
         self._m_handle_creator = _m_handle_creator_tb
 
 

@@ -46,9 +46,9 @@ class TbHamiltonTestCase(CommonTestCase):
                       [[1, 2, 3]],
                       -0.9,
                       phase=[1])
-        M = in_place_replace(H._getM(2, [0.4, 0], 12))
+        M = in_place_replace(H._getM([0.4, 0, 0], [0.4, 0, 1], 12))
 
-        self.assertContainerAlmostEqual(H._getM(2, [0.4, 0], 12), M)
+        self.assertContainerAlmostEqual(H._getM([0.4, 0, 0], [0.4, 0, 1], 12), M)
 
 if __name__ == "__main__":
     unittest.main()

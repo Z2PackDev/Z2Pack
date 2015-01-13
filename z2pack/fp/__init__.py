@@ -96,18 +96,22 @@ class System(Z2PackSystem):
                                      plane_pos):
             # check if kx is before or after plane_pos_dir
             if(3 - string_dir > 2 * plane_pos_dir):
-                return lambda kx, N: self._system._run(string_dir,
+                return lambda kx, N: self._system._static_run(string_dir,
                                                        [plane_pos, kx],
                                                        N)
             else:
-                return lambda kx, N: self._system._run(string_dir,
+                return lambda kx, N: self._system._static_run(string_dir,
                                                        [kx, plane_pos],
                                                        N)
 
         def _m_handle_creator_flexible(plane_edge_start,
                                        plane_edge_end,
                                        string_vec):
-            pass
+            return lambda kx, N: self._system._flexible_run(plane_edge_start,
+                                                            plane_edge_end,
+                                                            string_vec,
+                                                            kx,
+                                                            N)
 
         def _m_handle_creator_first_principles(*args, **kwargs):
             if(hasattr(args[0], '__getitem__')):
@@ -292,15 +296,19 @@ class _FirstPrinciplesSystem:
             f.write(self._k_points_fct[i](*args))
             f.close()
 
-    def _run(self, string_dir, string_pos, N):
-        # create input
+    def _static_run(self, string_dir, string_pos, N):
         start_point = copy.copy(string_pos)
         start_point.insert(string_dir, 0)
         end_point = copy.copy(string_pos)
         end_point.insert(string_dir, 1)
+        return self._run(start_point, end_point, N)
+
+    def _run(self, start_point, end_point, N):
         last_point = [1. / N * start_point[i] +
                       (N - 1.)/float(N) * end_point[i]
                       for i in range(3)]
+                      
+        # create input
         self._create_input(start_point, last_point, end_point, N)
 
         # execute command
@@ -318,6 +326,12 @@ class _FirstPrinciplesSystem:
 
         # read mmn file
         return mmn.getM(self._mmn_path_abs)
+
+    def _flexible_run(self, plane_edge_start, plane_edge_end, string_vec, kx, N):
+        start_point = [(1. - kx) * plane_edge_start[i] + kx * plane_edge_end[i]
+                       for i in range(len(plane_edge_start))]
+        end_point = [start_point[i] + string_vec[i] for i in range(len(plane_edge_start))]
+        return self._run(start_point, end_point, N)
 
 
 def _copy(initial_paths, final_names):

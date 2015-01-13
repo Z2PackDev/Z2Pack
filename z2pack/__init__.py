@@ -83,7 +83,7 @@ class Z2PackSystem:
 
         :param string_vec: Direction of the individual k-point strings. \
         Having ``string_dir`` set as ``0, 1, 2`` corresponds to ``string_vec``\
-        being ``{1, 0, 0}, {0, 1, 0}, {0, 0, 1}``.
+        being ``[1, 0, 0], [0, 1, 0], [0, 0, 1]``.
         :type string_vec: list (float)
 
         :param kwargs: passed to :class:`Z2PackPlane` constructor. Take \
@@ -114,6 +114,7 @@ class Z2PackSystem:
             return Z2PackPlane(self._m_handle_creator(plane_edge_start,
                                                       plane_edge_end,
                                                       string_vec),
+                               full_k_range=True,
                                **kw_arguments
                                )
 
@@ -132,6 +133,10 @@ class Z2PackPlane(object):
     :param pickle_file:     Path to a file where the results are stored using \
     the :py:mod:`pickle` module.
     :type pickle_file:      str
+
+    :param full_k_range:    If True, the values of ``kx`` will go from 0 \
+    to 1 (0 to 0.5 else).
+    :type full_k_range:     bool
 
     :param kwargs: Are passed to ``wcc_calc``. Kwargs specified in \
     ``wcc_calc`` take precedence
@@ -252,8 +257,13 @@ class Z2PackPlane(object):
         start_time = time.time()
 
         # initialising
-        self._k_points = list(np.linspace(0, 0.5, self._current['num_strings'],
-                                          endpoint=True))
+        if(self._full_k_range):
+            self._k_points = list(np.linspace(0., 1., self._current['num_strings'],
+                                              endpoint=True))
+        else:
+            self._k_points = list(np.linspace(0, 0.5, self._current['num_strings'],
+                                              endpoint=True))
+                        
         self._gaps = [None for i in range(self._current['num_strings'])]
         self._wcc_list = [[] for i in range(self._current['num_strings'])]
         self._neighbour_check = [False for i in
@@ -301,9 +311,11 @@ class Z2PackPlane(object):
     def __init__(self,
                  m_handle,
                  pickle_file="res_pickle.txt",
+                 full_k_range=False,
                  **kwargs):
         self._m_handle = m_handle
         self._pickle_file = pickle_file
+        self._full_k_range = full_k_range
         self._defaults = {'no_iter': False,
                           'no_neighbour_check': False,
                           'wcc_tol': 1e-2,

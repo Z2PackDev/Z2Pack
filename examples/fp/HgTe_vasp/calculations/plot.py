@@ -12,12 +12,9 @@ from python_tools.plot_setup import *
 import numpy as np
 import matplotlib.pyplot as plt
 
-
-def plot():
-    with open('EIGENVAL', 'r') as f:
+def plot(name):
+    with open('./results/' + name, 'r') as f:
         data = f.read().split('\n')[7:]
-
-    points = ['X', 'G', 'L']
 
     kpts = []
     eigvals = []
@@ -35,42 +32,39 @@ def plot():
             else:
                 tmp.append(float(filter(None, line.split(' '))[1]))
 
-    #~ step = 20
-    del eigvals[19]
-    #~ eigvals.append(eigvals[100])
+    del eigvals[100]
 
     fix, ax = plt.subplots()
 
-    bands = []
-    for band in np.array(eigvals).T:
-        bands.append(list(band))
-        
+    bands = np.array(eigvals).T
+            
     x = np.arange(len(bands[0]))
-    xx = np.linspace(0, len(bands[0]), 10 * len(bands[0]))
 
-    ax.set_xticks(range(0, len(bands[0]) + 1, 19))
-    ax.set_xticklabels(points)
+    ax.set_xticks([0, 99, 198])
+    ax.set_xticklabels(['X', 'G', 'L'])
     ax.set_xlabel(r'$k$')
     ax.set_ylabel(r'$E [\text{eV}]$', rotation='horizontal')
     ax.yaxis.set_label_coords(0, 1.05)
     ax.xaxis.set_label_coords(1, -0.09)
-    
+        
     occ = 18
-    
-    ax.set_title(r'$\Delta E_\text{{min}} = {:.6f}$ eV, $E_\text{{g}} = {:.6f}$ eV'.format((min([bands[occ][i] - bands[occ - 1][i] for i in range(len(bands[occ]))])), min(bands[occ] - max(bands[occ - 1]))))
     ax.set_xlim(0, len(eigvals) - 1)
     ax.set_ylim(min(bands[occ - 1]), max(bands[occ]))
     for band in bands:
         plt.plot(x, band, 'k')
 
     ax.plot(x, bands[occ - 1], 'r')
+
     ax.plot(x, bands[occ], 'b')
 
-    plt.savefig('band.pdf')
+    plt.savefig('./plots/band_' + name + '.pdf')
     ax.cla()
-
-    
+        
 if __name__ == "__main__":
-    plot()
-    print("plot.py")
-    
+    names = ['0', '0_5', '1', '1_5', '2', '2_5', '3', '3_5', '4',
+            'm_0_5', 'm_1', 'm_1_5', 'm_2', 'm_2_5', 'm_3', 'm_3_5', 'm_4']
+
+    for name in names:
+        plot(name)
+
+

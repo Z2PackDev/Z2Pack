@@ -31,7 +31,7 @@ def calculate_system(ax, t1, t2):
     # call to Z2Pack
     tb_system = tb.System(H)
     tb_plane = tb_system.plane(1, 2, 0, pickle_file = './results/res.txt')
-    tb_plane.wcc_calc(verbose=True, num_strings=20, iterator=range(8, 35, 2))
+    tb_plane.wcc_calc(verbose=False, num_strings=20, iterator=range(8, 35, 2))
     plot = tb_plane.plot(show = False, axis = ax)
     print("t1: {0}, t2: {1}, invariant: {2}".format(t1, t2, tb_plane.invariant()))
     return plot
@@ -45,4 +45,4 @@ if __name__ == "__main__":
     fig, axes = plt.subplots(2,2)
     for i, ax in enumerate(axes.flatten()):
         calculate_system(ax, *t_values[i])
-    plt.savefig('./results/squarelattice.pdf', bbox_inches = 'tight')
+    plt.savefig('./results/squarelattice.pdf', bbox_inches='tight')

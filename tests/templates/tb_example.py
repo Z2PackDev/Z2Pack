@@ -57,7 +57,7 @@ class TbExampleTestCase(CommonTestCase):
         
         res = in_place_replace(tb_plane.get_res())
 
-        self.assertContainerAlmostEqual(tb_plane.get_res(), res)
+        self.assertDictAlmostEqual(tb_plane.get_res(), res)
 
     def test_res2(self):
         """ test no_iter=True """
@@ -72,7 +72,7 @@ class TbExampleTestCase(CommonTestCase):
 
         res = in_place_replace(tb_plane.get_res())
 
-        self.assertContainerAlmostEqual(tb_plane.get_res(), res)
+        self.assertDictAlmostEqual(tb_plane.get_res(), res)
 
     def test_res3(self):
         """ test no_neighbour_check=True """
@@ -87,7 +87,7 @@ class TbExampleTestCase(CommonTestCase):
 
         res = in_place_replace(tb_plane.get_res())
 
-        self.assertContainerAlmostEqual(tb_plane.get_res(), res)
+        self.assertDictAlmostEqual(tb_plane.get_res(), res)
 
     def testkwargcheck1(self):
         """ test kwarg check on wcc_calc """
@@ -120,7 +120,7 @@ class TbExampleTestCase(CommonTestCase):
         
         res = in_place_replace(tb_plane.get_res())
 
-        self.assertContainerAlmostEqual(tb_plane.get_res(), res)
+        self.assertDictAlmostEqual(tb_plane.get_res(), res)
 
     def test_res2_v2(self):
         """ test no_iter=True """
@@ -135,7 +135,7 @@ class TbExampleTestCase(CommonTestCase):
 
         res = in_place_replace(tb_plane.get_res())
 
-        self.assertContainerAlmostEqual(tb_plane.get_res(), res)
+        self.assertDictAlmostEqual(tb_plane.get_res(), res)
 
     def test_res3_v2(self):
         """ test no_neighbour_check=True """
@@ -150,7 +150,7 @@ class TbExampleTestCase(CommonTestCase):
 
         res = in_place_replace(tb_plane.get_res())
 
-        self.assertContainerAlmostEqual(tb_plane.get_res(), res)
+        self.assertDictAlmostEqual(tb_plane.get_res(), res)
 
     def testkwargcheck1_v2(self):
         """ test kwarg check on wcc_calc """
@@ -172,7 +172,6 @@ class TbExampleTestCase(CommonTestCase):
             TypeError,
             tb_system.plane,
             plane_edge_start=[0, 0, 0], plane_edge_end=[1, 0, 0], string_vec=[0, 1, 0], invalid_kwarg = 3)
-
 
 if __name__ == "__main__":
     unittest.main()

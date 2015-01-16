@@ -36,7 +36,7 @@ class FpPhonyTestCase(CommonTestCase):
         plane = sys.plane(2, 0, 0, use_pickle=False)
 
         plane.wcc_calc(no_iter=True, no_neighbour_check=True, verbose=False)
-        self.assertContainerAlmostEqual(
+        self.assertDictAlmostEqual(
             plane.get_res(), in_place_replace(plane.get_res()))
 
     def testphony2(self):
@@ -51,7 +51,7 @@ class FpPhonyTestCase(CommonTestCase):
         plane = sys.plane(2, 0, 0, use_pickle=False)
 
         plane.wcc_calc(no_iter=True, no_neighbour_check=True, verbose=False)
-        self.assertContainerAlmostEqual(
+        self.assertDictAlmostEqual(
             plane.get_res(), in_place_replace(plane.get_res()))
 
 
@@ -67,7 +67,7 @@ class FpPhonyTestCase(CommonTestCase):
         plane = sys.plane(2, 0, 0, use_pickle=False)
 
         plane.wcc_calc(verbose=False)
-        self.assertContainerAlmostEqual(
+        self.assertDictAlmostEqual(
             plane.get_res(), in_place_replace(plane.get_res()))
 
     def testphony4(self):
@@ -81,7 +81,7 @@ class FpPhonyTestCase(CommonTestCase):
         plane = sys.plane(plane_edge_start=[0, 0, 0], plane_edge_end=[0, 1, 0], string_vec=[0, 0, 1], use_pickle=False)
 
         plane.wcc_calc(no_iter=True, no_neighbour_check=True, verbose=False)
-        self.assertContainerAlmostEqual(
+        self.assertDictAlmostEqual(
             plane.get_res(), in_place_replace(plane.get_res()))
 
     def testphony5(self):
@@ -96,7 +96,7 @@ class FpPhonyTestCase(CommonTestCase):
         plane = sys.plane(plane_edge_start=[0, 0, 0], plane_edge_end=[0, 1, 0], string_vec=[0, 0, 1], use_pickle=False)
 
         plane.wcc_calc(no_iter=True, no_neighbour_check=True, verbose=False)
-        self.assertContainerAlmostEqual(
+        self.assertDictAlmostEqual(
             plane.get_res(), in_place_replace(plane.get_res()))
             
     def testphony6(self):
@@ -111,7 +111,7 @@ class FpPhonyTestCase(CommonTestCase):
         plane = sys.plane(plane_edge_start=[0, 0, 0], plane_edge_end=[0, 1, 0], string_vec=[0, 0, 1], use_pickle=False)
 
         plane.wcc_calc(verbose=False)
-        self.assertContainerAlmostEqual(
+        self.assertDictAlmostEqual(
             plane.get_res(), in_place_replace(plane.get_res()))
 
 

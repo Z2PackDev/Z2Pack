@@ -266,6 +266,7 @@ class Z2PackPlane(object):
                         
         self._gaps = [None for i in range(self._current['num_strings'])]
         self._wcc_list = [[] for i in range(self._current['num_strings'])]
+        self._gamma_list = [[] for i in range(self._current['num_strings'])]
         self._neighbour_check = [False for i in
                                  range(self._current['num_strings'] - 1)]
         self._string_status = [False for i in
@@ -278,7 +279,7 @@ class Z2PackPlane(object):
         while not (all(self._neighbour_check)):
             for i, kx in enumerate(self._k_points):
                 if not(self._string_status[i]):
-                    self._wcc_list[i] = self._getwcc(kx)
+                    self._wcc_list[i], self._gamma_list[i] = self._getwcc(kx)
                     self._gaps[i] = _gapfind(self._wcc_list[i])
                     self._string_status[i] = True
                     self.save()
@@ -383,6 +384,7 @@ class Z2PackPlane(object):
                             self._k_points.insert(i + 1, (self._k_points[i] +
                                                   self._k_points[i+1]) / 2)
                             self._wcc_list.insert(i + 1, [])
+                            self._gamma_list.insert(i + 1, [])
                             self._gaps.insert(i + 1, None)
                             # check length of the variables
                             assert(len(self._k_points) == len(self._wcc_list))
@@ -422,7 +424,7 @@ class Z2PackPlane(object):
         """
         if(self._current['use_pickle']):
             fstream = open(self._pickle_file, "wb")
-            pickle.dump([self._k_points, self._wcc_list, self._gaps], fstream)
+            pickle.dump([self._k_points, self._wcc_list, self._gaps, self._gamma_list], fstream)
             fstream.close()
 
     def load(self):
@@ -430,7 +432,7 @@ class Z2PackPlane(object):
         Loads the data (e.g. from a previous run) from the :mod:`pickle` file.
         """
         fstream = open(self._pickle_file, "rb")
-        [self._k_points, self._wcc_list, self._gaps] = pickle.load(fstream)
+        [self._k_points, self._wcc_list, self._gaps, self._gamma_list] = pickle.load(fstream)
         fstream.close()
 
     # calculating one string
@@ -453,7 +455,7 @@ class Z2PackPlane(object):
         if(self._current['verbose']):
             print('    N = ' + str(N), end='')
             sys.stdout.flush()
-        x, min_sv = self._trywcc(self._m_handle(kx, N))
+        x, min_sv, gamma = self._trywcc(self._m_handle(kx, N))
 
         # no iteration
         if(self._current['no_iter']):
@@ -468,7 +470,7 @@ class Z2PackPlane(object):
                     # Output
                     print("    N = " + str(N), end="")
                     sys.stdout.flush()
-                x, min_sv = self._trywcc(self._m_handle(kx, N))
+                x, min_sv, gamma = self._trywcc(self._m_handle(kx, N))
 
                 # break conditions
                 if(self._convcheck(x, xold)):  # success
@@ -481,7 +483,7 @@ class Z2PackPlane(object):
                 if(self._current['verbose']):
                     print('iterator ends, failed to converge!\n\n', end='')
                     sys.stdout.flush()
-        return sorted(x)
+        return sorted(x), gamma
 
     def _print_wcc(func):
         """
@@ -525,7 +527,7 @@ class Z2PackPlane(object):
             min_sv = min(min(E), min_sv)
         # getting the wcc from the eigenvalues of gamma
         [eigs, _] = la.eig(gamma)
-        return [(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs], min_sv
+        return [(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs], min_sv, gamma
 
     # wcc convergence functions
     def _convcheck(self, x, y):
@@ -598,13 +600,14 @@ class Z2PackPlane(object):
 
     def get_res(self):
         """
-        Returns a ``tuple`` ``(k_points, wcc, gaps)``, ``k_points`` being the \
+        Returns a ``dict`` with the following keys: ``kpt``, the \
         positions of the k-point strings used (at which the WCCs were \
-        computed), ``wcc`` the WCC positions at each of those positions, and \
-        ``gaps`` the positions of the largest gap in each string.
+        computed); ``wcc``, the WCC positions at each of those positions, \
+        ``gap`` the positions of the largest gap in each string and \
+        ``gamma``, the Gamma matrix for each string.
         """
         try:
-            return (self._k_points, self._wcc_list, self._gaps)
+            return {'kpt': self._k_points, 'wcc': self._wcc_list, 'gap': self._gaps, 'gamma': self._gamma_list}
         except (NameError, AttributeError):
             raise RuntimeError('WCC not yet calculated')
         # for a potential Python3 - only version

@@ -38,6 +38,18 @@ def assertContainerAlmostEqual(TestCase, x, y):
     except TypeError:
         TestCase.assertAlmostEqual(x, y)
 
+def assertDictAlmostEqual(TestCase, x, y):
+    """
+    comparing two dicts for almost equality
+    """
+    try:
+        if not(sorted(x.keys()) == sorted(y.keys())):
+            TestCase.fail(msg="dicts don't have the same keys")
+        for key in x.keys():
+            TestCase.assertContainerAlmostEqual(x[key], y[key])
+    except TypeError:
+        TestCase.assertAlmostEqual(x, y)
+
 
 class CommonTestCase(unittest.TestCase):
     def __init__(self, *args, **kwargs):
@@ -45,6 +57,8 @@ class CommonTestCase(unittest.TestCase):
         self.assertIterAlmostEqual = types.MethodType(assertIterAlmostEqual, self)
         self.assertContainerAlmostEqual = types.MethodType(
         assertContainerAlmostEqual, self)
+        self.assertDictAlmostEqual = types.MethodType(
+        assertDictAlmostEqual, self)
 
 if __name__ == "__main__":
     print("common.py")

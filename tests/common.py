@@ -12,6 +12,8 @@ from z2pack.python_tools.replace import *
 import types
 import inspect
 import unittest
+# ugly hack to enable in-place replacement of arrays
+from numpy import array
 
 # assert functions for all tests
 def assertIterAlmostEqual(TestCase, x, y, iter_type = list):

@@ -1,0 +1,39 @@
+SYSTEM = HgTe
+#EDIFF = 1E-8
+##     
+NPAR=30
+PREC = A
+LSORBIT = .TRUE.
+#LORBIT = 11
+#LREAL = .FALSE.
+GGA_COMPAT = .FALSE.
+ISMEAR =  0
+SIGMA  =  0.05
+GGA    = PE
+#ISYM = -1
+ENCUT = 260.00 eV
+#NELMDL = 2
+#NSW=0
+## HSE
+#LHFCALC = .TRUE. 
+#HFSCREEN = 0.2 
+#AEXX = 0.25
+#ALGO = D 
+#TIME = 0.4 
+#LDIAG = .TRUE.
+ICHARG = 11
+
+#ISTART = 1
+#LHFCALC = .TRUE. ; HFSCREEN = 0.2
+#NBANDS = number of occupied bands
+#ALGO = N ; TIME = 0.3
+#PRECFOCK  = N
+#NELMIN = 8
+##VASP2WANNIER
+LPEAD=.FALSE.  
+LWANNIER90=.TRUE.
+LWRITE_MMN_AMN = .TRUE.
+ISYM = -1
+
+#NELM   = 100   #  maximum of 100 electronic steps
+NBANDS = 30 # 18 occupied

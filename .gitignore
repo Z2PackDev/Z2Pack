@@ -24,3 +24,5 @@ lsf.*
 *DDB
 status.txt
 *.pyc
+HgTe_strain*
+

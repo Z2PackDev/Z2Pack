@@ -1,6 +1,0 @@
-num_wann = 18
-num_bands = 18
-spinors : true
-num_iter 0
-shell_list 1
-exclude_bands 19-30

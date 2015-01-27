@@ -95,6 +95,8 @@ class Z2PackSystem:
 
         # distinguishing the two input cases
         if(string_dir is not None):
+            if any(hasattr(x, '__getitem__') for x in [string_dir, plane_pos_dir, plane_pos]):
+                raise ValueError('Confusing input. Input variables [string_dir, plane_pos_dir, plane_pos] should be [int, int, float].')
             if any(var is None for var in [string_dir, plane_pos_dir, plane_pos]):
                 raise ValueError('Incomplete input set for [string_dir, plane_pos_dir, plane_pos].')
             if not all(var is None for var in [plane_edge_start, plane_edge_end, string_vec]):

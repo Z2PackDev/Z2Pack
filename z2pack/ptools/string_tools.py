@@ -12,7 +12,7 @@ def cbox(   string,
             alignment = "left", 
             padding = "auto", 
             total_size = 70,
-            centering_line = "longest"):
+            centering_line = "first"):
     """ 
     padding:        space on alignment side; auto -> longest/first 
                     line is centered

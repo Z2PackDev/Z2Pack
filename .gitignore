@@ -13,9 +13,9 @@ MANIFEST
 dist
 files*.txt
 *egg**
-z2pack/python_tools/.git
-z2pack/python_tools/.gitignore
-z2pack/python_tools/*.py
+z2pack/ptools/.git
+z2pack/ptools/.gitignore
+z2pack/ptools/*.py
 results*
 *.tar.gz
 z2pack/decorator.py

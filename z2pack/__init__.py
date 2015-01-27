@@ -14,11 +14,8 @@ specialisations) and Z2PackPlane (responsible for all the calculation / \
 plots etc.)
 """
 
-from .python_tools import string_tools
-
 from .core import *
 
 from . import fp
 from . import tb
 
-#~ __all__ = ['']

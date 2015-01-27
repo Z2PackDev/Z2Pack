@@ -11,6 +11,10 @@ Implementation of Core functionality
 
 from __future__ import division, print_function
 
+
+from .ptools import string_tools
+
+
 import re
 import sys
 import time

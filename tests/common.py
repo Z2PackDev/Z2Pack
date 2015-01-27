@@ -5,9 +5,10 @@
 # Date:    15.10.2014 10:18:11 CEST
 # File:    common.py
 
+import os
 import sys
-sys.path.append('../')
-from z2pack.python_tools.replace import *
+sys.path.append(os.path.dirname(__file__) + '/../')
+from z2pack.ptools.replace import *
 
 import types
 import inspect

@@ -32,7 +32,7 @@ def calculate_system(ax, t1, t2):
 
     # call to Z2Pack
     tb_system = tb.System(H)
-    tb_plane = tb_system.plane(1, 2, 0, pickle_file = './results/res.txt')
+    tb_plane = tb_system.plane(lambda kx: [kx, 0, 0], [0, 1, 0], pickle_file = './results/res.txt')
     tb_plane.wcc_calc(verbose=True, num_strings=20, iterator=range(8, 35, 2))
 
     tb_plane.save()

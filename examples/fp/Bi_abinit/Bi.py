@@ -29,8 +29,8 @@ Bi = z2pack.fp.System(["Bi_nscf.files", "Bi_nscf.in", "wannier90.win" ],
     
 
 # creating the Z2PackPlane object
-plane_0 = Bi.plane(lambda kx: [0, kx, 0], [0, 0, 1], pickle_file = './results/res_0.txt')
-plane_0 = Bi.plane(lambda kx: [0.5, kx, 0], [0, 0, 1], pickle_file = './results/res_1.txt')
+plane_0 = Bi.plane(lambda t: [0, t / 2, 0], [0, 0, 1], pickle_file = './results/res_0.txt')
+plane_0 = Bi.plane(lambda t: [0.5, t / 2, 0], [0, 0, 1], pickle_file = './results/res_1.txt')
 
 # WCC calculation
 plane_0.wcc_calc()

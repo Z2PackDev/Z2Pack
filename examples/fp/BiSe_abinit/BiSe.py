@@ -30,9 +30,9 @@ if __name__ == "__main__":
                             )
 
     # plane at k1=0
-    plane_0 = BiSe.plane(2, 0, 0, pickle_file = 'results/res_0.txt')
+    plane_0 = BiSe.plane(lambda t: [0, t / 2, 0], [0, 0, 1], pickle_file = 'results/res_0.txt')
     plane_0.wcc_calc(no_iter=True, no_neighbour_check=False, iterator=range(10, 20, 2))
 
     # plane at k1=Pi
-    plane_1 = BiSe.plane(2, 0, 0.5, pickle_file = 'results/res_1.txt')
+    plane_1 = BiSe.plane(lambda t: [0.5, t / 2, 0], [0, 0, 1], pickle_file = 'results/res_1.txt')
     #~ plane_1.wcc_calc(no_iter=False, no_neighbour_check=False, iterator=range(10, 20, 2))

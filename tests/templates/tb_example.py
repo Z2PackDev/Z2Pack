@@ -52,7 +52,7 @@ class TbExampleTestCase(CommonTestCase):
         self.createH(0.2, 0.3)
         # call to Z2Pack
         tb_system = z2pack.tb.System(self.H)
-        tb_plane = tb_system.plane(lambda kx: [kx, 0, 0], [0, 1, 0])
+        tb_plane = tb_system.plane(lambda kx: [kx / 2, 0, 0], [0, 1, 0])
         tb_plane.wcc_calc(verbose=False, num_strings=20, use_pickle=False)
         
         res = in_place_replace(tb_plane.get_res())
@@ -64,7 +64,7 @@ class TbExampleTestCase(CommonTestCase):
         self.createH(0, 0.3)
         # call to Z2Pack
         tb_system = z2pack.tb.System(self.H)
-        tb_plane = tb_system.plane(lambda kx: [kx, 0, 0], [0, 1, 0])
+        tb_plane = tb_system.plane(lambda kx: [kx / 2, 0, 0], [0, 1, 0])
         tb_plane.wcc_calc(verbose=False,
                           num_strings=20,
                           use_pickle=False,
@@ -79,7 +79,7 @@ class TbExampleTestCase(CommonTestCase):
         self.createH(0.1, 0.3)
         # call to Z2Pack
         tb_system = z2pack.tb.System(self.H)
-        tb_plane = tb_system.plane(lambda kx: [kx, 0, 0], [0, 1, 0])
+        tb_plane = tb_system.plane(lambda kx: [kx / 2, 0, 0], [0, 1, 0])
         tb_plane.wcc_calc(verbose=False,
                           num_strings=20,
                           use_pickle=False,
@@ -94,7 +94,7 @@ class TbExampleTestCase(CommonTestCase):
         self.createH(0.1, 0.3)
         # call to Z2Pack
         tb_system = z2pack.tb.System(self.H)
-        tb_plane = tb_system.plane(lambda kx: [kx, 0, 0], [0, 1, 0])
+        tb_plane = tb_system.plane(lambda kx: [kx / 2, 0, 0], [0, 1, 0])
         self.assertRaises(
             TypeError,
             tb_plane.wcc_calc,

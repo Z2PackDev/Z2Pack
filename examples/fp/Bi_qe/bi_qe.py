@@ -64,7 +64,7 @@ if(plotfig):
 # define plane with strings along k1 and k2=0.0
 #
 print("Computing the Z2 invariant for strings along k1 and k2=0.0") 
-Bi_plane = Bi.plane(0,1,0.0, pickle_file = 'results/res1.txt')
+Bi_plane = Bi.plane(lambda t: [0, 0, t / 2.], [1, 0, 0], pickle_file = 'results/res1.txt')
 #
 # compute the wannier centers
 #
@@ -84,7 +84,7 @@ print("Z2 invariant: {0}".format( Bi_plane.invariant()))
 # define plane with strings along k1 and k2=0.5
 #
 print("Computing the Z2 invariant for strings along k1 and k2=0.5") 
-Bi_plane = Bi.plane(0,1,0.5, pickle_file = 'results/res2.txt')
+Bi_plane = Bi.plane(lambda t: [0, 0.5, t / 2.], [1, 0, 0], pickle_file = 'results/res2.txt')
 #
 # compute the wannier centers
 #

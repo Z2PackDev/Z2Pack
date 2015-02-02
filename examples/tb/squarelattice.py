@@ -32,26 +32,17 @@ def calculate_system(ax, t1, t2):
 
     # call to Z2Pack
     tb_system = tb.System(H)
-    tb_plane = tb_system.plane(lambda kx: [kx, 0, 0], [0, 1, 0], pickle_file = './results/res.txt')
+    tb_plane = tb_system.plane(lambda kx: [kx / 2, 0, 0], [0, 1, 0], pickle_file = './results/res.txt')
     tb_plane.wcc_calc(verbose=True, num_strings=20, iterator=range(8, 35, 2))
 
-    tb_plane.save()
     tb_plane.load()
+    tb_plane.save()
     
     plot = tb_plane.plot(show = False, axis = ax)
 
     
     print("t1: {0}, t2: {1}, invariant: {2}".format(t1, t2, tb_plane.invariant()))
     return plot, tb_plane
-
-#~ def gamma_eval(plane, string_index, wcc_index):
-    #~ gamma = plane.get_res()['gamma']
-    #~ eigvec = la.eig(gamma[string_index])[1][:, wcc_index]
-    #~ for g in gamma[string_index + 1:]:
-        #~ _, candidates = la.eig(g)
-        #~ index = np.argmax([abs(np.dot(eigvec, candidates[:, i])) for i in range(len(candidates[0]))])
-        #~ eigvec = candidates[index]
-        #~ print(index)
         
 if __name__ == "__main__":
     if not os.path.exists('./results'):
@@ -62,7 +53,5 @@ if __name__ == "__main__":
     fig, axes = plt.subplots(2,2)
     for i, ax in enumerate(axes.flatten()):
         calculate_system(ax, *t_values[i])
-    #~ fig, ax = plt.subplots()
-    #~ _, gamma = calculate_system(ax, *t_values[0])
-    #~ gamma_eval(gamma, 1, 0)
+
     plt.savefig('./results/squarelattice.pdf', bbox_inches = 'tight')

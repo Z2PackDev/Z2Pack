@@ -29,8 +29,8 @@ BiSe = z2pack.fp.System(["BiSe_nscf.files", "BiSe_nscf.in", "wannier90.win" ],
 
 
 # creating the z2pack.plane object
-plane_0 = BiSe.plane(2, 0, 0, pickle_file = './results/res_0.txt')
-plane_1 = BiSe.plane(2, 0, 0.5, pickle_file = './results/res_1.txt')
+plane_0 = BiSe.plane(lambda t: [0, t / 2, 0], [0, 0, 1], pickle_file = './results/res_0.txt')
+plane_1 = BiSe.plane(lambda t: [0.5, t / 2, 0], [0, 0, 1], pickle_file = './results/res_1.txt')
 
 
 plane_0.load()

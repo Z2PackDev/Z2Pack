@@ -33,7 +33,7 @@ class FpPhonyTestCase(CommonTestCase):
             'samples' + self._sep + 'build',
             "")
 
-        plane = sys.plane(lambda kx: [0, kx, 0], [0, 0, 1], use_pickle=False)
+        plane = sys.plane(lambda kx: [0, kx / 2, 0], [0, 0, 1], use_pickle=False)
 
         plane.wcc_calc(no_iter=True, no_neighbour_check=True, verbose=False)
         self.assertDictAlmostEqual(
@@ -48,7 +48,7 @@ class FpPhonyTestCase(CommonTestCase):
             "",
             file_names='wannier90.mmn')
 
-        plane = sys.plane(lambda kx: [0, kx, 0], [0, 0, 1], use_pickle=False)
+        plane = sys.plane(lambda kx: [0, kx / 2, 0], [0, 0, 1], use_pickle=False)
 
         plane.wcc_calc(no_iter=True, no_neighbour_check=True, verbose=False)
         self.assertDictAlmostEqual(
@@ -64,7 +64,7 @@ class FpPhonyTestCase(CommonTestCase):
             "",
             mmn_path='varw90.mmn')
 
-        plane = sys.plane(lambda kx: [0, kx, 0], [0, 0, 1], use_pickle=False)
+        plane = sys.plane(lambda kx: [0, kx / 2, 0], [0, 0, 1], use_pickle=False)
 
         plane.wcc_calc(verbose=False)
         self.assertDictAlmostEqual(

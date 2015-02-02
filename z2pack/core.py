@@ -37,7 +37,7 @@ class Z2PackSystem:
     abstract Base Class for Z2Pack systems (Interface definition)
 
     :param m_handle_creator: Takes (``string_dir``, ``plane_pos_dir``, \
-    ``plane_pos``) and creates an ``m_handle`` s.t. ``m_handle(kx, N)`` \
+    ``plane_pos``) and creates an ``m_handle`` s.t. ``m_handle(t, N)`` \
     returns the overlap matrices
     :type m_handle_creator: function
 
@@ -68,16 +68,8 @@ class Z2PackSystem:
         :param plane_pos: position of the plane along ``plane_pos_dir``
         :type plane_pos: float
 
-        :param plane_edge_start: First point in the first k-point string \
-        that is to be computed (i.e. the start of the edge of the plane \
-        in k-space).
-        :type plane_edge_start: list (float)
-        
-        :param plane_edge_end: First point in the last k-point string \
-        that is to be computed (i.e. the end of the edge of the plane \
-        in k-space). Note that the plane should typically only span \
-        half the BZ.
-        :type plane_edge_end: list (float)
+        :param edge_function: Returns the start of the k-point string \
+        as function of the pumping parameter t.
 
         :param string_vec: Direction of the individual k-point strings. \
         Having ``string_dir`` set as ``0, 1, 2`` corresponds to ``string_vec``\
@@ -110,10 +102,6 @@ class Z2PackPlane(object):
     :param pickle_file:     Path to a file where the results are stored using \
     the :py:mod:`pickle` module.
     :type pickle_file:      str
-
-    :param full_k_range:    If True, the values of ``kx`` will go from 0 \
-    to 1 (0 to 0.5 else).
-    :type full_k_range:     bool
 
     :param kwargs: Are passed to ``wcc_calc``. Kwargs specified in \
     ``wcc_calc`` take precedence
@@ -234,12 +222,9 @@ class Z2PackPlane(object):
         start_time = time.time()
 
         # initialising
-        if(self._full_k_range):
-            self._k_points = list(np.linspace(0., 1., self._current['num_strings'],
-                                              endpoint=True))
-        else:
-            self._k_points = list(np.linspace(0, 0.5, self._current['num_strings'],
-                                              endpoint=True))
+        self._t_points = list(np.linspace(0., 1., self._current['num_strings'],
+                                          endpoint=True))
+
                         
         self._gaps = [None for i in range(self._current['num_strings'])]
         self._wcc_list = [[] for i in range(self._current['num_strings'])]
@@ -254,9 +239,9 @@ class Z2PackPlane(object):
         # a failed convergence (reaching lower limit) also produces
         # 'true'
         while not (all(self._neighbour_check)):
-            for i, kx in enumerate(self._k_points):
+            for i, t in enumerate(self._t_points):
                 if not(self._string_status[i]):
-                    self._wcc_list[i], self._lambda_list[i] = self._getwcc(kx)
+                    self._wcc_list[i], self._lambda_list[i] = self._getwcc(t)
                     self._gaps[i] = _gapfind(self._wcc_list[i])
                     self._string_status[i] = True
                     self.save()
@@ -281,7 +266,7 @@ class Z2PackPlane(object):
             print(string_tools.cbox("finished wcc calculation" + "\ntime: "
                                     + duration_string))
 
-        return (self._k_points, self._wcc_list, self._gaps)
+        return (self._t_points, self._wcc_list, self._gaps)
 
     # has to be below wcc_calc because _validate_kwargs needs access to
     # wcc_calc.__doc__
@@ -289,11 +274,9 @@ class Z2PackPlane(object):
     def __init__(self,
                  m_handle,
                  pickle_file="res_pickle.txt",
-                 full_k_range=False,
                  **kwargs):
         self._m_handle = m_handle
         self._pickle_file = pickle_file
-        self._full_k_range = full_k_range
         self._defaults = {'no_iter': False,
                           'no_neighbour_check': False,
                           'wcc_tol': 1e-2,
@@ -308,7 +291,7 @@ class Z2PackPlane(object):
 
     def __str__(self):
         try:
-            text = 'kpts:\n' + str(self._k_points)
+            text = 'kpts:\n' + str(self._t_points)
             text += '\nwcc:\n' + str(self._wcc_list)
             text += '\ngaps:\n' + str(self._gaps)
             text += '\ninvariant:\n' + str(self.invariant())
@@ -332,9 +315,9 @@ class Z2PackPlane(object):
             if not(status):
                 if(self._string_status[i] and self._string_status[i + 1]):
                     if(self._current['verbose']):
-                        print("Checking neighbouring k-points k = " + "%.4f" %
-                              self._k_points[i] + " and k = " + "%.4f" %
-                              self._k_points[i + 1] + "\n", end="")
+                        print("Checking neighbouring t-points t = " + "%.4f" %
+                              self._t_points[i] + " and t = " + "%.4f" %
+                              self._t_points[i + 1] + "\n", end="")
                         sys.stdout.flush()
                     if(self._check_single_neighbour(i, i + 1)):
                         if(self._current['verbose']):
@@ -342,7 +325,7 @@ class Z2PackPlane(object):
                             sys.stdout.flush()
                         self._neighbour_check[i] = True
                     else:
-                        if(self._k_points[i + 1] - self._k_points[i] <
+                        if(self._t_points[i + 1] - self._t_points[i] <
                            self._current['min_neighbour_dist']):
                             if(self._current['verbose']):
                                 print('Reched minimum distance between ' + 
@@ -358,18 +341,18 @@ class Z2PackPlane(object):
                             # string_status
                             self._neighbour_check.insert(i + 1, False)
                             self._string_status.insert(i + 1, False)
-                            self._k_points.insert(i + 1, (self._k_points[i] +
-                                                  self._k_points[i+1]) / 2)
+                            self._t_points.insert(i + 1, (self._t_points[i] +
+                                                  self._t_points[i+1]) / 2)
                             self._wcc_list.insert(i + 1, [])
                             self._lambda_list.insert(i + 1, [])
                             self._gaps.insert(i + 1, None)
                             # check length of the variables
-                            assert(len(self._k_points) == len(self._wcc_list))
-                            assert(len(self._k_points) - 1 ==
+                            assert(len(self._t_points) == len(self._wcc_list))
+                            assert(len(self._t_points) - 1 ==
                                    len(self._neighbour_check))
-                            assert(len(self._k_points) ==
+                            assert(len(self._t_points) ==
                                    len(self._string_status))
-                            assert len(self._k_points) == len(self._gaps)
+                            assert len(self._t_points) == len(self._gaps)
                             return False
                 else:
                     return False
@@ -399,7 +382,7 @@ class Z2PackPlane(object):
         Save ``get_res()`` output to a pickle file. 
         Only works if ``use_pickle == True`` and the path to ``pickle_file`` exists.
         """
-        to_save = ['_k_points', '_wcc_list', '_gaps', '_lambda_list']
+        to_save = ['_t_points', '_wcc_list', '_gaps', '_lambda_list']
         data = dict((k, v) for k, v in self.__dict__.items() if k in to_save)
             
         if(self._current['use_pickle']):
@@ -418,23 +401,28 @@ class Z2PackPlane(object):
         if not(isinstance(res, dict)):
             if(len(res) < 4):
                 res.extend([None] * (4 - len(res)))
-            [self._k_points, self._wcc_list, self._gaps, self._lambda_list] = res
+            [self._t_points, self._wcc_list, self._gaps, self._lambda_list] = res
             self.save()
 
         # new version -- if the output is a dict
         else:
             self.__dict__.update(res)
+            # handle renaming of k_points => t_points
+            try:
+                self._t_points = self._k_points
+            except AttributeError:
+                pass
         
 
     # calculating one string
-    def _getwcc(self, kx):
+    def _getwcc(self, t):
         """
         calculates WCC along a string by increasing the number of steps
         (k-points) along the string until the WCC converge
         """
         # initial output
         if(self._current['verbose']):
-            print("calculating string at kx = " + "%.4f" % kx)
+            print("calculating string at t = " + "%.4f" % t)
             sys.stdout.flush()
 
         # get new generator
@@ -446,7 +434,7 @@ class Z2PackPlane(object):
         if(self._current['verbose']):
             print('    N = ' + str(N), end='')
             sys.stdout.flush()
-        x, min_sv, lambda_ = self._trywcc(self._m_handle(kx, N))
+        x, min_sv, lambda_ = self._trywcc(self._m_handle(t, N))
 
         # no iteration
         if(self._current['no_iter']):
@@ -461,7 +449,7 @@ class Z2PackPlane(object):
                     # Output
                     print("    N = " + str(N), end="")
                     sys.stdout.flush()
-                x, min_sv, lambda_ = self._trywcc(self._m_handle(kx, N))
+                x, min_sv, lambda_ = self._trywcc(self._m_handle(t, N))
 
                 # break conditions
                 if(self._convcheck(x, xold)):  # success
@@ -541,7 +529,7 @@ class Z2PackPlane(object):
 
     def plot(self, shift=0, show=True, axis=None):
         """
-        Plots the WCCs and the largest gaps (y-axis) against the k-points \
+        Plots the WCCs and the largest gaps (y-axis) against the t-points \
         (x-axis).
 
         :param shift:   Shifts the plot in the y-axis
@@ -564,17 +552,14 @@ class Z2PackPlane(object):
         else:
             return_fig = False
         axis.set_ylim(0, 1)
-        if(self._full_k_range):
-            axis.set_xlim(-0.01, 1.01)
-        else:
-            axis.set_xlim(-0.01, 0.51)
-        axis.plot(self._k_points, [(x + shift) % 1 for x in self._gaps], 'bD')
+        axis.set_xlim(-0.01, 1.01)
+        axis.plot(self._t_points, [(x + shift) % 1 for x in self._gaps], 'bD')
         # add plots with +/- 1 to ensure periodicity
-        axis.plot(self._k_points, [(x + shift) % 1 + 1 for x in self._gaps],
+        axis.plot(self._t_points, [(x + shift) % 1 + 1 for x in self._gaps],
                   'bD')
-        axis.plot(self._k_points, [(x + shift) % 1 - 1 for x in self._gaps],
+        axis.plot(self._t_points, [(x + shift) % 1 - 1 for x in self._gaps],
                   'bD')
-        for i, kpt in enumerate(self._k_points):
+        for i, kpt in enumerate(self._t_points):
             axis.plot([kpt] * len(self._wcc_list[i]),
                       [(x + shift) % 1 for x in self._wcc_list[i]],
                       "ro")
@@ -585,7 +570,7 @@ class Z2PackPlane(object):
             axis.plot([kpt] * len(self._wcc_list[i]),
                       [(x + shift) % 1 - 1 for x in self._wcc_list[i]],
                       "ro")
-        axis.set_xlabel(r'$k$')
+        axis.set_xlabel(r'$t$')
         axis.set_ylabel(r'$x$', rotation='horizontal')
         if(show):
             plt.show()
@@ -594,8 +579,8 @@ class Z2PackPlane(object):
 
     def get_res(self):
         """
-        Returns a ``dict`` with the following keys: ``kpt``, the \
-        positions of the k-point strings used (at which the WCCs were \
+        Returns a ``dict`` with the following keys: ``t_par``, the \
+        pumping parameters t used (at which the WCCs were \
         computed); ``wcc``, the WCC positions at each of those positions, \
         ``gap`` the positions of the largest gap in each string and \
         ``lambda_``, the Gamma matrix for each string.
@@ -603,7 +588,7 @@ class Z2PackPlane(object):
         # Note: if the names are changed, you must change the lookup table
         # in .load() as well
         try:
-            return {'kpt': self._k_points, 'wcc': self._wcc_list, 'gap': self._gaps, 'lambda_': self._lambda_list}
+            return {'t_par': self._t_points, 'wcc': self._wcc_list, 'gap': self._gaps, 'lambda_': self._lambda_list}
         except (NameError, AttributeError):
             raise RuntimeError('WCC not yet calculated')
         # for a potential Python3 - only version

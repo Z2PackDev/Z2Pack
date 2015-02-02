@@ -52,7 +52,7 @@ class TbExampleTestCase(CommonTestCase):
         self.createH(0.2, 0.3)
         # call to Z2Pack
         tb_system = z2pack.tb.System(self.H)
-        tb_plane = tb_system.plane(1, 2, 0)
+        tb_plane = tb_system.plane(lambda kx: [kx, 0, 0], [0, 1, 0])
         tb_plane.wcc_calc(verbose=False, num_strings=20, use_pickle=False)
         
         res = in_place_replace(tb_plane.get_res())
@@ -64,7 +64,7 @@ class TbExampleTestCase(CommonTestCase):
         self.createH(0, 0.3)
         # call to Z2Pack
         tb_system = z2pack.tb.System(self.H)
-        tb_plane = tb_system.plane(1, 2, 0)
+        tb_plane = tb_system.plane(lambda kx: [kx, 0, 0], [0, 1, 0])
         tb_plane.wcc_calc(verbose=False,
                           num_strings=20,
                           use_pickle=False,
@@ -79,7 +79,7 @@ class TbExampleTestCase(CommonTestCase):
         self.createH(0.1, 0.3)
         # call to Z2Pack
         tb_system = z2pack.tb.System(self.H)
-        tb_plane = tb_system.plane(1, 2, 0)
+        tb_plane = tb_system.plane(lambda kx: [kx, 0, 0], [0, 1, 0])
         tb_plane.wcc_calc(verbose=False,
                           num_strings=20,
                           use_pickle=False,
@@ -94,7 +94,7 @@ class TbExampleTestCase(CommonTestCase):
         self.createH(0.1, 0.3)
         # call to Z2Pack
         tb_system = z2pack.tb.System(self.H)
-        tb_plane = tb_system.plane(1, 2, 0)
+        tb_plane = tb_system.plane(lambda kx: [kx, 0, 0], [0, 1, 0])
         self.assertRaises(
             TypeError,
             tb_plane.wcc_calc,
@@ -109,69 +109,6 @@ class TbExampleTestCase(CommonTestCase):
             TypeError,
             tb_system.plane,
             1, 2, 0, invalid_kwarg = 3)
-
-    # this test may produce false negatives due to small numerical differences
-    def test_res1_v2(self):
-        self.createH(0.2, 0.3)
-        # call to Z2Pack
-        tb_system = z2pack.tb.System(self.H)
-        tb_plane = tb_system.plane(plane_edge_start=[0, 0, 0], plane_edge_end=[1, 0, 0], string_vec=[0, 1, 0])
-        tb_plane.wcc_calc(verbose=False, num_strings=20, use_pickle=False)
-        
-        res = in_place_replace(tb_plane.get_res())
-
-        self.assertDictAlmostEqual(tb_plane.get_res(), res)
-
-    def test_res2_v2(self):
-        """ test no_iter=True """
-        self.createH(0, 0.3)
-        # call to Z2Pack
-        tb_system = z2pack.tb.System(self.H)
-        tb_plane = tb_system.plane(plane_edge_start=[0, 0, 0], plane_edge_end=[1, 0, 0], string_vec=[0, 1, 0])
-        tb_plane.wcc_calc(verbose=False,
-                          num_strings=20,
-                          use_pickle=False,
-                          no_iter=True)
-
-        res = in_place_replace(tb_plane.get_res())
-
-        self.assertDictAlmostEqual(tb_plane.get_res(), res)
-
-    def test_res3_v2(self):
-        """ test no_neighbour_check=True """
-        self.createH(0.1, 0.3)
-        # call to Z2Pack
-        tb_system = z2pack.tb.System(self.H)
-        tb_plane = tb_system.plane(plane_edge_start=[0, 0, 0], plane_edge_end=[1, 0, 0], string_vec=[0, 1, 0])
-        tb_plane.wcc_calc(verbose=False,
-                          num_strings=20,
-                          use_pickle=False,
-                          no_neighbour_check=True)
-
-        res = in_place_replace(tb_plane.get_res())
-
-        self.assertDictAlmostEqual(tb_plane.get_res(), res)
-
-    def testkwargcheck1_v2(self):
-        """ test kwarg check on wcc_calc """
-        self.createH(0.1, 0.3)
-        # call to Z2Pack
-        tb_system = z2pack.tb.System(self.H)
-        tb_plane = tb_system.plane(plane_edge_start=[0, 0, 0], plane_edge_end=[1, 0, 0], string_vec=[0, 1, 0])
-        self.assertRaises(
-            TypeError,
-            tb_plane.wcc_calc,
-            invalid_kwarg = 3)
-
-    def testkwargcheck2_v2(self):
-        """ test kwarg check on __init__ """
-        self.createH(0, 0.3)
-        # call to Z2Pack
-        tb_system = z2pack.tb.System(self.H)
-        self.assertRaises(
-            TypeError,
-            tb_system.plane,
-            plane_edge_start=[0, 0, 0], plane_edge_end=[1, 0, 0], string_vec=[0, 1, 0], invalid_kwarg = 3)
 
 if __name__ == "__main__":
     unittest.main()

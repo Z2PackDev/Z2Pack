@@ -49,9 +49,9 @@ class Z2PackSystem:
         self._defaults = kwargs
         self._m_handle_creator = m_handle_creator
 
-    def plane(self, string_dir=None, plane_pos_dir=None, plane_pos=None,
-              plane_edge_start=None, plane_edge_end=None, string_vec=None, **kwargs):
+    def plane(self, edge_function=None, string_vec=None, **kwargs):
         """
+        TODO: update to final version once v2 is done!!
         Creates a :class:`Z2PackPlane` instance. The directions are given \
         w.r.t. the inverse lattice vectors. The plane can be specified \
         either with the three parameters string_dir, plane_pos_dir, \
@@ -93,30 +93,7 @@ class Z2PackSystem:
         kw_arguments = copy.copy(self._defaults)
         kw_arguments.update(kwargs)
 
-        # distinguishing the two input cases
-        if(string_dir is not None):
-            if any(hasattr(x, '__getitem__') for x in [string_dir, plane_pos_dir, plane_pos]):
-                raise ValueError('Confusing input. Input variables [string_dir, plane_pos_dir, plane_pos] should be [int, int, float].')
-            if any(var is None for var in [string_dir, plane_pos_dir, plane_pos]):
-                raise ValueError('Incomplete input set for [string_dir, plane_pos_dir, plane_pos].')
-            if not all(var is None for var in [plane_edge_start, plane_edge_end, string_vec]):
-                raise ValueError('Confusing input. Use either [string_dir, plane_pos_dir, plane_pos] or [plane_edge_start, plane_edge_end, string_vec], not both.')
-            return Z2PackPlane(self._m_handle_creator(string_dir,
-                                                      plane_pos_dir,
-                                                      plane_pos),
-                               **kw_arguments
-                               )
-        else:
-            if any(var is None for var in [plane_edge_start, plane_edge_end, string_vec]):
-                raise ValueError('Incomplete input set for [plane_edge_start, plane_edge_end, string_vec].')
-            if not all(var is None for var in {string_dir, plane_pos_dir, plane_pos}):
-                raise ValueError('Confusing input. Use either [string_dir, plane_pos_dir, plane_pos] or [plane_edge_start, plane_edge_end, string_vec], not both.')
-            return Z2PackPlane(self._m_handle_creator(plane_edge_start,
-                                                      plane_edge_end,
-                                                      string_vec),
-                               full_k_range=True,
-                               **kw_arguments
-                               )
+        return Z2PackPlane(self._m_handle_creator(edge_function, string_vec))
 
 
 

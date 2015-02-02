@@ -91,34 +91,9 @@ class System(Z2PackSystem):
                                               clean_working_folder)
         self._defaults = kwargs
 
-        def _m_handle_creator_static(string_dir,
-                                     plane_pos_dir,
-                                     plane_pos):
-            # check if kx is before or after plane_pos_dir
-            if(3 - string_dir > 2 * plane_pos_dir):
-                return lambda kx, N: self._system._static_run(string_dir,
-                                                       [plane_pos, kx],
-                                                       N)
-            else:
-                return lambda kx, N: self._system._static_run(string_dir,
-                                                       [kx, plane_pos],
-                                                       N)
+        def _m_handle_creator_first_principles(edge_function, string_vec):
+            return lambda kx, N: self._system._run(edge_function(kx), string_vec, N)
 
-        def _m_handle_creator_flexible(plane_edge_start,
-                                       plane_edge_end,
-                                       string_vec):
-            return lambda kx, N: self._system._flexible_run(plane_edge_start,
-                                                            plane_edge_end,
-                                                            string_vec,
-                                                            kx,
-                                                            N)
-
-        def _m_handle_creator_first_principles(*args, **kwargs):
-            if(hasattr(args[0], '__getitem__')):
-                return _m_handle_creator_flexible(*args, **kwargs)
-            else:
-                return _m_handle_creator_static(*args, **kwargs)
-        
         self._m_handle_creator = _m_handle_creator_first_principles
 
 
@@ -303,7 +278,8 @@ class _FirstPrinciplesSystem:
         end_point.insert(string_dir, 1)
         return self._run(start_point, end_point, N)
 
-    def _run(self, start_point, end_point, N):
+    def _run(self, start_point, string_vec, N):
+        end_point = [start_point[i] + string_vec[i] for i in range(len(start_point))]
         last_point = [1. / N * start_point[i] +
                       (N - 1.)/float(N) * end_point[i]
                       for i in range(3)]

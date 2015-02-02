@@ -85,7 +85,7 @@ class Z2PackSystem:
         kw_arguments = copy.copy(self._defaults)
         kw_arguments.update(kwargs)
 
-        return Z2PackPlane(self._m_handle_creator(edge_function, string_vec))
+        return Z2PackPlane(self._m_handle_creator(edge_function, string_vec), edge_function=edge_function, **kw_arguments)
 
 
 
@@ -273,9 +273,11 @@ class Z2PackPlane(object):
     @_validate_kwargs(target=wcc_calc)
     def __init__(self,
                  m_handle,
+                 edge_function,
                  pickle_file="res_pickle.txt",
                  **kwargs):
         self._m_handle = m_handle
+        self._edge_function = edge_function
         self._pickle_file = pickle_file
         self._defaults = {'no_iter': False,
                           'no_neighbour_check': False,

@@ -424,7 +424,7 @@ class Z2PackPlane(object):
         """
         # initial output
         if(self._current['verbose']):
-            print("calculating string at t = " + "%.4f" % t)
+            print("calculating string at t = {:.4f}, k = {}".format(t, self._edge_function(t)))
             sys.stdout.flush()
 
         # get new generator
@@ -572,7 +572,9 @@ class Z2PackPlane(object):
             axis.plot([kpt] * len(self._wcc_list[i]),
                       [(x + shift) % 1 - 1 for x in self._wcc_list[i]],
                       "ro")
-        axis.set_xlabel(r'$t$')
+        #~ axis.set_xlabel(r'$t$')
+        axis.set_xticks([0, 1])
+        axis.set_xticklabels([str(self._edge_function(i)) for i in range(2)])
         axis.set_ylabel(r'$x$', rotation='horizontal')
         if(show):
             plt.show()

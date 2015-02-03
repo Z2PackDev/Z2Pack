@@ -14,7 +14,7 @@ import numpy as np
 import scipy.linalg as la
 import matplotlib.pyplot as plt
 
-def calculate_system(ax, t1, t2):
+def calculate_system(ax, t1, t2, **kwargs):
 
     H = tb.Hamilton()
 
@@ -33,7 +33,7 @@ def calculate_system(ax, t1, t2):
     # call to Z2Pack
     tb_system = tb.System(H)
     tb_plane = tb_system.plane(lambda kx: [kx / 2., 0, 0], [0, 1, 0], pickle_file = './results/res.txt')
-    tb_plane.wcc_calc(verbose=True, num_strings=20, iterator=range(8, 35, 2))
+    tb_plane.wcc_calc(**kwargs)
 
     tb_plane.load()
     tb_plane.save()
@@ -48,10 +48,12 @@ if __name__ == "__main__":
     if not os.path.exists('./results'):
         os.makedirs('./results')
 
+    #~ settings = {'num_strings': 3, 'verbose': False, 'no_move_check': False, 'move_check_factor': 0.1, 'no_neighbour_check': True}
+    settings = {}
     t_values = [[0.2, 0.3], [0.1, 0.4], [-0.2, -0.3], [0.0, 0.3]]
 
     fig, axes = plt.subplots(2,2)
     for i, ax in enumerate(axes.flatten()):
-        calculate_system(ax, *t_values[i])
+        calculate_system(ax, *t_values[i], **settings)
 
     plt.savefig('./results/squarelattice.pdf', bbox_inches = 'tight')

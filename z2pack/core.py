@@ -183,6 +183,16 @@ class Z2PackPlane(object):
         :param verbose:             Toggles printed output ``Default: True``
         :type verbose:              bool
 
+        :param no_move_check:       Toggles checking the movement of \
+        neighbouring wcc. ``Default: False``
+        :type no_move_check:        bool
+
+        :param move_check_factor:   Scaling factor for the maximum allowed \
+        movement between neighbouring wcc. The factor is multiplied by \
+        the size of the largest gap between two wcc (from the two \
+        neighbouring strings, the smaller value is chosen). ``Default: 0.25``
+        :type move_check_factor:    float
+
         :returns:                   ``tuple (k_points, wcc, gaps)``, \
         ``k_points`` being the positions of the strings of k-points used in \
         the calculation; ``wcc`` the Wannier charge center positions and \
@@ -205,7 +215,10 @@ class Z2PackPlane(object):
             del self._current['wcc_tol']
         if self._current['no_neighbour_check']:
             del self._current['gap_tol']
-            del self._current['min_neighbour_dist']
+        if self._current['no_move_check']:
+            del self._current['move_check_factor']
+            if self._current['no_neighbour_check']:
+                del self._current['min_neighbour_dist']
 
         # initial output
         if(self._current['verbose']):
@@ -227,6 +240,7 @@ class Z2PackPlane(object):
 
                         
         self._gaps = [None for i in range(self._current['num_strings'])]
+        self._gapsize = [None for i in range(self._current['num_strings'])]
         self._wcc_list = [[] for i in range(self._current['num_strings'])]
         self._lambda_list = [[] for i in range(self._current['num_strings'])]
         self._neighbour_check = [False for i in
@@ -242,11 +256,11 @@ class Z2PackPlane(object):
             for i, t in enumerate(self._t_points):
                 if not(self._string_status[i]):
                     self._wcc_list[i], self._lambda_list[i] = self._getwcc(t)
-                    self._gaps[i] = _gapfind(self._wcc_list[i])
+                    self._gaps[i], self._gapsize[i] = _gapfind(self._wcc_list[i])
                     self._string_status[i] = True
                     self.save()
 
-            if not(self._current['no_neighbour_check']):
+            if not(self._current['no_neighbour_check'] and self._current['no_move_check']):
                 self._check_neighbours()
             else:
                 if(self._current['verbose']):
@@ -281,8 +295,10 @@ class Z2PackPlane(object):
         self._pickle_file = pickle_file
         self._defaults = {'no_iter': False,
                           'no_neighbour_check': False,
+                          'no_move_check': False,
                           'wcc_tol': 1e-2,
                           'gap_tol': 2e-2,
+                          'move_check_factor': 0.25,
                           'iterator': range(8, 27, 2),
                           'min_neighbour_dist': 0.01,
                           'use_pickle': True,
@@ -321,7 +337,15 @@ class Z2PackPlane(object):
                               self._t_points[i] + " and t = " + "%.4f" %
                               self._t_points[i + 1] + "\n", end="")
                         sys.stdout.flush()
-                    if(self._check_single_neighbour(i, i + 1)):
+                    passed_check = True
+                    if not self._current['no_neighbour_check']:
+                        passed_check = passed_check and self._check_single_neighbour(i, i + 1)
+                    if not self._current['no_move_check']:
+                        tolerance = self._current['move_check_factor'] * min(self._gapsize[i], self._gapsize[i + 1])
+                        #~ if(tolerance >= 1.):
+                            #~ raise ValueError('Move tolerance >= 1, reduce move_check_factor')
+                        passed_check = passed_check and self._convcheck(self._wcc_list[i], self._wcc_list[i + 1], tolerance)
+                    if(passed_check):
                         if(self._current['verbose']):
                             print("Condition fulfilled\n\n", end="")
                             sys.stdout.flush()
@@ -348,6 +372,7 @@ class Z2PackPlane(object):
                             self._wcc_list.insert(i + 1, [])
                             self._lambda_list.insert(i + 1, [])
                             self._gaps.insert(i + 1, None)
+                            self._gapsize.insert(i + 1, None)
                             # check length of the variables
                             assert(len(self._t_points) == len(self._wcc_list))
                             assert(len(self._t_points) - 1 ==
@@ -454,7 +479,7 @@ class Z2PackPlane(object):
                 x, min_sv, lambda_ = self._trywcc(self._m_handle(t, N))
 
                 # break conditions
-                if(self._convcheck(x, xold)):  # success
+                if(self._convcheck(x, xold, self._current['wcc_tol'])):  # success
                     if(self._current['verbose']):
                         print("finished!\n\n", end="")
                         sys.stdout.flush()
@@ -511,7 +536,7 @@ class Z2PackPlane(object):
         return [(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs], min_sv, lambda_
 
     # wcc convergence functions
-    def _convcheck(self, x, y):
+    def _convcheck(self, x, y, tol):
         """
         check convergence of wcc from x to y
 
@@ -525,7 +550,7 @@ class Z2PackPlane(object):
                       "amount of WCC")
             return False
         else:
-            return _convsum(x, y, self._current['wcc_tol']) < 1
+            return _convsum(x, y, tol) < 1
 
     #----------------END OF SUPPORT FUNCTIONS---------------------------#
 
@@ -631,7 +656,7 @@ def _convsum(list_a, list_b, epsilon=1e-2, N0=7):
     to list_b, when each WCC corresponds to a triangle of width epsilon
     (and total density = 1)
     """
-    N = N0 * int(1/(2 * epsilon))
+    N = max(N0 * int(1/(2 * epsilon)), 1)
     val = np.zeros(N)
     for x in list_a:
         index = int(N*x)
@@ -678,7 +703,7 @@ def _gapfind(wcc):
     if(temp > gapsize):
         gapsize = temp
         gappos = N - 1
-    return (wcc[gappos] + gapsize / 2) % 1
+    return (wcc[gappos] + gapsize / 2) % 1, gapsize
 
 
 #----------------END CLASS INDEPENDENT FUNCTIONS---------------------#

@@ -48,8 +48,7 @@ if __name__ == "__main__":
     if not os.path.exists('./results'):
         os.makedirs('./results')
 
-    #~ settings = {'num_strings': 3, 'verbose': False, 'no_move_check': False, 'move_check_factor': 0.1, 'no_neighbour_check': True}
-    settings = {}
+    settings = {'num_strings': 3, 'verbose': True}
     t_values = [[0.2, 0.3], [0.1, 0.4], [-0.2, -0.3], [0.0, 0.3]]
 
     fig, axes = plt.subplots(2,2)

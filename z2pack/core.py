@@ -237,8 +237,7 @@ class Z2PackPlane(object):
         # initialising
         self._t_points = list(np.linspace(0., 1., self._current['num_strings'],
                                           endpoint=True))
-
-                        
+        self._kpt_list = [self._edge_function(t) for t in self._t_points]
         self._gaps = [None for i in range(self._current['num_strings'])]
         self._gapsize = [None for i in range(self._current['num_strings'])]
         self._wcc_list = [[] for i in range(self._current['num_strings'])]
@@ -363,23 +362,26 @@ class Z2PackPlane(object):
                             if(self._current['verbose']):
                                 print("Condition not fulfilled\n\n", end="")
                                 sys.stdout.flush()
-                            # add entries to neighbour_check, k_point and
-                            # string_status
+                            # add entries due to additional string
                             self._neighbour_check.insert(i + 1, False)
                             self._string_status.insert(i + 1, False)
                             self._t_points.insert(i + 1, (self._t_points[i] +
                                                   self._t_points[i+1]) / 2)
+                            self._kpt_list.insert(i + 1, self._edge_function(self._t_points[i + 1]))
                             self._wcc_list.insert(i + 1, [])
                             self._lambda_list.insert(i + 1, [])
                             self._gaps.insert(i + 1, None)
                             self._gapsize.insert(i + 1, None)
                             # check length of the variables
-                            assert(len(self._t_points) == len(self._wcc_list))
                             assert(len(self._t_points) - 1 ==
                                    len(self._neighbour_check))
                             assert(len(self._t_points) ==
-                                   len(self._string_status))
-                            assert len(self._t_points) == len(self._gaps)
+                                   len(self._string_status) ==
+                                   len(self._kpt_list) ==
+                                   len(self._wcc_list) ==
+                                   len(self._gapsize) ==
+                                   len(self._lambda_list)==
+                                   len(self._gaps))
                             return False
                 else:
                     return False
@@ -409,7 +411,7 @@ class Z2PackPlane(object):
         Save ``get_res()`` output to a pickle file. 
         Only works if ``use_pickle == True`` and the path to ``pickle_file`` exists.
         """
-        to_save = ['_t_points', '_wcc_list', '_gaps', '_lambda_list']
+        to_save = ['_t_points', '_wcc_list', '_gaps', '_gapsize', '_lambda_list']
         data = dict((k, v) for k, v in self.__dict__.items() if k in to_save)
             
         if(self._current['use_pickle']):
@@ -449,7 +451,7 @@ class Z2PackPlane(object):
         """
         # initial output
         if(self._current['verbose']):
-            print("calculating string at t = {:.4f}, k = {}".format(t, self._edge_function(t)))
+            print("calculating string at t = {:.4f}, k = {}".format(t, string_tools.fl_to_s(self._edge_function(t))))
             sys.stdout.flush()
 
         # get new generator
@@ -610,14 +612,13 @@ class Z2PackPlane(object):
         """
         Returns a ``dict`` with the following keys: ``t_par``, the \
         pumping parameters t used (at which the WCCs were \
-        computed); ``wcc``, the WCC positions at each of those positions, \
+        computed), ``kpt`` The list of starting points for each k-point\
+         string, ``wcc``, the WCC positions at each of those positions, \
         ``gap`` the positions of the largest gap in each string and \
         ``lambda_``, the Gamma matrix for each string.
         """
-        # Note: if the names are changed, you must change the lookup table
-        # in .load() as well
         try:
-            return {'t_par': self._t_points, 'wcc': self._wcc_list, 'gap': self._gaps, 'lambda_': self._lambda_list}
+            return {'t_par': self._t_points, 'kpt': self._kpt_list, 'wcc': self._wcc_list, 'gap': self._gaps, 'lambda_': self._lambda_list}
         except (NameError, AttributeError):
             raise RuntimeError('WCC not yet calculated')
         # for a potential Python3 - only version
@@ -672,19 +673,11 @@ def _convsum(list_a, list_b, epsilon=1e-2, N0=7):
             val[(index + i) % N] -= 1 - (i/N0)
     return sum(abs(val)) / N0
 
-
 def _sgng(z, zplus, x):
     """
     calculates the invariant between two WCC strings
     """
-    #~ return np.copysign(1, np.sin(2*np.pi*(zplus - z)) +
-                       #~ np.sin(2*np.pi*(x-zplus)) +
-                       #~ np.sin(2*np.pi*(z-x)))
-    if(max(zplus, z) > x and min(zplus, z) < x):
-        return -1
-    else:
-        return 1
-
+    return -1 if (max(zplus, z) > x and min(zplus, z) < x) else 1
 
 def _gapfind(wcc):
     """

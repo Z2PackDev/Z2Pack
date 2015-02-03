@@ -425,6 +425,7 @@ class Z2PackPlane(object):
             res = pickle.load(f)
 
         # handle legacy outputs
+        # TODO: fill in placeholders for unknown parts
         if not(isinstance(res, dict)):
             if(len(res) < 4):
                 res.extend([None] * (4 - len(res)))
@@ -432,6 +433,7 @@ class Z2PackPlane(object):
             self.save()
 
         # new version -- if the output is a dict
+        # TODO: fill in defaults (hierarchy __dict__ < defaults < res ?)
         else:
             self.__dict__.update(res)
             # handle renaming of k_points => t_points
@@ -618,7 +620,12 @@ class Z2PackPlane(object):
         try:
             return {'t_par': self._t_points, 'kpt': self._kpt_list, 'wcc': self._wcc_list, 'gap': self._gaps, 'lambda_': self._lambda_list}
         except (NameError, AttributeError):
-            raise RuntimeError('WCC not yet calculated')
+            # TODO remove double try - except for a cleaner version to
+            # distinguish v1 and v2
+            try:
+                return {'t_par': self._t_points, 'wcc': self._wcc_list, 'gap': self._gaps, 'lambda_': self._lambda_list}
+            except:
+                raise RuntimeError('WCC not yet calculated')
         # for a potential Python3 - only version
         #~ except (NameError, AttributeError) as e:
             #~ raise RuntimeError('WCC not yet calculated') from e

@@ -1,49 +1,30 @@
-Welcome to Z2Pack's documentation!
-==================================
-created by `Dominik Gresch`_
+.. image:: images/z2pack_logo.svg
+    :width: 200px
+    :alt: Z2Pack logo
+
+|
+|
+
+Welcome!
+========
+Z2Pack is a Python module for calculating the Z2 topological invariant.
+
+
 
 .. _Dominik Gresch: http://github.com/greschd
 
-WARNING -- DOCUMENTATION HAS NOT BEEN UPDATED TO V2!
-----------------------------------------------------
-update all docstrings, update version in conf.py and then remove this
-warning
+.. toctree::
+   :maxdepth: 2
+   
+   subpages/core.rst
+   subpages/tb.rst
+   subpages/fp.rst
 
-Z2Pack Core
------------
-.. automodule:: z2pack
-    :members:
-    :imported-members:
-
-Z2Pack for Tight-Binding Models
--------------------------------
-.. automodule:: z2pack.tb
-    :members:
-    :imported-members:
-
-Functions for creating connecting vectors
-+++++++++++++++++++++++++++++++++++++++++
-.. automodule:: z2pack.tb.vectors
-    :members:
-    :imported-members:
-
-Z2Pack for First-Principles Systems
------------------------------------
-.. automodule:: z2pack.fp
-    :members:
-    :imported-members:
-
-Functions creating k-points input
-+++++++++++++++++++++++++++++++++
-
-.. automodule:: z2pack.fp.kpts
-    :members:
-    :imported-members:
+created by `Dominik Gresch`_
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`
 

@@ -4,6 +4,11 @@ created by `Dominik Gresch`_
 
 .. _Dominik Gresch: http://github.com/greschd
 
+WARNING -- DOCUMENTATION HAS NOT BEEN UPDATED TO V2!
+----------------------------------------------------
+update all docstrings, update version in conf.py and then remove this
+warning
+
 Z2Pack Core
 -----------
 .. automodule:: z2pack

@@ -341,8 +341,6 @@ class Z2PackPlane(object):
                         passed_check = passed_check and self._check_single_neighbour(i, i + 1)
                     if not self._current['no_move_check']:
                         tolerance = self._current['move_check_factor'] * min(self._gapsize[i], self._gapsize[i + 1])
-                        #~ if(tolerance >= 1.):
-                            #~ raise ValueError('Move tolerance >= 1, reduce move_check_factor')
                         passed_check = passed_check and self._convcheck(self._wcc_list[i], self._wcc_list[i + 1], tolerance)
                     if(passed_check):
                         if(self._current['verbose']):

@@ -40,11 +40,10 @@ Documentation
 
 Getting in touch
 ================
-The development version of Z2Pack is hosted on `github`__ .
+The development version of Z2Pack is hosted on `GitHub`_ .
 Post an issue there or contact `me`__ directly with questions / suggestions
 / feedback about Z2Pack.
 
-__ Z2Pack_github_
 __ dg_
 
 Indices and tables
@@ -55,4 +54,4 @@ Indices and tables
 
 .. _dg: http://github.com/greschd
 .. _online_tool: http://z2pack.ethz.ch
-.. _Z2Pack_github: http://github.com/Z2PackDev/Z2Pack
+.. _GitHub: http://github.com/Z2PackDev/Z2Pack

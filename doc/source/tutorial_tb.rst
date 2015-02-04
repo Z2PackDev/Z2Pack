@@ -3,5 +3,5 @@ Tight - Binding Calculations
 
 .. _tb_System:
 
-tb.System
----------
+Class :class:`.tb.System`
+-------------------------

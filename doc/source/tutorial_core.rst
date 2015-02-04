@@ -7,7 +7,7 @@ Z2Pack can be installed directly from the Python package index:
 
 ``sudo pip install z2pack``
 
-The source code is also available on github_. If you download the source
+The source code is also available on GitHub_. If you download the source
 code, you can either reference it directly in your Python project by
 adding
 
@@ -17,7 +17,11 @@ adding
     sys.path.append('path_to_package')
     import z2pack
 
-or you can **install** it by typing (while in the source directory)
+.. note:: ``'path_to_package'`` should be the the top-level directory of
+    the git repository (``Z2Pack``), not the directory containing the Python
+    module (``Z2Pack/z2pack``).
+
+Alternatively, you can **install** it by typing (while in the source directory)
 
 ``sudo python setup.py install --record files.txt``
 
@@ -37,10 +41,10 @@ create an instance of :class:`System<z2pack.System>`, please refer to its subcla
 In both cases, the :class:`System<z2pack.System>` instance is used to create the
 different planes on which to compute the Z2 topological invariant.
 
-Creating a :class:`Plane<z2pack.Plane>`
+Creating a :class:`.Plane`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Class :class:`Plane<z2pack.Plane>`
+Class :class:`.Plane`
 ----------------------------------
 
 Calculating the WCC positions
@@ -48,18 +52,19 @@ Calculating the WCC positions
 
 Getting the results
 ~~~~~~~~~~~~~~~~~~~
-The Z2 invariant can be calculated by calling the ::
+
+The Z2 invariant can be calculated by calling the :meth:`.invariant()`
 method, which returns 0 for topologically trivial planes or 1 for
 non-trivial ones.
 
 Wannier charge centers, k-points, :math:`\Lambda` matrices etc.
-can be extracted by using the ``.get_res()`` method. Its return value is
-a ``dict`` containing the different 
+can be extracted by using the :meth:`.get_res()` method. Its return value is
+a ``dict`` containing the data.
 
 Saving and loading with ``pickle``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-.. _github: http://github.com/Z2PackDev/Z2Pack
+.. _GitHub: http://github.com/Z2PackDev/Z2Pack
 .. _first-principles: tutorial_fp.html
 .. _tight-binding: tutorial_tb.html

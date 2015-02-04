@@ -33,16 +33,15 @@ import matplotlib.pyplot as plt
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
 class System:
-    """
-    abstract Base Class for Z2Pack systems (Interface definition)
+    r"""
+    Describes the interface a Z2Pack specialisation must fulfil. Also, it
+    defines the :meth:`plane` method, which is used to create :class:`Plane`
+    instances.
 
-    :param m_handle_creator: Takes (``string_dir``, ``plane_pos_dir``, \
-    ``plane_pos``) and creates an ``m_handle`` s.t. ``m_handle(t, N)`` \
-    returns the overlap matrices
+    :param m_handle_creator: Takes the ``edge_function`` and  ``string_vec`` given to :meth:`plane` and creates an ``m_handle`` s.t. ``m_handle(t, N)`` returns the overlap matrices
     :type m_handle_creator: function
 
-    :param kwargs: Passed to the :class:`Plane` constructor unless\
-     overwritten by kwargs to :func:`plane`
+    :param kwargs: Keyword arguments are passed to the :class:`Plane` constructor unless overwritten by kwargs to :func:`plane`
     """
 
     def __init__(self, m_handle_creator, **kwargs):
@@ -50,36 +49,31 @@ class System:
         self._m_handle_creator = m_handle_creator
 
     def plane(self, edge_function=None, string_vec=None, **kwargs):
-        """
-        TODO: update to final version once v2 is done!!
-        Creates a :class:`Plane` instance. The directions are given \
-        w.r.t. the inverse lattice vectors. The plane can be specified \
-        either with the three parameters string_dir, plane_pos_dir, \
-        plane_pos (easier option) or with the the parameters plane_edge_start, \
-        plane_edge_end, string_vec (more flexible).
+        r"""
+        Creates a :class:`Plane` instance.  The plane's position is
+        specified by a function ``edge_function``: :math:`t \in [0, 1]
+        \rightarrow \mathbb{R}^3` (or, if you want to stay in the same
+        UC, :math:`[0, 1]^3`) connecting a pumping parameter :math:`t`
+        to the edge of the plane. The direction along which the plane
+        extends from this edge, then, is given by ``string_vec``.
 
-        :param string_dir: direction of the string of k-points
-        :type string_dir: int
-
-        :param plane_pos_dir: index of the reciprocal lattice vector not in \
-        the plane
-        :type plane_pos_dir: int
-
-        :param plane_pos: position of the plane along ``plane_pos_dir``
-        :type plane_pos: float
-
-        :param edge_function: Returns the start of the k-point string \
-        as function of the pumping parameter t.
-
-        :param string_vec: Direction of the individual k-point strings. \
-        Having ``string_dir`` set as ``0, 1, 2`` corresponds to ``string_vec``\
-        being ``[1, 0, 0], [0, 1, 0], [0, 0, 1]``.
+        :param edge_function: Returns the start of the k-point string 
+            as function of the pumping parameter t.
+        
+        :param string_vec: Direction of the individual k-point strings.
+            Note that ``string_vec`` must connect equivalent k-points
+            (i.e. it must be a reciprocal lattice vector). Typically,
+            it is one of ``[1, 0, 0]``, ``[0, 1, 0]``, ``[0, 0, 1]``.
         :type string_vec: list (float)
-
-        :param kwargs: passed to :class:`Plane` constructor. Take \
-        precedence over kwargs from :class:`System` constructor.
+        
+        :param kwargs: Keyword arguments are passed to the :class:`Plane`
+            constructor. They take precedence over kwargs from the
+            :class:`System` constructor.
 
         :rtype: :class:`Plane`
+
+        .. note:: All directions / positions are given w.r.t. the
+            inverse lattice vectors.
         """
         # updating keyword arguments
         kw_arguments = copy.copy(self._defaults)
@@ -90,21 +84,26 @@ class System:
 
 
 class Plane(object):
-    """
-    Describes a plane in reciprocal space where to calculate the Z2 \
-    topological invariant.
+    r"""
+    Describes a plane (or generalised 2D surface) in reciprocal space 
+    for which the Z2 topological invariant is to be calculated. It is
+    created by using the :class:`System`'s :meth:`plane()<System.plane>` method.
 
-    :param m_handle:        Function that returns a list of overlap matrices \
-    given the position of the string in the plane ``k`` and the number of \
-    k-points on the string ``N``.
+    A :class:`Plane` instance is the main object used to perform Z2Pack
+    tasks like calculating WCC and the Z2 invariant, getting results, plotting
+    etc.
+
+    :param m_handle:        Function that returns a list of overlap matrices 
+        given the pumping parameter :math:`t` and the number of k-points in
+        the string.
     :type m_handle:         function
-
-    :param pickle_file:     Path to a file where the results are stored using \
-    the :py:mod:`pickle` module.
-    :type pickle_file:      str
-
-    :param kwargs: Are passed to ``wcc_calc``. Kwargs specified in \
-    ``wcc_calc`` take precedence
+    
+    :param edge_function: Returns the start of the k-point string 
+        as function of the pumping parameter t.
+    
+    :param kwargs: Keyword arguments are passed to the :class:`Plane`
+        constructor. They take precedence over kwargs from the
+        :class:`System` constructor.
     """
 
     def _validate_kwargs(func=None, target=None):
@@ -146,6 +145,8 @@ class Plane(object):
 
         * automated convergence in string direction
         * automated check for distance between gap and wcc -> add string
+        * automated convergence check w.r.t. movement of the WCC between \
+        different k-strings.
 
         :param no_iter:             Turns the automated iteration of the  \
         number of k-points in a string off ``Default: False``
@@ -177,6 +178,10 @@ class Plane(object):
         for saving ``Default: True``
         :type use_pickle:           bool
 
+        :param pickle_file:     Path to a file where the results are stored using \
+        the :py:mod:`pickle` module.
+        :type pickle_file:      str
+
         :param num_strings:         Initial number of strings ``Default: 11``
         :type num_strings:          int
 
@@ -190,7 +195,7 @@ class Plane(object):
         :param move_check_factor:   Scaling factor for the maximum allowed \
         movement between neighbouring wcc. The factor is multiplied by \
         the size of the largest gap between two wcc (from the two \
-        neighbouring strings, the smaller value is chosen). ``Default: 0.25``
+        neighbouring strings, the smaller value is chosen). ``Default: 0.5``
         :type move_check_factor:    float
 
         :returns:                   ``tuple (k_points, wcc, gaps)``, \
@@ -199,7 +204,7 @@ class Plane(object):
         ``gaps`` the position of the largest gap, both for each of the \
         k-point strings.
         """
-        self._current = copy.copy(self._defaults)
+        self._current = copy.deepcopy(self._defaults)
         self._current.update(kwargs)
 
         # checking num_strings
@@ -287,34 +292,33 @@ class Plane(object):
     def __init__(self,
                  m_handle,
                  edge_function,
-                 pickle_file="res_pickle.txt",
                  **kwargs):
         self._m_handle = m_handle
         self._edge_function = edge_function
-        self._pickle_file = pickle_file
         self._defaults = {'no_iter': False,
                           'no_neighbour_check': False,
                           'no_move_check': False,
                           'wcc_tol': 1e-2,
                           'gap_tol': 2e-2,
-                          'move_check_factor': 0.25,
+                          'move_check_factor': 0.5,
                           'iterator': range(8, 27, 2),
                           'min_neighbour_dist': 0.01,
                           'use_pickle': True,
+                          'pickle_file': 'res_pickle.txt',
                           'num_strings': 11,
                           'verbose': True}
         self._defaults.update(kwargs)
-        self._current = copy.copy(self._defaults)
+        self._current = copy.deepcopy(self._defaults)
 
-    def __str__(self):
-        try:
-            text = 'kpts:\n' + str(self._t_points)
-            text += '\nwcc:\n' + str(self._wcc_list)
-            text += '\ngaps:\n' + str(self._gaps)
-            text += '\ninvariant:\n' + str(self.invariant())
-            return text
-        except AttributeError:
-            return super(Plane, self).__str__()
+    #~ def __str__(self):
+        #~ try:
+            #~ text = 'kpts:\n' + str(self._t_points)
+            #~ text += '\nwcc:\n' + str(self._wcc_list)
+            #~ text += '\ngaps:\n' + str(self._gaps)
+            #~ text += '\ninvariant:\n' + str(self.invariant())
+            #~ return text
+        #~ except AttributeError:
+            #~ return super(Plane, self).__str__()
 
     #-------------------------------------------------------------------#
     #                support functions for wcc                          #
@@ -406,14 +410,16 @@ class Plane(object):
     # pickle: save and load
     def save(self):
         """
-        Save ``get_res()`` output to a pickle file. 
+        Saves the t-points, WCC, gap positions and sizes and Lambda \
+        matrices to a pickle file.
+
         Only works if ``use_pickle == True`` and the path to ``pickle_file`` exists.
         """
         to_save = ['_t_points', '_wcc_list', '_gaps', '_gapsize', '_lambda_list']
         data = dict((k, v) for k, v in self.__dict__.items() if k in to_save)
             
         if(self._current['use_pickle']):
-            with open(self._pickle_file, "wb") as f:
+            with open(self._current['pickle_file'], "wb") as f:
                 pickle.dump(data, f)
 
     def load(self):
@@ -421,7 +427,7 @@ class Plane(object):
         Loads the data (e.g. from a previous run) from the :mod:`pickle` file.
         """
 
-        with open(self._pickle_file, "rb") as f:
+        with open(self._current['pickle_file'], "rb") as f:
             res = pickle.load(f)
 
         # handle legacy outputs
@@ -559,7 +565,7 @@ class Plane(object):
     def plot(self, shift=0, show=True, axis=None):
         """
         Plots the WCCs and the largest gaps (y-axis) against the t-points \
-        (x-axis).
+        (x-axis). 
 
         :param shift:   Shifts the plot in the y-axis
         :type shift:    float
@@ -572,6 +578,12 @@ class Plane(object):
 
         :returns:       :class:`matplotlib figure` instance (only if \
         ``ax == None``)
+
+        .. note:: This plotting tool is meant as a quick way of \
+            looking at the results calculated by Z2Pack, and features \
+            very little flexibility. If you wish to create beautiful \
+            plots, it is highly recommended to fetch the data with \
+            :meth:`.get_res()` and utilize the full power of matplotlib.
         """
         shift = shift % 1
         if not axis:
@@ -601,8 +613,9 @@ class Plane(object):
                       "ro")
         #~ axis.set_xlabel(r'$t$')
         axis.set_xticks([0, 1])
-        axis.set_xticklabels([str(self._edge_function(i)) for i in range(2)])
+        axis.set_xticklabels(['0', '1'])
         axis.set_ylabel(r'$x$', rotation='horizontal')
+        axis.set_xlabel(r'$t$')
         if(show):
             plt.show()
         if return_fig:
@@ -615,7 +628,7 @@ class Plane(object):
         computed), ``kpt`` The list of starting points for each k-point\
          string, ``wcc``, the WCC positions at each of those positions, \
         ``gap`` the positions of the largest gap in each string and \
-        ``lambda_``, the Gamma matrix for each string.
+        ``lambda_``, a list of Gamma matrices for each string.
         """
         try:
             return {'t_par': self._t_points, 'kpt': self._kpt_list, 'wcc': self._wcc_list, 'gap': self._gaps, 'lambda_': self._lambda_list}
@@ -632,7 +645,7 @@ class Plane(object):
 
     def invariant(self):
         """
-        Calculates the Z2 topological invariant
+        Calculates the Z2 topological invariant.
         
         :returns:   Z2 topological invariant
         :rtype:     int

@@ -26,22 +26,22 @@ time, using
 
 ``cat files.txt | xargs rm -rf``
 
-Class :class:`Z2PackSystem` 
----------------------------
-The ``Z2PackSystem`` class is used to describe the system for which you
+Class :class:`System<z2pack.System>`
+------------------------------------
+The :class:`System<z2pack.System>` class is used to describe the system for which you
 want to calculate topological invariants. If you want to learn how to
-create an instance of ``Z2PackSystem``, please refer to its subclasses
+create an instance of :class:`System<z2pack.System>`, please refer to its subclasses
 :ref:`fp.System<fp_System>` or :ref:`tb.System<tb_System>` (for
 `first-principles`_ or `tight-binding`_ calculations).
 
-In both cases, the :class:`z2pack.Z2PackSystem` instance is used to create the
+In both cases, the :class:`System<z2pack.System>` instance is used to create the
 different planes on which to compute the Z2 topological invariant.
 
-Creating a ``Z2PackPlane``
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Creating a :class:`Plane<z2pack.Plane>`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Class ``Z2PackPlane``
----------------------
+Class :class:`Plane<z2pack.Plane>`
+----------------------------------
 
 Calculating the WCC positions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -230,7 +230,7 @@ class Hamilton:
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
 
-from .. import Z2PackSystem
+from .. import System as Z2PackSystem
 
 
 class System(Z2PackSystem):

@@ -32,7 +32,7 @@ import matplotlib.pyplot as plt
 #                           LIBRARY CORE                                #
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
-class Z2PackSystem:
+class System:
     """
     abstract Base Class for Z2Pack systems (Interface definition)
 
@@ -41,7 +41,7 @@ class Z2PackSystem:
     returns the overlap matrices
     :type m_handle_creator: function
 
-    :param kwargs: Passed to the :class:`Z2PackPlane` constructor unless\
+    :param kwargs: Passed to the :class:`Plane` constructor unless\
      overwritten by kwargs to :func:`plane`
     """
 
@@ -52,7 +52,7 @@ class Z2PackSystem:
     def plane(self, edge_function=None, string_vec=None, **kwargs):
         """
         TODO: update to final version once v2 is done!!
-        Creates a :class:`Z2PackPlane` instance. The directions are given \
+        Creates a :class:`Plane` instance. The directions are given \
         w.r.t. the inverse lattice vectors. The plane can be specified \
         either with the three parameters string_dir, plane_pos_dir, \
         plane_pos (easier option) or with the the parameters plane_edge_start, \
@@ -76,20 +76,20 @@ class Z2PackSystem:
         being ``[1, 0, 0], [0, 1, 0], [0, 0, 1]``.
         :type string_vec: list (float)
 
-        :param kwargs: passed to :class:`Z2PackPlane` constructor. Take \
-        precedence over kwargs from :class:`Z2PackSystem` constructor.
+        :param kwargs: passed to :class:`Plane` constructor. Take \
+        precedence over kwargs from :class:`System` constructor.
 
-        :rtype: :class:`Z2PackPlane`
+        :rtype: :class:`Plane`
         """
         # updating keyword arguments
         kw_arguments = copy.copy(self._defaults)
         kw_arguments.update(kwargs)
 
-        return Z2PackPlane(self._m_handle_creator(edge_function, string_vec), edge_function=edge_function, **kw_arguments)
+        return Plane(self._m_handle_creator(edge_function, string_vec), edge_function=edge_function, **kw_arguments)
 
 
 
-class Z2PackPlane(object):
+class Plane(object):
     """
     Describes a plane in reciprocal space where to calculate the Z2 \
     topological invariant.
@@ -314,7 +314,7 @@ class Z2PackPlane(object):
             text += '\ninvariant:\n' + str(self.invariant())
             return text
         except AttributeError:
-            return super(Z2PackPlane, self).__str__()
+            return super(Plane, self).__str__()
 
     #-------------------------------------------------------------------#
     #                support functions for wcc                          #

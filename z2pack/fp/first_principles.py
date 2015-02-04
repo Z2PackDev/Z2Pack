@@ -6,7 +6,7 @@
 # File:    first_principles.py
 
 from . import kpts
-from .. import Z2PackSystem
+from .. import System as Z2PackSystem
 from . import read_mmn as mmn
 
 import os

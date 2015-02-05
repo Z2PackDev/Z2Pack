@@ -140,46 +140,46 @@ class Plane(object):
 
     @_validate_kwargs
     def wcc_calc(self, **kwargs):
-        """
+        r"""
         Calculates the Wannier charge centers in the given plane
 
         * automated convergence in string direction
         * automated check for distance between gap and wcc -> add string
-        * automated convergence check w.r.t. movement of the WCC between \
-        different k-strings.
+        * automated convergence check w.r.t. movement of the WCC between 
+          different k-strings.
 
-        :param no_iter:             Turns the automated iteration of the  \
-        number of k-points in a string off ``Default: False``
+        :param no_iter:             Turns the automated iteration of the  
+            number of k-points in a string off ``Default: False``
         :type no_iter:              bool
 
-        :param no_neighbour_check:  Turns the automated check for missing  \
-        strings (by distance between gaps and WCCs) off ``Default: False``
+        :param no_neighbour_check:  Turns the automated check for missing  
+            strings (by distance between gaps and WCCs) off ``Default: False``
         :type no_neighbour_check:   bool
 
-        :param wcc_tol:             Maximum movement of a WCC between two  \
-        steps for convergence. ``Default: 1e-2``
+        :param wcc_tol:             Maximum movement of a WCC between two  
+            steps for convergence. ``Default: 1e-2``
         :type wcc_tol:              float
 
-        :param gap_tol:             Smallest tolerated distance between the \
-        gap and neighbouring WCCs ``Default: 2e-2``
+        :param gap_tol:             Smallest tolerated distance between the 
+            gap and neighbouring WCCs ``Default: 2e-2``
         :type gap_tol:              float
 
-        :param min_neighbour_dist:  Minimum distance between two strings (no \
-        new strings will be added, even if the neighbour check fails). \
-        ``Default: 0.01``
+        :param min_neighbour_dist:  Minimum distance between two strings (no 
+            new strings will be added, even if the neighbour check fails). 
+            ``Default: 0.01``
         :type min_neighbour_dist:   float
 
-        :param iterator:            Generator for the number of points in \
-        a k-point string. The iterator should also take care of the maximum \
-        number of iterations. It is needed even when ``no_iter=True``, to \
-        provide a starting value. ``Default: range(2, 27, 2)``.
+        :param iterator:            Generator for the number of points in 
+            a k-point string. The iterator should also take care of the maximum 
+            number of iterations. It is needed even when ``no_iter=True``, to 
+            provide a starting value. ``Default: range(2, 27, 2)``.
 
-        :param use_pickle:          Toggles using the :mod:`pickle` module \
-        for saving ``Default: True``
+        :param use_pickle:          Toggles using the :mod:`pickle` module 
+            for saving ``Default: True``
         :type use_pickle:           bool
 
-        :param pickle_file:     Path to a file where the results are stored using \
-        the :py:mod:`pickle` module.
+        :param pickle_file:     Path to a file where the results are stored using 
+            the :py:mod:`pickle` module.
         :type pickle_file:      str
 
         :param num_strings:         Initial number of strings ``Default: 11``
@@ -188,21 +188,18 @@ class Plane(object):
         :param verbose:             Toggles printed output ``Default: True``
         :type verbose:              bool
 
-        :param no_move_check:       Toggles checking the movement of \
-        neighbouring wcc. ``Default: False``
+        :param no_move_check:       Toggles checking the movement of 
+            neighbouring wcc. ``Default: False``
         :type no_move_check:        bool
 
-        :param move_check_factor:   Scaling factor for the maximum allowed \
-        movement between neighbouring wcc. The factor is multiplied by \
-        the size of the largest gap between two wcc (from the two \
-        neighbouring strings, the smaller value is chosen). ``Default: 0.5``
+        :param move_check_factor:   Scaling factor for the maximum allowed 
+            movement between neighbouring wcc. The factor is multiplied by 
+            the size of the largest gap between two wcc (from the two 
+            neighbouring strings, the smaller value is chosen). ``Default: 0.5``
         :type move_check_factor:    float
 
-        :returns:                   ``tuple (k_points, wcc, gaps)``, \
-        ``k_points`` being the positions of the strings of k-points used in \
-        the calculation; ``wcc`` the Wannier charge center positions and \
-        ``gaps`` the position of the largest gap, both for each of the \
-        k-point strings.
+        :returns:                   ``None``. Use :meth:`get_res` and
+            :meth:`invariant` to get the results.
         """
         self._current = copy.deepcopy(self._defaults)
         self._current.update(kwargs)
@@ -283,8 +280,6 @@ class Plane(object):
         if(self._current['verbose']):
             print(string_tools.cbox("finished wcc calculation" + "\ntime: "
                                     + duration_string))
-
-        return (self._t_points, self._wcc_list, self._gaps)
 
     # has to be below wcc_calc because _validate_kwargs needs access to
     # wcc_calc.__doc__

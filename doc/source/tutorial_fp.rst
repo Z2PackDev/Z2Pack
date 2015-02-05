@@ -1,6 +1,8 @@
 First - Principles Calculations
 ===============================
 
+.. _Wannier90_setup:
+
 Setup and Compatibility
 -----------------------
 

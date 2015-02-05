@@ -6,7 +6,7 @@
 # File:    first_principles.py
 
 from . import kpts
-from .. import System as Z2PackSystem
+from .. import System as _Z2PackSystem
 from . import read_mmn as mmn
 
 import os
@@ -18,55 +18,55 @@ import platform
 import subprocess
 
 
-class System(Z2PackSystem):
-    """
-    Subclass of Z2PackSystem designed to work with various first - \
+class System(_Z2PackSystem):
+    r"""
+    A subclass of :class:`z2pack.System` designed to work with various first - 
     principles codes.
 
     :param input_files:             Path(s) of the input file(s)
     :type input_files:              str or list
 
-    :param k_points_fct:            Fct that creates a ``str`` specifying \
-    the k-points (in the language of the first-principles code used), \
-    given a ``starting_point``, ``last_point``, ``end point`` and number \
-    of k-points ``N``. Can also be a ``list`` of functions if k-points \
-    need to be written to more than one file.
+    :param k_points_fct:            Fct that creates a ``str`` specifying 
+        the k-points (in the language of the first-principles code used), 
+        given a ``starting_point``, ``last_point``, ``end point`` and number 
+        of k-points ``N``. Can also be a ``list`` of functions if k-points 
+        need to be written to more than one file.
 
-    :param k_points_path:           Name of the file where the k-points \
-    ``str`` belongs. Will append to a file if it matches one of the \
-    ``file_names``, and create a separate file else. \
-    If ``k_points_fct`` is a ``list``, ``k_points_path`` should also be \
-    a list, specifying the path for each of the functions.
+    :param k_points_path:           Name of the file where the k-points 
+        ``str`` belongs. Will append to a file if it matches one of the 
+        ``file_names``, and create a separate file else. 
+        If ``k_points_fct`` is a ``list``, ``k_points_path`` should also be 
+        a list, specifying the path for each of the functions.
     :type k_points_path:            str or list of str
 
     :param working_folder:          Folder where the created input files go
     :type working_folder:           str
 
-    :param command:                 Command to execute the first principles \
-    code
+    :param command:                 Command to execute the first principles 
+        code
     :type command:                  str
 
     :param executable:              Sets the executable executing the command
     :type executable:               str
 
-    :param file_names:              Name(s) the input file(s) should get \
-    in the ``working_folder``. Default behaviour is taking the filenames \
-    from the input files.
+    :param file_names:              Name(s) the input file(s) should get 
+        in the ``working_folder``. Default behaviour is taking the filenames 
+        from the input files.
     :type file_names:               str or list
 
-    :param mmn_path:                Path to the ``.mmn`` output file of \
-    ``Wannier90``
+    :param mmn_path:                Path to the ``.mmn`` output file of 
+        ``Wannier90``
     :type mmn_path:                 str
 
-    :param clean_subfolder:         Toggles deleting the content of \
-    ``working_folder`` before starting a new calculation.
+    :param clean_subfolder:         Toggles deleting the content of 
+        ``working_folder`` before starting a new calculation.
     :type clean_subfolder:          bool
 
-    :param kwargs:                  Are passed to the :class:`Z2PackPlane` \
-    constructor via :func:`plane`. More recent arguments take precendence.
+    :param kwargs:                  Are passed to the :class:`.Plane` 
+        constructor via :meth:`.plane`. More recent arguments take precendence.
 
-    .. note:: input_files and working_folder can be absolute or relative \
-    paths, the rest is relative to working_folder
+    .. note:: ``input_files`` and ``working_folder`` can be absolute or relative 
+        paths, the rest is relative ``to working_folder``
     """
     def __init__(self,
                  input_files,

@@ -6,7 +6,7 @@
 # File:    tb_vectors.py
 
 """
-A collection of functions to easily create multiple reciprocal lattice vectors
+A collection of functions to easily create multiple reciprocal lattice vectors.
 """
 
 

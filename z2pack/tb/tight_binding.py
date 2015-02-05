@@ -123,10 +123,10 @@ class Hamilton:
 
     def create_hamiltonian(self):
         """
-        Creates the ``hamiltonian`` member, which returns the Hamiltonian \
-        matrix as a function of k (as a ``list`` of lenth 3).
+        Creates the ``hamiltonian`` member variable, which returns the
+        Hamiltonian matrix as a function of k (as a ``list`` of lenth 3).
 
-        :returns: ``self.hamiltonian``
+        :returns: ``hamiltonian``
         """
         # create conversion from index to orbital/vice versa
         count = 0
@@ -230,19 +230,19 @@ class Hamilton:
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
 
-from .. import System as Z2PackSystem
+from .. import System as _Z2PackSystem
 
 
-class System(Z2PackSystem):
-    """
-    Subclass of Z2PackSystem used for calculating system with a tight-
+class System(_Z2PackSystem):
+    r"""
+    Subclass of :class:`z2pack.System` used for calculating system with a tight-
     binding model
 
-    :param tb_hamilton:     system being calculated
+    :param tb_hamilton:    Describes the system being calculated
     :type tb_hamilton:     :class:`z2pack.tb.Hamilton` object
-    :param kwargs:          are passed to the Z2PackPlane constructor via \
-    .plane(), which passes them to wcc_calc(), precedence: wcc_calc > plane > \
-    this (newer kwargs take precedence)
+    :param kwargs:          are passed to the :class:`.Plane` constructor via 
+        :meth:`.plane`, which passes them to :meth:`.wcc_calc`, precedence:
+        :meth:`.wcc_calc` > :meth:`.plane` > this (newer kwargs take precedence)
     """
     def __init__(self,
                  tb_hamilton,

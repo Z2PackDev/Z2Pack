@@ -39,19 +39,19 @@ create an instance of :class:`System<z2pack.System>`, please refer to its subcla
 `first-principles`_ or `tight-binding`_ calculations).
 
 In both cases, the :class:`System<z2pack.System>` instance is used to create the
-different planes on which to compute the Z2 topological invariant.
+different surfaces on which to compute the Z2 topological invariant.
 
-Creating a :class:`.Plane`
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-Having defined a system, the next step is creating a plane for which the
-Z2 invariant should be calculated. This is done with the :meth:`System.plane`
+Creating a :class:`.Surface`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Having defined a system, the next step is creating a surface for which the
+Z2 invariant should be calculated. This is done with the :meth:`System.surface`
 method.
 
-The basic functionality of :meth:`plane` requires two arguments:
+The basic functionality of :meth:`surface` requires two arguments:
 ``edge_function`` and ``string_vec``. 
 
-Class :class:`.Plane`
----------------------
+Class :class:`.Surface`
+-----------------------
 
 Calculating the WCC positions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -60,7 +60,7 @@ Getting the results
 ~~~~~~~~~~~~~~~~~~~
 
 The Z2 invariant can be calculated by calling the :meth:`.invariant()`
-method, which returns 0 for topologically trivial planes or 1 for
+method, which returns 0 for topologically trivial surfaces or 1 for
 non-trivial ones.
 
 Wannier charge centers, k-points, :math:`\Lambda` matrices etc.

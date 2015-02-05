@@ -35,26 +35,26 @@ import matplotlib.pyplot as plt
 class System:
     r"""
     Describes the interface a Z2Pack specialisation must fulfil. Also, it
-    defines the :meth:`plane` method, which is used to create :class:`Plane`
+    defines the :meth:`surface` method, which is used to create :class:`Surface`
     instances.
 
-    :param m_handle_creator: Takes the ``edge_function`` and  ``string_vec`` given to :meth:`plane` and creates an ``m_handle`` s.t. ``m_handle(t, N)`` returns the overlap matrices
+    :param m_handle_creator: Takes the ``edge_function`` and  ``string_vec`` given to :meth:`surface` and creates an ``m_handle`` s.t. ``m_handle(t, N)`` returns the overlap matrices
     :type m_handle_creator: function
 
-    :param kwargs: Keyword arguments are passed to the :class:`Plane` constructor unless overwritten by kwargs to :func:`plane`
+    :param kwargs: Keyword arguments are passed to the :class:`Surface` constructor unless overwritten by kwargs to :func:`surface`
     """
 
     def __init__(self, m_handle_creator, **kwargs):
         self._defaults = kwargs
         self._m_handle_creator = m_handle_creator
 
-    def plane(self, edge_function=None, string_vec=None, **kwargs):
+    def surface(self, edge_function=None, string_vec=None, **kwargs):
         r"""
-        Creates a :class:`Plane` instance.  The plane's position is
+        Creates a :class:`Surface` instance.  The surface's position is
         specified by a function ``edge_function``: :math:`t \in [0, 1]
         \rightarrow \mathbb{R}^3` (or, if you want to stay in the same
         UC, :math:`[0, 1]^3`) connecting a pumping parameter :math:`t`
-        to the edge of the plane. The direction along which the plane
+        to the edge of the surface. The direction along which the surface
         extends from this edge, then, is given by ``string_vec``.
 
         :param edge_function: Returns the start of the k-point string 
@@ -66,11 +66,11 @@ class System:
             it is one of ``[1, 0, 0]``, ``[0, 1, 0]``, ``[0, 0, 1]``.
         :type string_vec: list (float)
         
-        :param kwargs: Keyword arguments are passed to the :class:`Plane`
+        :param kwargs: Keyword arguments are passed to the :class:`Surface`
             constructor. They take precedence over kwargs from the
             :class:`System` constructor.
 
-        :rtype: :class:`Plane`
+        :rtype: :class:`Surface`
 
         .. note:: All directions / positions are given w.r.t. the
             inverse lattice vectors.
@@ -79,17 +79,17 @@ class System:
         kw_arguments = copy.copy(self._defaults)
         kw_arguments.update(kwargs)
 
-        return Plane(self._m_handle_creator(edge_function, string_vec), edge_function=edge_function, **kw_arguments)
+        return Surface(self._m_handle_creator(edge_function, string_vec), edge_function=edge_function, **kw_arguments)
 
 
 
-class Plane(object):
+class Surface(object):
     r"""
-    Describes a plane (or generalised 2D surface) in reciprocal space 
+    Describes a surface (or generalised 2D surface) in reciprocal space 
     for which the Z2 topological invariant is to be calculated. It is
-    created by using the :class:`System`'s :meth:`plane()<System.plane>` method.
+    created by using the :class:`System`'s :meth:`surface()<System.surface>` method.
 
-    A :class:`Plane` instance is the main object used to perform Z2Pack
+    A :class:`Surface` instance is the main object used to perform Z2Pack
     tasks like calculating WCC and the Z2 invariant, getting results, plotting
     etc.
 
@@ -101,7 +101,7 @@ class Plane(object):
     :param edge_function: Returns the start of the k-point string 
         as function of the pumping parameter t.
     
-    :param kwargs: Keyword arguments are passed to the :class:`Plane`
+    :param kwargs: Keyword arguments are passed to the :class:`Surface`
         constructor. They take precedence over kwargs from the
         :class:`System` constructor.
     """
@@ -141,7 +141,7 @@ class Plane(object):
     @_validate_kwargs
     def wcc_calc(self, **kwargs):
         r"""
-        Calculates the Wannier charge centers in the given plane
+        Calculates the Wannier charge centers in the given surface
 
         * automated convergence in string direction
         * automated check for distance between gap and wcc -> add string
@@ -313,7 +313,7 @@ class Plane(object):
             #~ text += '\ninvariant:\n' + str(self.invariant())
             #~ return text
         #~ except AttributeError:
-            #~ return super(Plane, self).__str__()
+            #~ return super(Surface, self).__str__()
 
     #-------------------------------------------------------------------#
     #                support functions for wcc                          #

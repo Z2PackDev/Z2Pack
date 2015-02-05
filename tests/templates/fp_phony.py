@@ -33,11 +33,11 @@ class FpPhonyTestCase(CommonTestCase):
             'samples' + self._sep + 'build',
             "")
 
-        plane = sys.plane(lambda kx: [0, kx / 2, 0], [0, 0, 1], use_pickle=False)
+        surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], use_pickle=False)
 
-        plane.wcc_calc(no_iter=True, no_neighbour_check=True, verbose=False)
+        surface.wcc_calc(no_iter=True, no_neighbour_check=True, verbose=False)
         self.assertDictAlmostEqual(
-            plane.get_res(), in_place_replace(plane.get_res()))
+            surface.get_res(), in_place_replace(surface.get_res()))
 
     def testphony2(self):
         sys = z2pack.fp.System(
@@ -48,11 +48,11 @@ class FpPhonyTestCase(CommonTestCase):
             "",
             file_names='wannier90.mmn')
 
-        plane = sys.plane(lambda kx: [0, kx / 2, 0], [0, 0, 1], use_pickle=False)
+        surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], use_pickle=False)
 
-        plane.wcc_calc(no_iter=True, no_neighbour_check=True, verbose=False)
+        surface.wcc_calc(no_iter=True, no_neighbour_check=True, verbose=False)
         self.assertDictAlmostEqual(
-            plane.get_res(), in_place_replace(plane.get_res()))
+            surface.get_res(), in_place_replace(surface.get_res()))
 
 
     def testphony3(self):
@@ -64,11 +64,11 @@ class FpPhonyTestCase(CommonTestCase):
             "",
             mmn_path='varw90.mmn')
 
-        plane = sys.plane(lambda kx: [0, kx / 2, 0], [0, 0, 1], use_pickle=False)
+        surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], use_pickle=False)
 
-        plane.wcc_calc(verbose=False)
+        surface.wcc_calc(verbose=False)
         self.assertDictAlmostEqual(
-            plane.get_res(), in_place_replace(plane.get_res()))
+            surface.get_res(), in_place_replace(surface.get_res()))
 
 
 if __name__ == "__main__":

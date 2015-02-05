@@ -5,7 +5,7 @@ package. If you are looking for a Tutorial for Z2Pack online, go `here`_.
 The :ref:`Documentation<core>` of Z2Pack provides more detailed information about
 the classes, methods and available parameters.
 
-In the first section, the two classes ``System`` and ``Plane``
+In the first section, the two classes ``System`` and ``Surface``
 will be introduced, and the different options for calculating, saving,
 plotting etc. are shown. The subsequent sections explain the two different specialisations, for first-principles calculations or for use with a
 tight-binding model. 

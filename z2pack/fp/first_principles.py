@@ -62,7 +62,7 @@ class System(_Z2PackSystem):
         ``working_folder`` before starting a new calculation.
     :type clean_subfolder:          bool
 
-    :param kwargs:                  Are passed to the :class:`.Plane` 
+    :param kwargs:                  Are passed to the :class:`.Surface` 
         constructor via :meth:`.plane`. More recent arguments take precendence.
 
     .. note:: ``input_files`` and ``working_folder`` can be absolute or relative 

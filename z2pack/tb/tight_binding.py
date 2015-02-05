@@ -240,7 +240,7 @@ class System(_Z2PackSystem):
 
     :param tb_hamilton:    Describes the system being calculated
     :type tb_hamilton:     :class:`z2pack.tb.Hamilton` object
-    :param kwargs:          are passed to the :class:`.Plane` constructor via 
+    :param kwargs:          are passed to the :class:`.Surface` constructor via 
         :meth:`.plane`, which passes them to :meth:`.wcc_calc`, precedence:
         :meth:`.wcc_calc` > :meth:`.plane` > this (newer kwargs take precedence)
     """

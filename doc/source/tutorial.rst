@@ -20,4 +20,4 @@ tight-binding model.
     tutorial_tb.rst
 
 
-.. _Z2Packonline_Tutorial: http://todo.todo
+.. _Z2Packonline_Tutorial: not_found.html

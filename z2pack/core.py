@@ -148,6 +148,9 @@ class Surface(object):
         * automated convergence check w.r.t. movement of the WCC between 
           different k-strings.
 
+        :param num_strings:         Initial number of strings ``Default: 11``
+        :type num_strings:          int
+
         :param no_iter:             Turns the automated iteration of the  
             number of k-points in a string off ``Default: False``
         :type no_iter:              bool
@@ -155,6 +158,10 @@ class Surface(object):
         :param no_neighbour_check:  Turns the automated check for missing  
             strings (by distance between gaps and WCCs) off ``Default: False``
         :type no_neighbour_check:   bool
+
+        :param no_move_check:       Toggles checking the movement of 
+            neighbouring wcc. ``Default: False``
+        :type no_move_check:        bool
 
         :param wcc_tol:             Maximum movement of a WCC between two  
             steps for convergence. ``Default: 1e-2``
@@ -164,15 +171,21 @@ class Surface(object):
             gap and neighbouring WCCs ``Default: 2e-2``
         :type gap_tol:              float
 
-        :param min_neighbour_dist:  Minimum distance between two strings (no 
-            new strings will be added, even if the neighbour check fails). 
-            ``Default: 0.01``
-        :type min_neighbour_dist:   float
+        :param move_check_factor:   Scaling factor for the maximum allowed 
+            movement between neighbouring wcc. The factor is multiplied by 
+            the size of the largest gap between two wcc (from the two 
+            neighbouring strings, the smaller value is chosen). ``Default: 0.5``
+        :type move_check_factor:    float
 
         :param iterator:            Generator for the number of points in 
             a k-point string. The iterator should also take care of the maximum 
             number of iterations. It is needed even when ``no_iter=True``, to 
-            provide a starting value. ``Default: range(2, 27, 2)``.
+            provide a starting value. ``Default: range(8, 27, 2)``.
+
+        :param min_neighbour_dist:  Minimum distance between two strings (no 
+            new strings will be added, even if the neighbour check fails). 
+            ``Default: 0.01``
+        :type min_neighbour_dist:   float
 
         :param use_pickle:          Toggles using the :mod:`pickle` module 
             for saving ``Default: True``
@@ -182,21 +195,8 @@ class Surface(object):
             the :py:mod:`pickle` module.
         :type pickle_file:      str
 
-        :param num_strings:         Initial number of strings ``Default: 11``
-        :type num_strings:          int
-
         :param verbose:             Toggles printed output ``Default: True``
         :type verbose:              bool
-
-        :param no_move_check:       Toggles checking the movement of 
-            neighbouring wcc. ``Default: False``
-        :type no_move_check:        bool
-
-        :param move_check_factor:   Scaling factor for the maximum allowed 
-            movement between neighbouring wcc. The factor is multiplied by 
-            the size of the largest gap between two wcc (from the two 
-            neighbouring strings, the smaller value is chosen). ``Default: 0.5``
-        :type move_check_factor:    float
 
         :returns:                   ``None``. Use :meth:`get_res` and
             :meth:`invariant` to get the results.

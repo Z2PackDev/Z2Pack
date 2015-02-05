@@ -1,3 +1,5 @@
+.. _tutorial_fp:
+
 First - Principles Calculations
 ===============================
 

@@ -38,6 +38,12 @@ Documentation
    fp.rst
    tb.rst
 
+.. ~ Hidden files
+
+.. toctree::
+    :hidden:
+
+    not_found.rst 
 
 Getting in touch
 ================
@@ -56,3 +62,4 @@ Indices and tables
 .. _dg: http://github.com/greschd
 .. _online_tool: http://z2pack.ethz.ch
 .. _GitHub: http://github.com/Z2PackDev/Z2Pack
+

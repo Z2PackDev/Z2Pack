@@ -19,14 +19,15 @@ available in Z2Pack.
 __ online_tool
 
 If you use Z2Pack or its online interface for your research, please
-consider citing http://todo.todo
+consider citing :ref:`TODO<not_found>`
 
-Tutorial
-========
+Tutorial & Examples
+===================
 .. toctree::
     :maxdepth: 2
     
     tutorial.rst
+    examples.rst
 
 Documentation
 =============

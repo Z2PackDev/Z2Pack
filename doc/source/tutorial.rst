@@ -2,7 +2,7 @@ Tutorial
 ========
 The following Tutorial gives an introduction to the Z2Pack **Python**
 package. If you are looking for a Tutorial for Z2Pack online, go `here`_.
-The `Documentation`_ of Z2Pack provides more detailed information about
+The :ref:`Documentation<core>` of Z2Pack provides more detailed information about
 the classes, methods and available parameters.
 
 In the first section, the two classes ``System`` and ``Plane``
@@ -11,7 +11,6 @@ plotting etc. are shown. The subsequent sections explain the two different speci
 tight-binding model. 
 
 .. _here: Z2Packonline_Tutorial_
-.. _Documentation: doc_
 
 .. toctree::
     :maxdepth: 2
@@ -22,4 +21,3 @@ tight-binding model.
 
 
 .. _Z2Packonline_Tutorial: http://todo.todo
-.. _doc: http://todo.todo

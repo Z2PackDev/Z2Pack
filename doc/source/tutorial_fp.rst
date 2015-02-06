@@ -3,6 +3,8 @@
 First - Principles Calculations
 ===============================
 
+.. contents::
+
 .. _Wannier90_setup:
 
 Setup and Compatibility
@@ -22,17 +24,14 @@ For the computation of overlap matrices, Z2Pack uses the Wannier90 software pack
 ABINIT Setup
 ~~~~~~~~~~~~
 The following is a guide on how to install ABINIT with the modified
-Wannier90 source. There might be a more straightforward way by linking
-to an already compiled source, but this is the easiest procedure we could
-come up with.
+Wannier90 source by replacing the Wannier90 fallback in ABINIT. If your
+usual routine is to install ABINIT with Wannier90 as an external (pre-compiled)
+library, it may be easier to compile the modified Wannier90 source
+again and then linking to that.
 
-* **Step 1**
-
-  Download the modified Wannier90 source and copy it to the ``tarballs``
+* Download the modified Wannier90 source and copy it to the ``tarballs``
   directory of ABINIT (usually ``~/.abinit/tarballs``)
-* **Step 2**
-
-  Now we need to change the checksum ABINIT expects from the Wannier90
+* Now we need to change the checksum ABINIT expects from the Wannier90
   source.
     
     * Get the md5sum for both the original (un-modified) Wannier90 source
@@ -41,9 +40,7 @@ come up with.
       Search and replace every instance of the old checksum with the new
       one. You should find 2 checksums to replace.
 
-* **Step 3**
-
-  Build ABINIT with Wannier90 enabled. If one of the previous steps
+* Build ABINIT with Wannier90 enabled. If one of the previous steps
   were not done correctly, the installation will likely get stuck trying to
   download Wannier90.
 
@@ -53,22 +50,42 @@ For VASP, the installation routine doesn't differ from installing VASP with
 a regular version of Wannier90. Compile the modified Wannier90 source and
 link to it when installing VASP.
 
+.. _fp_System:
 
-Basic Idea
-----------
-The basic steps of a Wannier charge center calculation with Z2Pack are:
+Creating a :class:`fp.System`
+-----------------------------
+The basic steps of a first-principles WCC calculation with Z2Pack are:
 
 1. Input files created by the user are copied into the working folder
 #. A string specifying the k - points is either appended to one of those files or put in a separate file
 #. The first - principles code is called and Wannier90 creates the .mmn file
 #. Z2Pack reads the overlap matrices from the ``.mmn`` file
 
+1. Preparing input files
+~~~~~~~~~~~~~~~~~~~~~~~~
+
 For the first step, the user needs to create input files for an NSCF run calling Wannier90. These input files should also contain a reference to the density file acquired in a previous SCF run. However, the **k-points** used in the NSCF run should not be in these files. The reason for this is that the k-points will change many times during a Z2Pack calculation.
 
 .. note::
     The Wannier90 input file must contain the variable ``shell_list 1``. Also, use ``exclude_bands`` to exclude the non - occupied bands.
 
-For the second step, a function that produces the input specifying the k-points is needed. This function must have the following syntax:
+When creating the :class:`z2pack.System` instance, the input files should
+be listed in the ``input_files`` keyword argument (as a list of strings).
+
+2. Preparing k-points input
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+If you are using  **VASP**, **ABINIT** or **Quantum Espresso**, you
+can use the functions provided in :mod:`z2pack.fp.kpts` to create k-points
+input. Else, you will need to specify a function producing the input for specifying
+the k-points.
+
+In both cases, the function itself should be given as the
+``kpts_fct`` input variable, while the file the k-points string should
+be printed to is given as ``kpts_path``. If you need the k-points input
+to be written to more than one file, you can let ``kpts_fct`` be a list
+of functions, and ``kpts_path`` a list of file names.
+
+The function given in ``kpt_fct`` must have the following syntax:
 
 ::
 
@@ -89,7 +106,32 @@ variable name     description                 format
 ===============   ==========================  =========================
 
 
-.. _fp_System:
 
-Class :class:`.fp.System`
--------------------------
+Depending on how your first-principles code works, it might be easier
+to use either ``last_point`` or ``end_point``. Note that ``end_point``
+itself should not be in the k-points used.
+
++----------------------------------------+--------------------------------+
+|sample input                            |   desired k-points             |
++=================+======================+================================+
+|``start_point``  | ``[0, 0.5, 0]``      |``[0, 0.5, 0], [0, 0.5, 0.2]``  |
++-----------------+----------------------+                                |
+|``last_point``   | ``[0, 0.5, 0.8]``    |``[0, 0.5, 0.4], [0, 0.5, 0.6]``|
++-----------------+----------------------+                                |
+|``end_point``    |``[0, 0.5, 1]``       |                                |
++-----------------+----------------------+``[0, 0.5, 0.8]``               |
+|``N``            |  ``5``               |                                |
++-----------------+----------------------+--------------------------------+
+
+3. Call to the first-principles code
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The call to the first-principles code is simple: just provide Z2Pack with
+the command line input (as a string) of how to call the first-principles
+code you are using. This is the ``command`` keyword argument to :class:`fp.System`.
+
+4. Reading the .mmn file
+~~~~~~~~~~~~~~~~~~~~~~~~
+Finally, Z2Pack needs the path to where the overlap file ``wannier90.mmn``
+will be (Keyword argument ``mmn_path``). By default, it is assumed to be
+in the top level of the build directory.
+

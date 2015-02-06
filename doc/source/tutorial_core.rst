@@ -1,6 +1,8 @@
 Core Module
 ===========
 
+.. contents::
+
 Getting Z2Pack
 --------------
 Z2Pack can be installed directly from the Python package index:
@@ -86,7 +88,7 @@ of strings can be changed by setting the ``num_strings`` keyword value.
 Convergence options
 +++++++++++++++++++
 
-* Convergence **along the k-points string**:
+* Convergence along the k-points string
     The number of k-points along a given string is increased until
     the change in WCC positions is below a certain limit. Because it is
     in general not possible to identify (and hence distinguish) the WCC,
@@ -94,18 +96,25 @@ Convergence options
     spread ``wcc_tol`` and weight 1 to each WCC. If the total difference
     in density is lower than 1, the WCC are considered converged. 
 
+    The number of k-points used for each step can be adjusted by setting
+    the ``iterator`` keyword. Its value must be a Python iterator returning
+    integers. For example, ``iterator=range(10, 31, 4)`` would mean the
+    number of k-points goes from 10 to 30 in steps of 4.
+
     Considering a single WCC, this scheme ensures that it cannot move
     more than ``wcc_tol`` for convergence to be reached.
 
-    Iteration along the string can be turned off by setting ``no_iter=True``
-* Distance between the **largest gap** and **neighbouring WCC**
+    Iteration along the string can be turned off by setting ``no_iter=True``.
+    The first value yielded by the ``iterator`` is then used as the
+    number of k-points used.
+* Distance between the largest gap and neighbouring WCC
     For a reliable calculation of the Z2 invariant, the middle of the
     largest gap between WCC in a k-point string should not be too close
     to the WCC in its neighbouring strings. If the WCC are closer than
     ``gap_tol``, another string is added in between the two neighbours.
 
     This check can be disabled by setting ``no_neighbour_check=True``
-* **Movement** of WCC between neighbouring strings
+* Movement of WCC between neighbouring strings
     This convergence option checks for the movement of WCC between
     neighbouring strings in the same way the movement of WCC in a single
     string was considered before. Because WCC are expected to move a
@@ -124,6 +133,12 @@ Convergence options
     likely need a slightly higher ``move_check_factor``.
 
     This check can be disabled by setting ``no_move_check=True``
+
+* Minimum distane between neighbouring strings
+    For both the check for distance between the largest gap and its
+    neighbouring WCC and the check for movement of WCC, no additional
+    string will be added after the distance between two strings has
+    reached the value set by ``min_neighbour_dist``.
 
 .. caution:: Even carefully chosen convergence options can sometimes
     lead to false results, especially when the WCC move very quickly

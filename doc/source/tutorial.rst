@@ -13,7 +13,7 @@ tight-binding model.
 .. _here: Z2Packonline_Tutorial_
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 3
     
     tutorial_core.rst
     tutorial_fp.rst

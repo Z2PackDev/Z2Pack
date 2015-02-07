@@ -40,10 +40,10 @@ Documentation
 
 .. ~ Hidden files
 
-.. toctree::
-    :hidden:
-
-    not_found.rst 
+.. ~ .. toctree::
+.. ~     :hidden:
+.. ~ 
+.. ~     not_found.rst 
 
 Getting in touch
 ================

@@ -1,6 +1,8 @@
 Core Module
 ===========
 
+Tutorial on the core module :mod:`z2pack`.
+
 .. contents::
 
 Getting Z2Pack
@@ -88,57 +90,58 @@ of strings can be changed by setting the ``num_strings`` keyword value.
 Convergence options
 +++++++++++++++++++
 
-* Convergence along the k-points string
-    The number of k-points along a given string is increased until
-    the change in WCC positions is below a certain limit. Because it is
-    in general not possible to identify (and hence distinguish) the WCC,
-    a WCC density is computed by assigning a triangular density with
-    spread ``wcc_tol`` and weight 1 to each WCC. If the total difference
-    in density is lower than 1, the WCC are considered converged. 
+* **Convergence along the k-points string**
 
-    The number of k-points used for each step can be adjusted by setting
-    the ``iterator`` keyword. Its value must be a Python iterator returning
-    integers. For example, ``iterator=range(10, 31, 4)`` would mean the
-    number of k-points goes from 10 to 30 in steps of 4.
+  The number of k-points along a given string is increased until
+  the change in WCC positions is below a certain limit. Because it is
+  in general not possible to identify (and hence distinguish) the WCC,
+  a WCC density is computed by assigning a triangular density with
+  spread ``wcc_tol`` and weight 1 to each WCC. If the total difference
+  in density is lower than 1, the WCC are considered converged. 
 
-    Considering a single WCC, this scheme ensures that it cannot move
-    more than ``wcc_tol`` for convergence to be reached.
+  The number of k-points used for each step can be adjusted by setting
+  the ``iterator`` keyword. Its value must be a Python iterator returning
+  integers. For example, ``iterator=range(10, 31, 4)`` would mean the
+  number of k-points goes from 10 to 30 in steps of 4.
 
-    Iteration along the string can be turned off by setting ``no_iter=True``.
-    The first value yielded by the ``iterator`` is then used as the
-    number of k-points used.
-* Distance between the largest gap and neighbouring WCC
-    For a reliable calculation of the Z2 invariant, the middle of the
-    largest gap between WCC in a k-point string should not be too close
-    to the WCC in its neighbouring strings. If the WCC are closer than
-    ``gap_tol``, another string is added in between the two neighbours.
+  Considering a single WCC, this scheme ensures that it cannot move
+  more than ``wcc_tol`` for convergence to be reached.
 
-    This check can be disabled by setting ``no_neighbour_check=True``
-* Movement of WCC between neighbouring strings
-    This convergence option checks for the movement of WCC between
-    neighbouring strings in the same way the movement of WCC in a single
-    string was considered before. Because WCC are expected to move a
-    litle bit between neighbours, the spread of each triangular density
-    is now given in terms of the size of the largest gap between WCC.
-    The keyword argument ``move_check_factor`` defines which fraction
-    of the gap is used as a spread. If the convergence criterion fails,
-    another string is again added between the two neighbours.
+  Iteration along the string can be turned off by setting ``no_iter=True``.
+  The first value yielded by the ``iterator`` is then used as the
+  number of k-points used.
+* **Distance between the largest gap and neighbouring WCC**
+  For a reliable calculation of the Z2 invariant, the middle of the
+  largest gap between WCC in a k-point string should not be too close
+  to the WCC in its neighbouring strings. If the WCC are closer than
+  ``gap_tol``, another string is added in between the two neighbours.
 
-    If used with an appropriate value of ``move_check_factor``, this
-    test can help focusing the calculation on the important values where
-    the WCC change faster.
+  This check can be disabled by setting ``no_neighbour_check=True``
+* **Movement of WCC between neighbouring strings**
+  This convergence option checks for the movement of WCC between
+  neighbouring strings in the same way the movement of WCC in a single
+  string was considered before. Because WCC are expected to move a
+  litle bit between neighbours, the spread of each triangular density
+  is now given in terms of the size of the largest gap between WCC.
+  The keyword argument ``move_check_factor`` defines which fraction
+  of the gap is used as a spread. If the convergence criterion fails,
+  another string is again added between the two neighbours.
 
-    Note that, since the criterion is formulated in terms of the total
-    change in WCC density, a system with more Wannier functions will
-    likely need a slightly higher ``move_check_factor``.
+  If used with an appropriate value of ``move_check_factor``, this
+  test can help focusing the calculation on the important values where
+  the WCC change faster.
+  
+  Note that, since the criterion is formulated in terms of the total
+  change in WCC density, a system with more Wannier functions will
+  likely need a slightly higher ``move_check_factor``.
+  
+  This check can be disabled by setting ``no_move_check=True``
 
-    This check can be disabled by setting ``no_move_check=True``
-
-* Minimum distane between neighbouring strings
-    For both the check for distance between the largest gap and its
-    neighbouring WCC and the check for movement of WCC, no additional
-    string will be added after the distance between two strings has
-    reached the value set by ``min_neighbour_dist``.
+* **Minimum distane between neighbouring strings**
+  For both the check for distance between the largest gap and its
+  neighbouring WCC and the check for movement of WCC, no additional
+  string will be added after the distance between two strings has
+  reached the value set by ``min_neighbour_dist``.
 
 .. caution:: Even carefully chosen convergence options can sometimes
     lead to false results, especially when the WCC move very quickly

@@ -3,6 +3,8 @@
 First - Principles Calculations
 ===============================
 
+Tutorial on the :mod:`z2pack.fp` submodule.
+
 .. contents::
 
 .. _Wannier90_setup:
@@ -34,11 +36,11 @@ again and then linking to that.
 * Now we need to change the checksum ABINIT expects from the Wannier90
   source.
     
-    * Get the md5sum for both the original (un-modified) Wannier90 source
-      and the modified source with the command ``md5sum filename``. 
-    * Go to your ABINIT source folder and open the file ``fallbacks/configure``.
-      Search and replace every instance of the old checksum with the new
-      one. You should find 2 checksums to replace.
+  * Get the md5sum for both the original (un-modified) Wannier90 source
+    and the modified source with the command ``md5sum filename``. 
+  * Go to your ABINIT source folder and open the file ``fallbacks/configure``.
+    Search and replace every instance of the old checksum with the new
+    one. You should find 2 checksums to replace.
 
 * Build ABINIT with Wannier90 enabled. If one of the previous steps
   were not done correctly, the installation will likely get stuck trying to

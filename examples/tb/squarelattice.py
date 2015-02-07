@@ -9,50 +9,68 @@ import sys
 sys.path.append("../../")
 import z2pack.tb as tb
 
-import os
 import numpy as np
 import scipy.linalg as la
 import matplotlib.pyplot as plt
 
-def calculate_system(ax, t1, t2, **kwargs):
+# Setting the interaction strength
+t1, t2 = (0.2, 0.3)
 
-    H = tb.Hamilton()
+# Settings used for wcc_calc. Feel free to play around with the different
+# options.
+settings = {'num_strings': 11,
+            'no_iter': False,
+            'no_neighbour_check': False,
+            'no_move_check': False,
+            'wcc_tol': 1e-2,
+            'gap_tol': 2e-2,
+            'move_check_factor': 0.5,
+            'iterator': range(8, 27, 2),
+            'min_neighbour_dist': 1e-2,
+            'use_pickle': True,
+            'pickle_file': 'res_pickle.txt',
+            'verbose': True
+           }
 
-    # create the two atoms
-    H.add_atom(([1, 1], 1), [0, 0, 0])
-    H.add_atom(([-1, -1], 1), [0.5, 0.5, 0])
+# Creating an empty Hamilton instance
+H = tb.Hamilton()
 
-    # add hopping between different atoms
-    H.add_hopping(((0, 0), (1, 1)), tb.vectors.combine([0,-1],[0,-1],0), t1, phase = [1, -1j, 1j, -1])
-    H.add_hopping(((0, 1), (1, 0)), tb.vectors.combine([0,-1],[0,-1],0), t1, phase = [1, 1j, -1j, -1])
+# Creating the two atoms. The orbitals have opposite energies because
+# they are in different sublattices.
+H.add_atom(([1, 1], 1), [0, 0, 0])
+H.add_atom(([-1, -1], 1), [0.5, 0.5, 0])
 
-    # add hopping between neighbouring orbitals of the same type
-    H.add_hopping((((0, 0), (0, 0)),((0, 1), (0, 1))), tb.vectors.neighbours([0,1]), t2)
-    H.add_hopping((((1, 1), (1, 1)),((1, 0), (1, 0))), tb.vectors.neighbours([0,1]), -t2)
+# Add hopping between different atoms
+# The first hopping is between the first orbital of the first atom and
+# the second orbital of the second atom, (inter-sublattice interation)
+H.add_hopping(((0, 0), (1, 1)),
+              tb.vectors.combine([0,-1],[0,-1],0),
+              t1,
+              phase = [1, -1j, 1j, -1])
+# The second interaction is also inter-sublattice, but with the other
+# two orbitals. The strength is the same, but the phase is conjugated.
+H.add_hopping(((0, 1), (1, 0)),
+              tb.vectors.combine([0,-1],[0,-1],0),
+              t1,
+              phase = [1, 1j, -1j, -1])
 
-    # call to Z2Pack
-    tb_system = tb.System(H)
-    tb_plane = tb_system.plane(lambda kx: [kx / 2., 0, 0], [0, 1, 0], pickle_file = './results/res.txt')
-    tb_plane.wcc_calc(**kwargs)
+# These are intra-sublattice interactions between neighbouring U.C.
+# Sublattice A has positive, sublattice B negative interaction strength
+H.add_hopping((((0, 0), (0, 0)),((0, 1), (0, 1))), tb.vectors.neighbours([0,1]), t2)
+H.add_hopping((((1, 1), (1, 1)),((1, 0), (1, 0))), tb.vectors.neighbours([0,1]), -t2)
 
-    tb_plane.load()
-    tb_plane.save()
-    
-    plot = tb_plane.plot(show = False, axis = ax)
+# Creating the System
+tb_system = tb.System(H)
 
-    
-    print("t1: {0}, t2: {1}, invariant: {2}".format(t1, t2, tb_plane.invariant()))
-    return plot, tb_plane
-        
-if __name__ == "__main__":
-    if not os.path.exists('./results'):
-        os.makedirs('./results')
+# Creating a surface with strings along ky at kz=0
+tb_surface = tb_system.surface(lambda kx: [kx / 2., 0, 0], [0, 1, 0])
 
-    settings = {'num_strings': 3, 'verbose': True}
-    t_values = [[0.2, 0.3], [0.1, 0.4], [-0.2, -0.3], [0.0, 0.3]]
+# Calculating WCC with standard settings
+tb_surface.wcc_calc(**settings)
 
-    fig, axes = plt.subplots(2,2)
-    for i, ax in enumerate(axes.flatten()):
-        calculate_system(ax, *t_values[i], **settings)
+# showing the plot
+tb_surface.plot()
 
-    plt.savefig('./results/squarelattice.pdf', bbox_inches = 'tight')
+# Printing the results
+print("t1: {0}, t2: {1}, Z2 invariant: {2}".format(t1, t2, tb_surface.invariant()))
+

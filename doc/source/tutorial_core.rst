@@ -70,6 +70,9 @@ The surface then extends along ``string_vec`` from that edge.
 Keyword arguments given to :meth:`.surface` will be used as defaults for
 any :meth:`.wcc_calc` call for that Surface.
 
+.. warning:: Different instances of :class:`.Surface` should have different
+    paths to the pickle file (keyword argument ``pickle_file``), otherwise they will overwrite each other's data.
+
 Class :class:`.Surface`
 -----------------------
 The methods of the :class:`.Surface` class is where most of the

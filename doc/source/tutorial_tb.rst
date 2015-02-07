@@ -41,6 +41,10 @@ Adding interaction terms
 
 The method :meth:`.add_hopping` is used to add interaction terms. 
 
+.. note::
+    It is possible, but not advised, to add interaction terms before all
+    atoms have been added. 
+
 The first input variable, ``orbital_pairs``, specifies between **which two orbitals** the interaction takes place. It is a tuple (``orbital_1``, ``orbital_2``), where ``orbital_*`` is again a tuple (``atom_index``, ``orbital_index``), where both indices start at 0.
 ``orbital_pairs`` can also be a list of such tuples, which means that the same interaction will be applied for every pair of orbitals.
 
@@ -49,11 +53,10 @@ Again, ``rec_lattice_vec`` can also be a list of such vectors, which means there
 
 The third input variable, ``overlap`` specifies the **strength** of the interaction.
 
-Finally, ``phase`` (a list of float) can be used to give a different (real or complex) **multiplicative factor** for each of the vectors specified in ``rec_lattice_vec``. If no ``phase`` is given, it defaults to 1. If only one ``phase`` is given, it will be the same for all ``rec_lattice_vec``, which is equivalent to multiplying ``overlap`` by that factor. 
+Finally, ``phase`` (a list of float) can be used to give a different (real or complex) **multiplicative factor** for each of the vectors specified in ``rec_lattice_vec``. If no ``phase`` is given, it defaults to 1. If only one ``phase`` is given, it will be the same for all ``rec_lattice_vec``, which is equivalent to multiplying ``overlap`` by that factor.
 
 .. note::
-    It is possible, but not advised, to add interaction terms before all
-    atoms have been added. 
+    The complex conjugate of a given interaction term is added automatically.
 
 Creating the :class:`.tb.System`
 --------------------------------

@@ -24,6 +24,8 @@ import decorator
 import itertools
 import numpy as np
 import scipy.linalg as la
+import matplotlib
+import matplotlib.cbook
 import matplotlib.pyplot as plt
 
 

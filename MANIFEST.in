@@ -2,11 +2,17 @@ recursive-include examples/tb *.py
 recursive-include examples/fp/Bi_abinit *.py *.files *.win
 recursive-include examples/fp/Bi_abinit/scf_files *
 recursive-include tests *.py *.txt *.mmn
-include doc/build/text/doc.txt
-recursive-include doc/build/html *
+prune doc
 prune examples/fp/Bi_abinit/build
 prune tests/samples/build
+prune tests/build
 prune tests/templates
+prune z2pack/ptools
+include z2pack/ptools/__init__.py
+include z2pack/ptools/parse_dict.py
+include z2pack/ptools/string_tools.py
+exclude MANIFEST.in
+
 exclude tests/create_tests.py
 include README.md
 include LICENSE.txt

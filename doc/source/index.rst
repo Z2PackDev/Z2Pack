@@ -60,6 +60,6 @@ Indices and tables
 * :ref:`modindex`
 
 .. _dg: http://github.com/greschd
-.. _online_tool: http://z2pack.ethz.ch
+.. _online_tool: http://z2pack.ethz.ch/online
 .. _GitHub: http://github.com/Z2PackDev/Z2Pack
 

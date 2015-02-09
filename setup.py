@@ -15,8 +15,8 @@ with open('README.md', 'r') as f:
 
 setup(
     name='z2pack',
-    version='0.1',
-    url='',
+    version='1.0',
+    url='http://z2pack.ethz.ch',
     author='Dominik Gresch',
     author_email='greschd@gmx.ch',
     description='A tool for calculating topological invariants',
@@ -24,6 +24,6 @@ setup(
     long_description=readme,
     license='LICENSE.txt',
     packages=['z2pack',
-              'z2pack.python_tools',
+              'z2pack.ptools',
               'z2pack.tb',
               'z2pack.fp'])

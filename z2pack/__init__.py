@@ -9,7 +9,7 @@
 The core module contains the routines that are shared between different \
 specialisations of Z2Pack (first-principles, tight-binding), and interfaces \
 to those. It contains the classes System (which acts as hook for the \
-specialisations) and Plane (responsible for all the calculations / \
+specialisations) and Surface (responsible for all the calculations / \
 plots etc.)
 """
 

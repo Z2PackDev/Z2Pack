@@ -20,7 +20,7 @@ def neighbours(axes, forward_only=True):
     either as different arguments or as a list
     :type args:             int or list(int)
     :param forward_only:    If True, adds only the neighbour in positive \
-    direction (+1) instead of both directions (+-1)
+    direction (+1) instead of both directions (+-1) ``Default: True``
     :type forward_only:     Boolean
     """
     res = []

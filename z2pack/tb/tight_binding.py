@@ -14,7 +14,7 @@ import numpy as np
 import scipy.linalg as la
 
 
-class Hamilton:
+class Hamilton(object):
     """
     Describes a tight-binding model for use with :class:`z2pack.tb.System`.
     """

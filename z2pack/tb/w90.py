@@ -6,7 +6,25 @@
 # File:    hr_parse.py
 
 from ..ptools.csv_parser import read_file
+from .tight_binding import Hamilton as TbHamilton
 
+import scipy.linalg as la
+
+class Hamilton(TbHamilton):
+    def __init__(self, hr_file, num_occ):
+        super(Hamilton, self).__init__()
+        
+        num_wann, h_entries = _read_hr(hr_file)
+
+        # initialize empty atom at the origin
+        self.add_atom(([0] * num_wann, num_occ), [0, 0, 0])
+
+        for hopping in h_entries:
+            self.add_hopping(((0, hopping[1][0] - 1),(0, hopping[1][1] - 1)),
+                             hopping[0],
+                             hopping[2],
+                             add_conjugate=False)
+        
 # read from seedname_hr.dat
 def _read_hr(filename):
     data = read_file(filename, separator=" ", ignore=[0])
@@ -30,7 +48,7 @@ def _read_hr(filename):
                           (entry[5] + 1j * entry[6]) /
                           float(deg_pts[int(i / (num_wann * num_wann))])])
 
-    return num_wann, nrpts, h_entries
+    return num_wann, h_entries
 
 # read from seedname.wout
 # TODO: check if the output is absolute or w.r.t. the reduced UC

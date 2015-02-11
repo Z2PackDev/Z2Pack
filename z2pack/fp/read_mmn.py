@@ -57,4 +57,7 @@ def getM(mmn_file):
 
         M.append([list(x) for x in zip(*temp2)])
 
+    if not M:
+        raise ValueError('The generated overlap matrix is empty. This might be due to Wannier90 computing overlaps in the wrong direction. Try increasing the initial number of k-points along the string.')
+
     return M

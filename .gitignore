@@ -26,3 +26,4 @@ status.txt
 *.pyc
 HgTe_strain*
 res_pickle.txt
+debug

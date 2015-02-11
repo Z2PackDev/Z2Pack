@@ -7,7 +7,8 @@
 
 from ..ptools.csv_parser import read_file
 
-def _read(filename):
+# read from seedname_hr.dat
+def _read_hr(filename):
     data = read_file(filename, separator=" ", ignore=[0])
 
     num_wann = data[0][0][0]
@@ -23,7 +24,32 @@ def _read(filename):
     assert(len(deg_pts) == nrpts)
 
     h_entries = []
-    for entry in data[2]:
-        h_entries.append([entry[:3], (entry[3], entry[4]), entry[5] + 1j * entry[6]])
+    for i, entry in enumerate(data[2]):
+        h_entries.append([entry[:3],
+                          (entry[3], entry[4]),
+                          (entry[5] + 1j * entry[6]) /
+                          float(deg_pts[int(i / (num_wann * num_wann))])])
 
-    return num_wann, nrpts, deg_pts, h_entries
+    return num_wann, nrpts, h_entries
+
+# read from seedname.wout
+# TODO: check if the output is absolute or w.r.t. the reduced UC
+def _read_centre(filename):
+    with open(filename, 'r') as f:
+        data = f.read().split('\n')
+
+    for i, line in enumerate(data):
+        if 'Final State' in line:
+            start_line = i
+            break
+    else:
+        raise ValueError('no WF centre final state found')
+
+    positions = []
+    for line in data[start_line + 1:]:
+        if not 'WF centre and spread' in line:
+            break
+        line = line.split('(')[1].split(')')[0]
+        line = [float(x) for x in line.split(',')]
+        positions.append(line)
+    return positions

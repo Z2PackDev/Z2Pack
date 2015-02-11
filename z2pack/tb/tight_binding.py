@@ -49,19 +49,26 @@ class Hamilton:
         # return the index the atom will get
         return len(self._atoms) - 1
 
-    def add_hopping(self, orbital_pairs, rec_lattice_vec, overlap, phase=None):
-        """
-        Adds a hopping term between orbitals. If the orbitals are not equal, \
+    def add_hopping(self, orbital_pairs, rec_lattice_vec, overlap, phase=None, add_conjugate=True):
+        r"""
+        Adds a hopping term between orbitals. If the orbitals are not equal,
         the complex conjugate term is also added.
 
-        :param orbital_pairs:       A tuple ``(orbital_1, orbital_2)``, where \
-        ``orbital_*`` is again a tuple ``(atom_index, orbital_index)``. Can \
-        also be a list of orbital pairs.
-        :param rec_lattice_vec:     Vector connecting unit cells (``list`` of \
-        length 3), or list of such vectors
+        :param orbital_pairs:       A tuple ``(orbital_1, orbital_2)``, where
+            ``orbital_*`` is again a tuple ``(atom_index, orbital_index)``. Can
+            also be a list of orbital pairs.
+
+        :param rec_lattice_vec:     Vector connecting unit cells (``list`` of
+            length 3), or list of such vectors
+
         :param overlap:             Strength of the hopping
-        :param phase:               Multiplicative factor for the overlap or \
-        a ``list`` of factors (one for each ``rec_lattice_vec``)
+
+        :param phase:               Multiplicative factor for the overlap or
+            a ``list`` of factors (one for each ``rec_lattice_vec``)
+
+        :param add_conjugate:       Toggles adding the complex conjugate hopping
+            automatically.
+        :type add_conjugate:        Boolean
         """
         # check if there are multiple orbital pairs
         try:
@@ -120,6 +127,11 @@ class Hamilton:
                                        indices_1,
                                        indices_2,
                                        rec_lattice_vec))
+                if(add_conjugate):
+                    self._hoppings.append((overlap.conjugate(),
+                                           indices_2,
+                                           indices_1,
+                                           [-x for x in rec_lattice_vec]))
 
     def create_hamiltonian(self):
         """
@@ -151,7 +163,6 @@ class Hamilton:
                 index_2 = orbital_to_index[hopping[2][0]][hopping[2][1]]
                 phase = np.exp(1j * self._dot_prod(hopping[3], k))
                 H[index_1][index_2] += hopping[0] * phase
-                H[index_2][index_1] += (hopping[0] * phase).conjugate()
             return H
 
         # needed for _getM
@@ -240,7 +251,7 @@ class System(_Z2PackSystem):
 
     :param tb_hamilton:    Describes the system being calculated
     :type tb_hamilton:     :class:`z2pack.tb.Hamilton` object
-    :param kwargs:          are passed to the :class:`.Surface` constructor via 
+    :param kwargs:          are passed to the :class:`.Surface` constructor via
         :meth:`.surface`, which passes them to :meth:`.wcc_calc`, precedence:
         :meth:`.wcc_calc` > :meth:`.surface` > this (newer kwargs take precedence)
     """
@@ -256,6 +267,6 @@ class System(_Z2PackSystem):
                 end_point = [start_point[i] + string_vec[i] for i in range(len(start_point))]
                 return self._tb_hamilton._getM(start_point, end_point, N)
             return inner
-        
+
         self._m_handle_creator = _m_handle_creator_tb
-    
+

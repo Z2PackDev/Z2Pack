@@ -611,8 +611,8 @@ class Surface(object):
         #~ axis.set_xlabel(r'$t$')
         axis.set_xticks([0, 1])
         axis.set_xticklabels(['0', '1'])
-        axis.set_ylabel(r'$x$', rotation='horizontal')
-        axis.set_xlabel(r'$t$')
+        axis.set_ylabel('x', rotation='horizontal')
+        axis.set_xlabel('t')
         if(show):
             plt.show()
         if return_fig:

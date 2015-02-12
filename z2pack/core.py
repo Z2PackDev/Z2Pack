@@ -337,13 +337,14 @@ class Surface(object):
                               self._t_points[i] + " and t = " + "%.4f" %
                               self._t_points[i + 1] + "\n", end="")
                         sys.stdout.flush()
-                    passed_check = True
+                    neighbour_check = True
+                    move_check = True
                     if not self._current['no_neighbour_check']:
-                        passed_check = passed_check and self._check_single_neighbour(i, i + 1)
+                        neighbour_check = self._check_single_neighbour(i, i + 1)
                     if not self._current['no_move_check']:
                         tolerance = self._current['move_check_factor'] * min(self._gapsize[i], self._gapsize[i + 1])
-                        passed_check = passed_check and self._convcheck(self._wcc_list[i], self._wcc_list[i + 1], tolerance)
-                    if(passed_check):
+                        move_check = self._convcheck(self._wcc_list[i], self._wcc_list[i + 1], tolerance)
+                    if(neighbour_check and move_check):
                         if(self._current['verbose']):
                             print("Condition fulfilled\n\n", end="")
                             sys.stdout.flush()
@@ -352,8 +353,12 @@ class Surface(object):
                         if(self._t_points[i + 1] - self._t_points[i] <
                            self._current['min_neighbour_dist']):
                             if(self._current['verbose']):
-                                print('Reched minimum distance between ' + 
-                                'neighbours, did not converge\n\n', end="")
+                                print('Reached minimum distance between ' + 
+                                'neighbours\n', end="")
+                                if not neighbour_check:
+                                    print('Neighbour check failed.\n', end='')
+                                if not move_check:
+                                    print('Movement check failed.\n\n', end='')
                                 sys.stdout.flush()
                             # convergence failed
                             self._neighbour_check[i] = True

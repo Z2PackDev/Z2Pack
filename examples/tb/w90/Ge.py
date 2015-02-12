@@ -14,15 +14,15 @@ import numpy as np
 import scipy.linalg as la
 import matplotlib.pyplot as plt
 
-def calculate(ax, settings):
+def calculate(settings):
     # Creating the Hamilton from the Wannier90 output file
-    H = tb.w90.Hamilton('wannier90_hr.dat', 8)
+    H = tb.w90.Hamilton('wannier90_hr.dat', 'wannier90.wout', 8)
     tb_system = tb.System(H)
     tb_surface = tb_system.surface(lambda kx: [kx / 2., 0, 0], [0, 1, 0])
     tb_surface.wcc_calc(verbose=True, no_iter=False)
 
 def plot():
-    H = tb.w90.Hamilton('wannier90_hr.dat', 8)
+    H = tb.w90.Hamilton('wannier90_hr.dat', 'wannier90.wout', 8)
     tb_system = tb.System(H)
     tb_surface = tb_system.surface(lambda kx: [kx / 2., 0, 0], [0, 1, 0])
     
@@ -36,7 +36,7 @@ def plot():
     print("Z2 invariant: {}".format(tb_surface.invariant()))
 
 def bandstructure():
-    system = tb.w90.Hamilton('wannier90_hr.dat', 8)
+    system = tb.w90.Hamilton('wannier90_hr.dat', 'wannier90.wout', 8)
     H = system.create_hamiltonian()
 
     eigenvalues = []
@@ -55,7 +55,7 @@ if __name__ == "__main__":
         os.makedirs('./results')
 
     settings = {'verbose': True, 'iterator': range(12, 37, 2)}
-    #~ calculate(settings)
-    #~ plot()
-    bandstructure()
+    calculate(settings)
+    plot()
+    #~ bandstructure()
     

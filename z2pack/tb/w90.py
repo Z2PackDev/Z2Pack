@@ -8,19 +8,27 @@
 from ..ptools.csv_parser import read_file
 from .tight_binding import Hamilton as TbHamilton
 
+import numpy as np
 import scipy.linalg as la
 
 class Hamilton(TbHamilton):
-    def __init__(self, hr_file, num_occ):
+    def __init__(self, hr_file, wout_file, num_occ):
         super(Hamilton, self).__init__()
         
         num_wann, h_entries = _read_hr(hr_file)
+        positions = np.array(_read_centre(wout_file))
+        inv_latt = np.array(_read_inv_lattice(wout_file))
+        positions = np.dot(inv_latt, positions.T).T / (2 * np.pi)
+        
+        assert(num_wann == len(positions))
 
-        # initialize empty atom at the origin
-        self.add_atom(([0] * num_wann, num_occ), [0, 0, 0])
+        # initialize atoms
+        self.add_atom(([0], num_occ), positions[0])
+        for pos in positions[1:]:
+            self.add_atom(([0], 0), list(pos))
 
         for hopping in h_entries:
-            self.add_hopping(((0, hopping[1][0] - 1),(0, hopping[1][1] - 1)),
+            self.add_hopping(((hopping[1][0] - 1, 0),(hopping[1][1] - 1, 0)),
                              hopping[0],
                              hopping[2],
                              add_conjugate=False)
@@ -71,3 +79,23 @@ def _read_centre(filename):
         line = [float(x) for x in line.split(',')]
         positions.append(line)
     return positions
+
+def _read_inv_lattice(filename):
+    with open(filename, 'r') as f:
+        data = f.read().split('\n')
+        
+    for i, line in enumerate(data):
+        if 'Reciprocal-Space Vectors' in line:
+            start_line = i
+            break
+    else:
+        raise ValueError('ne reciprocal space vectors found')
+
+    rec_lattice_vecs = []
+    for line in data[start_line + 1:]:
+        if not 'b_' in line:
+            break
+        line = filter(None, line.split(' '))[1:]
+        line = [float(x) for x in line]
+        rec_lattice_vecs.append(line)
+    return rec_lattice_vecs

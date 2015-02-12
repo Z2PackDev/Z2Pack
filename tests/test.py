@@ -31,5 +31,5 @@ for filename in os.listdir(os.path.dirname(os.path.abspath(__file__))):
 
 if __name__ == "__main__":
     print("Note: Tests including iterative steps may fail due to " +
-    "small numerical differences. This is not a cause for concern")
+    "small numerical \n      differences. This is not a cause for concern")
     unittest.main()

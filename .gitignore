@@ -1,29 +1,43 @@
+# Python binaries
 **/*.pyc
 *__pycache__*
-*.in~
+
+# hidden files garbage
 *~
-build
-**/scf_files
 .fuse*
-*.pdf
-doc/build
-examples/tb/results/*
-examples/fp/**/results/*
-MANIFEST
-dist
-files*.txt
-*egg**
-z2pack/ptools/.git
-z2pack/ptools/.gitignore
-z2pack/ptools/*.py
-results*
-*.tar.gz
-z2pack/decorator.py
-lsf.*
+
+# ab-initio/doc build files and example results
 *EIG
 *DDB
+*.pdf
+lsf.*
+build
+results*
 status.txt
-*.pyc
 HgTe_strain*
+**/scf_files
 res_pickle.txt
+examples/tb/results/*
+examples/fp/**/results/*
+
+# Installation/setup related
+dist
+*egg**
+MANIFEST
+*.tar.gz
+files*.txt
+
+# ignoring the ptools git
+z2pack/ptools/.git
+z2pack/ptools/.gitignore
+
+# selectively choose ptools
+z2pack/ptools/*.py
+!z2pack/ptools/__init__.py  
+!z2pack/ptools/replace.py  
+!z2pack/ptools/csv_parser.py  
+!z2pack/ptools/parse_dict.py  
+!z2pack/ptools/string_tools.py  
+
+# debug folder
 debug

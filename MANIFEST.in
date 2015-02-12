@@ -12,6 +12,7 @@ include z2pack/ptools/__init__.py
 include z2pack/ptools/parse_dict.py
 include z2pack/ptools/string_tools.py
 exclude MANIFEST.in
+exclude decorator.py
 
 exclude tests/create_tests.py
 include README.md

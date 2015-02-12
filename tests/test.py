@@ -30,6 +30,6 @@ for filename in os.listdir(os.path.dirname(os.path.abspath(__file__))):
                 pass
 
 if __name__ == "__main__":
-    print("Note: failures in test_res1 due to small numerical " +
-    "differences are not a cause for concern.")
+    print("Note: Tests including iterative steps may fail due to " +
+    "small numerical differences. This is not a cause for concern")
     unittest.main()

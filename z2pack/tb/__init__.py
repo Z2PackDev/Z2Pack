@@ -12,4 +12,4 @@ The :mod:`z2pack.tb` module: Contains the classes :class:`Hamilton`
 """
 
 from .tight_binding import *
-from . import w90
+#~ from . import w90

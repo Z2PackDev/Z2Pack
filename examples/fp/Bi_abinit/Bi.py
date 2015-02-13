@@ -20,17 +20,17 @@ if not os.path.exists('./results'):
 
 # creating the Z2PackSystem object
 # the command (mpirun ...) will have to be replaced
-Bi = z2pack.fp.System(["Bi_nscf.files", "Bi_nscf.in", "wannier90.win" ],
+Bi = z2pack.fp.System(['Bi_nscf.files', 'Bi_nscf.in', 'wannier90.win' ],
                       z2pack.fp.kpts.abinit,
-                      "Bi_nscf.in",
-                      "build",
-                      "mpirun ~/software/abinit-7.8.2/src/98_main/abinit < Bi_nscf.files >& log"
-                    )
+                      'Bi_nscf.in',
+                      'mpirun ~/software/abinit-7.8.2/src/98_main/abinit < Bi_nscf.files >& log',
+                      executable='/bin/bash'
+                     )
     
 
 # creating the Z2PackPlane object
-surface_0 = Bi.surface(lambda t: [0, t / 2, 0], [0, 0, 1], pickle_file = './results/res_0.txt')
-surface_0 = Bi.surface(lambda t: [0.5, t / 2, 0], [0, 0, 1], pickle_file = './results/res_1.txt')
+surface_0 = Bi.surface(lambda t: [0, t / 2, 0], [0, 0, 1], pickle_file = './results/Bi_0.txt')
+surface_0 = Bi.surface(lambda t: [0.5, t / 2, 0], [0, 0, 1], pickle_file = './results/Bi_1.txt')
 
 # WCC calculation
 surface_0.wcc_calc()

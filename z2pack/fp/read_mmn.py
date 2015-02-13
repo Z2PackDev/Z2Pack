@@ -1,4 +1,4 @@
-#!/usr/bin/python3.2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Author:  Dominik Gresch <greschd@ethz.ch>

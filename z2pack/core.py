@@ -13,6 +13,7 @@ from __future__ import division, print_function
 
 
 from .ptools import string_tools
+from .ptools.logger import Logger, ConvFail
 
 
 import re
@@ -282,6 +283,7 @@ class Surface(object):
         if(self._current['verbose']):
             print(string_tools.cbox("finished wcc calculation" + "\ntime: "
                                     + duration_string))
+            print(string_tools.cbox('CONVERCENGE REPORT\n------------------\n\n' + str(self._log)))
 
     # has to be below wcc_calc because _validate_kwargs needs access to
     # wcc_calc.__doc__
@@ -306,16 +308,17 @@ class Surface(object):
                           'verbose': True}
         self._defaults.update(kwargs)
         self._current = copy.deepcopy(self._defaults)
+        self._log = Logger(ConvFail('in-string iteration', 't = {}, k = {}'),
+                           ConvFail('neighbour check',
+                                    'between t = {}, k = {}\n    and t = {}, k = {}'),
+                           ConvFail('move check',
+                                    'between t = {}, k = {}\n    and t = {}, k = {}'))
 
-    #~ def __str__(self):
-        #~ try:
-            #~ text = 'kpts:\n' + str(self._t_points)
-            #~ text += '\nwcc:\n' + str(self._wcc_list)
-            #~ text += '\ngaps:\n' + str(self._gaps)
-            #~ text += '\ninvariant:\n' + str(self.invariant())
-            #~ return text
-        #~ except AttributeError:
-            #~ return super(Surface, self).__str__()
+    def log(self):
+        """
+        Returns the convergence report for the wcc calculation.
+        """
+        return str(self._log)
 
     #-------------------------------------------------------------------#
     #                support functions for wcc                          #
@@ -352,6 +355,17 @@ class Surface(object):
                     else:
                         if(self._t_points[i + 1] - self._t_points[i] <
                            self._current['min_neighbour_dist']):
+                            # writing the logs
+                            if not neighbour_check:
+                                t1 = self._t_points[i]
+                                t2 = self._t_points[i + 1]
+                                k1 = string_tools.fl_to_s(self._edge_function(t1), 6)
+                                k2 = string_tools.fl_to_s(self._edge_function(t2), 6)
+                                if not neighbour_check:
+                                    self._log.log('neighbour check', t1, k1, t2, k2)
+                                if not move_check:
+                                    self._log.log('move check', t1, k1, t2, k2)
+                               
                             if(self._current['verbose']):
                                 print('Reached minimum distance between ' + 
                                 'neighbours\n', end="")
@@ -496,6 +510,7 @@ class Surface(object):
                     break
             # iterator ended
             else:
+                self._log.log('in-string iteration', t, string_tools.fl_to_s(self._edge_function(t)))
                 if(self._current['verbose']):
                     print('iterator ends, failed to converge!\n\n', end='')
                     sys.stdout.flush()

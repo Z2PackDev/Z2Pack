@@ -19,7 +19,7 @@ t1, t2 = (0.2, 0.3)
 # Settings used for wcc_calc. Feel free to play around with the different
 # options.
 settings = {'num_strings': 11,
-            'no_iter': False,
+            'no_iter': True,
             'no_neighbour_check': False,
             'no_move_check': False,
             'wcc_tol': 1e-2,

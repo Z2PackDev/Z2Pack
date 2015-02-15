@@ -18,12 +18,16 @@ available in Z2Pack.
 If you use Z2Pack or its online interface for your research, please
 consider citing :ref:`TODO<not_found>`
 
+.. toctree::
+    :hidden:
+    
+    Z2Pack online <http://z2pack.ethz.ch/online/>
+
 Tutorial & Examples
 ===================
 .. toctree::
     :maxdepth: 2
     
-    Z2Pack online <http://z2pack.ethz.ch/online/>
     tutorial.rst
     examples.rst
 
@@ -36,13 +40,11 @@ Documentation
     fp.rst
     tb.rst
 
-
-.. ~ Hidden files
-
 .. ~ .. toctree::
 .. ~     :hidden:
 .. ~ 
-.. ~     not_found.rst 
+.. ~     genindex </genindex.html>
+
 
 Getting in touch
 ================

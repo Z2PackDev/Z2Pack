@@ -19,7 +19,6 @@ a format string.
 class Logger:
     def __init__(self, *events):
         self._events = {event.name(): event for event in events}
-        print(self._events)
 
     def __str__(self):
         output = ''

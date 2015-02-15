@@ -13,7 +13,7 @@ from __future__ import division, print_function
 
 
 from .ptools import string_tools
-from .ptools.logger import Logger, ConvFail
+from .ptools import logger
 
 
 import re
@@ -204,6 +204,8 @@ class Surface(object):
         :returns:                   ``None``. Use :meth:`get_res` and
             :meth:`invariant` to get the results.
         """
+
+        #----------------checking input variables-----------------------#
         self._current = copy.deepcopy(self._defaults)
         self._current.update(kwargs)
 
@@ -225,7 +227,7 @@ class Surface(object):
             if self._current['no_neighbour_check']:
                 del self._current['min_neighbour_dist']
 
-        # initial output
+        #----------------initial output---------------------------------#
         if(self._current['verbose']):
             string = "starting wcc calculation\n\n"
             length = max(len(key) for key in self._current.keys()) + 2
@@ -239,7 +241,7 @@ class Surface(object):
 
         start_time = time.time()
 
-        # initialising
+        #----------------initialization - creating data containers------#
         self._t_points = list(np.linspace(0., 1., self._current['num_strings'],
                                           endpoint=True))
         self._kpt_list = [self._edge_function(t) for t in self._t_points]
@@ -308,10 +310,10 @@ class Surface(object):
                           'verbose': True}
         self._defaults.update(kwargs)
         self._current = copy.deepcopy(self._defaults)
-        self._log = Logger(ConvFail('in-string iteration', 't = {}, k = {}'),
-                           ConvFail('neighbour check',
+        self._log = logger.Logger(logger.ConvFail('string iteration', 't = {}, k = {}'),
+                                   logger.ConvFail('neighbour check',
                                     'between t = {}, k = {}\n    and t = {}, k = {}'),
-                           ConvFail('move check',
+                                   logger.ConvFail('move check',
                                     'between t = {}, k = {}\n    and t = {}, k = {}'))
 
     def log(self):
@@ -390,16 +392,6 @@ class Surface(object):
                             self._lambda_list.insert(i + 1, [])
                             self._gaps.insert(i + 1, None)
                             self._gapsize.insert(i + 1, None)
-                            # check length of the variables
-                            assert(len(self._t_points) - 1 ==
-                                   len(self._neighbour_check))
-                            assert(len(self._t_points) ==
-                                   len(self._string_status) ==
-                                   len(self._kpt_list) ==
-                                   len(self._wcc_list) ==
-                                   len(self._gapsize) ==
-                                   len(self._lambda_list)==
-                                   len(self._gaps))
                             return False
                 else:
                     return False
@@ -463,60 +455,65 @@ class Surface(object):
                 self._t_points = self._k_points
             except AttributeError:
                 pass
-        
+
+    def _print_getwcc(func):
+        def inner(self, t):
+            # initial output
+            if(self._current['verbose']):
+                print("calculating string at t = {:.4f}, k = {}".format(t, string_tools.fl_to_s(self._edge_function(t))))
+                sys.stdout.flush()
+            #-----------------------------------------------------------#
+            res = func(self, t)
+            #-----------------------------------------------------------#
+            if self._current['verbose']:
+                if self._current['no_iter']:
+                    print('no iteration\n\n', end='')
+                else:
+                    # check convergence flag
+                    if res[-1]:
+                        print("finished!\n\n", end="")
+                    else:
+                        print('iterator ends, failed to converge!\n\n', end='')
+            # check convergence flag
+            if not res[-1]:
+                self._log.log('string iteration', t, string_tools.fl_to_s(self._edge_function(t)))
+                    
+            return res[:-1] # cut out convergence flag
+        return inner
 
     # calculating one string
+    @_print_getwcc
     def _getwcc(self, t):
         """
         calculates WCC along a string by increasing the number of steps
         (k-points) along the string until the WCC converge
         """
-        # initial output
-        if(self._current['verbose']):
-            print("calculating string at t = {:.4f}, k = {}".format(t, string_tools.fl_to_s(self._edge_function(t))))
-            sys.stdout.flush()
+
+        converged = True
 
         # get new generator
         iterator, self._current['iterator'] = itertools.tee(
             self._current['iterator'], 2)
 
         N = next(iterator)
-        
-        if(self._current['verbose']):
-            print('    N = ' + str(N), end='')
-            sys.stdout.flush()
         x, min_sv, lambda_ = self._trywcc(self._m_handle(t, N))
 
-        # no iteration
-        if(self._current['no_iter']):
-            if(self._current['verbose']):
-                print('no iteration\n\n', end='')
-                sys.stdout.flush()
-        # iteration
-        else:
+        if not self._current['no_iter']:
             for N in iterator:
                 xold = copy.copy(x)
-                if(self._current['verbose']):
-                    # Output
-                    print("    N = " + str(N), end="")
-                    sys.stdout.flush()
                 x, min_sv, lambda_ = self._trywcc(self._m_handle(t, N))
 
                 # break conditions
                 if(self._convcheck(x, xold, self._current['wcc_tol'])):  # success
                     if(self._current['verbose']):
-                        print("finished!\n\n", end="")
                         sys.stdout.flush()
                     break
             # iterator ended
             else:
-                self._log.log('in-string iteration', t, string_tools.fl_to_s(self._edge_function(t)))
-                if(self._current['verbose']):
-                    print('iterator ends, failed to converge!\n\n', end='')
-                    sys.stdout.flush()
-        return sorted(x), lambda_
+                converged = False
+        return sorted(x), lambda_, converged
 
-    def _print_wcc(func):
+    def _print_trywcc(func):
         """
         decorator to print wcc after a function call (if verbose)
         """
@@ -524,8 +521,12 @@ class Surface(object):
             """
             decorated function
             """
+            if args[0]._current['verbose']:
+                print('    N = ' + str(len(args[1])), end='')
+            #-----------------------------------------------------------#
             res = func(*args, **kwargs)
             wcc = sorted(res[0])
+            #-----------------------------------------------------------#
             if(args[0]._current['verbose']):
                 print(" (" + "%.3f" % res[1] + ")", end='\n        ')
                 print('WCC positions: ', end='\n        ')
@@ -545,7 +546,7 @@ class Surface(object):
             return res
         return inner
 
-    @_print_wcc
+    @_print_trywcc
     def _trywcc(self, all_m):
         """
         Calculates the WCC from the MMN matrices
@@ -569,13 +570,7 @@ class Surface(object):
                     roughly corresponds to the total 'movement' in WCC that
                     is tolerated between x and y
         """
-        if(len(x) != len(y)):
-            if(self._current['verbose']):
-                print("Warning: consecutive strings don't have the same " + 
-                      "amount of WCC")
-            return False
-        else:
-            return _convsum(x, y, tol) < 1
+        return _convsum(x, y, tol) < 1
 
     #----------------END OF SUPPORT FUNCTIONS---------------------------#
 

@@ -335,82 +335,103 @@ class Surface(object):
         - returns Boolean: all neighbour conditions fulfilled <=> True
         """
         for i, status in enumerate(self._neighbour_check):
-            if not(status):
-                if(self._string_status[i] and self._string_status[i + 1]):
-                    if(self._current['verbose']):
-                        print("Checking neighbouring t-points t = " + "%.4f" %
-                              self._t_points[i] + " and t = " + "%.4f" %
-                              self._t_points[i + 1] + "\n", end="")
-                        sys.stdout.flush()
-                    neighbour_check = True
-                    move_check = True
-                    if not self._current['no_neighbour_check']:
-                        neighbour_check = self._check_single_neighbour(i, i + 1)
-                    if not self._current['no_move_check']:
-                        tolerance = self._current['move_check_factor'] * min(self._gapsize[i], self._gapsize[i + 1])
-                        move_check = self._convcheck(self._wcc_list[i], self._wcc_list[i + 1], tolerance)
-                    if(neighbour_check and move_check):
-                        if(self._current['verbose']):
-                            print("Condition fulfilled\n\n", end="")
-                            sys.stdout.flush()
-                        self._neighbour_check[i] = True
-                    else:
-                        if(self._t_points[i + 1] - self._t_points[i] <
-                           self._current['min_neighbour_dist']):
-                            # writing the logs
+            if not status:
+                if self._string_status[i] and self._string_status[i + 1]:
+                    neighbour_check, move_check = self._check_single_neighbour(i)
+                    if not (neighbour_check and move_check):
+                        if not self._add_string(i):
+                            t1 = self._t_points[i]
+                            t2 = self._t_points[i + 1]
+                            k1 = string_tools.fl_to_s(self._edge_function(t1), 6)
+                            k2 = string_tools.fl_to_s(self._edge_function(t2), 6)
                             if not neighbour_check:
-                                t1 = self._t_points[i]
-                                t2 = self._t_points[i + 1]
-                                k1 = string_tools.fl_to_s(self._edge_function(t1), 6)
-                                k2 = string_tools.fl_to_s(self._edge_function(t2), 6)
-                                if not neighbour_check:
-                                    self._log.log('neighbour check', t1, k1, t2, k2)
-                                if not move_check:
-                                    self._log.log('move check', t1, k1, t2, k2)
-                               
-                            if(self._current['verbose']):
-                                print('Reached minimum distance between ' + 
-                                'neighbours\n', end="")
-                                if not neighbour_check:
-                                    print('Neighbour check failed.\n', end='')
-                                if not move_check:
-                                    print('Movement check failed.\n\n', end='')
-                                sys.stdout.flush()
-                            # convergence failed
-                            self._neighbour_check[i] = True
-                        else:
-                            if(self._current['verbose']):
-                                print("Condition not fulfilled\n\n", end="")
-                                sys.stdout.flush()
-                            # add entries due to additional string
-                            self._neighbour_check.insert(i + 1, False)
-                            self._string_status.insert(i + 1, False)
-                            self._t_points.insert(i + 1, (self._t_points[i] +
-                                                  self._t_points[i+1]) / 2)
-                            self._kpt_list.insert(i + 1, self._edge_function(self._t_points[i + 1]))
-                            self._wcc_list.insert(i + 1, [])
-                            self._lambda_list.insert(i + 1, [])
-                            self._gaps.insert(i + 1, None)
-                            self._gapsize.insert(i + 1, None)
-                            return False
+                                self._log.log('neighbour check', t1, k1, t2, k2)
+                            if not move_check:
+                                self._log.log('move check', t1, k1, t2, k2)
+                        return False
                 else:
                     return False
         return True
 
-    def _check_single_neighbour(self, i, j):
-        """
-        checks if the gap[i] is too close to any of the WCC in
-        wcc_list[j] and vice versa
-        should be used with j = i + 1
-        """
-        return self._check_single_direction(self._wcc_list[j], self._gaps[i])
+    def _print_check_single_neighbour(func):
+        def inner(self, i):
+            if(self._current['verbose']):
+                print(("Checking neighbouring t-points t = {:.4f} and " +
+                      "t = {:.4f}\n").format(self._t_points[i], self._t_points[i + 1]),
+                      end="")
+            #-----------------------------------------------------------#
+            res = func(self, i)
+            #-----------------------------------------------------------#
+            if self._current['verbose']:
+                if all(res):
+                    print("Condition fulfilled\n\n", end="")
+                else:
+                    if not res[0]:
+                        print('Neighbour check failed\n', end='')
+                    if not res[1]:
+                        print('Movement check failed\n', end='')
+                
+            return res
+        return inner
 
-    def _check_single_direction(self, wcc, gap):
+    @_print_check_single_neighbour
+    def _check_single_neighbour(self, i):
+        """
+        Performs the neighbour check and move check for neighbours at
+        i and i + 1 
+        """
+        neighbour_check = True
+        move_check = True
+        if not self._current['no_neighbour_check']:
+            neighbour_check = self._check_gap_distance(i)
+        if not self._current['no_move_check']:
+            tolerance = self._current['move_check_factor'] * min(self._gapsize[i], self._gapsize[i + 1])
+            move_check = self._convcheck(self._wcc_list[i], self._wcc_list[i + 1], tolerance)
+        if neighbour_check and move_check:
+            self._neighbour_check[i] = True
+        return neighbour_check, move_check
+
+
+    def _print_add_string(func):
+        def inner(self, i):
+            res = func(self, i)
+            if self._current['verbose']:
+                if res:
+                    print('Added string at t = {}\n'.format(self._t_points[i + 1]))
+                else:
+                    print('Reached minimum distance between ' + 
+                          'neighbours\n')
+            return res
+        return inner
+
+    @_print_add_string
+    def _add_string(self, i):
+        """
+        Adds a string between i and i + 1. returns False if it failed
+        due to the minimum neighbour distance, True else.
+        """
+        if(self._t_points[i + 1] - self._t_points[i] <
+           self._current['min_neighbour_dist']):
+            self._neighbour_check[i] = True
+            return False
+        else:
+            self._neighbour_check.insert(i + 1, False)
+            self._string_status.insert(i + 1, False)
+            self._t_points.insert(i + 1, (self._t_points[i] +
+                                  self._t_points[i + 1]) / 2)
+            self._kpt_list.insert(i + 1, self._edge_function(self._t_points[i + 1]))
+            self._wcc_list.insert(i + 1, [])
+            self._lambda_list.insert(i + 1, [])
+            self._gaps.insert(i + 1, None)
+            self._gapsize.insert(i + 1, None)
+        return True
+
+    def _check_gap_distance(self, i):
         """
         checks if gap is too close to any of the elements in wcc
         """
-        for wcc_val in wcc:
-            if(min(abs(1 + wcc_val - gap) % 1, abs(1 - wcc_val + gap) % 1) <
+        for wcc_val in self._wcc_list[i + 1]:
+            if(min(abs(1 + wcc_val - self._gaps[i]) % 1, abs(1 - wcc_val + self._gaps[i]) % 1) <
                 self._current['gap_tol']):
                 return False
         return True

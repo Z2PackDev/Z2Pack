@@ -51,7 +51,7 @@ class System:
         self._defaults = kwargs
         self._m_handle_creator = m_handle_creator
 
-    def surface(self, edge_function=None, string_vec=None, **kwargs):
+    def surface(self, edge_function, string_vec, **kwargs):
         r"""
         Creates a :class:`Surface` instance.  The surface's position is
         specified by a function ``edge_function``: :math:`t \in [0, 1]
@@ -227,17 +227,19 @@ class Surface(object):
             if self._current['no_neighbour_check']:
                 del self._current['min_neighbour_dist']
 
+        # reset log to avoid double-logging
+        self._log.reset()
+
         #----------------initial output---------------------------------#
-        if(self._current['verbose']):
-            string = "starting wcc calculation\n\n"
-            length = max(len(key) for key in self._current.keys()) + 2
-            for key in sorted(self._current.keys()):
-                value = str(self._current[key])
-                if(len(value) > 48):
-                    value = value[:45] + '...'
-                string += key.ljust(length) + value + '\n'
-            string = string[:-1]
-            print(string_tools.cbox(string))
+        string = "starting wcc calculation\n\n"
+        length = max(len(key) for key in self._current.keys()) + 2
+        for key in sorted(self._current.keys()):
+            value = str(self._current[key])
+            if(len(value) > 48):
+                value = value[:45] + '...'
+            string += key.ljust(length) + value + '\n'
+        string = string[:-1]
+        self._print(string_tools.cbox(string))
 
         start_time = time.time()
 
@@ -269,8 +271,7 @@ class Surface(object):
             if not(self._current['no_neighbour_check'] and self._current['no_move_check']):
                 self._check_neighbours()
             else:
-                if(self._current['verbose']):
-                    print('skipping neighbour checks')
+                self._print('skipping neighbour checks')
                 break
 
         # dump results into pickle file
@@ -283,9 +284,9 @@ class Surface(object):
             " h " + str(int(np.floor(duration / 60)) % 60) + \
             " min " + str(int(np.floor(duration)) % 60) + " sec"
         if(self._current['verbose']):
-            print(string_tools.cbox("finished wcc calculation" + "\ntime: "
-                                    + duration_string))
-            print(string_tools.cbox('CONVERCENGE REPORT\n------------------\n\n' + str(self._log)))
+            self._print(string_tools.cbox("finished wcc calculation" + "\ntime: "
+                                    + duration_string) + '\n')
+            self._print(string_tools.cbox('CONVERCENGE REPORT\n------------------\n\n' + str(self._log)) + '\n')
 
     # has to be below wcc_calc because _validate_kwargs needs access to
     # wcc_calc.__doc__
@@ -355,21 +356,18 @@ class Surface(object):
 
     def _print_check_single_neighbour(func):
         def inner(self, i):
-            if(self._current['verbose']):
-                print(("Checking neighbouring t-points t = {:.4f} and " +
-                      "t = {:.4f}\n").format(self._t_points[i], self._t_points[i + 1]),
-                      end="")
+            self._print(("Checking neighbouring t-points t = {:.4f} and " +
+                      "t = {:.4f}\n").format(self._t_points[i], self._t_points[i + 1]))
             #-----------------------------------------------------------#
             res = func(self, i)
             #-----------------------------------------------------------#
-            if self._current['verbose']:
-                if all(res):
-                    print("Condition fulfilled\n\n", end="")
-                else:
-                    if not res[0]:
-                        print('Neighbour check failed\n', end='')
-                    if not res[1]:
-                        print('Movement check failed\n', end='')
+            if all(res):
+                self._print("Condition fulfilled\n\n")
+            else:
+                if not res[0]:
+                    self._print('Neighbour check failed\n')
+                if not res[1]:
+                    self._print('Movement check failed\n')
                 
             return res
         return inner
@@ -395,12 +393,10 @@ class Surface(object):
     def _print_add_string(func):
         def inner(self, i):
             res = func(self, i)
-            if self._current['verbose']:
-                if res:
-                    print('Added string at t = {}\n'.format(self._t_points[i + 1]))
-                else:
-                    print('Reached minimum distance between ' + 
-                          'neighbours\n')
+            if res:
+                self._print('Added string at t = {}\n\n'.format(self._t_points[i + 1]))
+            else:
+                self._print('Reached minimum distance between neighbours\n\n')
             return res
         return inner
 
@@ -480,21 +476,19 @@ class Surface(object):
     def _print_getwcc(func):
         def inner(self, t):
             # initial output
-            if(self._current['verbose']):
-                print("calculating string at t = {:.4f}, k = {}".format(t, string_tools.fl_to_s(self._edge_function(t))))
-                sys.stdout.flush()
+            self._print("Calculating string at t = {:.4f}, k = {}\n".
+                format(t, string_tools.fl_to_s(self._edge_function(t))))
             #-----------------------------------------------------------#
             res = func(self, t)
             #-----------------------------------------------------------#
-            if self._current['verbose']:
-                if self._current['no_iter']:
-                    print('no iteration\n\n', end='')
+            if self._current['no_iter']:
+                self._print('no iteration\n\n')
+            else:
+                # check convergence flag
+                if res[-1]:
+                    self._print("finished!\n\n")
                 else:
-                    # check convergence flag
-                    if res[-1]:
-                        print("finished!\n\n", end="")
-                    else:
-                        print('iterator ends, failed to converge!\n\n', end='')
+                    self._print('iterator ends, failed to converge!\n\n')
             # check convergence flag
             if not res[-1]:
                 self._log.log('string iteration', t, string_tools.fl_to_s(self._edge_function(t)))
@@ -526,8 +520,6 @@ class Surface(object):
 
                 # break conditions
                 if(self._convcheck(x, xold, self._current['wcc_tol'])):  # success
-                    if(self._current['verbose']):
-                        sys.stdout.flush()
                     break
             # iterator ended
             else:
@@ -538,32 +530,29 @@ class Surface(object):
         """
         decorator to print wcc after a function call (if verbose)
         """
-        def inner(*args, **kwargs):
+        def inner(self, all_m):
             """
             decorated function
             """
-            if args[0]._current['verbose']:
-                print('    N = ' + str(len(args[1])), end='')
+            self._print('    N = ' + str(len(all_m)))
             #-----------------------------------------------------------#
-            res = func(*args, **kwargs)
+            res = func(self, all_m)
             wcc = sorted(res[0])
             #-----------------------------------------------------------#
-            if(args[0]._current['verbose']):
-                print(" (" + "%.3f" % res[1] + ")", end='\n        ')
-                print('WCC positions: ', end='\n        ')
-                print('[', end='')
-                line_length = 0
-                for val in wcc[:-1]:
-                    line_length += len(str(val)) + 2
-                    if(line_length > 60):
-                        print('', end='\n        ')
-                        line_length = len(str(val)) + 2
-                    print(val, end=', ')
-                line_length += len(str(wcc[-1])) + 2
+            self._print(' (' + '%.3f' % res[1] + ')\n        ')
+            self._print('WCC positions:\n        ')
+            self._print('[')
+            line_length = 0
+            for val in wcc[:-1]:
+                line_length += len(str(val)) + 2
                 if(line_length > 60):
-                    print('', end='\n        ')
-                print(wcc[-1], end=']\n')
-                sys.stdout.flush
+                    self._print('\n        ')
+                    line_length = len(str(val)) + 2
+                self._print(str(val) + ', ')
+            line_length += len(str(wcc[-1])) + 2
+            if(line_length > 60):
+                self._print('\n        ')
+            self._print(str(wcc[-1]) + ']\n')
             return res
         return inner
 
@@ -695,6 +684,9 @@ class Surface(object):
         except (NameError, AttributeError):
             raise RuntimeError('WCC not yet calculated')
 
+    def _print(self, string):
+        if(self._current['verbose']):
+            print(string, end='')
 
 #-------------------------------------------------------------------#
 #                CLASS - independent functions                      #

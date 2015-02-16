@@ -30,7 +30,7 @@ class Logger:
         self._events[name].log(*msg)
 
     def reset(self):
-        for name, event in self._events.iteritems():
+        for name, event in self._events.items():
             event.reset()
 
 class Event:

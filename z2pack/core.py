@@ -241,7 +241,7 @@ class Surface(object):
                 value = value[:45] + '...'
             string += key.ljust(length) + value + '\n'
         string = string[:-1]
-        self._print(string_tools.cbox(string))
+        self._print(string_tools.cbox(string) + '\n')
 
         start_time = time.time()
 
@@ -285,10 +285,8 @@ class Surface(object):
         duration_string = str(int(np.floor(duration / 3600))) + \
             " h " + str(int(np.floor(duration / 60)) % 60) + \
             " min " + str(int(np.floor(duration)) % 60) + " sec"
-        if(self._current['verbose']):
-            self._print(string_tools.cbox("finished wcc calculation" + "\ntime: "
-                                    + duration_string) + '\n')
-            self._print(string_tools.cbox('CONVERCENGE REPORT\n------------------\n\n' + str(self._log)) + '\n')
+        self._print(string_tools.cbox(["finished wcc calculation" + "\ntime: "
+                                      + duration_string,'CONVERCENGE REPORT\n------------------\n\n' + str(self._log)]) + '\n')
 
     # has to be below wcc_calc because _validate_kwargs needs access to
     # wcc_calc.__doc__
@@ -316,7 +314,7 @@ class Surface(object):
         self._log = logger.Logger(logger.ConvFail('string iteration', 't = {}, k = {}'),
                                    logger.ConvFail('neighbour check',
                                     'between t = {}, k = {}\n    and t = {}, k = {}'),
-                                   logger.ConvFail('move check',
+                                   logger.ConvFail('movement check',
                                     'between t = {}, k = {}\n    and t = {}, k = {}'))
 
     def log(self):
@@ -350,7 +348,7 @@ class Surface(object):
                             if not neighbour_check:
                                 self._log.log('neighbour check', t1, k1, t2, k2)
                             if not move_check:
-                                self._log.log('move check', t1, k1, t2, k2)
+                                self._log.log('movement check', t1, k1, t2, k2)
                         return False
                 else:
                     return False
@@ -359,7 +357,7 @@ class Surface(object):
     @verbose_prt.dispatcher
     def _check_single_neighbour(self, i):
         """
-        Performs the neighbour check and move check for neighbours at
+        Performs the neighbour check and movement check for neighbours at
         i and i + 1 
         """
         neighbour_check = True
@@ -428,23 +426,7 @@ class Surface(object):
         with open(self._current['pickle_file'], "rb") as f:
             res = pickle.load(f)
 
-        # handle legacy outputs
-        # TODO: fill in placeholders for unknown parts
-        if not(isinstance(res, dict)):
-            if(len(res) < 4):
-                res.extend([None] * (4 - len(res)))
-            [self._t_points, self._wcc_list, self._gaps, self._lambda_list] = res
-            self.save()
-
-        # new version -- if the output is a dict
-        # TODO: fill in defaults (hierarchy __dict__ < defaults < res ?)
-        else:
             self.__dict__.update(res)
-            # handle renaming of k_points => t_points
-            try:
-                self._t_points = self._k_points
-            except AttributeError:
-                pass
 
     # calculating one string
     @verbose_prt.dispatcher

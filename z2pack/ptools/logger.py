@@ -22,7 +22,7 @@ class Logger:
 
     def __str__(self):
         output = ''
-        for name, event in self._events.iteritems():
+        for name, event in self._events.items():
             output += str(event) + '\n\n'
         return output.rstrip()
 

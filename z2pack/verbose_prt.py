@@ -71,15 +71,14 @@ class PrintFunctions:
             res = func(self, i)
             #-----------------------------------------------------------#
             if all(res):
-                self._print("Condition fulfilled\n\n")
+                self._print("Condition fulfilled!\n\n")
             else:
                 if not res[0]:
-                    self._print('Neighbour check failed\n')
+                    self._print('Neighbour check not fulfilled yet.\n')
                 if not res[1]:
-                    self._print('Movement check failed\n')
+                    self._print('Movement check not fulfilled yet.\n')
             return res
         return inner
-
 
     def _add_string(func):
         def inner(self, i):

@@ -24,7 +24,7 @@ if __name__ == "__main__":
     Bi2Se3 = z2pack.fp.System(["Bi2Se3_nscf.files", "Bi2Se3_nscf.in", "wannier90.win" ],
                             z2pack.fp.kpts.abinit,
                             "Bi2Se3_nscf.in",
-                            "mpirun -np 6 abinit < Bi2Se3_nscf.files >& log",
+                            "abinit < Bi2Se3_nscf.files >& log",
                             executable='/bin/bash'
                             )
 

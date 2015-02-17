@@ -66,6 +66,14 @@ class PrintFunctions:
             _print(self, str(wcc[-1]) + ']\n')
             return res
         return inner
+
+    def _check_neighbours(func):
+        def inner(self):
+            res = func(self)
+            if res is None:
+                _print(self, 'Skipping movement check and neighbour check.')
+            return res
+        return inner
     
     def _check_single_neighbour(func):
         def inner(self, i):

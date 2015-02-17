@@ -178,7 +178,7 @@ class Surface(object):
         :param move_check_factor:   Scaling factor for the maximum allowed
             movement between neighbouring wcc. The factor is multiplied by
             the size of the largest gap between two wcc (from the two
-            neighbouring strings, the smaller value is chosen). ``Default: 0.5``
+            neighbouring strings, the smaller value is chosen). ``Default: 0.3``
         :type move_check_factor:    float
 
         :param iterator:            Generator for the number of points in
@@ -225,7 +225,7 @@ class Surface(object):
                           'no_move_check': False,
                           'wcc_tol': 1e-2,
                           'gap_tol': 2e-2,
-                          'move_check_factor': 0.5,
+                          'move_check_factor': 0.3,
                           'iterator': range(8, 27, 2),
                           'min_neighbour_dist': 0.01,
                           'use_pickle': True,
@@ -261,10 +261,7 @@ class Surface(object):
                     self._string_status[i] = True
                     self.save()
 
-            if not(self._current['no_neighbour_check'] and self._current['no_move_check']):
-                self._check_neighbours()
-            else:
-                self._print('skipping neighbour checks')
+            if self._check_neighbours() is None:
                 break
 
     def _param_check(self):
@@ -304,6 +301,7 @@ class Surface(object):
         self._string_status = [False for i in
                                range(self._current['num_strings'])]
 
+    @verbose_prt.dispatcher
     def _check_neighbours(self):
         """
         checks the neighbour conditions, adds a value in k_points when
@@ -311,24 +309,27 @@ class Surface(object):
         - adds at most one k_point per run
         - returns Boolean: all neighbour conditions fulfilled <=> True
         """
-        for i, status in enumerate(self._neighbour_check):
-            if not status:
-                if self._string_status[i] and self._string_status[i + 1]:
-                    neighbour_check, move_check = self._check_single_neighbour(i)
-                    if not (neighbour_check and move_check):
-                        if not self._add_string(i):
-                            t1 = self._t_points[i]
-                            t2 = self._t_points[i + 1]
-                            k1 = string_tools.fl_to_s(self._edge_function(t1), 6)
-                            k2 = string_tools.fl_to_s(self._edge_function(t2), 6)
-                            if not neighbour_check:
-                                self._log.log('neighbour check', t1, k1, t2, k2)
-                            if not move_check:
-                                self._log.log('movement check', t1, k1, t2, k2)
+        if (self._current['no_neighbour_check'] and self._current['no_move_check']):
+            return None
+        else:
+            for i, status in enumerate(self._neighbour_check):
+                if not status:
+                    if self._string_status[i] and self._string_status[i + 1]:
+                        neighbour_check, move_check = self._check_single_neighbour(i)
+                        if not (neighbour_check and move_check):
+                            if not self._add_string(i):
+                                t1 = self._t_points[i]
+                                t2 = self._t_points[i + 1]
+                                k1 = string_tools.fl_to_s(self._edge_function(t1), 6)
+                                k2 = string_tools.fl_to_s(self._edge_function(t2), 6)
+                                if not neighbour_check:
+                                    self._log.log('neighbour check', t1, k1, t2, k2)
+                                if not move_check:
+                                    self._log.log('movement check', t1, k1, t2, k2)
+                            return False
+                    else:
                         return False
-                else:
-                    return False
-        return True
+            return True
 
     @verbose_prt.dispatcher
     def _check_single_neighbour(self, i):
@@ -549,31 +550,21 @@ class Surface(object):
 #-------------------------------------------------------------------#
 #                CLASS - independent functions                      #
 #-------------------------------------------------------------------#
-
-def _convcheck(list_a, list_b, epsilon=1e-2, N0=7):
+def _convcheck(list_a, list_b, epsilon):
     """
-    helper function for _convcheck
-
-    calculates the absolute value of the change in density from list_a
-    to list_b, when each WCC corresponds to a triangle of width epsilon
-    (and total density = 1)
+    new style convergence check!!
     """
-    N = max(N0 * int(1/(2 * epsilon)), 1)
-    val = np.zeros(N)
-    for x in list_a:
-        index = int(N*x)
-        for i in range(0, N0):
-            val[(index - i) % N] += 1 - (i/N0)
-        for i in range(1, N0):
-            val[(index + i) % N] += 1 - (i/N0)
-    for x in list_b:
-        index = int(N*x)
-        for i in range(0, N0):
-            val[(index - i) % N] -= 1 - (i/N0)
-        for i in range(1, N0):
-            val[(index + i) % N] -= 1 - (i/N0)
-    return (sum(abs(val)) / float(N0)) < 1
-
+    full_list = copy.deepcopy(list_a)
+    full_list.extend(list_b)
+    gap = _gapfind(full_list)[0]
+    a_mod = sorted([(x + 1 - gap) for x in list_a])
+    b_mod = sorted([x + 1 - gap for x in list_b])
+    for i in range(len(a_mod)):
+        if abs(a_mod[i] - b_mod[i]) > epsilon:
+            return False
+    else:
+        return True
+    
 def _sgng(z, zplus, x):
     """
     calculates the invariant between two WCC strings

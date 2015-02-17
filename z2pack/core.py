@@ -424,11 +424,6 @@ class Surface(object):
         [eigs, _] = la.eig(lambda_)
         return [(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs], min_sv, lambda_
 
-    def _print(self, string):
-        if(self._current['verbose']):
-            print(string, end='')
-            sys.stdout.flush()
-
     #----------------END OF SUPPORT FUNCTIONS---------------------------#
 
     def log(self):

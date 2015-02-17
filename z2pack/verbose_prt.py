@@ -71,7 +71,7 @@ class PrintFunctions:
         def inner(self):
             res = func(self)
             if res is None:
-                _print(self, 'Skipping movement check and neighbour check.')
+                _print(self, 'Skipping movement and neighbour checks.\n\n')
             return res
         return inner
     

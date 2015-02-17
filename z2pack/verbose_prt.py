@@ -9,6 +9,9 @@ from __future__ import print_function
 
 from .ptools import string_tools
 
+import time
+import numpy as np
+
 class PrintFunctions:
     def _getwcc(func):
         def inner(self, t):
@@ -87,6 +90,36 @@ class PrintFunctions:
                 self._print('Added string at t = {}\n\n'.format(self._t_points[i + 1]))
             else:
                 self._print('Reached minimum distance between neighbours\n\n')
+            return res
+        return inner
+
+    def _wcc_calc_main(func):
+        def inner(self):
+            #----------------initial output-----------------------------#
+            start_time = time.time()
+            string = "starting wcc calculation\n\n"
+            length = max(len(key) for key in self._current.keys()) + 2
+            for key in sorted(self._current.keys()):
+                value = str(self._current[key])
+                if(len(value) > 48):
+                    value = value[:45] + '...'
+                string += key.ljust(length) + value + '\n'
+            string = string[:-1]
+            self._print(string_tools.cbox(string) + '\n')
+            #----------------computation--------------------------------#
+            res = func(self)
+            #----------------final output-------------------------------#
+            end_time = time.time()
+            duration = end_time - start_time
+            duration_string = str(int(np.floor(duration / 3600))) + \
+                " h " + str(int(np.floor(duration / 60)) % 60) + \
+                " min " + str(int(np.floor(duration)) % 60) + " sec"
+            self._print(
+                string_tools.cbox(
+                    ["finished wcc calculation" + "\ntime: " + duration_string,
+                     'CONVERCENGE REPORT\n------------------\n\n' +
+                    str(self._log)]) +
+                '\n')
             return res
         return inner
 

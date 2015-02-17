@@ -20,7 +20,6 @@ from . import verbose_prt
 
 import re
 import sys
-import time
 import copy
 import pickle
 import decorator
@@ -62,15 +61,15 @@ class System:
         to the edge of the surface. The direction along which the surface
         extends from this edge, then, is given by ``string_vec``.
 
-        :param edge_function: Returns the start of the k-point string 
+        :param edge_function: Returns the start of the k-point string
             as function of the pumping parameter t.
-        
+
         :param string_vec: Direction of the individual k-point strings.
             Note that ``string_vec`` must connect equivalent k-points
             (i.e. it must be a reciprocal lattice vector). Typically,
             it is one of ``[1, 0, 0]``, ``[0, 1, 0]``, ``[0, 0, 1]``.
         :type string_vec: list (float)
-        
+
         :param kwargs: Keyword arguments are passed to the :class:`Surface`
             constructor. They take precedence over kwargs from the
             :class:`System` constructor.
@@ -90,7 +89,7 @@ class System:
 
 class Surface(object):
     r"""
-    Describes a surface (or generalised 2D surface) in reciprocal space 
+    Describes a surface (or generalised 2D surface) in reciprocal space
     for which the Z2 topological invariant is to be calculated. It is
     created by using the :class:`System`'s :meth:`surface()<System.surface>` method.
 
@@ -98,14 +97,14 @@ class Surface(object):
     tasks like calculating WCC and the Z2 invariant, getting results, plotting
     etc.
 
-    :param m_handle:        Function that returns a list of overlap matrices 
+    :param m_handle:        Function that returns a list of overlap matrices
         given the pumping parameter :math:`t` and the number of k-points in
         the string.
     :type m_handle:         function
-    
-    :param edge_function: Returns the start of the k-point string 
+
+    :param edge_function: Returns the start of the k-point string
         as function of the pumping parameter t.
-    
+
     :param kwargs: Keyword arguments are passed to the :class:`Surface`
         constructor. They take precedence over kwargs from the
         :class:`System` constructor.
@@ -150,53 +149,53 @@ class Surface(object):
 
         * automated convergence in string direction
         * automated check for distance between gap and wcc -> add string
-        * automated convergence check w.r.t. movement of the WCC between 
+        * automated convergence check w.r.t. movement of the WCC between
           different k-strings.
 
         :param num_strings:         Initial number of strings ``Default: 11``
         :type num_strings:          int
 
-        :param no_iter:             Turns the automated iteration of the  
+        :param no_iter:             Turns the automated iteration of the
             number of k-points in a string off ``Default: False``
         :type no_iter:              bool
 
-        :param no_neighbour_check:  Turns the automated check for missing  
+        :param no_neighbour_check:  Turns the automated check for missing
             strings (by distance between gaps and WCCs) off ``Default: False``
         :type no_neighbour_check:   bool
 
-        :param no_move_check:       Toggles checking the movement of 
+        :param no_move_check:       Toggles checking the movement of
             neighbouring wcc. ``Default: False``
         :type no_move_check:        bool
 
-        :param wcc_tol:             Maximum movement of a WCC between two  
+        :param wcc_tol:             Maximum movement of a WCC between two
             steps for convergence. ``Default: 1e-2``
         :type wcc_tol:              float
 
-        :param gap_tol:             Smallest tolerated distance between the 
+        :param gap_tol:             Smallest tolerated distance between the
             gap and neighbouring WCCs ``Default: 2e-2``
         :type gap_tol:              float
 
-        :param move_check_factor:   Scaling factor for the maximum allowed 
-            movement between neighbouring wcc. The factor is multiplied by 
-            the size of the largest gap between two wcc (from the two 
+        :param move_check_factor:   Scaling factor for the maximum allowed
+            movement between neighbouring wcc. The factor is multiplied by
+            the size of the largest gap between two wcc (from the two
             neighbouring strings, the smaller value is chosen). ``Default: 0.5``
         :type move_check_factor:    float
 
-        :param iterator:            Generator for the number of points in 
-            a k-point string. The iterator should also take care of the maximum 
-            number of iterations. It is needed even when ``no_iter=True``, to 
+        :param iterator:            Generator for the number of points in
+            a k-point string. The iterator should also take care of the maximum
+            number of iterations. It is needed even when ``no_iter=True``, to
             provide a starting value. ``Default: range(8, 27, 2)``.
 
-        :param min_neighbour_dist:  Minimum distance between two strings (no 
-            new strings will be added, even if the neighbour check fails). 
+        :param min_neighbour_dist:  Minimum distance between two strings (no
+            new strings will be added, even if the neighbour check fails).
             ``Default: 0.01``
         :type min_neighbour_dist:   float
 
-        :param use_pickle:          Toggles using the :mod:`pickle` module 
+        :param use_pickle:          Toggles using the :mod:`pickle` module
             for saving ``Default: True``
         :type use_pickle:           bool
 
-        :param pickle_file:     Path to a file where the results are stored using 
+        :param pickle_file:     Path to a file where the results are stored using
             the :py:mod:`pickle` module.
         :type pickle_file:      str
 
@@ -206,87 +205,11 @@ class Surface(object):
         :returns:                   ``None``. Use :meth:`get_res` and
             :meth:`invariant` to get the results.
         """
-
-        #----------------checking input variables-----------------------#
         self._current = copy.deepcopy(self._defaults)
         self._current.update(kwargs)
-
-        # checking num_strings
-        if(self._current['num_strings'] < 2):
-            raise ValueError("num_strings must be at least 2")
-
-        if self._current['no_iter']:
-            if not(hasattr(self._current['iterator'], '__next__')):
-                self._current['iterator'] = iter(self._current['iterator'])
-            # iterator shouldn't be deleted (used for first step also)
-            # instead, it is modified to reflect no_iter=True
-            self._current['iterator'] = [next(self._current['iterator'])]
-            del self._current['wcc_tol']
-        if self._current['no_neighbour_check']:
-            del self._current['gap_tol']
-        if self._current['no_move_check']:
-            del self._current['move_check_factor']
-            if self._current['no_neighbour_check']:
-                del self._current['min_neighbour_dist']
-
-        # reset log to avoid double-logging
+        self._param_check()
         self._log.reset()
-
-        #----------------initial output---------------------------------#
-        string = "starting wcc calculation\n\n"
-        length = max(len(key) for key in self._current.keys()) + 2
-        for key in sorted(self._current.keys()):
-            value = str(self._current[key])
-            if(len(value) > 48):
-                value = value[:45] + '...'
-            string += key.ljust(length) + value + '\n'
-        string = string[:-1]
-        self._print(string_tools.cbox(string) + '\n')
-
-        start_time = time.time()
-
-        #----------------initialization - creating data containers------#
-        self._t_points = list(np.linspace(0., 1., self._current['num_strings'],
-                                          endpoint=True))
-        self._kpt_list = [self._edge_function(t) for t in self._t_points]
-        self._gaps = [None for i in range(self._current['num_strings'])]
-        self._gapsize = [None for i in range(self._current['num_strings'])]
-        self._wcc_list = [[] for i in range(self._current['num_strings'])]
-        self._lambda_list = [[] for i in range(self._current['num_strings'])]
-        self._neighbour_check = [False for i in
-                                 range(self._current['num_strings'] - 1)]
-        self._string_status = [False for i in
-                               range(self._current['num_strings'])]
-
-        # main calculation part
-        # all neighbour checks can be true even if it did not converge!
-        # a failed convergence (reaching lower limit) also produces
-        # 'true'
-        while not (all(self._neighbour_check)):
-            for i, t in enumerate(self._t_points):
-                if not(self._string_status[i]):
-                    self._wcc_list[i], self._lambda_list[i] = self._getwcc(t)
-                    self._gaps[i], self._gapsize[i] = _gapfind(self._wcc_list[i])
-                    self._string_status[i] = True
-                    self.save()
-
-            if not(self._current['no_neighbour_check'] and self._current['no_move_check']):
-                self._check_neighbours()
-            else:
-                self._print('skipping neighbour checks')
-                break
-
-        # dump results into pickle file
-        self.save()
-
-        # output to signal end of wcc calculation
-        end_time = time.time()
-        duration = end_time - start_time
-        duration_string = str(int(np.floor(duration / 3600))) + \
-            " h " + str(int(np.floor(duration / 60)) % 60) + \
-            " min " + str(int(np.floor(duration)) % 60) + " sec"
-        self._print(string_tools.cbox(["finished wcc calculation" + "\ntime: "
-                                      + duration_string,'CONVERCENGE REPORT\n------------------\n\n' + str(self._log)]) + '\n')
+        self._wcc_calc_main()
 
     # has to be below wcc_calc because _validate_kwargs needs access to
     # wcc_calc.__doc__
@@ -317,17 +240,70 @@ class Surface(object):
                                    logger.ConvFail('movement check',
                                     'between t = {}, k = {}\n    and t = {}, k = {}'))
 
-    def log(self):
-        """
-        Returns the convergence report for the wcc calculation.
-        """
-        return str(self._log)
-
     #-------------------------------------------------------------------#
     #                support functions for wcc                          #
     #-------------------------------------------------------------------#
 
-    # checking distance gap-wcc
+    @verbose_prt.dispatcher
+    def _wcc_calc_main(self):
+        """
+        main calculation part
+        all neighbour checks can be true even if it did not converge!
+        a failed convergence (reaching lower limit) also produces
+        'true'
+        """
+        self._var_init()
+        while not (all(self._neighbour_check)):
+            for i, t in enumerate(self._t_points):
+                if not(self._string_status[i]):
+                    self._wcc_list[i], self._lambda_list[i] = self._getwcc(t)
+                    self._gaps[i], self._gapsize[i] = _gapfind(self._wcc_list[i])
+                    self._string_status[i] = True
+                    self.save()
+
+            if not(self._current['no_neighbour_check'] and self._current['no_move_check']):
+                self._check_neighbours()
+            else:
+                self._print('skipping neighbour checks')
+                break
+
+    def _param_check(self):
+        """
+        Checks the current parameters and deletes unnecessary ones.
+        """
+        if(self._current['num_strings'] < 2):
+            raise ValueError("num_strings must be at least 2")
+
+        if self._current['no_iter']:
+            if not(hasattr(self._current['iterator'], '__next__')):
+                self._current['iterator'] = iter(self._current['iterator'])
+            # iterator shouldn't be deleted (used for first step also)
+            # instead, it is modified to reflect no_iter=True
+            self._current['iterator'] = [next(self._current['iterator'])]
+            del self._current['wcc_tol']
+        if self._current['no_neighbour_check']:
+            del self._current['gap_tol']
+        if self._current['no_move_check']:
+            del self._current['move_check_factor']
+            if self._current['no_neighbour_check']:
+                del self._current['min_neighbour_dist']
+
+    def _var_init(self):
+        """
+        initialization - creating data containers
+        """
+        self._t_points = list(np.linspace(0., 1., self._current['num_strings'],
+                                          endpoint=True))
+        self._kpt_list = [self._edge_function(t) for t in self._t_points]
+        self._gaps = [None for i in range(self._current['num_strings'])]
+        self._gapsize = [None for i in range(self._current['num_strings'])]
+        self._wcc_list = [[] for i in range(self._current['num_strings'])]
+        self._lambda_list = [[] for i in range(self._current['num_strings'])]
+        self._neighbour_check = [False for i in
+                                 range(self._current['num_strings'] - 1)]
+        self._string_status = [False for i in
+                               range(self._current['num_strings'])]
+
     def _check_neighbours(self):
         """
         checks the neighbour conditions, adds a value in k_points when
@@ -358,7 +334,7 @@ class Surface(object):
     def _check_single_neighbour(self, i):
         """
         Performs the neighbour check and movement check for neighbours at
-        i and i + 1 
+        i and i + 1
         """
         neighbour_check = True
         move_check = True
@@ -366,7 +342,7 @@ class Surface(object):
             neighbour_check = self._check_gap_distance(i)
         if not self._current['no_move_check']:
             tolerance = self._current['move_check_factor'] * min(self._gapsize[i], self._gapsize[i + 1])
-            move_check = self._convcheck(self._wcc_list[i], self._wcc_list[i + 1], tolerance)
+            move_check = _convcheck(self._wcc_list[i], self._wcc_list[i + 1], tolerance)
         if neighbour_check and move_check:
             self._neighbour_check[i] = True
         return neighbour_check, move_check
@@ -403,31 +379,6 @@ class Surface(object):
                 return False
         return True
 
-    # pickle: save and load
-    def save(self):
-        """
-        Saves the t-points, WCC, gap positions and sizes and Lambda \
-        matrices to a pickle file.
-
-        Only works if ``use_pickle == True`` and the path to ``pickle_file`` exists.
-        """
-        to_save = ['_t_points', '_wcc_list', '_gaps', '_gapsize', '_lambda_list']
-        data = dict((k, v) for k, v in self.__dict__.items() if k in to_save)
-            
-        if(self._current['use_pickle']):
-            with open(self._current['pickle_file'], "wb") as f:
-                pickle.dump(data, f)
-
-    def load(self):
-        """
-        Loads the data (e.g. from a previous run) from the :mod:`pickle` file.
-        """
-
-        with open(self._current['pickle_file'], "rb") as f:
-            res = pickle.load(f)
-
-            self.__dict__.update(res)
-
     # calculating one string
     @verbose_prt.dispatcher
     def _getwcc(self, t):
@@ -450,7 +401,7 @@ class Surface(object):
                 x, min_sv, lambda_ = self._trywcc(self._m_handle(t, N))
 
                 # break conditions
-                if(self._convcheck(x, xold, self._current['wcc_tol'])):  # success
+                if(_convcheck(x, xold, self._current['wcc_tol'])):  # success
                     break
             # iterator ended
             else:
@@ -473,23 +424,23 @@ class Surface(object):
         [eigs, _] = la.eig(lambda_)
         return [(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs], min_sv, lambda_
 
-    # wcc convergence functions
-    def _convcheck(self, x, y, tol):
-        """
-        check convergence of wcc from x to y
-
-        depends on: self._current['wcc_tol']
-                    roughly corresponds to the total 'movement' in WCC that
-                    is tolerated between x and y
-        """
-        return _convsum(x, y, tol) < 1
+    def _print(self, string):
+        if(self._current['verbose']):
+            print(string, end='')
+            sys.stdout.flush()
 
     #----------------END OF SUPPORT FUNCTIONS---------------------------#
+
+    def log(self):
+        """
+        Returns the convergence report for the wcc calculation.
+        """
+        return str(self._log)
 
     def plot(self, shift=0, show=True, axis=None):
         """
         Plots the WCCs and the largest gaps (y-axis) against the t-points \
-        (x-axis). 
+        (x-axis).
 
         :param shift:   Shifts the plot in the y-axis
         :type shift:    float
@@ -554,23 +505,12 @@ class Surface(object):
         ``gap`` the positions of the largest gap in each string and \
         ``lambda_``, a list of Gamma matrices for each string.
         """
-        try:
-            return {'t_par': self._t_points, 'kpt': self._kpt_list, 'wcc': self._wcc_list, 'gap': self._gaps, 'lambda_': self._lambda_list}
-        except (NameError, AttributeError):
-            # TODO remove double try - except for a cleaner version to
-            # distinguish v1 and v2
-            try:
-                return {'t_par': self._t_points, 'wcc': self._wcc_list, 'gap': self._gaps, 'lambda_': self._lambda_list}
-            except:
-                raise RuntimeError('WCC not yet calculated')
-        # for a potential Python3 - only version
-        #~ except (NameError, AttributeError) as e:
-            #~ raise RuntimeError('WCC not yet calculated') from e
+        return {'t_par': self._t_points, 'kpt': self._kpt_list, 'wcc': self._wcc_list, 'gap': self._gaps, 'lambda_': self._lambda_list}
 
     def invariant(self):
         """
         Calculates the Z2 topological invariant.
-        
+
         :returns:   Z2 topological invariant
         :rtype:     int
         """
@@ -586,16 +526,36 @@ class Surface(object):
         except (NameError, AttributeError):
             raise RuntimeError('WCC not yet calculated')
 
-    def _print(self, string):
-        if(self._current['verbose']):
-            print(string, end='')
-            sys.stdout.flush()
+    # pickle: save and load
+    def save(self):
+        """
+        Saves the t-points, WCC, gap positions and sizes and Lambda \
+        matrices to a pickle file.
+
+        Only works if ``use_pickle == True`` and the path to ``pickle_file`` exists.
+        """
+        to_save = ['_t_points', '_wcc_list', '_gaps', '_gapsize', '_lambda_list']
+        data = dict((k, v) for k, v in self.__dict__.items() if k in to_save)
+
+        if(self._current['use_pickle']):
+            with open(self._current['pickle_file'], "wb") as f:
+                pickle.dump(data, f)
+
+    def load(self):
+        """
+        Loads the data (e.g. from a previous run) from the :mod:`pickle` file.
+        """
+
+        with open(self._current['pickle_file'], "rb") as f:
+            res = pickle.load(f)
+
+            self.__dict__.update(res)
 
 #-------------------------------------------------------------------#
 #                CLASS - independent functions                      #
 #-------------------------------------------------------------------#
 
-def _convsum(list_a, list_b, epsilon=1e-2, N0=7):
+def _convcheck(list_a, list_b, epsilon=1e-2, N0=7):
     """
     helper function for _convcheck
 
@@ -617,7 +577,7 @@ def _convsum(list_a, list_b, epsilon=1e-2, N0=7):
             val[(index - i) % N] -= 1 - (i/N0)
         for i in range(1, N0):
             val[(index + i) % N] -= 1 - (i/N0)
-    return sum(abs(val)) / N0
+    return (sum(abs(val)) / float(N0)) < 1
 
 def _sgng(z, zplus, x):
     """

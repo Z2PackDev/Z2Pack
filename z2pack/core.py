@@ -589,6 +589,7 @@ class Surface(object):
     def _print(self, string):
         if(self._current['verbose']):
             print(string, end='')
+            sys.stdout.flush()
 
 #-------------------------------------------------------------------#
 #                CLASS - independent functions                      #

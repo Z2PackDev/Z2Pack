@@ -377,8 +377,7 @@ class Surface(object):
         checks if gap is too close to any of the elements in wcc
         """
         for wcc_val in self._wcc_list[i + 1]:
-            if(min(abs(1 + wcc_val - self._gaps[i]) % 1, abs(1 - wcc_val + self._gaps[i]) % 1) <
-                self._current['gap_tol']):
+            if _dist(wcc_val, self._gaps[i]) < self._current['gap_tol']:
                 return False
         return True
 
@@ -562,7 +561,7 @@ def _convcheck(list_a, list_b, epsilon):
     a_mod = sorted([(x + 1 - gap) for x in list_a])
     b_mod = sorted([x + 1 - gap for x in list_b])
     for i in range(len(a_mod)):
-        if abs(a_mod[i] - b_mod[i]) > epsilon:
+        if _dist(a_mod[i], b_mod[i]) > epsilon:
             return False
     else:
         return True
@@ -591,6 +590,13 @@ def _gapfind(wcc):
         gapsize = temp
         gappos = N - 1
     return (wcc[gappos] + gapsize / 2) % 1, gapsize
+
+def _dist(x, y):
+    """
+    Returns the smallest distance on the periodic [0, 1) between x, y
+    where x, y should be in [0, 1)
+    """
+    return min(abs(1 + x - y) % 1, abs(1 - x + y) % 1)
 
 
 #----------------END CLASS INDEPENDENT FUNCTIONS---------------------#

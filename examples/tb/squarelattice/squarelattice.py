@@ -9,10 +9,6 @@ import sys
 sys.path.append("../../../")
 import z2pack.tb as tb
 
-import numpy as np
-import scipy.linalg as la
-import matplotlib.pyplot as plt
-
 # Setting the interaction strength
 t1, t2 = (0.2, 0.3)
 

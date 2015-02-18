@@ -60,7 +60,7 @@ class TbExampleTestCase(CommonTestCase):
         self.assertDictAlmostEqual(tb_surface.get_res(), res)
 
     def test_res2(self):
-        """ test no_iter=True """
+        """ test pos_check=False """
         self.createH(0, 0.3)
         # call to Z2Pack
         tb_system = z2pack.tb.System(self.H)
@@ -68,14 +68,14 @@ class TbExampleTestCase(CommonTestCase):
         tb_surface.wcc_calc(verbose=False,
                           num_strings=20,
                           use_pickle=False,
-                          no_iter=True)
+                          pos_check=False)
 
         res = in_place_replace(tb_surface.get_res())
 
         self.assertDictAlmostEqual(tb_surface.get_res(), res)
 
     def test_res3(self):
-        """ test no_neighbour_check=True """
+        """ test gap_check=False """
         self.createH(0.1, 0.3)
         # call to Z2Pack
         tb_system = z2pack.tb.System(self.H)
@@ -83,14 +83,14 @@ class TbExampleTestCase(CommonTestCase):
         tb_surface.wcc_calc(verbose=False,
                           num_strings=20,
                           use_pickle=False,
-                          no_neighbour_check=True)
+                          gap_check=False)
 
         res = in_place_replace(tb_surface.get_res())
 
         self.assertDictAlmostEqual(tb_surface.get_res(), res)
 
     def test_res4(self):
-        """ test no_move_check=True """
+        """ test move_check=False """
         self.createH(0.1, 0.3)
         # call to Z2Pack
         tb_system = z2pack.tb.System(self.H)
@@ -98,14 +98,14 @@ class TbExampleTestCase(CommonTestCase):
         tb_surface.wcc_calc(verbose=False,
                           num_strings=20,
                           use_pickle=False,
-                          no_move_check=True)
+                          move_check=False)
 
         res = in_place_replace(tb_surface.get_res())
 
         self.assertDictAlmostEqual(tb_surface.get_res(), res)
 
     def test_res5(self):
-        """ test no_neighbour_check=True and no_move_check=True"""
+        """ test gap_check=False and move_check=False"""
         self.createH(0.1, 0.3)
         # call to Z2Pack
         tb_system = z2pack.tb.System(self.H)
@@ -113,8 +113,8 @@ class TbExampleTestCase(CommonTestCase):
         tb_surface.wcc_calc(verbose=False,
                             num_strings=20,
                             use_pickle=False,
-                            no_neighbour_check=True,
-                            no_move_check=True)
+                            gap_check=False,
+                            move_check=False)
 
         res = in_place_replace(tb_surface.get_res())
 

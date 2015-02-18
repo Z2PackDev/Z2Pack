@@ -19,12 +19,12 @@ t1, t2 = (0.2, 0.3)
 # Settings used for wcc_calc. Feel free to play around with the different
 # options.
 settings = {'num_strings': 3,
-            'no_iter': False,
-            'no_neighbour_check': False,
-            'no_move_check': False,
-            'wcc_tol': 1e-2,
+            'pos_check': True,
+            'gap_check': True,
+            'move_check': True,
+            'pos_tol': 1e-2,
             'gap_tol': 2e-2,
-            'move_check_factor': 0.3,
+            'move_tol': 0.3,
             'iterator': range(8, 27, 2),
             'min_neighbour_dist': 1e-2,
             'use_pickle': True,

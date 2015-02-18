@@ -22,7 +22,7 @@ class PrintFunctions:
             #-----------------------------------------------------------#
             res = func(self, t)
             #-----------------------------------------------------------#
-            if self._current['no_iter']:
+            if not self._current['pos_check']:
                 _print(self, 'no iteration\n\n')
             else:
                 # check convergence flag
@@ -32,7 +32,7 @@ class PrintFunctions:
                     _print(self, 'iterator ends, failed to converge!\n\n')
             # check convergence flag
             if not res[-1]:
-                self._log.log('string iteration', t, string_tools.fl_to_s(self._edge_function(t)))
+                self._log.log('pos check', t, string_tools.fl_to_s(self._edge_function(t)))
                     
             return res[:-1] # cut out convergence flag
         return inner
@@ -71,7 +71,7 @@ class PrintFunctions:
         def inner(self):
             res = func(self)
             if res is None:
-                _print(self, 'Skipping movement and neighbour checks.\n\n')
+                _print(self, 'Skipping neighbour checks (gap check & move check).\n\n')
             return res
         return inner
     
@@ -86,9 +86,9 @@ class PrintFunctions:
                 _print(self, "Condition fulfilled!\n\n")
             else:
                 if not res[0]:
-                    _print(self, 'Neighbour check not fulfilled yet.\n')
+                    _print(self, 'Gap check not fulfilled yet.\n')
                 if not res[1]:
-                    _print(self, 'Movement check not fulfilled yet.\n')
+                    _print(self, 'Move check not fulfilled yet.\n')
             return res
         return inner
 

@@ -93,17 +93,17 @@ of strings can be changed by setting the ``num_strings`` keyword value.
 Convergence options
 +++++++++++++++++++
 
-* **Convergence along the k-points string**
+* **Convergence of WCC positions along the k-points string (pos check)**
 
   The number of k-points along a given string is increased until
-  the change in WCC positions is below a certain limit ``wcc_tol``. 
+  the change in WCC positions is below a certain limit ``pos_tol``. 
 
   The number of k-points used for each step can be adjusted by setting
   the ``iterator`` keyword. Its value must be a Python iterator returning
   integers. For example, ``iterator=range(10, 31, 4)`` would mean the
   number of k-points goes from 10 to 30 in steps of 4.
 
-  Iteration along the string can be turned off by setting ``no_iter=True``.
+  Iteration along the string can be turned off by setting ``pos_check=False``.
   The first value yielded by the ``iterator`` is then used as the
   number of k-points used.
 
@@ -115,32 +115,27 @@ Convergence options
       avoid this, the WCC are sorted not from 0 to 1, but from  the
       largest gap between any two WCC (in both iteration steps) onward.
   
-* **Distance between the largest gap and neighbouring WCC**
+* **Distance between the largest gap and neighbouring WCC (gap check)**
   For a reliable calculation of the Z2 invariant, the middle of the
   largest gap between WCC in a k-point string should not be too close
   to the WCC in its neighbouring strings. If the WCC are closer than
   ``gap_tol``, another string is added in between the two neighbours.
 
-  This check can be disabled by setting ``no_neighbour_check=True``
-* **Movement of WCC between neighbouring strings**
+  This check can be disabled by setting ``gap_check=False``
+* **Movement of WCC between neighbouring strings (move check)**
   This convergence option checks for the movement of WCC between
   neighbouring strings in the same way the movement of WCC in a single
-  string was considered before. Because WCC are expected to move a
-  litle bit between neighbours, the spread of each triangular density
-  is now given in terms of the size of the largest gap between WCC.
-  The keyword argument ``move_check_factor`` defines which fraction
-  of the gap is used as a spread. If the convergence criterion fails,
-  another string is again added between the two neighbours.
+  string was considered before. The important thing here is that a WCC
+  should not fully cross the largest gap in a single step. For this
+  reason, the tolerance for WCC movement is defined as a fraction
+  ``pos_tol`` of the size of the largest gap between WCC. If the convergence
+  criterion fails, another string is again added between the two neighbours.
 
-  If used with an appropriate value of ``move_check_factor``, this
+  If used with an appropriate value of ``move_tol``, this
   test can help focusing the calculation on the important values where
   the WCC change faster.
   
-  Note that, since the criterion is formulated in terms of the total
-  change in WCC density, a system with more Wannier functions will
-  likely need a slightly higher ``move_check_factor``.
-  
-  This check can be disabled by setting ``no_move_check=True``
+  This check can be disabled by setting ``move_check=False``
 
 * **Minimum distane between neighbouring strings**
   For both the check for distance between the largest gap and its

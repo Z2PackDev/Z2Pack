@@ -155,39 +155,41 @@ class Surface(object):
         :param num_strings:         Initial number of strings ``Default: 11``
         :type num_strings:          int
 
-        :param no_iter:             Turns the automated iteration of the
-            number of k-points in a string off ``Default: False``
-        :type no_iter:              bool
+        :param pos_check:           Toggles the automated iteration of the
+            number of k-points in a string for convergence of the WCC
+            positions. ``Default: True``
+        :type pos_check:            bool
 
-        :param no_neighbour_check:  Turns the automated check for missing
-            strings (by distance between gaps and WCCs) off ``Default: False``
-        :type no_neighbour_check:   bool
+        :param gap_check:           Turns on the check for the distance
+            between the largest gap and WCC in neighbouring strings.
+            ``Default: True``
+        :type gap_check:   bool
 
-        :param no_move_check:       Toggles checking the movement of
-            neighbouring wcc. ``Default: False``
-        :type no_move_check:        bool
+        :param move_check:       Toggles checking the movement of
+            WCC between neighbouring strings. ``Default: True``
+        :type move_check:        bool
 
-        :param wcc_tol:             Maximum movement of a WCC between two
+        :param pos_tol:             Maximum movement of a WCC between two
             steps for convergence. ``Default: 1e-2``
-        :type wcc_tol:              float
+        :type pos_tol:              float
 
         :param gap_tol:             Smallest tolerated distance between the
             gap and neighbouring WCCs ``Default: 2e-2``
         :type gap_tol:              float
 
-        :param move_check_factor:   Scaling factor for the maximum allowed
+        :param move_tol:   Scaling factor for the maximum allowed
             movement between neighbouring wcc. The factor is multiplied by
             the size of the largest gap between two wcc (from the two
             neighbouring strings, the smaller value is chosen). ``Default: 0.3``
-        :type move_check_factor:    float
+        :type move_tol:    float
 
         :param iterator:            Generator for the number of points in
             a k-point string. The iterator should also take care of the maximum
-            number of iterations. It is needed even when ``no_iter=True``, to
+            number of iterations. It is needed even when ``pos_check=False``, to
             provide a starting value. ``Default: range(8, 27, 2)``.
 
         :param min_neighbour_dist:  Minimum distance between two strings (no
-            new strings will be added, even if the neighbour check fails).
+            new strings will be added, even if the gap check (gap check & move check) fails).
             ``Default: 0.01``
         :type min_neighbour_dist:   float
 
@@ -220,12 +222,12 @@ class Surface(object):
                  **kwargs):
         self._m_handle = m_handle
         self._edge_function = edge_function
-        self._defaults = {'no_iter': False,
-                          'no_neighbour_check': False,
-                          'no_move_check': False,
-                          'wcc_tol': 1e-2,
+        self._defaults = {'pos_check': True,
+                          'gap_check': True,
+                          'move_check': True,
+                          'pos_tol': 1e-2,
                           'gap_tol': 2e-2,
-                          'move_check_factor': 0.3,
+                          'move_tol': 0.3,
                           'iterator': range(8, 27, 2),
                           'min_neighbour_dist': 0.01,
                           'use_pickle': True,
@@ -234,10 +236,10 @@ class Surface(object):
                           'verbose': True}
         self._defaults.update(kwargs)
         self._current = copy.deepcopy(self._defaults)
-        self._log = logger.Logger(logger.ConvFail('string iteration', 't = {}, k = {}'),
-                                   logger.ConvFail('neighbour check',
+        self._log = logger.Logger(logger.ConvFail('pos check', 't = {}, k = {}'),
+                                   logger.ConvFail('gap check',
                                     'between t = {}, k = {}\n    and t = {}, k = {}'),
-                                   logger.ConvFail('movement check',
+                                   logger.ConvFail('move check',
                                     'between t = {}, k = {}\n    and t = {}, k = {}'))
 
     #-------------------------------------------------------------------#
@@ -248,7 +250,7 @@ class Surface(object):
     def _wcc_calc_main(self):
         """
         main calculation part
-        all neighbour checks can be true even if it did not converge!
+        all gap checks can be true even if it did not converge!
         a failed convergence (reaching lower limit) also produces
         'true'
         """
@@ -271,18 +273,18 @@ class Surface(object):
         if(self._current['num_strings'] < 2):
             raise ValueError("num_strings must be at least 2")
 
-        if self._current['no_iter']:
+        if not self._current['pos_check']:
             if not(hasattr(self._current['iterator'], '__next__')):
                 self._current['iterator'] = iter(self._current['iterator'])
             # iterator shouldn't be deleted (used for first step also)
-            # instead, it is modified to reflect no_iter=True
+            # instead, it is modified to reflect pos_check=False
             self._current['iterator'] = [next(self._current['iterator'])]
-            del self._current['wcc_tol']
-        if self._current['no_neighbour_check']:
+            del self._current['pos_tol']
+        if not self._current['gap_check']:
             del self._current['gap_tol']
-        if self._current['no_move_check']:
-            del self._current['move_check_factor']
-            if self._current['no_neighbour_check']:
+        if not self._current['move_check']:
+            del self._current['move_tol']
+            if self._current['gap_check']:
                 del self._current['min_neighbour_dist']
 
     def _var_init(self):
@@ -309,7 +311,7 @@ class Surface(object):
         - adds at most one k_point per run
         - returns Boolean: all neighbour conditions fulfilled <=> True
         """
-        if (self._current['no_neighbour_check'] and self._current['no_move_check']):
+        if not (self._current['gap_check'] or self._current['move_check']):
             return None
         else:
             for i, status in enumerate(self._neighbour_check):
@@ -323,9 +325,9 @@ class Surface(object):
                                 k1 = string_tools.fl_to_s(self._edge_function(t1), 6)
                                 k2 = string_tools.fl_to_s(self._edge_function(t2), 6)
                                 if not neighbour_check:
-                                    self._log.log('neighbour check', t1, k1, t2, k2)
+                                    self._log.log('gap check', t1, k1, t2, k2)
                                 if not move_check:
-                                    self._log.log('movement check', t1, k1, t2, k2)
+                                    self._log.log('move check', t1, k1, t2, k2)
                             return False
                     else:
                         return False
@@ -334,15 +336,15 @@ class Surface(object):
     @verbose_prt.dispatcher
     def _check_single_neighbour(self, i):
         """
-        Performs the neighbour check and movement check for neighbours at
+        Performs the gap check and move check for neighbours at
         i and i + 1
         """
         neighbour_check = True
         move_check = True
-        if not self._current['no_neighbour_check']:
+        if self._current['gap_check']:
             neighbour_check = self._check_gap_distance(i)
-        if not self._current['no_move_check']:
-            tolerance = self._current['move_check_factor'] * min(self._gapsize[i], self._gapsize[i + 1])
+        if self._current['move_check']:
+            tolerance = self._current['move_tol'] * min(self._gapsize[i], self._gapsize[i + 1])
             move_check = _convcheck(self._wcc_list[i], self._wcc_list[i + 1], tolerance)
         if neighbour_check and move_check:
             self._neighbour_check[i] = True
@@ -396,13 +398,13 @@ class Surface(object):
         N = next(iterator)
         x, min_sv, lambda_ = self._trywcc(self._m_handle(t, N))
 
-        if not self._current['no_iter']:
+        if self._current['pos_check']:
             for N in iterator:
                 xold = copy.copy(x)
                 x, min_sv, lambda_ = self._trywcc(self._m_handle(t, N))
 
                 # break conditions
-                if(_convcheck(x, xold, self._current['wcc_tol'])):  # success
+                if(_convcheck(x, xold, self._current['pos_tol'])):  # success
                     break
             # iterator ended
             else:

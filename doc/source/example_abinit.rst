@@ -17,15 +17,11 @@ to exclude non-occupied bands.
 Note also that you will have to **change the command** that is used to call
 ABINIT to match your system.
 
-::
+.. code:: python
 
     import z2pack
 
-    import os
     import matplotlib.pyplot as plt
-
-    if not os.path.exists('./results'):
-        os.makedirs('./results')
 
     # Creating the System. Note that the SCF charge file does not need to be
     # copied, but instead can be referenced in the .files file.
@@ -57,7 +53,7 @@ ABINIT to match your system.
     fig, ax = plt.subplots(1, 2, sharey=True, figsize = (9,5))
     surface_0.plot(show=False, axis=ax[0])
     surface_1.plot(show=False, axis=ax[1])
-    plt.savefig('./results/plot.pdf', bbox_inches = 'tight')
+    plt.savefig('plot.pdf', bbox_inches = 'tight')
 
     print('Z2 topological invariant at kx = 0: {0}'.format(surface_0.invariant()))
     print('Z2 topological invariant at kx = 0.5: {0}'.format(surface_1.invariant()))

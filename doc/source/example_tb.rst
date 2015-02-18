@@ -24,7 +24,7 @@ Using different parameters ``t1`` and ``t2`` and modifying the ``settings`` (cur
                 'move_check': True,
                 'pos_tol': 1e-2,
                 'gap_tol': 2e-2,
-                'move_tol': 0.5,
+                'move_tol': 0.3,
                 'iterator': range(8, 27, 2),
                 'min_neighbour_dist': 1e-2,
                 'use_pickle': True,

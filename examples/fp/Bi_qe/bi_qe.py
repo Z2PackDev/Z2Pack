@@ -64,41 +64,41 @@ if(plotfig):
 # define plane with strings along k1 and k2=0.0
 #
 print("Computing the Z2 invariant for strings along k1 and k2=0.0") 
-Bi_plane = Bi.plane(lambda t: [0, 0, t / 2.], [1, 0, 0], pickle_file = 'results/res1.txt')
+Bi_surface = Bi.surface(lambda t: [0, 0, t / 2.], [1, 0, 0], pickle_file = 'results/res1.txt')
 #
 # compute the wannier centers
 #
-Bi_plane.wcc_calc(no_iter = True, no_neighbour_check = False)
+Bi_surface.wcc_calc(no_iter = True, no_neighbour_check = False)
 #
 # plot the results
 #
 if(plotfig):
   ax=fig.add_subplot(1,2,1)
-  Bi_plane.plot(show= False, axis = ax)
+  Bi_surface.plot(show= False, axis = ax)
 #
 # compute the invariant
 #
-print("Z2 invariant: {0}".format( Bi_plane.invariant()))
+print("Z2 invariant: {0}".format( Bi_surface.invariant()))
 
 #
 # define plane with strings along k1 and k2=0.5
 #
 print("Computing the Z2 invariant for strings along k1 and k2=0.5") 
-Bi_plane = Bi.plane(lambda t: [0, 0.5, t / 2.], [1, 0, 0], pickle_file = 'results/res2.txt')
+Bi_surface = Bi.surface(lambda t: [0, 0.5, t / 2.], [1, 0, 0], pickle_file = 'results/res2.txt')
 #
 # compute the wannier centers
 #
-Bi_plane.wcc_calc(no_iter = True, no_neighbour_check = False)
+Bi_surface.wcc_calc(no_iter = True, no_neighbour_check = False)
 #
 # plot the results
 #
 if(plotfig):
   ax=fig.add_subplot(1,2,2)
-  Bi_plane.plot(show= False, axis = ax)
+  Bi_surface.plot(show= False, axis = ax)
 #
 # compute the invariant
 #
-print("Z2 invariant: {0}".format( Bi_plane.invariant()))
+print("Z2 invariant: {0}".format( Bi_surface.invariant()))
 
 
 

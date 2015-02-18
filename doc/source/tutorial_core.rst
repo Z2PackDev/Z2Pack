@@ -93,7 +93,7 @@ of strings can be changed by setting the ``num_strings`` keyword value.
 Convergence options
 +++++++++++++++++++
 
-* **Convergence of WCC positions along the k-points string (pos check)**
+* **Convergence of WCC positions along the k-points string (POS CHECK)**
 
   The number of k-points along a given string is increased until
   the change in WCC positions is below a certain limit ``pos_tol``. 
@@ -115,14 +115,14 @@ Convergence options
       avoid this, the WCC are sorted not from 0 to 1, but from  the
       largest gap between any two WCC (in both iteration steps) onward.
   
-* **Distance between the largest gap and neighbouring WCC (gap check)**
+* **Distance between the largest gap and neighbouring WCC (GAP CHECK)**
   For a reliable calculation of the Z2 invariant, the middle of the
   largest gap between WCC in a k-point string should not be too close
   to the WCC in its neighbouring strings. If the WCC are closer than
   ``gap_tol``, another string is added in between the two neighbours.
 
   This check can be disabled by setting ``gap_check=False``
-* **Movement of WCC between neighbouring strings (move check)**
+* **Movement of WCC between neighbouring strings (MOVE CHECK)**
   This convergence option checks for the movement of WCC between
   neighbouring strings in the same way the movement of WCC in a single
   string was considered before. The important thing here is that a WCC

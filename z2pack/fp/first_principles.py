@@ -39,12 +39,12 @@ class System(_Z2PackSystem):
         a list, specifying the path for each of the functions.
     :type kpts_path:            str or list of str
 
-    :param build_folder:          Folder where the created input files go
-    :type build_folder:           str
-
     :param command:                 Command to execute the first principles 
         code
     :type command:                  str
+
+    :param build_folder:          Folder where the created input files go
+    :type build_folder:           str
 
     :param executable:              Sets the executable executing the command.
         If nothing is specified, the ``subprocess`` default will be used.
@@ -78,7 +78,7 @@ class System(_Z2PackSystem):
                  build_folder='build',
                  file_names='copy',
                  mmn_path='wannier90.mmn',
-                 clean_build_folder=True,
+                 clean_build=True,
                  **kwargs):
 
         self._system = _FirstPrinciplesSystem(input_files,
@@ -89,7 +89,7 @@ class System(_Z2PackSystem):
                                               executable,
                                               file_names,
                                               mmn_path,
-                                              clean_build_folder)
+                                              clean_build)
         self._defaults = kwargs
 
         def _m_handle_creator_first_principles(edge_fct, string_vec):

@@ -42,7 +42,7 @@ class System:
     defines the :meth:`surface` method, which is used to create :class:`Surface`
     instances.
 
-    :param m_handle_creator: Takes the ``edge_function`` and  ``string_vec`` given to :meth:`surface` and creates an ``m_handle`` s.t. ``m_handle(t, N)`` returns the overlap matrices
+    :param m_handle_creator: Takes the ``edge_fct`` and  ``string_vec`` given to :meth:`surface` and creates an ``m_handle`` s.t. ``m_handle(t, N)`` returns the overlap matrices
     :type m_handle_creator: function
 
     :param kwargs: Keyword arguments are passed to the :class:`Surface` constructor unless overwritten by kwargs to :func:`surface`
@@ -52,16 +52,16 @@ class System:
         self._defaults = kwargs
         self._m_handle_creator = m_handle_creator
 
-    def surface(self, edge_function, string_vec, **kwargs):
+    def surface(self, edge_fct, string_vec, **kwargs):
         r"""
         Creates a :class:`Surface` instance.  The surface's position is
-        specified by a function ``edge_function``: :math:`t \in [0, 1]
+        specified by a function ``edge_fct``: :math:`t \in [0, 1]
         \rightarrow \mathbb{R}^3` (or, if you want to stay in the same
         UC, :math:`[0, 1]^3`) connecting a pumping parameter :math:`t`
         to the edge of the surface. The direction along which the surface
         extends from this edge, then, is given by ``string_vec``.
 
-        :param edge_function: Returns the start of the k-point string
+        :param edge_fct: Returns the start of the k-point string
             as function of the pumping parameter t.
 
         :param string_vec: Direction of the individual k-point strings.
@@ -83,7 +83,7 @@ class System:
         kw_arguments = copy.copy(self._defaults)
         kw_arguments.update(kwargs)
 
-        return Surface(self._m_handle_creator(edge_function, string_vec), edge_function=edge_function, **kw_arguments)
+        return Surface(self._m_handle_creator(edge_fct, string_vec), edge_fct=edge_fct, **kw_arguments)
 
 
 
@@ -102,7 +102,7 @@ class Surface(object):
         the string.
     :type m_handle:         function
 
-    :param edge_function: Returns the start of the k-point string
+    :param edge_fct: Returns the start of the k-point string
         as function of the pumping parameter t.
 
     :param kwargs: Keyword arguments are passed to the :class:`Surface`
@@ -218,10 +218,10 @@ class Surface(object):
     @_validate_kwargs(target=wcc_calc)
     def __init__(self,
                  m_handle,
-                 edge_function,
+                 edge_fct,
                  **kwargs):
         self._m_handle = m_handle
-        self._edge_function = edge_function
+        self._edge_fct = edge_fct
         self._defaults = {'pos_check': True,
                           'gap_check': True,
                           'move_check': True,
@@ -293,7 +293,7 @@ class Surface(object):
         """
         self._t_points = list(np.linspace(0., 1., self._current['num_strings'],
                                           endpoint=True))
-        self._kpt_list = [self._edge_function(t) for t in self._t_points]
+        self._kpt_list = [self._edge_fct(t) for t in self._t_points]
         self._gaps = [None for i in range(self._current['num_strings'])]
         self._gapsize = [None for i in range(self._current['num_strings'])]
         self._wcc_list = [[] for i in range(self._current['num_strings'])]
@@ -322,8 +322,8 @@ class Surface(object):
                             if not self._add_string(i):
                                 t1 = self._t_points[i]
                                 t2 = self._t_points[i + 1]
-                                k1 = string_tools.fl_to_s(self._edge_function(t1), 6)
-                                k2 = string_tools.fl_to_s(self._edge_function(t2), 6)
+                                k1 = string_tools.fl_to_s(self._edge_fct(t1), 6)
+                                k2 = string_tools.fl_to_s(self._edge_fct(t2), 6)
                                 if not neighbour_check:
                                     self._log.log('gap check', t1, k1, t2, k2)
                                 if not move_check:
@@ -365,7 +365,7 @@ class Surface(object):
             self._string_status.insert(i + 1, False)
             self._t_points.insert(i + 1, (self._t_points[i] +
                                   self._t_points[i + 1]) / 2)
-            self._kpt_list.insert(i + 1, self._edge_function(self._t_points[i + 1]))
+            self._kpt_list.insert(i + 1, self._edge_fct(self._t_points[i + 1]))
             self._wcc_list.insert(i + 1, [])
             self._lambda_list.insert(i + 1, [])
             self._gaps.insert(i + 1, None)

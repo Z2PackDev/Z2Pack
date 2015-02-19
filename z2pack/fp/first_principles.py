@@ -92,8 +92,8 @@ class System(_Z2PackSystem):
                                               clean_working_folder)
         self._defaults = kwargs
 
-        def _m_handle_creator_first_principles(edge_function, string_vec):
-            return lambda kx, N: self._system._run(edge_function(kx), string_vec, N)
+        def _m_handle_creator_first_principles(edge_fct, string_vec):
+            return lambda kx, N: self._system._run(edge_fct(kx), string_vec, N)
 
         self._m_handle_creator = _m_handle_creator_first_principles
 

@@ -52,7 +52,7 @@ Z2 invariant should be calculated. This is done with the :meth:`System.surface`
 method.
 
 The basic functionality of :meth:`surface` requires two arguments:
-``edge_function`` and ``string_vec``. The first one, ``edge_function``,
+``edge_fct`` and ``string_vec``. The first one, ``edge_fct``,
 describes a function
 
 .. math::
@@ -165,11 +165,11 @@ If ``use_pickle=True`` is set for :meth:`.wcc_calc` (or when creating the :class
 saved into the path given by ``pickle_files``. They can later be extracted
 by calling :meth:`.load`
 
-.. note:: **Not all** internal variables of the :class:`.Plane` instance **can
-    be pickled**. For example, ``edge_function`` cannot be saved. For this
-    reason, a loaded :class:`Plane` might not always behave exactly the
+.. note:: **Not all** internal variables of the :class:`.Surface` instance **can
+    be pickled**. For example, ``edge_fct`` cannot be saved. For this
+    reason, a loaded :class:`Surface` might not always behave exactly the
     same as a fresh one. To make sure everything is set up properly,
-    create the :class:`.Plane` with the same arguments as when you
+    create the :class:`.Surface` with the same arguments as when you
     initially created it. However, there is no need to re-do the costly
     :meth:`.wcc_calc`.
 

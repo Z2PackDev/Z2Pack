@@ -28,7 +28,7 @@ Bi = z2pack.fp.System(['Bi_nscf.files', 'Bi_nscf.in', 'wannier90.win' ],
                      )
     
 
-# creating the Z2PackPlane object
+# creating the Surface object
 surface_0 = Bi.surface(lambda t: [0, t / 2, 0], [0, 0, 1], pickle_file = './results/Bi_0.txt')
 surface_0 = Bi.surface(lambda t: [0.5, t / 2, 0], [0, 0, 1], pickle_file = './results/Bi_1.txt')
 

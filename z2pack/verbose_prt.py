@@ -18,7 +18,7 @@ class PrintFunctions:
         def inner(self, t):
             # initial output
             _print(self, "Calculating string at t = {:.4f}, k = {}\n".
-                format(t, string_tools.fl_to_s(self._edge_function(t))))
+                format(t, string_tools.fl_to_s(self._edge_fct(t))))
             #-----------------------------------------------------------#
             res = func(self, t)
             #-----------------------------------------------------------#
@@ -32,7 +32,7 @@ class PrintFunctions:
                     _print(self, 'iterator ends, failed to converge!\n\n')
             # check convergence flag
             if not res[-1]:
-                self._log.log('pos check', t, string_tools.fl_to_s(self._edge_function(t)))
+                self._log.log('pos check', t, string_tools.fl_to_s(self._edge_fct(t)))
                     
             return res[:-1] # cut out convergence flag
         return inner

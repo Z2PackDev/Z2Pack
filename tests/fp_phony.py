@@ -31,7 +31,7 @@ class FpPhonyTestCase(CommonTestCase):
             lambda x, y, z, N: '',
             "kpts",
             "",
-            working_folder='samples' + self._sep + 'build')
+            build_folder='samples' + self._sep + 'build')
 
         surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], use_pickle=False)
 
@@ -1134,7 +1134,7 @@ class FpPhonyTestCase(CommonTestCase):
             lambda x, y, z, N: '',
             "kpts",
             "",
-            working_folder='samples' + self._sep + 'build',
+            build_folder='samples' + self._sep + 'build',
             file_names='wannier90.mmn')
 
         surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], use_pickle=False)
@@ -2239,7 +2239,7 @@ class FpPhonyTestCase(CommonTestCase):
             lambda x, y, z, N: '',
             "kpts",
             "",
-            working_folder='samples' + self._sep + 'build',
+            build_folder='samples' + self._sep + 'build',
             mmn_path='varw90.mmn')
 
         surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], use_pickle=False)

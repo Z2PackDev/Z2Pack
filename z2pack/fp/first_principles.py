@@ -39,8 +39,8 @@ class System(_Z2PackSystem):
         a list, specifying the path for each of the functions.
     :type kpts_path:            str or list of str
 
-    :param working_folder:          Folder where the created input files go
-    :type working_folder:           str
+    :param build_folder:          Folder where the created input files go
+    :type build_folder:           str
 
     :param command:                 Command to execute the first principles 
         code
@@ -51,7 +51,7 @@ class System(_Z2PackSystem):
     :type executable:               str
 
     :param file_names:              Name(s) the input file(s) should get 
-        in the ``working_folder``. Default behaviour is taking the filenames 
+        in the ``build_folder``. Default behaviour is taking the filenames 
         from the input files.
     :type file_names:               str or list
 
@@ -59,15 +59,15 @@ class System(_Z2PackSystem):
         ``Wannier90``
     :type mmn_path:                 str
 
-    :param clean_subfolder:         Toggles deleting the content of 
-        ``working_folder`` before starting a new calculation.
-    :type clean_subfolder:          bool
+    :param clean_build:         Toggles deleting the content of 
+        ``build_folder`` before starting a new calculation.
+    :type clean_build:          bool
 
     :param kwargs:                  Are passed to the :class:`.Surface` 
         constructor via :meth:`.surface`. More recent arguments take precendence.
 
-    .. note:: ``input_files`` and ``working_folder`` can be absolute or relative 
-        paths, the rest is relative ``to working_folder``
+    .. note:: ``input_files`` and ``build_folder`` can be absolute or relative 
+        paths, the rest is relative ``to build_folder``
     """
     def __init__(self,
                  input_files,
@@ -75,21 +75,21 @@ class System(_Z2PackSystem):
                  kpts_path,
                  command,
                  executable=None,
-                 working_folder='build',
+                 build_folder='build',
                  file_names='copy',
                  mmn_path='wannier90.mmn',
-                 clean_working_folder=True,
+                 clean_build_folder=True,
                  **kwargs):
 
         self._system = _FirstPrinciplesSystem(input_files,
                                               kpts_fct,
                                               kpts_path,
-                                              working_folder,
+                                              build_folder,
                                               command,
                                               executable,
                                               file_names,
                                               mmn_path,
-                                              clean_working_folder)
+                                              clean_build_folder)
         self._defaults = kwargs
 
         def _m_handle_creator_first_principles(edge_fct, string_vec):
@@ -104,12 +104,12 @@ class _FirstPrinciplesSystem:
                  input_files,
                  kpts_fct,
                  kpts_path,
-                 working_folder,
+                 build_folder,
                  command,
                  executable=None,
                  file_names='copy',
                  mmn_path='wannier90.mmn',
-                 clean_subfolder=True):
+                 clean_build=True):
         """
         args:
         ~~~~
@@ -120,7 +120,7 @@ class _FirstPrinciplesSystem:
                                 will append to a file if it matches one
                                 of file_names, create a separate file
                                 else
-        working_folder:         folder where the created input files go
+        build_folder:         folder where the created input files go
         command:                command to execute the first principles
                                 code
 
@@ -130,14 +130,14 @@ class _FirstPrinciplesSystem:
                                 put 'copy' -> same as input_files
         mmn_path:               path of the .mmn file (default:
                                 wannier90.mmn)
-        clean_subfolder:        toggles deleting content of
-                                working_folder before starting a new
+        clean_build:        toggles deleting content of
+                                build_folder before starting a new
                                 calculation
 
         file paths:
         ~~~~~~~~~~
-        input_files and working_folder can be absolute or relative
-        paths, the rest is relative to working_folder
+        input_files and build_folder can be absolute or relative
+        paths, the rest is relative to build_folder
         """
         # catch Windows
         if(re.match('Windows', platform.platform(), re.IGNORECASE)):
@@ -202,62 +202,62 @@ class _FirstPrinciplesSystem:
                 'the same length'.format(
                     len(self._kpts_path), len(self._kpts_fct)))
         self._mmn_path = mmn_path
-        self._clean_subfolder = clean_subfolder
+        self._clean_build = clean_build
 
         self._calling_path = os.getcwd()
 
         # working folder given as string
-        if(isinstance(working_folder, str)):
-            self._create_working_folder(working_folder)
+        if(isinstance(build_folder, str)):
+            self._create_build_folder(build_folder)
         # working folder given as a function of counter
         else:
             self._counter = 0
-            self._working_folder_fct = working_folder
+            self._build_folder_fct = build_folder
 
-    def _create_working_folder(self, working_folder):
+    def _create_build_folder(self, build_folder):
         # check all paths: absolute / relative?
         # absolute
-        if(working_folder[0] == self._sep or working_folder[0] == "~"):
-            self._working_folder = working_folder
+        if(build_folder[0] == self._sep or build_folder[0] == "~"):
+            self._build_folder = build_folder
         else:  # relative
-            self._working_folder = (self._calling_path +
-                                    self._sep + working_folder)
-        # make file_names absolute (assumed to be relative to working_folder)
+            self._build_folder = (self._calling_path +
+                                    self._sep + build_folder)
+        # make file_names absolute (assumed to be relative to build_folder)
         self._file_names_abs = []
         for i in range(len(self._file_names)):
-            self._file_names_abs.append(self._working_folder + self._sep +
+            self._file_names_abs.append(self._build_folder + self._sep +
                                         self._file_names[i])
 
         self._kpts_path_abs = []
         for path in self._kpts_path:
             self._kpts_path_abs.append(
-                self._working_folder + self._sep + path)
-        self._mmn_path_abs = self._working_folder + self._sep + self._mmn_path
+                self._build_folder + self._sep + path)
+        self._mmn_path_abs = self._build_folder + self._sep + self._mmn_path
 
         # create working folder if it doesn't exist
-        if not(os.path.isdir(self._working_folder)):
-            subprocess.call("mkdir " + self._working_folder, shell=True)
+        if not(os.path.isdir(self._build_folder)):
+            subprocess.call("mkdir " + self._build_folder, shell=True)
 
     def _create_input(self, *args):
         try:
             self._counter += 1
-            self._create_working_folder(
-                self._working_folder_fct(self._counter))
+            self._create_build_folder(
+                self._build_folder_fct(self._counter))
         except (AttributeError, NameError):
             pass
 
-        if(self._clean_subfolder):
+        if(self._clean_build):
             if not(self._is_windows):
-                subprocess.call('rm -rf ' + self._working_folder + self._sep
+                subprocess.call('rm -rf ' + self._build_folder + self._sep
                                 + "*", shell=True)
             else:
                 try:
-                    subprocess.call('del ' + self._working_folder + self._sep
+                    subprocess.call('del ' + self._build_folder + self._sep
                                     + '* /S /Q', shell=True)
                 except OSError:  # if there is no file to delete
                     pass
                 try:
-                    subprocess.call('for /d %x in (' + self._working_folder
+                    subprocess.call('for /d %x in (' + self._build_folder
                                     + self._sep + '*) do rd /S /Q "%x"')
                 except OSError:  # if there is no folder to delete
                     pass
@@ -285,13 +285,13 @@ class _FirstPrinciplesSystem:
         if(self._executable is not None):
             subprocess.call(
                 self._command,
-                cwd=self._working_folder,
+                cwd=self._build_folder,
                 shell=True,
                 executable=self._executable)
         else:
             subprocess.call(
                 self._command,
-                cwd=self._working_folder,
+                cwd=self._build_folder,
                 shell=True)
 
         # read mmn file

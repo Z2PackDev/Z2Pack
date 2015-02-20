@@ -240,6 +240,15 @@ class TbExampleTestCase(CommonTestCase):
 
         self.assertDictAlmostEqual(tb_surface.get_res(), res)
 
+    def test_saveload(self):
+        self.createH(0.1, 0.3)
+        tb_system = z2pack.tb.System(self.H)
+        surface1 = tb_system.surface(lambda kx: [kx / 2, 0, 0], [0, 1, 0], pickle_file='samples/tb_pickle.txt')
+        surface2 = tb_system.surface(lambda kx: [kx / 2, 0, 0], [0, 1, 0], pickle_file='samples/tb_pickle.txt')
+        surface1.wcc_calc(verbose=False)
+        surface2.load()
+        self.assertDictAlmostEqual(surface1.get_res(), surface2.get_res())
+
     def testkwargcheck1(self):
         """ test kwarg check on wcc_calc """
         self.createH(0.1, 0.3)

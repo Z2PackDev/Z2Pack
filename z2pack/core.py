@@ -531,7 +531,7 @@ class Surface(object):
 
         Only works if ``use_pickle == True`` and the path to ``pickle_file`` exists.
         """
-        to_save = ['_t_points', '_wcc_list', '_gaps', '_gapsize', '_lambda_list']
+        to_save = ['_t_points', '_kpt_list', '_wcc_list', '_gaps', '_gapsize', '_lambda_list']
         data = dict((k, v) for k, v in self.__dict__.items() if k in to_save)
 
         if(self._current['use_pickle']):
@@ -558,8 +558,8 @@ def _convcheck(list_a, list_b, epsilon):
     full_list = copy.deepcopy(list_a)
     full_list.extend(list_b)
     gap = _gapfind(full_list)[0]
-    a_mod = sorted([(x + 1 - gap) for x in list_a])
-    b_mod = sorted([x + 1 - gap for x in list_b])
+    a_mod = sorted([(x + 1 - gap) % 1 for x in list_a])
+    b_mod = sorted([(x + 1 - gap) % 1 for x in list_b])
     for i in range(len(a_mod)):
         if _dist(a_mod[i], b_mod[i]) > epsilon:
             return False
@@ -596,6 +596,8 @@ def _dist(x, y):
     Returns the smallest distance on the periodic [0, 1) between x, y
     where x, y should be in [0, 1)
     """
+    x = x % 1
+    y = y % 1
     return min(abs(1 + x - y) % 1, abs(1 - x + y) % 1)
 
 

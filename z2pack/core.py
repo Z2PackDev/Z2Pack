@@ -9,7 +9,7 @@
 Implementation of Core functionality
 """
 
-from __future__ import division, print_function
+from __future__ import division
 
 
 from .ptools import string_tools

@@ -17,7 +17,6 @@ from .ptools import logger
 
 from . import verbose_prt
 
-
 import re
 import sys
 import copy
@@ -26,10 +25,6 @@ import decorator
 import itertools
 import numpy as np
 import scipy.linalg as la
-import matplotlib
-import matplotlib.cbook
-import matplotlib.pyplot as plt
-
 
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
@@ -462,12 +457,15 @@ class Surface(object):
         :returns:       :class:`matplotlib figure` instance (only if 
             ``ax == None``)
 
-        .. note:: This plotting tool is meant as a quick way of 
-            looking at the results calculated by Z2Pack, and features 
-            very little flexibility. If you wish to create beautiful 
-            plots, it is recommended to fetch the data with 
+        .. note:: This plotting tool is meant mainly as a quick way of 
+            looking at the results calculated by Z2Pack, and has 
+            limited flexibility. If you wish to create beautiful 
+            plots, it might be necessary to fetch the data with 
             :meth:`.get_res()` and utilize the full power of matplotlib.
         """
+        import matplotlib
+        import matplotlib.cbook
+        import matplotlib.pyplot as plt
         shift = shift % 1
         if not axis:
             return_fig = True

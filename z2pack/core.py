@@ -117,8 +117,7 @@ class Surface(object):
                 doc = func.__doc__
             else:
                 doc = target.__doc__
-            valid_kwargs = [text.lstrip(' ').split(':')[0]
-                            for text in doc.split(':param')[1:]]
+            valid_kwargs = re.findall(':[\s]*param[\s]+([^:\s]+)', doc)
             for key in kwargs.keys():
                 if key not in valid_kwargs:
                     if target is None:

@@ -434,9 +434,14 @@ class Surface(object):
         """
         return str(self._log)
 
-    def plot(self, shift=0, show=True, axis=None):
-        """
-        Plots the WCCs and the largest gaps (y-axis) against the t-points \
+    def plot(self,
+             shift=0,
+             show=True,
+             axis=None,
+             wcc_settings={'s': 50., 'lw': 1., 'facecolor': 'none'},
+             gap_settings={'marker': 'D', 'color': 'b', 'linestyle': 'none'}):
+        r"""
+        Plots the WCCs and the largest gaps (y-axis) against the t-points 
         (x-axis).
 
         :param shift:   Shifts the plot in the y-axis
@@ -448,13 +453,19 @@ class Surface(object):
         :param ax:      Axis where the plot is drawn
         :type ax:       :mod:`matplotlib` ``axis``
 
-        :returns:       :class:`matplotlib figure` instance (only if \
-        ``ax == None``)
+        :param wcc_settings:    Keyword arguments for the scatter plot of the wcc
+            positions. 
 
-        .. note:: This plotting tool is meant as a quick way of \
-            looking at the results calculated by Z2Pack, and features \
-            very little flexibility. If you wish to create beautiful \
-            plots, it is highly recommended to fetch the data with \
+        :param gap_settings:    Keyword arguments for the plot of the gap
+            positions. 
+
+        :returns:       :class:`matplotlib figure` instance (only if 
+            ``ax == None``)
+
+        .. note:: This plotting tool is meant as a quick way of 
+            looking at the results calculated by Z2Pack, and features 
+            very little flexibility. If you wish to create beautiful 
+            plots, it is recommended to fetch the data with 
             :meth:`.get_res()` and utilize the full power of matplotlib.
         """
         shift = shift % 1
@@ -466,28 +477,13 @@ class Surface(object):
             return_fig = False
         axis.set_ylim(0, 1)
         axis.set_xlim(-0.01, 1.01)
-        axis.plot(self._t_points, [(x + shift) % 1 for x in self._gaps], 'bD')
-        # add plots with +/- 1 to ensure periodicity
-        axis.plot(self._t_points, [(x + shift) % 1 + 1 for x in self._gaps],
-                  'bD')
-        axis.plot(self._t_points, [(x + shift) % 1 - 1 for x in self._gaps],
-                  'bD')
+        for offset in [-1, 0, 1]:
+            axis.plot(self._t_points, [(x + shift) % 1 + offset for x in self._gaps], **gap_settings)
         for i, kpt in enumerate(self._t_points):
-            axis.plot([kpt] * len(self._wcc_list[i]),
-                      [(x + shift) % 1 for x in self._wcc_list[i]],
-                      "ro")
-            # add plots with +/- 1 to ensure periodicity
-            axis.plot([kpt] * len(self._wcc_list[i]),
-                      [(x + shift) % 1 + 1 for x in self._wcc_list[i]],
-                      "ro")
-            axis.plot([kpt] * len(self._wcc_list[i]),
-                      [(x + shift) % 1 - 1 for x in self._wcc_list[i]],
-                      "ro")
-        #~ axis.set_xlabel(r'$t$')
-        axis.set_xticks([0, 1])
-        axis.set_xticklabels(['0', '1'])
-        axis.set_ylabel('x', rotation='horizontal')
-        axis.set_xlabel('t')
+            for offset in [-1, 0, 1]:
+                axis.scatter([kpt] * len(self._wcc_list[i]),
+                             [(x + shift) % 1 + offset for x in self._wcc_list[i]],
+                             **wcc_settings)
         if(show):
             plt.show()
         if return_fig:

@@ -1,5 +1,5 @@
 # Python binaries
-**/*.pyc
+*.pyc
 *__pycache__*
 
 # hidden files garbage
@@ -15,10 +15,10 @@ build
 results*
 status.txt
 HgTe_strain*
-**/scf_files
+scf_files
 res_pickle.txt
-examples/tb/results/*
-examples/fp/**/results/*
+examples/tb/results
+examples/fp/**/results
 
 # Installation/setup related
 dist

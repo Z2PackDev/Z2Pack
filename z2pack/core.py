@@ -31,7 +31,7 @@ import scipy.linalg as la
 #                           LIBRARY CORE                                #
 #-----------------------------------------------------------------------#
 #-----------------------------------------------------------------------#
-class System:
+class System(object):
     r"""
     Describes the interface a Z2Pack specialisation must fulfil. Also, it
     defines the :meth:`surface` method, which is used to create :class:`Surface`

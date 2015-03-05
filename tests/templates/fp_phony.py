@@ -66,7 +66,7 @@ class FpPhonyTestCase(CommonTestCase):
 
         surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], use_pickle=False)
 
-        surface.wcc_calc(verbose=False)
+        self.assertRaises(ValueError, surface.wcc_calc, verbose=False)
         self.assertDictAlmostEqual(
             surface.get_res(), in_place_replace(surface.get_res()))
 

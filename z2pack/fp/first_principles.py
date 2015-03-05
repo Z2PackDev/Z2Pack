@@ -295,7 +295,12 @@ class _FirstPrinciplesSystem:
                 shell=True)
 
         # read mmn file
-        return mmn.getM(self._mmn_path_abs)
+        M = mmn.getM(self._mmn_path_abs)
+        if len(M) == 0:
+            raise ValueError('No overlap matrices were found. Maybe switch from shell_list to search_shells in wannier90.win or add more k-points to the string.')
+        if len(M) != N:
+            raise ValueError('The number of overlap matrices found is {}, but should be {}. Maybe check search_shells in wannier90.win'.format(len(M), N))
+        return M
 
 def _copy(initial_paths, final_names):
     """

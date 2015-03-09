@@ -198,6 +198,10 @@ class Surface(object):
         :param verbose:             Toggles printed output ``Default: True``
         :type verbose:              bool
 
+        :param overwrite:           Toggles whether existing data should be
+            overwritten or used to re-start a run.
+        :type overwrite:            bool
+
         :returns:                   ``None``. Use :meth:`get_res` and
             :meth:`invariant` to get the results.
         """
@@ -227,7 +231,9 @@ class Surface(object):
                           'use_pickle': True,
                           'pickle_file': 'res_pickle.txt',
                           'num_strings': 11,
-                          'verbose': True}
+                          'verbose': True,
+                          'overwrite': False,
+                          }
         self._defaults.update(kwargs)
         self._current = copy.deepcopy(self._defaults)
         self._log = logger.Logger(logger.ConvFail('pos check', 't = {}, k = {}'),
@@ -285,17 +291,21 @@ class Surface(object):
         """
         initialization - creating data containers
         """
-        self._t_points = list(np.linspace(0., 1., self._current['num_strings'],
-                                          endpoint=True))
-        self._kpt_list = [self._edge_fct(t) for t in self._t_points]
-        self._gaps = [None for i in range(self._current['num_strings'])]
-        self._gapsize = [None for i in range(self._current['num_strings'])]
-        self._wcc_list = [[] for i in range(self._current['num_strings'])]
-        self._lambda_list = [[] for i in range(self._current['num_strings'])]
+        if (not hasattr(self, '_wcc_list')) or self._current['overwrite']:
+            self._wcc_list = [[] for i in range(self._current['num_strings'])]
+            self._t_points = list(np.linspace(0., 1., self._current['num_strings'],
+                                              endpoint=True))
+            self._kpt_list = [self._edge_fct(t) for t in self._t_points]
+            self._gaps = [None for i in range(self._current['num_strings'])]
+            self._gapsize = [None for i in range(self._current['num_strings'])]
+            self._lambda_list = [[] for i in range(self._current['num_strings'])]
+            self._string_status = [False for i in
+                                   range(self._current['num_strings'])]
+        # this is DELIBERATELY always overwritten to allow changing the
+        # move_tol and gap_tol parameters between reloaded runs.
+        # It is inexpensive to recreate in the opposite case. 
         self._neighbour_check = [False for i in
-                                 range(self._current['num_strings'] - 1)]
-        self._string_status = [False for i in
-                               range(self._current['num_strings'])]
+                                 range(len(self._wcc_list) - 1)]
 
     @verbose_prt.dispatcher
     def _check_neighbours(self):

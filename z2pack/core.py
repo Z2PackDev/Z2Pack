@@ -149,37 +149,29 @@ class Surface(object):
         :param num_strings:         Initial number of strings ``Default: 11``
         :type num_strings:          int
 
-        :param pos_check:           Toggles the automated iteration of the
-            number of k-points in a string for convergence of the WCC
-            positions. ``Default: True``
-        :type pos_check:            bool
-
-        :param gap_check:           Turns on the check for the distance
-            between the largest gap and WCC in neighbouring strings.
-            ``Default: True``
-        :type gap_check:   bool
-
-        :param move_check:       Toggles checking the movement of
-            WCC between neighbouring strings. ``Default: True``
-        :type move_check:        bool
-
-        :param pos_tol:             Maximum movement of a WCC between two
-            steps for convergence. ``Default: 1e-2``
+        :param pos_tol:     The maximum movement of a WCC for the iteration
+            w.r.t. the number of k-points in a single string to converge.
+            The iteration can be turned off by setting ``pos_tol=None``.
+            ``Default: 1e-2``
         :type pos_tol:              float
 
-        :param gap_tol:             Smallest tolerated distance between the
-            gap and neighbouring WCCs ``Default: 2e-2``
+        :param gap_tol:     Smallest distance between a gap and its
+            neighbouring WCC for the gap check to be satisfied.
+            The check can be turned off by setting ``gap_tol=None``.
+            ``Default: 2e-2``
         :type gap_tol:              float
 
-        :param move_tol:   Scaling factor for the maximum allowed
+        :param move_tol:    Scaling factor for the maximum allowed
             movement between neighbouring wcc. The factor is multiplied by
             the size of the largest gap between two wcc (from the two
-            neighbouring strings, the smaller value is chosen). ``Default: 0.3``
+            neighbouring strings, the smaller value is chosen). The check
+            can be turned off by setting ``move_tol=None``.
+            ``Default: 0.3``
         :type move_tol:    float
 
         :param iterator:            Generator for the number of points in
             a k-point string. The iterator should also take care of the maximum
-            number of iterations. It is needed even when ``pos_check=False``, to
+            number of iterations. It is needed even when ``pos_tol=None``, to
             provide a starting value. ``Default: range(8, 27, 2)``.
 
         :param min_neighbour_dist:  Minimum distance between two strings (no
@@ -187,12 +179,8 @@ class Surface(object):
             ``Default: 0.01``
         :type min_neighbour_dist:   float
 
-        :param use_pickle:          Toggles using the :mod:`pickle` module
-            for saving ``Default: True``
-        :type use_pickle:           bool
-
         :param pickle_file:     Path to a file where the results are stored using
-            the :py:mod:`pickle` module.
+            the :py:mod:`pickle` module. Can be ``None`` to disable pickling.
         :type pickle_file:      str
 
         :param verbose:             Toggles printed output ``Default: True``
@@ -220,15 +208,12 @@ class Surface(object):
                  **kwargs):
         self._m_handle = m_handle
         self._edge_fct = edge_fct
-        self._defaults = {'pos_check': True,
-                          'gap_check': True,
-                          'move_check': True,
+        self._defaults = {
                           'pos_tol': 1e-2,
                           'gap_tol': 2e-2,
                           'move_tol': 0.3,
                           'iterator': range(8, 27, 2),
                           'min_neighbour_dist': 0.01,
-                          'use_pickle': True,
                           'pickle_file': 'res_pickle.txt',
                           'num_strings': 11,
                           'verbose': True,
@@ -273,19 +258,14 @@ class Surface(object):
         if(self._current['num_strings'] < 2):
             raise ValueError("num_strings must be at least 2")
 
-        if not self._current['pos_check']:
+        if self._current['pos_tol'] is None:
             if not(hasattr(self._current['iterator'], '__next__')):
                 self._current['iterator'] = iter(self._current['iterator'])
             # iterator shouldn't be deleted (used for first step also)
-            # instead, it is modified to reflect pos_check=False
+            # instead, it is modified to reflect pos_tol=None
             self._current['iterator'] = [next(self._current['iterator'])]
-            del self._current['pos_tol']
-        if not self._current['gap_check']:
-            del self._current['gap_tol']
-        if not self._current['move_check']:
-            del self._current['move_tol']
-            if self._current['gap_check']:
-                del self._current['min_neighbour_dist']
+        if (self._current['gap_tol'] is None) and (self._current['move_tol'] is None):
+            del self._current['min_neighbour_dist']
 
     def _var_init(self):
         """
@@ -315,7 +295,7 @@ class Surface(object):
         - adds at most one k_point per run
         - returns Boolean: all neighbour conditions fulfilled <=> True
         """
-        if not (self._current['gap_check'] or self._current['move_check']):
+        if (self._current['gap_tol'] is None) and (self._current['move_tol'] is None):
             return None
         else:
             for i, status in enumerate(self._neighbour_check):
@@ -345,9 +325,9 @@ class Surface(object):
         """
         neighbour_check = True
         move_check = True
-        if self._current['gap_check']:
+        if self._current['gap_tol'] is not None:
             neighbour_check = self._check_gap_distance(i)
-        if self._current['move_check']:
+        if self._current['move_tol'] is not None:
             tolerance = self._current['move_tol'] * min(self._gapsize[i], self._gapsize[i + 1])
             move_check = _convcheck(self._wcc_list[i], self._wcc_list[i + 1], tolerance)
         if neighbour_check and move_check:
@@ -401,7 +381,7 @@ class Surface(object):
         N = next(iterator)
         x, min_sv, lambda_ = self._trywcc(self._m_handle(t, N))
 
-        if self._current['pos_check']:
+        if self._current['pos_tol'] is not None:
             for N in iterator:
                 xold = copy.copy(x)
                 x, min_sv, lambda_ = self._trywcc(self._m_handle(t, N))
@@ -529,27 +509,34 @@ class Surface(object):
     # pickle: save and load
     def save(self):
         """
-        Saves the t-points, WCC, gap positions and sizes and Lambda \
-        matrices to a pickle file.
+        Saves the data (t-points, k-points, wcc, gaps, gap sizes,
+        lambda matrices, string statuses) to a pickle file.
 
-        Only works if ``use_pickle == True`` and the path to ``pickle_file`` exists.
+        Only works if ``pickle_file`` is not ``None`` and the path to ``pickle_file`` exists.
         """
         to_save = ['_t_points', '_kpt_list', '_wcc_list', '_gaps', '_gapsize', '_lambda_list', '_string_status']
         data = dict((k, v) for k, v in self.__dict__.items() if k in to_save)
 
-        if(self._current['use_pickle']):
+        if self._current['pickle_file'] is not None:
             with open(self._current['pickle_file'], "wb") as f:
                 pickle.dump(data, f)
 
-    def load(self):
-        """
+    def load(self, quiet=False):
+        r"""
         Loads the data (e.g. from a previous run) from the :mod:`pickle` file.
+
+        :param quiet:   If True, load does not raise an Error if there is
+            no pickle file. Default: ``False``
+        :type quiet:    bool
         """
-
-        with open(self._current['pickle_file'], "rb") as f:
-            res = pickle.load(f)
-
-            self.__dict__.update(res)
+        try:
+            with open(self._current['pickle_file'], "rb") as f:
+                res = pickle.load(f)
+                self.__dict__.update(res)
+        except IOError as e:
+            if not quiet:
+                raise e
+        
 
 #-------------------------------------------------------------------#
 #                CLASS - independent functions                      #

@@ -53,7 +53,7 @@ class TbExampleTestCase(CommonTestCase):
         # call to Z2Pack
         tb_system = z2pack.tb.System(self.H)
         tb_surface = tb_system.surface(lambda kx: [kx / 2, 0, 0], [0, 1, 0])
-        tb_surface.wcc_calc(verbose=False, num_strings=20, use_pickle=False)
+        tb_surface.wcc_calc(verbose=False, num_strings=20, pickle_file=None)
         
         res = in_place_replace(tb_surface.get_res())
 
@@ -66,55 +66,55 @@ class TbExampleTestCase(CommonTestCase):
         tb_system = z2pack.tb.System(self.H)
         tb_surface = tb_system.surface(lambda kx: [kx / 2, 0, 0], [0, 1, 0])
         tb_surface.wcc_calc(verbose=False,
-                          num_strings=20,
-                          use_pickle=False,
-                          pos_check=False)
+                            num_strings=20,
+                            pickle_file=None,
+                            pos_tol=None)
 
         res = in_place_replace(tb_surface.get_res())
 
         self.assertDictAlmostEqual(tb_surface.get_res(), res)
 
     def test_res3(self):
-        """ test gap_check=False """
-        self.createH(0.1, 0.3)
-        # call to Z2Pack
-        tb_system = z2pack.tb.System(self.H)
-        tb_surface = tb_system.surface(lambda kx: [kx / 2, 0, 0], [0, 1, 0])
-        tb_surface.wcc_calc(verbose=False,
-                          num_strings=20,
-                          use_pickle=False,
-                          gap_check=False)
-
-        res = in_place_replace(tb_surface.get_res())
-
-        self.assertDictAlmostEqual(tb_surface.get_res(), res)
-
-    def test_res4(self):
-        """ test move_check=False """
-        self.createH(0.1, 0.3)
-        # call to Z2Pack
-        tb_system = z2pack.tb.System(self.H)
-        tb_surface = tb_system.surface(lambda kx: [kx / 2, 0, 0], [0, 1, 0])
-        tb_surface.wcc_calc(verbose=False,
-                          num_strings=20,
-                          use_pickle=False,
-                          move_check=False)
-
-        res = in_place_replace(tb_surface.get_res())
-
-        self.assertDictAlmostEqual(tb_surface.get_res(), res)
-
-    def test_res5(self):
-        """ test gap_check=False and move_check=False"""
+        """ test gap_tol=None """
         self.createH(0.1, 0.3)
         # call to Z2Pack
         tb_system = z2pack.tb.System(self.H)
         tb_surface = tb_system.surface(lambda kx: [kx / 2, 0, 0], [0, 1, 0])
         tb_surface.wcc_calc(verbose=False,
                             num_strings=20,
-                            use_pickle=False,
-                            gap_check=False,
-                            move_check=False)
+                            pickle_file=None,
+                            gap_tol=None)
+
+        res = in_place_replace(tb_surface.get_res())
+
+        self.assertDictAlmostEqual(tb_surface.get_res(), res)
+
+    def test_res4(self):
+        """ test move_tol=None """
+        self.createH(0.1, 0.3)
+        # call to Z2Pack
+        tb_system = z2pack.tb.System(self.H)
+        tb_surface = tb_system.surface(lambda kx: [kx / 2, 0, 0], [0, 1, 0])
+        tb_surface.wcc_calc(verbose=False,
+                          num_strings=20,
+                          pickle_file=None,
+                          move_tol=None)
+
+        res = in_place_replace(tb_surface.get_res())
+
+        self.assertDictAlmostEqual(tb_surface.get_res(), res)
+
+    def test_res5(self):
+        """ test gap_tol=None and move_tol=None"""
+        self.createH(0.1, 0.3)
+        # call to Z2Pack
+        tb_system = z2pack.tb.System(self.H)
+        tb_surface = tb_system.surface(lambda kx: [kx / 2, 0, 0], [0, 1, 0])
+        tb_surface.wcc_calc(verbose=False,
+                            num_strings=20,
+                            pickle_file=None,
+                            gap_tol=None,
+                            move_tol=None)
 
         res = in_place_replace(tb_surface.get_res())
 

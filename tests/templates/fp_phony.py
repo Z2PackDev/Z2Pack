@@ -33,9 +33,9 @@ class FpPhonyTestCase(CommonTestCase):
             "",
             build_folder='samples' + self._sep + 'build')
 
-        surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], use_pickle=False)
+        surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], pickle_file=None)
 
-        surface.wcc_calc(pos_check=False, gap_check=False, verbose=False)
+        surface.wcc_calc(pos_tol=None, gap_tol=None, verbose=False)
         self.assertDictAlmostEqual(
             surface.get_res(), in_place_replace(surface.get_res()))
 
@@ -48,9 +48,9 @@ class FpPhonyTestCase(CommonTestCase):
             build_folder='samples' + self._sep + 'build',
             file_names='wannier90.mmn')
 
-        surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], use_pickle=False)
+        surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], pickle_file=None)
 
-        surface.wcc_calc(pos_check=False, gap_check=False, verbose=False)
+        surface.wcc_calc(pos_tol=None, gap_tol=None, verbose=False)
         self.assertDictAlmostEqual(
             surface.get_res(), in_place_replace(surface.get_res()))
 
@@ -64,7 +64,7 @@ class FpPhonyTestCase(CommonTestCase):
             build_folder='samples' + self._sep + 'build',
             mmn_path='varw90.mmn')
 
-        surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], use_pickle=False)
+        surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], pickle_file=None)
 
         self.assertRaises(ValueError, surface.wcc_calc, verbose=False)
         self.assertDictAlmostEqual(

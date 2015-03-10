@@ -22,7 +22,7 @@ class PrintFunctions:
             #-----------------------------------------------------------#
             res = func(self, t)
             #-----------------------------------------------------------#
-            if not self._current['pos_check']:
+            if self._current['pos_tol'] is None:
                 _print(self, 'no iteration\n\n')
             else:
                 # check convergence flag

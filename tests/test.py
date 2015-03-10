@@ -16,6 +16,19 @@ expr = re.compile(r'\.py$')
 imports all classes inherited from unittest.TestCase from modules located
 in the test folder
 """
+
+# TODO:
+# - test quiet / non-quiet mode for load.
+#       - assertRaises for non-quiet
+#       - simple load of dummy filename for quiet
+# - test checkpoint restart
+#       - test that they are not redone by removing pos_check -> difference
+#       - test that num_strings does not change anything
+#       - re-create system with same pickle-file and check consistency
+#         after both have run again
+#       - basic test with changed move_tol -> should produce the same
+#         result as changing move_tol in the beginning
+
 exclude_list = ['test.py', 'create_tests.py']
 for filename in os.listdir(os.path.dirname(os.path.abspath(__file__))):
     if(filename in exclude_list):

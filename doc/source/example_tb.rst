@@ -14,10 +14,7 @@ Using different parameters ``t1`` and ``t2`` and modifying the ``settings`` (cur
 
     # Settings used for wcc_calc. Feel free to play around with the different
     # options.
-    settings = {'num_strings': 11,
-                'pos_check': True,
-                'gap_check': True,
-                'move_check': True,
+    settings = {
                 'pos_tol': 1e-2,
                 'gap_tol': 2e-2,
                 'move_tol': 0.3,

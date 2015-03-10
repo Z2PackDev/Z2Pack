@@ -103,7 +103,7 @@ Convergence options
   integers. For example, ``iterator=range(10, 31, 4)`` would mean the
   number of k-points goes from 10 to 30 in steps of 4.
 
-  Iteration along the string can be turned off by setting ``pos_check=False``.
+  Iteration along the string can be turned off by setting ``pos_tol=None``.
   The first value yielded by the ``iterator`` is then used as the
   number of k-points used.
 
@@ -121,7 +121,7 @@ Convergence options
   to the WCC in its neighbouring strings. If the WCC are closer than
   ``gap_tol``, another string is added in between the two neighbours.
 
-  This check can be disabled by setting ``gap_check=False``
+  This check can be disabled by setting ``gap_tol=None``
 * **Movement of WCC between neighbouring strings (MOVE CHECK)**
   This convergence option checks for the movement of WCC between
   neighbouring strings in the same way the movement of WCC in a single
@@ -135,7 +135,7 @@ Convergence options
   test can help focusing the calculation on the important values where
   the WCC change faster.
   
-  This check can be disabled by setting ``move_check=False``
+  This check can be disabled by setting ``move_tol=None``
 
 * **Minimum distane between neighbouring strings**
   For both the check for distance between the largest gap and its

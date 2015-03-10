@@ -39,7 +39,7 @@ settings1 = {'num_strings': 4,
             'use_pickle': True,
             'pickle_file': 'res_pickle.txt',
             'verbose': True,
-            'overwrite': True
+            'overwrite': False
            }
 
 H = tb.Hamilton()
@@ -58,10 +58,11 @@ H.add_hopping((((1, 1), (1, 1)),((1, 0), (1, 0))), tb.vectors.neighbours([0,1]),
 
 tb_system = tb.System(H)
 tb_surface = tb_system.surface(lambda kx: [kx / 2., 0, 0], [0, 1, 0])
-
-tb_surface.wcc_calc(**settings0)
-tb_surface.plot()
-
+#~ 
+#~ tb_surface.wcc_calc(**settings0)
+#~ tb_surface.plot()
+#~ 
+tb_surface.load()
 tb_surface.wcc_calc(**settings1)
 tb_surface.plot()
 

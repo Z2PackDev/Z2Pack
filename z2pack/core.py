@@ -534,7 +534,7 @@ class Surface(object):
 
         Only works if ``use_pickle == True`` and the path to ``pickle_file`` exists.
         """
-        to_save = ['_t_points', '_kpt_list', '_wcc_list', '_gaps', '_gapsize', '_lambda_list']
+        to_save = ['_t_points', '_kpt_list', '_wcc_list', '_gaps', '_gapsize', '_lambda_list', '_string_status']
         data = dict((k, v) for k, v in self.__dict__.items() if k in to_save)
 
         if(self._current['use_pickle']):

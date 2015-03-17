@@ -15,12 +15,13 @@ with open('README.md', 'r') as f:
 
 setup(
     name='z2pack',
-    version='1.0',
+    version='1.0.0',
     url='http://z2pack.ethz.ch',
     author='Dominik Gresch',
     author_email='greschd@gmx.ch',
-    description='A tool for calculating topological invariants',
-    install_requires=['matplotlib', 'decorator'],
+    description='A tool for computing topological invariants',
+    install_requires=['numpy', 'scipy', 'decorator'],
+    extras_require = {'plot':  ['matplotlib']},
     long_description=readme,
     license='LICENSE.txt',
     packages=['z2pack',

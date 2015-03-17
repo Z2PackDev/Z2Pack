@@ -8,22 +8,17 @@
 import sys
 sys.path.append("../../../")
 import z2pack.tb as tb
-
 # Setting the interaction strength
 t1, t2 = (0.2, 0.3)
 
 # Settings used for wcc_calc. Feel free to play around with the different
 # options.
-settings = {'num_strings': 3,
-            'pos_check': True,
-            'gap_check': True,
-            'move_check': True,
+settings = {'num_strings': 11,
             'pos_tol': 1e-2,
             'gap_tol': 2e-2,
             'move_tol': 0.3,
             'iterator': range(8, 27, 2),
             'min_neighbour_dist': 1e-2,
-            'use_pickle': True,
             'pickle_file': 'res_pickle.txt',
             'verbose': True
            }

@@ -464,6 +464,7 @@ class Surface(object):
             return_fig = False
         axis.set_ylim(0, 1)
         axis.set_xlim(-0.01, 1.01)
+        axis.set_xticks(self._t_points, minor=True)
         for offset in [-1, 0, 1]:
             axis.plot(self._t_points, [(x + shift) % 1 + offset for x in self._gaps], **gap_settings)
         for i, kpt in enumerate(self._t_points):

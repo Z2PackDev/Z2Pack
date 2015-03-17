@@ -16,7 +16,9 @@ available, however it does not support the full range of options
 available in Z2Pack.
 
 If you use Z2Pack or its online interface for your research, please
-consider citing :ref:`TODO<not_found>`
+consider citing it.
+
+.. ~ TODO!
 
 .. toctree::
     :hidden:

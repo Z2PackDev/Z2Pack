@@ -161,8 +161,8 @@ a ``dict`` containing the data.
 
 Saving and loading with ``pickle``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-If ``use_pickle=True`` is set for :meth:`.wcc_calc` (or when creating the :class:`.Surface`), the most important results will automatically be
-saved into the path given by ``pickle_files``. They can later be extracted
+If ``pickle_file`` is set (not ``None``) for :meth:`.wcc_calc` (or when creating the :class:`.Surface`), the most important results will automatically be
+saved into the path given by ``pickle_file``. They can later be extracted
 by calling :meth:`.load`
 
 .. note:: **Not all** internal variables of the :class:`.Surface` instance **can
@@ -173,6 +173,19 @@ by calling :meth:`.load`
     initially created it. However, there is no need to re-do the costly
     :meth:`.wcc_calc`.
 
+Restarting a calculation
+~~~~~~~~~~~~~~~~~~~~~~~~
+When calculating the Wannier charge centers, Z2Pack automatically saves
+the progress each time a string of k-points has converged. This allows
+restarting a crashed calculation by calling :meth:`.load` before
+:meth:`.wcc_calc`.
+
+It can even be used to restart a calculation with more stringent values
+for ``pos_tol``, ``gap_tol`` and ``move_tol``. While the k-point strings
+that have already been computed will not be affected by this, the
+neighbour checks (gap & move check) will be performed again and additional
+strings might be added. This is particularly useful to check for convergence
+w.r.t. ``gap_tol`` & ``move_tol``.
 
 .. _GitHub: http://github.com/Z2PackDev/Z2Pack
 .. _first-principles: 

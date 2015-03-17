@@ -1,4 +1,4 @@
-# Z2Pack
+Z2Pack
 is a tool for calculating topological invariants on
 first-principles (z2pack.fp) and tight-binding (z2pack.tb) systems.
 
@@ -9,5 +9,5 @@ to calculate the Z2 topological invariant.
 Overlap matrices are calculated either directly (for tb) or via
 the Wannier90 code package (fp).
 
-- Documentation: soon
-- Online interface: soon
+- Documentation: <http://z2pack.ethz.ch/doc>
+- Online interface: <http://z2pack.ethz.ch/online>

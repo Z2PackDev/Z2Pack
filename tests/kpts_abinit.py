@@ -6,11 +6,6 @@
 # File:    kpts_abinit.py
 """Module containing the TestCase for Abinit k-point generation"""
 
-import sys
-sys.path.insert(0, '../')
-import z2pack
-
-import unittest
 from common import *
 
 class KptsAbinitTestCase(unittest.TestCase):

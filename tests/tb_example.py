@@ -5,10 +5,6 @@
 # Date:    15.10.2014 10:22:43 CEST
 # File:    tbexample.py
 
-import sys
-sys.path.append('../')
-import z2pack
-
 from common import *
 
 import types

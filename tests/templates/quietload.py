@@ -5,10 +5,6 @@
 # Date:    10.03.2015 10:53:12 CET
 # File:    quietload.py
 
-import sys
-sys.path.append('../')
-import z2pack
-
 from common import *
 
 import types

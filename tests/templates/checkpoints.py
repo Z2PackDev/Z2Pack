@@ -5,10 +5,6 @@
 # Date:    10.03.2015 10:24:40 CET
 # File:    checkpoints.py
 
-import sys
-sys.path.append('../')
-import z2pack
-
 from common import *
 
 import types

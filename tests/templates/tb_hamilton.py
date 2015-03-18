@@ -5,10 +5,6 @@
 # Date:    15.10.2014 14:49:25 CEST
 # File:    tb_hamilton.py
 
-import sys
-sys.path.insert(0, '../')
-import z2pack
-
 from common import *
 
 import unittest

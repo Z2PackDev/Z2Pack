@@ -15,7 +15,7 @@ with open('README.md', 'r') as f:
 
 setup(
     name='z2pack',
-    version='1.0.0',
+    version='1.0.1',
     url='http://z2pack.ethz.ch',
     author='Dominik Gresch',
     author_email='greschd@gmx.ch',

@@ -12,7 +12,7 @@ Tutorial on the :mod:`z2pack.fp` submodule.
 Setup and Compatibility
 -----------------------
 
-For the computation of overlap matrices, Z2Pack uses the Wannier90 software package. This means that Z2Pack can be used with any first - principles code that interfaces to Wannier90. Unfortunately, the Wannier90 source had to be changed slightly. You can download the modified source here:
+For the computation of overlap matrices, Z2Pack uses the Wannier90 software package. This means that Z2Pack can be used with any first - principles code that interfaces to Wannier90. Unfortunately, the Wannier90 source had to be changed slightly. We are currently working with the Wannier90 developers to integrate that into a future version of Wannier90. For now, you can download the modified source here:
 
 :download:`Wannier90 1.2, modified for ABINIT<downloads/wannier90-1.2.0.1.tar.gz>`
 :download:`Wannier90 1.2<downloads/wannier90-1.2.tar.gz>`

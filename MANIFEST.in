@@ -1,13 +1,7 @@
 recursive-include examples/tb *.py
-recursive-include examples/fp/Bi_abinit *.py *.files *.win
-recursive-include examples/fp/Bi_abinit/scf_files *
+prune examples/fp
 recursive-include tests *.py *.txt *.mmn
 prune doc
-
-recursive-include examples/fp/Bi_abinit *
-prune examples/fp/Bi_abinit/build
-exclude examples/fp/Bi_abinit/status.txt
-include examples/fp/Psps/83bi.5.hgh
 
 prune tests/samples/build
 prune tests/build

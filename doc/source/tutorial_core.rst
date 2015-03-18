@@ -7,11 +7,31 @@ Tutorial on the core module :mod:`z2pack`.
 
 Getting Z2Pack
 --------------
+
+pip
+~~~
 Z2Pack can be installed directly from the Python package index:
 
 ``sudo pip install z2pack``
 
-The source code is also available on GitHub_. If you download the source
+If you are using Z2Pack from a system where you do not have admin rights,
+you can still install it if ``virtualenv`` is installed on it:
+
+::
+
+    virtualenv --system-site-packages my_venv
+    source ./my_venv/bin/activate
+    pip install z2pack
+
+where ``my_venv`` can obviously be replaced by a different name.
+
+.. note:: You will have to call ``source ./my_venv/bin/activate`` each
+    time you want to use the virtual environment. 
+
+From source
+~~~~~~~~~~~
+
+The source code is also available on GitHub_ (development version) or PyPI_ (release version). If you download the source
 code, you can either reference it directly in your Python project by
 adding
 
@@ -189,4 +209,5 @@ w.r.t. ``gap_tol`` & ``move_tol``.
 
 .. _GitHub: http://github.com/Z2PackDev/Z2Pack
 .. _first-principles: 
-.. _tight-binding: 
+.. _tight-binding:
+.. _PyPI: https://pypi.python.org/pypi/z2pack

@@ -6,10 +6,10 @@
 # File:    squarelattice.py
 
 import sys
-sys.path.append("../../../")
+sys.path.insert(0, "../../../")
 import z2pack.tb as tb
 # Setting the interaction strength
-t1, t2 = (0.2, 0.3)
+t1, t2 = (0.0, 0.3)
 
 # Settings used for wcc_calc. Feel free to play around with the different
 # options.
@@ -63,5 +63,5 @@ tb_surface.wcc_calc(**settings)
 tb_surface.plot()
 
 # Printing the results
-print("t1: {0}, t2: {1}, Z2 invariant: {2}".format(t1, t2, tb_surface.invariant()))
-
+#~ print("t1: {0}, t2: {1}, Z2 invariant: {2}".format(t1, t2, tb_surface.invariant()))
+print(tb_surface.chern())

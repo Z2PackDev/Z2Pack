@@ -507,6 +507,21 @@ class Surface(object):
         except (NameError, AttributeError):
             raise RuntimeError('WCC not yet calculated')
 
+    def chern(self):
+        r"""
+        Calculates the evolution of polarization (sum of WCC) along the
+        pumping cycle, as well as the Chern number. To estimate convergence,
+        the largest jump in polarization is also calculated.
+
+        :returns:   A ``dict`` containing Chern number (``chern``), polarization evolution (``pol``), and the largest jump (``max_step``).
+        """
+        pol = [sum(wcc) % 1 for wcc in self._wcc_list]
+        delta_pol = []
+        for i in range(len(pol) - 1):
+            diff = pol[i + 1] - pol[i]
+            delta_pol.append(min([diff, diff + 1, diff - 1], key=lambda x: abs(x)))
+        return {'chern': sum(delta_pol), 'pol': pol, 'max_step': max([abs(d) for d in delta_pol])}
+
     # pickle: save and load
     def save(self):
         """

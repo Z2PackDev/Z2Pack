@@ -10,12 +10,22 @@ try:
 except:
     from distutils.core import setup
 
-with open('README.md', 'r') as f:
-    readme = f.read()
+readme = r"""Z2Pack is a tool for calculating topological invariants on
+first-principles (z2pack.fp) and tight-binding (z2pack.tb) systems.
+
+It uses the method described in http://journals.aps.org/prb/abstract/10.1103/PhysRevB.83.235401
+to calculate the Z2 topological invariant.
+
+Overlap matrices are calculated either directly (for tb) or via
+the Wannier90 code package (fp).
+
+- Documentation: http://z2pack.ethz.ch/doc
+- Online interface: http://z2pack.ethz.ch/online
+"""
 
 setup(
     name='z2pack',
-    version='1.0.1',
+    version='1.0.2',
     url='http://z2pack.ethz.ch',
     author='Dominik Gresch',
     author_email='greschd@gmx.ch',

@@ -126,7 +126,7 @@ class PrintFunctions:
             _print(self, 
                 string_tools.cbox(
                     ["finished wcc calculation" + "\ntime: " + duration_string,
-                     'CONVERCENGE REPORT\n------------------\n\n' +
+                     'CONVERGENCE REPORT\n------------------\n\n' +
                     str(self._log)]) +
                 '\n')
             return res

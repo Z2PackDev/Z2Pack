@@ -21,6 +21,7 @@ import re
 import sys
 import copy
 import pickle
+import warnings
 import decorator
 import itertools
 import numpy as np
@@ -394,7 +395,6 @@ class Surface(object):
                 converged = False
         return sorted(x), lambda_, converged
 
-
     @verbose_prt.dispatcher
     def _trywcc(self, all_m):
         """
@@ -418,10 +418,31 @@ class Surface(object):
         """
         return str(self._log)
 
-    def plot(self,
-             shift=0,
+    @decorator.decorator
+    def _plot(func, self, show, axis, *args, **kwargs):
+        import matplotlib
+        import matplotlib.cbook
+        import matplotlib.pyplot as plt
+        if not axis:
+            return_fig = True
+            fig = plt.figure()
+            axis = fig.add_subplot(111)
+        else:
+            return_fig = False
+        axis.set_ylim(0, 1)
+        axis.set_xlim(-0.01, 1.01)
+        axis.set_xticks(self._t_points, minor=True)
+        func(self, show, axis, *args, **kwargs)
+        if(show):
+            plt.show()
+        if return_fig:
+            return fig
+
+    @_plot
+    def wcc_plot(self,
              show=True,
              axis=None,
+             shift=0,
              wcc_settings={'s': 50., 'lw': 1., 'facecolor': 'none'},
              gaps=True,
              gap_settings={'marker': 'D', 'color': 'b', 'linestyle': 'none'}):
@@ -429,24 +450,26 @@ class Surface(object):
         Plots the WCCs and the largest gaps (y-axis) against the t-points 
         (x-axis).
 
-        :param shift:   Shifts the plot in the y-axis
-        :type shift:    float
-
         :param show:    Toggles showing the plot
         :type show:     bool
 
         :param ax:      Axis where the plot is drawn
         :type ax:       :mod:`matplotlib` ``axis``
 
+        :param shift:   Shifts the plot in the y-axis
+        :type shift:    float
+
         :param wcc_settings:    Keyword arguments for the scatter plot of the wcc
             positions. 
-
-        :param gap_settings:    Keyword arguments for the plot of the gap
-            positions.
+        :type wcc_settings:     dict
 
         :param gaps:    Controls whether the largest gaps are printed.
             Default: ``True``
         :type gaps:     bool
+
+        :param gap_settings:    Keyword arguments for the plot of the gap
+            positions.
+        :type gap_settings:     dict
 
         :returns:       :class:`matplotlib figure` instance (only if 
             ``ax == None``)
@@ -457,19 +480,6 @@ class Surface(object):
             plots, it might be necessary to fetch the data with 
             :meth:`.get_res()` and utilize the full power of matplotlib.
         """
-        import matplotlib
-        import matplotlib.cbook
-        import matplotlib.pyplot as plt
-        shift = shift % 1
-        if not axis:
-            return_fig = True
-            fig = plt.figure()
-            axis = fig.add_subplot(111)
-        else:
-            return_fig = False
-        axis.set_ylim(0, 1)
-        axis.set_xlim(-0.01, 1.01)
-        axis.set_xticks(self._t_points, minor=True)
         if gaps:
             for offset in [-1, 0, 1]:
                 axis.plot(self._t_points, [(x + shift) % 1 + offset for x in self._gaps], **gap_settings)
@@ -478,10 +488,40 @@ class Surface(object):
                 axis.scatter([kpt] * len(self._wcc_list[i]),
                              [(x + shift) % 1 + offset for x in self._wcc_list[i]],
                              **wcc_settings)
-        if(show):
-            plt.show()
-        if return_fig:
-            return fig
+
+    def plot(self, *args, **kwargs):
+        r"""
+        Deprecated alias for :meth:`wcc_plot`.
+        """
+        warnings.warn('Using deprecated function plot. Use wcc_plot instead.')
+        return self.wcc_plot(*args, **kwargs)
+
+    @_plot
+    def chern_plot(self,
+                   show=True,
+                   axis=None,
+                   settings={'marker': 'o', 'markerfacecolor': 'r', 'color': 'r'},
+                   ):
+        r"""
+        Plots the evolution of the polarization (sum of WCC) along the
+        surface against the t-points.
+
+        :param show:    Toggles showing the plot
+        :type show:     bool
+
+        :param ax:      Axis where the plot is drawn
+        :type ax:       :mod:`matplotlib` ``axis``
+
+        :param settings:    Keyword arguments passed to ``matplotlib.pyplot.plot()``
+        :type settings:     dict 
+        """
+        res = self.chern()
+        pol = res['pol']
+        steps = res['step']
+        for i in range(len(pol) - 1):
+            axis.plot(self._t_points[i:i+2], [pol[i], pol[i] + steps[i]], **settings)
+        for i in range(len(pol) - 1):
+            axis.plot(self._t_points[i:i+2], [pol[i + 1] - steps[i], pol[i + 1]], **settings)
 
     def get_res(self):
         """
@@ -519,14 +559,14 @@ class Surface(object):
         pumping cycle, as well as the Chern number. To estimate convergence,
         the largest jump in polarization is also calculated.
 
-        :returns:   A ``dict`` containing Chern number (``chern``), polarization evolution (``pol``), and the largest jump (``max_step``).
+        :returns:   A ``dict`` containing Chern number (``chern``), polarization evolution (``pol``), and the steps between the polarization values (``step``).
         """
         pol = [sum(wcc) % 1 for wcc in self._wcc_list]
         delta_pol = []
         for i in range(len(pol) - 1):
             diff = pol[i + 1] - pol[i]
             delta_pol.append(min([diff, diff + 1, diff - 1], key=lambda x: abs(x)))
-        return {'chern': sum(delta_pol), 'pol': pol, 'max_step': max([abs(d) for d in delta_pol])}
+        return {'chern': sum(delta_pol), 'pol': pol, 'step': delta_pol}
 
     # pickle: save and load
     def save(self):

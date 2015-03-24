@@ -60,7 +60,8 @@ tb_surface = tb_system.surface(lambda kx: [kx / 2., 0, 0], [0, 1, 0])
 tb_surface.wcc_calc(**settings)
 
 # showing the plot
-tb_surface.plot()
+#~ tb_surface.wcc_plot()
+tb_surface.chern_plot()
 
 # Printing the results
 #~ print("t1: {0}, t2: {1}, Z2 invariant: {2}".format(t1, t2, tb_surface.invariant()))

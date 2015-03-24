@@ -518,10 +518,11 @@ class Surface(object):
         res = self.chern()
         pol = res['pol']
         steps = res['step']
-        for i in range(len(pol) - 1):
-            axis.plot(self._t_points[i:i+2], [pol[i], pol[i] + steps[i]], **settings)
-        for i in range(len(pol) - 1):
-            axis.plot(self._t_points[i:i+2], [pol[i + 1] - steps[i], pol[i + 1]], **settings)
+        for offset in [-1, 0, 1]:
+            for i in range(len(pol) - 1):
+                axis.plot(self._t_points[i:i+2], [pol[i] + offset, pol[i] + steps[i] + offset], **settings)
+            for i in range(len(pol) - 1):
+                axis.plot(self._t_points[i:i+2], [pol[i + 1] - steps[i] + offset, pol[i + 1] + offset], **settings)
 
     def get_res(self):
         """

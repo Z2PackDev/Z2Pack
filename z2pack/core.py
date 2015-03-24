@@ -423,6 +423,7 @@ class Surface(object):
              show=True,
              axis=None,
              wcc_settings={'s': 50., 'lw': 1., 'facecolor': 'none'},
+             gaps=True,
              gap_settings={'marker': 'D', 'color': 'b', 'linestyle': 'none'}):
         r"""
         Plots the WCCs and the largest gaps (y-axis) against the t-points 
@@ -441,7 +442,11 @@ class Surface(object):
             positions. 
 
         :param gap_settings:    Keyword arguments for the plot of the gap
-            positions. 
+            positions.
+
+        :param gaps:    Controls whether the largest gaps are printed.
+            Default: ``True``
+        :type gaps:     bool
 
         :returns:       :class:`matplotlib figure` instance (only if 
             ``ax == None``)

@@ -18,7 +18,6 @@ import matplotlib.pyplot as plt
 system = z2pack.fp.System(["system_nscf.files", "system_nscf.in", "wannier90.win" ],
                           z2pack.fp.kpts.abinit,
                           "system_nscf.in",
-                          "build",
                           "mpirun ~/software/abinit-7.8.2/src/98_main/abinit < " +
                           "system_nscf.files >& log"
                     )

@@ -22,68 +22,72 @@ def prototype(kpt):
     """
     raise NotImplementedError('This is only the prototype for kpts')
 
-#~ 
-#~ def abinit(kpt):
-    #~ """
-    #~ Creates a k-point input for **ABINIT**. It uses ``kptopt -1`` and
-    #~ specifies the k-points string using ``ndivk`` and ``kptbounds``.
-    #~ """
-    #~ for point in [start_point, last_point, end_point]:
-        #~ if len(point) != 3:
-            #~ raise ValueError('dimension of point != 3')
-#~ 
-    #~ string = "\nkptopt -1\nndivk " + str(int(N - 1)) + '\nkptbounds '
-    #~ for coord in start_point:
-        #~ string += str(coord).replace('e', 'd') + ' '
-    #~ string += '\n'
-    #~ for coord in last_point:
-        #~ string += str(coord).replace('e', 'd') + ' '
-    #~ string += '\n'
-    #~ return string
-#~ 
-#~ 
-#~ def qe(kpt):
-    #~ """
-    #~ Creates a k-point input for  **Quantum Espresso**.
-    #~ """
-    #~ for point in [start_point, last_point, end_point]:
-        #~ if len(point) != 3:
-            #~ raise ValueError('dimension of point != 3')
-#~ 
-    #~ string = "\nK_POINTS crystal_b\n 2 \n"
-    #~ for coord in start_point:
-        #~ string += str(coord).replace('e', 'd') + ' '
-    #~ string += str(N-1)+'\n'
-    #~ for coord in last_point:
-        #~ string += str(coord).replace('e', 'd') + ' '
-    #~ string += str(1)+'\n'
-    #~ return string
-#~ 
-#~ def wannier90(kpt):
-    #~ """
-    #~ Creates a k-point input for **Wannier90**. It can be useful when the
-    #~ first-principles code does not generate the k-points in
-    #~ ``wannier90.win`` (e.g. with Quantum Espresso).
-    #~ """
-    #~ for point in [start_point, last_point, end_point]:
-        #~ if len(point) != 3:
-            #~ raise ValueError('dimension of point != 3')
-#~ 
-    #~ string = "mp_grid: " + str(int(N)) + " 1 1 \nbegin kpoints"
-    #~ for i in range(N):
-        #~ string += '\n'
-        #~ point = start_point
-        #~ for j, coord in enumerate(point):
-            #~ coord += float(i)/float(N-1) * (last_point[j] - start_point[j])
-            #~ string += str(coord).replace('e', 'd') + ' '
-    #~ string += '\nend kpoints\n'
-    #~ return string
+
+def abinit(kpt):
+    """
+    Creates a k-point input for **ABINIT**. It uses ``kptopt -1`` and
+    specifies the k-points string using ``ndivk`` and ``kptbounds``.
+    """
+    start_point = kpt[0]
+    end_point = kpt[-1]
+    last_point = kpt[-2]
+    N = len(kpt) - 1
+    for point in kpt:
+        if len(point) != 3:
+            raise ValueError('dimension of point != 3')
+
+    string = "\nkptopt -1\nndivk " + str(int(N - 1)) + '\nkptbounds '
+    for coord in start_point:
+        string += str(coord).replace('e', 'd') + ' '
+    string += '\n'
+    for coord in last_point:
+        string += str(coord).replace('e', 'd') + ' '
+    string += '\n'
+    return string
+
+
+def qe(kpt):
+    """
+    Creates a k-point input for  **Quantum Espresso**.
+    """
+    start_point = kpt[0]
+    end_point = kpt[-1]
+    last_point = kpt[-2]
+    for point in kpt:
+        if len(point) != 3:
+            raise ValueError('dimension of point != 3')
+
+    string = "\nK_POINTS crystal_b\n 2 \n"
+    for coord in start_point:
+        string += str(coord).replace('e', 'd') + ' '
+    string += str(N-1)+'\n'
+    for coord in last_point:
+        string += str(coord).replace('e', 'd') + ' '
+    string += str(1)+'\n'
+    return string
+
+def wannier90(kpt):
+    """
+    Creates a k-point input for **Wannier90**. It can be useful when the
+    first-principles code does not generate the k-points in
+    ``wannier90.win`` (e.g. with Quantum Espresso).
+    """
+    for point in kpt:
+        if len(point) != 3:
+            raise ValueError('dimension of point != 3')
+
+    string = "mp_grid: " + str(int(N)) + " 1 1 \nbegin kpoints"
+    for k in kpt[:-1]:
+        string += '\n'
+        for coord in k:
+            string += str(coord).replace('e', 'd') + ' '
+    string += '\nend kpoints\n'
+    return string
 
 def vasp(kpt):
     """
-    Creates a k-point input for  **VASP**. It uses explicit k-points
+    Creates a k-point input for  **VASP**, using explicit points
     """
-    # N or N - 1?
     N = len(kpt) - 1
     string = 'Explicit k-points\n' + str(N) + '\nReciprocal\n'
     for k in kpt[:-1]:

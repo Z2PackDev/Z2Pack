@@ -170,7 +170,7 @@ class Hamilton(object):
         self.hamiltonian = _H
         return self.hamiltonian
 
-    def _getM(self, start_point, end_point, N):
+    def _getM(self, kpt):
         """
         returns:        M-matrices
 
@@ -188,9 +188,8 @@ class Hamilton(object):
             self.create_hamiltonian()
 
         # create k-points for string
-        ky = np.linspace(0, 1, N - 1, endpoint=False)
-        k_points = [[(1 - k) * start_point[i] + k * end_point[i]
-                     for i in range(len(start_point))] for k in ky]
+        N = len(kpt) - 1
+        k_points = kpt[:-1]
 
         # get eigenvectors corr. to occupied states
         eigs = []
@@ -210,8 +209,8 @@ class Hamilton(object):
 
         # create M - matrices
         M = []
-        deltak = [1./(N - 1) * (end_point[i] - start_point[i]) for i in range(len(start_point))]
-        for i in range(0, N - 1):
+        for i in range(0, N):
+            deltak = list(np.array(kpt[i + 1]) - np.array(kpt[i]))
             Mnew = [[sum(np.conjugate(eigs[i][j, m]) *
                      eigs[i + 1][j, n] *
                      np.exp(-1j * self._dot_prod(deltak, self._T_list[j]))
@@ -261,12 +260,12 @@ class System(_Z2PackSystem):
         self._defaults = kwargs
         self._tb_hamilton = tb_hamilton
 
-        def _m_handle_creator_tb(edge_fct, string_vec):
-            def inner(kx, N):
-                start_point = edge_fct(kx)
-                end_point = [start_point[i] + string_vec[i] for i in range(len(start_point))]
-                return self._tb_hamilton._getM(start_point, end_point, N)
-            return inner
+        #~ def _m_handle_creator_tb(param_fct, string_vec):
+            #~ def inner(kx, N):
+                #~ start_point = param_fct(kx)
+                #~ end_point = [start_point[i] + string_vec[i] for i in range(len(start_point))]
+                #~ return self._tb_hamilton._getM(start_point, end_point, N)
+            #~ return inner
 
-        self._m_handle_creator = _m_handle_creator_tb
+        self._m_handle = self._tb_hamilton._getM
 

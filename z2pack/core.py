@@ -38,26 +38,26 @@ class System(object):
     defines the :meth:`surface` method, which is used to create :class:`Surface`
     instances.
 
-    :param m_handle_creator: Takes the ``edge_fct`` and  ``string_vec`` given to :meth:`surface` and creates an ``m_handle`` s.t. ``m_handle(t, N)`` returns the overlap matrices
-    :type m_handle_creator: function
+    :param m_handle: Creates the overlap matrices M given a list of k-points including the end point.
+    :type m_handle: function
 
     :param kwargs: Keyword arguments are passed to the :class:`Surface` constructor unless overwritten by kwargs to :func:`surface`
     """
 
-    def __init__(self, m_handle_creator, **kwargs):
+    def __init__(self, m_handle, **kwargs):
         self._defaults = kwargs
-        self._m_handle_creator = m_handle_creator
+        self._m_handle = m_handle
 
-    def surface(self, edge_fct, string_vec, **kwargs):
+    def surface(self, param_fct, string_vec=None, **kwargs):
         r"""
         Creates a :class:`Surface` instance.  The surface's position is
-        specified by a function ``edge_fct``: :math:`t \in [0, 1]
+        specified by a function ``param_fct``: :math:`t \in [0, 1]
         \rightarrow \mathbb{R}^3` (or, if you want to stay in the same
         UC, :math:`[0, 1]^3`) connecting a pumping parameter :math:`t`
         to the edge of the surface. The direction along which the surface
         extends from this edge, then, is given by ``string_vec``.
 
-        :param edge_fct: Returns the start of the k-point string
+        :param param_fct: Returns the start of the k-point string
             as function of the pumping parameter t.
 
         :param string_vec: Direction of the individual k-point strings.
@@ -79,7 +79,12 @@ class System(object):
         kw_arguments = copy.copy(self._defaults)
         kw_arguments.update(kwargs)
 
-        return Surface(self._m_handle_creator(edge_fct, string_vec), edge_fct=edge_fct, **kw_arguments)
+        if string_vec is not None:
+            def param_fct_proxy(t, k):
+                return list(np.array(param_fct(t)) + k * np.array(string_vec))
+            return Surface(self._m_handle, param_fct_proxy, **kw_arguments)
+
+        return Surface(self._m_handle, param_fct, **kw_arguments)
 
 
 
@@ -98,7 +103,7 @@ class Surface(object):
         the string.
     :type m_handle:         function
 
-    :param edge_fct: Returns the start of the k-point string
+    :param param_fct: Returns the start of the k-point string
         as function of the pumping parameter t.
 
     :param kwargs: Keyword arguments are passed to the :class:`Surface`
@@ -205,10 +210,10 @@ class Surface(object):
     @_validate_kwargs(target=wcc_calc)
     def __init__(self,
                  m_handle,
-                 edge_fct,
+                 param_fct,
                  **kwargs):
         self._m_handle = m_handle
-        self._edge_fct = edge_fct
+        self._param_fct = param_fct
         self._defaults = {
                           'pos_tol': 1e-2,
                           'gap_tol': 2e-2,
@@ -276,7 +281,7 @@ class Surface(object):
             self._wcc_list = [[] for i in range(self._current['num_strings'])]
             self._t_points = list(np.linspace(0., 1., self._current['num_strings'],
                                               endpoint=True))
-            self._kpt_list = [self._edge_fct(t) for t in self._t_points]
+            self._kpt_list = [self._param_fct(t, 0.) for t in self._t_points]
             self._gaps = [None for i in range(self._current['num_strings'])]
             self._gapsize = [None for i in range(self._current['num_strings'])]
             self._lambda_list = [[] for i in range(self._current['num_strings'])]
@@ -307,8 +312,8 @@ class Surface(object):
                             if not self._add_string(i):
                                 t1 = self._t_points[i]
                                 t2 = self._t_points[i + 1]
-                                k1 = string_tools.fl_to_s(self._edge_fct(t1), 6)
-                                k2 = string_tools.fl_to_s(self._edge_fct(t2), 6)
+                                k1 = string_tools.fl_to_s(self._param_fct(t1, 0.), 6)
+                                k2 = string_tools.fl_to_s(self._param_fct(t2, 0.), 6)
                                 if not neighbour_check:
                                     self._log.log('gap check', t1, k1, t2, k2)
                                 if not move_check:
@@ -350,7 +355,7 @@ class Surface(object):
             self._string_status.insert(i + 1, False)
             self._t_points.insert(i + 1, (self._t_points[i] +
                                   self._t_points[i + 1]) / 2)
-            self._kpt_list.insert(i + 1, self._edge_fct(self._t_points[i + 1]))
+            self._kpt_list.insert(i + 1, self._param_fct(self._t_points[i + 1], 0.))
             self._wcc_list.insert(i + 1, [])
             self._lambda_list.insert(i + 1, [])
             self._gaps.insert(i + 1, None)
@@ -380,12 +385,12 @@ class Surface(object):
             self._current['iterator'], 2)
 
         N = next(iterator)
-        x, min_sv, lambda_ = self._trywcc(self._m_handle(t, N))
+        x, min_sv, lambda_ = self._trywcc(self._get_m(t, N))
 
         if self._current['pos_tol'] is not None:
             for N in iterator:
                 xold = copy.copy(x)
-                x, min_sv, lambda_ = self._trywcc(self._m_handle(t, N))
+                x, min_sv, lambda_ = self._trywcc(self._get_m(t, N))
 
                 # break conditions
                 if(_convcheck(x, xold, self._current['pos_tol'])):  # success
@@ -410,6 +415,14 @@ class Surface(object):
         [eigs, _] = la.eig(lambda_)
         return [(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs], min_sv, lambda_
 
+    def _get_kpt(self, t, N):
+        """
+        Gets the k-points INCLUDING the last one
+        """
+        return list(self._param_fct(t, k) for k in np.linspace(0., 1., N + 1))
+
+    def _get_m(self, t, N):
+        return self._m_handle(self._get_kpt(t, N))
     #----------------END OF SUPPORT FUNCTIONS---------------------------#
 
     def log(self):

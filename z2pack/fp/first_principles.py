@@ -92,10 +92,7 @@ class System(_Z2PackSystem):
                                               clean_build)
         self._defaults = kwargs
 
-        def _m_handle_creator_first_principles(param_fct, string_vec):
-            return lambda kx, N: self._system._run(param_fct(kx), string_vec, N)
-
-        self._m_handle_creator = _m_handle_creator_first_principles
+        self._m_handle = self._system._run
 
 
 class _FirstPrinciplesSystem:
@@ -272,14 +269,14 @@ class _FirstPrinciplesSystem:
             f.write(self._kpts_fct[i](*args))
             f.close()
 
-    def _run(self, start_point, string_vec, N):
-        end_point = [start_point[i] + string_vec[i] for i in range(len(start_point))]
-        last_point = [1. / N * start_point[i] +
-                      (N - 1.)/float(N) * end_point[i]
-                      for i in range(3)]
-                      
+    def _run(self, kpt):
+        start_point = kpt[0]
+        end_point = kpt[-1]
+        last_point = kpt[-2]
+        N = len(kpt) - 1
+
         # create input
-        self._create_input(start_point, last_point, end_point, N)
+        self._create_input(kpt)
 
         # execute command
         if(self._executable is not None):

@@ -260,12 +260,5 @@ class System(_Z2PackSystem):
         self._defaults = kwargs
         self._tb_hamilton = tb_hamilton
 
-        #~ def _m_handle_creator_tb(param_fct, string_vec):
-            #~ def inner(kx, N):
-                #~ start_point = param_fct(kx)
-                #~ end_point = [start_point[i] + string_vec[i] for i in range(len(start_point))]
-                #~ return self._tb_hamilton._getM(start_point, end_point, N)
-            #~ return inner
-
         self._m_handle = self._tb_hamilton._getM
 

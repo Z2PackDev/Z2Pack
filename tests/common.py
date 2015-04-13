@@ -7,7 +7,7 @@
 
 import os
 import sys
-sys.path.insert(0, os.path.dirname(__file__) + '/../')
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)) + '/../')
 import z2pack
 try:
     from z2pack.ptools.replace import *
@@ -66,7 +66,3 @@ class CommonTestCase(unittest.TestCase):
         assertContainerAlmostEqual, self)
         self.assertDictAlmostEqual = types.MethodType(
         assertDictAlmostEqual, self)
-
-if __name__ == "__main__":
-    print("common.py")
-

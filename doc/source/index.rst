@@ -25,6 +25,17 @@ consider citing it (not yet published).
     
     Z2Pack online <http://z2pack.ethz.ch/online/>
 
+News
+====
+
+Z2Pack 1.1.0
+------------
+Z2Pack 1.1.0 is now available! Changes include:
+
+* functions for calculating Chern numbers
+* arbitrary surfaces are now possible with tight-binding models
+* tight-binding Hamiltonians can now be explicitly specified
+
 Tutorial & Examples
 ===================
 .. toctree::

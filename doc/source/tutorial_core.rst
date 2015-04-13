@@ -71,8 +71,39 @@ Having defined a system, the next step is creating a surface for which the
 Z2 invariant should be calculated. This is done with the :meth:`System.surface`
 method.
 
-The basic functionality of :meth:`surface` requires two arguments:
-``edge_fct`` and ``string_vec``. The first one, ``edge_fct``,
+A surface can be defined in two ways, either by specifying a ``param_fct``
+(parametrization function) which fully describes the surface, or by
+giving a one-dimensional parametrization of the edge, and a vector describing
+the direction of the surface from that edge.
+
+Method 1
+++++++++
+
+For the first method, ``param_fct`` describes a function
+
+.. math::
+    f:~~  &&t_1, t_2 &\longrightarrow &~\mathbf{k}\\
+        &&[0, 1]^2 &\longrightarrow &~\mathbb{R}^3
+
+that fully parametrizes the surface.
+
+.. warning::    For first-principles calculations, it is recommended to
+    use the second method because arbitrary surfaces are not yet
+    supported.
+
+.. note::   In order to get meaningful results, you should make sure
+    that the surface is periodic in :math:`t_2`, i.e.
+    
+    .. math::
+        f(t_1, 0) = f(t_1, 1) + \mathbf{G}; ~~~~\forall t_1
+
+    where :math:`\mathbf{G}` is a reciprocal lattice vector.
+
+Method 2
+++++++++
+
+The second method requires two arguments:
+``param_fct`` and ``string_vec``, where ``param_fct`` now
 describes a function
 
 .. math::
@@ -86,6 +117,28 @@ The surface then extends along ``string_vec`` from that edge.
     equivalend k-points, ``string_vec`` must be a reciprocal lattice vector.
     Usually it will be one of the three unit vectors (``[1, 0, 0]``, ``[0, 1, 0]``,
     ``[0, 0, 1]``).
+
+Example
++++++++
+
+The surface at :math:`k_2=0`, with strings
+along :math:`k_1` (from :math:`0` to :math:`1`) and :math:`k_3` going from :math:`0`
+to :math:`0.5` could be set up as follows (Method 1).
+
+.. code:: python
+
+    system = z2pack.System(...)
+    system.surface(lambda t1, t2: [t2, 0, t1 / 2.])
+
+or, equivalently (Method 2)
+
+.. code:: python
+
+    system = z2pack.System(...)
+    system.surface(lambda t: [0, 0, t / 2.], [1, 0, 0])
+
+Keyword arguments
++++++++++++++++++
 
 Keyword arguments given to :meth:`.surface` will be used as defaults for
 any :meth:`.wcc_calc` call for that Surface.

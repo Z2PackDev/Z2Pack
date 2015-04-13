@@ -14,6 +14,7 @@ plots etc.)
 """
 
 from .core import *
+from . import shapes
 
 from . import fp
 from . import tb

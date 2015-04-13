@@ -24,7 +24,7 @@ class FpPhonyTestCase(CommonTestCase):
     def testphony1(self):
         sys = z2pack.fp.System(
             'samples' + self._sep + 'wannier90.mmn',
-            lambda x, y, z, N: '',
+            lambda x: '',
             "kpts",
             "",
             build_folder='samples' + self._sep + 'build')
@@ -38,7 +38,7 @@ class FpPhonyTestCase(CommonTestCase):
     def testphony2(self):
         sys = z2pack.fp.System(
             'samples' + self._sep + 'varw90.mmn',
-            lambda x, y, z, N: '',
+            lambda x: '',
             "kpts",
             "",
             build_folder='samples' + self._sep + 'build',
@@ -54,7 +54,7 @@ class FpPhonyTestCase(CommonTestCase):
     def testphony3(self):
         sys = z2pack.fp.System(
             'samples' + self._sep + 'varw90.mmn',
-            lambda x, y, z, N: '',
+            lambda x: '',
             "kpts",
             "",
             build_folder='samples' + self._sep + 'build',
@@ -65,7 +65,6 @@ class FpPhonyTestCase(CommonTestCase):
         self.assertRaises(ValueError, surface.wcc_calc, verbose=False)
         self.assertDictAlmostEqual(
             surface.get_res(), in_place_replace(surface.get_res()))
-
 
 if __name__ == "__main__":
     unittest.main()

@@ -19,6 +19,9 @@ class Hamilton(object):
     Describes a tight-binding model for use with :class:`z2pack.tb.System`.
     """
     def __init__(self):
+        self._reset_atoms()
+
+    def _reset_atoms(self):
         self._atoms = []
         self._hoppings = []
         self._electrons = 0
@@ -133,6 +136,46 @@ class Hamilton(object):
                                            indices_1,
                                            [-x for x in rec_lattice_vec]))
 
+    def explicit_hamiltonian(self, hamiltonian, atoms_at_origin=True, occupied=None):
+        r"""
+        Specify the hamiltonian explicitly. The atom positions can be either
+        set to all be at the origin, or they can be 
+
+        
+        :param hamiltonian: A function returning the matrix hamiltonian
+            given k.
+        :type hamiltonian: function
+
+        :param atoms_at_origin: Specifies wheter the atoms are automatically
+            positioned at the origin. Alternatively they can be added via
+            :meth:`.add_atom()` **before** using :meth:`.explicit_hamiltonian()`.
+        :type atoms_at_origin: bool
+
+        :param occupied: The number of occupied states. By default
+            (``occupied=None``), the value given to :meth:`.add_atoms()`
+            is taken if ``atoms_at_origin=False``, and all states
+            are occupied else.
+        :type occupied: int
+        """
+        size = len(hamiltonian([0, 0, 0])) # assuming to be square...
+
+        # add one atom for each orbital in the hamiltonian
+        if atoms_at_origin:
+            self._reset_atoms()
+            for i in range(size):
+                self.add_atom(([0], 1), [0, 0, 0])
+
+        self._parse_atoms()
+
+        if len(self._T_list) != size:
+            raise ValueError('The number of orbitals found in the atoms ({}) does not match the size of the Hamiltonian ({})'.format(len(self._T_list), size))
+
+        if occupied is not None:
+            self._num_electrons = occupied
+
+        self.hamiltonian = hamiltonian
+        
+
     def create_hamiltonian(self):
         """
         Creates the ``hamiltonian`` member variable, which returns the
@@ -140,18 +183,7 @@ class Hamilton(object):
 
         :returns: ``hamiltonian``
         """
-        # create conversion from index to orbital/vice versa
-        count = 0
-        orbital_to_index = []
-        index_to_orbital = []
-        self._T_list = []
-        for atom_num, atom in enumerate(self._atoms):
-            num_orbitals = len(atom[0])
-            orbital_to_index.append([count + i for i in range(num_orbitals)])
-            for i in range(num_orbitals):
-                index_to_orbital.append((atom_num, i))
-                self._T_list.append(atom[2])
-            count += num_orbitals
+        self._parse_atoms()
 
         def _H(k):
             H = [list(row) for row in np.diag([energy for atom in self._atoms
@@ -159,16 +191,27 @@ class Hamilton(object):
 
             for hopping in self._hoppings:
                 # add entry for hopping
-                index_1 = orbital_to_index[hopping[1][0]][hopping[1][1]]
-                index_2 = orbital_to_index[hopping[2][0]][hopping[2][1]]
+                index_1 = self._orbital_to_index[hopping[1][0]][hopping[1][1]]
+                index_2 = self._orbital_to_index[hopping[2][0]][hopping[2][1]]
                 phase = np.exp(1j * self._dot_prod(hopping[3], k))
                 H[index_1][index_2] += hopping[0] * phase
             return H
-
-        # needed for _getM
-        self._num_electrons = sum(atom[1] for atom in self._atoms)
         self.hamiltonian = _H
         return self.hamiltonian
+
+    def _parse_atoms(self):
+        # create conversion from index to orbital/vice versa
+        count = 0
+        self._orbital_to_index = []
+        self._T_list = []
+        for atom_num, atom in enumerate(self._atoms):
+            num_orbitals = len(atom[0])
+            self._orbital_to_index.append([count + i for i in range(num_orbitals)])
+            for i in range(num_orbitals):
+                self._T_list.append(atom[2])
+            count += num_orbitals
+        # needed for _getM
+        self._num_electrons = sum(atom[1] for atom in self._atoms)
 
     def _getM(self, kpt):
         """

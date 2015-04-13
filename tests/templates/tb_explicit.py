@@ -67,7 +67,5 @@ class TbExplicitHTestCase(CommonTestCase):
         H.add_atom(([0], 1), [0, 0, 0])
         self.assertRaises(ValueError, H.explicit_hamiltonian, self.tb_hamiltonian, atoms_at_origin=False, occupied=1)
 
-        
-
 if __name__ == "__main__":
     unittest.main()    

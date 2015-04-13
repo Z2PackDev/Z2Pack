@@ -26,6 +26,13 @@ class Hamilton(object):
         self._hoppings = []
         self._electrons = 0
 
+    def __getattr__(self, key):
+        if key == 'hamiltonian':
+            return self.create_hamiltonian()
+
+        else:
+            raise AttributeError
+
     def add_atom(self, element, position):
         """
         :param element:     A tuple ``(orbitals, num_electrons)``, where \
@@ -224,12 +231,6 @@ class Hamilton(object):
                         in string_dir has been removed
         N:              number of steps in the string
         """
-        # check if hamiltonian exists - else create it
-        try:
-            self.hamiltonian
-        except (AttributeError, NameError):
-            self.create_hamiltonian()
-
         # create k-points for string
         N = len(kpt) - 1
         k_points = kpt[:-1]

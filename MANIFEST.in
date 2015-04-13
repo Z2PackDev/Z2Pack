@@ -1,20 +1,30 @@
-recursive-include examples/tb *.py
-prune examples/fp
-recursive-include tests *.py *.txt *.mmn
-prune doc
+# examples are provided via GitHub
+prune examples
 
+# keep tests, but not the test-creators
+recursive-include tests *.py *.txt *.mmn
 prune tests/samples/build
 prune tests/build
 prune tests/templates
+exclude tests/create_tests.py
+
+# Documentation is provided on http://z2pack.ethz.ch/doc
+prune doc
+
+# selectively include ptools
 prune z2pack/ptools
 prune futures
 include z2pack/ptools/__init__.py
 include z2pack/ptools/parse_dict.py
 include z2pack/ptools/string_tools.py
 include z2pack/ptools/logger.py
+
+# installation related
 exclude MANIFEST.in
+
+# local setup (Cluster)
 exclude decorator.py
 
-exclude tests/create_tests.py
+# License & README
 include README.md
 include LICENSE.txt

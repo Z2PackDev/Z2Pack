@@ -1,51 +1,41 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    15.10.2014 10:22:43 CEST
-# File:    tbexample.py
+# Date:    13.04.2015 16:52:29 CEST
+# File:    chern.py
+
 
 from common import *
 
-import types
 import unittest
+import numpy as np
 
+pauli_x = np.array([[0, 1], [1, 0]], dtype=complex)
+pauli_y = np.array([[0, -1j], [1j, 0]], dtype=complex)
+pauli_z = np.array([[1, 0], [0, -1]], dtype=complex)
+pauli_vector = list([pauli_x, pauli_y, pauli_z])
 
-class ChernTestCase(CommonTestCase):
+class TbExplicitHTestCase(CommonTestCase):
 
-    def createH(self, t1, t2):
+    def tb_hamiltonian(self, k):
+        k[2] = -k[2]
+        res = np.zeros((2, 2), dtype=complex)
+        for kval, p_mat in zip(k, pauli_vector):
+            res += kval * p_mat
+        return res
 
-        self.H = z2pack.tb.Hamilton()
-
-        # create the two atoms
-        self.H.add_atom(([1, 1], 1), [0, 0, 0])
-        self.H.add_atom(([-1, -1], 1), [0.5, 0.5, 0])
-
-        # add hopping between different atoms
-        self.H.add_hopping(((0, 0), (1, 1)),
-                           z2pack.tb.vectors.combine([0, -1], [0, -1], 0),
-                           t1,
-                           phase=[1, -1j, 1j, -1])
-        self.H.add_hopping(((0, 1), (1, 0)),
-                           z2pack.tb.vectors.combine([0, -1], [0, -1], 0),
-                           t1,
-                           phase=[1, 1j, -1j, -1])
-
-        # add hopping between neighbouring orbitals of the same type
-        self.H.add_hopping((((0, 0), (0, 0)), ((0, 1), (0, 1))),
-                           z2pack.tb.vectors.neighbours([0, 1],
-                                                        forward_only=True),
-                           t2,
-                           phase=[1])
-        self.H.add_hopping((((1, 1), (1, 1)), ((1, 0), (1, 0))),
-                           z2pack.tb.vectors.neighbours([0, 1],
-                                                        forward_only=True),
-                           -t2,
-                           phase=[1])
-
-    # this test may produce false negatives due to small numerical differences
     def test_chern(self):
-        raise NotImplementedError('TODO')
-        
+        H = z2pack.tb.Hamilton()
+        H.explicit_hamiltonian(self.tb_hamiltonian, occupied=1)
+        system = z2pack.tb.System(H)
+        surface = system.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.04))
+        surface.wcc_calc(pickle_file=None, verbose=False)
+
+        res = in_place_replace(surface.chern())
+
+        self.assertDictAlmostEqual(res, surface.chern())
+
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main()    
+

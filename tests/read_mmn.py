@@ -14,11 +14,14 @@ import unittest
 class ReadMmnTestCase(CommonTestCase):
 
     def test1(self):
-
+        
         with open('./samples/mmn_read.txt', 'r') as f:
-            tester = ast.literal_eval(f.read())
+            if sys.version_info[:2] == (2, 6):
+                tester = eval(f.read())
+            else:
+                tester = ast.literal_eval(f.read())
 
-        self.assertContainerAlmostEqual(
+        self.assertFullAlmostEqual(
             tester, z2pack.fp.read_mmn.getM('./samples/wannier90.mmn')
         )
 

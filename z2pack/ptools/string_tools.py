@@ -81,7 +81,7 @@ def fl_to_s(input_list, precision=6, strip_zeros=True):
     float list to string: takes a list of floats and returns a nicely
     formatted string
     """
-    return '[{}]'.format(', '.join([('{:.' + str(precision) + 'f}').format(val).rstrip('0' if strip_zeros else '') for val in input_list]))
+    return '[{0}]'.format(', '.join([('{0:.' + str(precision) + 'f}').format(val).rstrip('0' if strip_zeros else '') for val in input_list]))
     
 if __name__ == "__main__":
     print(cbox("Test:\nsuccessful"))

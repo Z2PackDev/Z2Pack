@@ -32,7 +32,7 @@ class FpPhonyTestCase(CommonTestCase):
         surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], pickle_file=None)
 
         surface.wcc_calc(pos_tol=None, gap_tol=None, verbose=False)
-        self.assertDictAlmostEqual(
+        self.assertFullAlmostEqual(
             surface.get_res(), in_place_replace(surface.get_res()))
 
     def testphony2(self):
@@ -47,7 +47,7 @@ class FpPhonyTestCase(CommonTestCase):
         surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], pickle_file=None)
 
         surface.wcc_calc(pos_tol=None, gap_tol=None, verbose=False)
-        self.assertDictAlmostEqual(
+        self.assertFullAlmostEqual(
             surface.get_res(), in_place_replace(surface.get_res()))
 
 
@@ -63,7 +63,7 @@ class FpPhonyTestCase(CommonTestCase):
         surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], pickle_file=None)
 
         self.assertRaises(ValueError, surface.wcc_calc, verbose=False)
-        self.assertDictAlmostEqual(
+        self.assertFullAlmostEqual(
             surface.get_res(), in_place_replace(surface.get_res()))
 
 if __name__ == "__main__":

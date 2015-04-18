@@ -18,7 +18,7 @@ class ShapesTestCase(CommonTestCase):
         for t in np.linspace(0, 1, 23):
             for k in np.linspace(0, 1, 27):
                 points.append(sphere(t, k))
-        self.assertContainerAlmostEqual(
+        self.assertFullAlmostEqual(
             points, in_place_replace(points))
 
 if __name__ == "__main__":

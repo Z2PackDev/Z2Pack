@@ -40,7 +40,7 @@ class TbExplicitHTestCase(CommonTestCase):
         surface2 = system2.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.04))
         surface2.wcc_calc(pickle_file=None, verbose=False)
 
-        self.assertDictAlmostEqual(surface1.get_res(), surface2.get_res())
+        self.assertFullAlmostEqual(surface1.get_res(), surface2.get_res())
 
     def test_explicitH_atoms(self):
         H1 = z2pack.tb.Hamilton()
@@ -60,7 +60,7 @@ class TbExplicitHTestCase(CommonTestCase):
         surface2 = system2.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.04))
         surface2.wcc_calc(pickle_file=None, verbose=False)
 
-        self.assertDictAlmostEqual(surface1.get_res(), surface2.get_res())
+        self.assertFullAlmostEqual(surface1.get_res(), surface2.get_res())
 
     def test_error(self):
         H = z2pack.tb.Hamilton()

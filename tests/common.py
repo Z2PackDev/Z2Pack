@@ -20,49 +20,59 @@ import unittest
 # ugly hack to enable in-place replacement of arrays
 from numpy import array
 
-# assert functions for all tests
-def assertIterAlmostEqual(TestCase, x, y, iter_type = list):
+def assertFullAlmostEqual(TestCase, x, y):
     """
-    comparing iterables of numbers (float, int) for almost equality
+    Compares for almost equality
     """
-    if not(isinstance(x, iter_type) and isinstance(y, iter_type)):
-        TestCase.fail(msg = 'type of compared input is not list')
-    if not(len(x) == len(y)):
-        TestCase.fail(msg = 'length of objects not equal')
-
-    for i in range(len(x)):
-        TestCase.assertAlmostEqual(x[i], y[i])
-
-def assertContainerAlmostEqual(TestCase, x, y):
-    """
-    comparing two containers (arbitrary depth) for almost equality
-    """
-    try:
-        if not(len(x) == len(y)):
-            TestCase.fail(msg='length of objects not equal')
-        for i in range(len(x)):
-            TestCase.assertContainerAlmostEqual(x[i], y[i])
-    except TypeError:
-        TestCase.assertAlmostEqual(x, y)
-
-def assertDictAlmostEqual(TestCase, x, y):
-    """
-    comparing two dicts for almost equality
-    """
-    try:
+    # str
+    if isinstance(x, str):
+        TestCase.assertEqual(x, y)
+    # dict
+    elif hasattr(x, 'keys'):
         if not(sorted(x.keys()) == sorted(y.keys())):
             TestCase.fail(msg="dicts don't have the same keys")
         for key in x.keys():
-            TestCase.assertContainerAlmostEqual(x[key], y[key])
-    except TypeError:
-        TestCase.assertAlmostEqual(x, y)
+            TestCase.assertFullAlmostEqual(x[key], y[key])
+    # list, tuple
+    elif hasattr(x, '__iter__'):
+        if len(x) != len(y):
+            TestCase.fail(msg='length of objects is not equal')
+        for xval, yval in zip(x, y):
+            TestCase.assertFullAlmostEqual(xval, yval)
+    # rest
+    else:
+        try:
+            TestCase.assertAlmostEqual(x, y)
+        except TypeError:
+            TestCase.assertEqual(x, y)
 
+def assertFullEqual(TestCase, x, y):
+    """
+    Compares for almost equality
+    """
+    # str
+    if isinstance(x, str):
+        TestCase.assertEqual(x, y)
+    # dict
+    elif hasattr(x, 'keys'):
+        if not(sorted(x.keys()) == sorted(y.keys())):
+            TestCase.fail(msg="dicts don't have the same keys")
+        for key in x.keys():
+            TestCase.assertFullEqual(x[key], y[key])
+    # list, tuple
+    elif hasattr(x, '__iter__'):
+        if len(x) != len(y):
+            TestCase.fail(msg='length of objects is not equal')
+        for xval, yval in zip(x, y):
+            TestCase.assertFullEqual(xval, yval)
+    # rest
+    else:
+        TestCase.assertEqual(x, y)
 
 class CommonTestCase(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(CommonTestCase, self).__init__(*args, **kwargs)
-        self.assertIterAlmostEqual = types.MethodType(assertIterAlmostEqual, self)
-        self.assertContainerAlmostEqual = types.MethodType(
-        assertContainerAlmostEqual, self)
-        self.assertDictAlmostEqual = types.MethodType(
-        assertDictAlmostEqual, self)
+        self.assertFullAlmostEqual = types.MethodType(
+            assertFullAlmostEqual, self)
+        self.assertFullEqual = types.MethodType(
+            assertFullEqual, self)

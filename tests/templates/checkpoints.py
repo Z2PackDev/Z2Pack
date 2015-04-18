@@ -49,7 +49,7 @@ class CheckpointTestCase(CommonTestCase):
         res0 = surface.get_res()
         surface.wcc_calc(verbose=False, num_strings=20, pickle_file='samples/chkpt.txt', pos_tol=1e-23, gap_tol=None, move_tol=None)
         res1 = surface.get_res()
-        self.assertDictAlmostEqual(res0, res1)
+        self.assertFullAlmostEqual(res0, res1)
 
     def test_num_strings(self):
         self.createH(0.2, 0.3)
@@ -59,7 +59,7 @@ class CheckpointTestCase(CommonTestCase):
         res0 = surface.get_res()
         surface.wcc_calc(verbose=False, num_strings=50, pickle_file='samples/chkpt.txt', pos_tol=1e-23, gap_tol=None, move_tol=None)
         res1 = surface.get_res()
-        self.assertDictAlmostEqual(res0, res1)
+        self.assertFullAlmostEqual(res0, res1)
 
     def test_load(self):
         self.createH(0.2, 0.3)
@@ -73,7 +73,7 @@ class CheckpointTestCase(CommonTestCase):
         surface1 = system.surface(lambda kx: [kx / 2, 0, 0], [0, 1, 0], pickle_file='samples/chkpt.txt')
         surface1.wcc_calc(verbose=False, num_strings=20, pos_tol=None)
         res1 = surface1.get_res()
-        self.assertDictAlmostEqual(res0, res1)
+        self.assertFullAlmostEqual(res0, res1)
 
     def test_conv_change(self):
         self.createH(0.2, 0.3)
@@ -87,7 +87,7 @@ class CheckpointTestCase(CommonTestCase):
         surface1.wcc_calc(verbose=False, num_strings=20, pos_tol=None, gap_tol=None, move_tol=None)
         surface1.wcc_calc(verbose=False, num_strings=20, pos_tol=None)
         res1 = surface1.get_res()
-        self.assertDictAlmostEqual(res0, res1)
+        self.assertFullAlmostEqual(res0, res1)
 
     def test_overwrite(self):
         self.createH(0.2, 0.3)

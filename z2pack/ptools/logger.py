@@ -18,7 +18,10 @@ a format string.
 
 class Logger:
     def __init__(self, *events):
-        self._events = {event.name(): event for event in events}
+        self._events = {}
+        for event in events:
+            self._events[event.name()] = event
+        #~ self._events = {event.name(): event for event in events}
 
     def __str__(self):
         output = ''
@@ -54,7 +57,7 @@ class Event:
             if self._zero_string is not None:
                 return self._zero_string
             else:
-                return 'No {} occurences'.format(self._name)
+                return 'No {0} occurences'.format(self._name)
         else:
             output = self._name.upper() + '\n'
             for occ in self._occurences:
@@ -74,7 +77,7 @@ class ConvFail(Event):
             if self._zero_string is not None:
                 return self._zero_string
             else:
-                return '{} never failed'.format(self._name.upper())
+                return '{0} never failed'.format(self._name.upper())
         else:
             output = self._name.upper() + ' failed in the following instances:\n'
             for occ in self._occurences:

@@ -17,7 +17,7 @@ class PrintFunctions:
     def _getwcc(func):
         def inner(self, t):
             # initial output
-            _print(self, "Calculating string at t = {:.4f}, k = {}\n".
+            _print(self, "Calculating string at t = {0:.4f}, k = {1}\n".
                 format(t, string_tools.fl_to_s(self._param_fct(t, 0.))))
             #-----------------------------------------------------------#
             res = func(self, t)
@@ -77,8 +77,8 @@ class PrintFunctions:
     
     def _check_single_neighbour(func):
         def inner(self, i):
-            _print(self, ('Checking neighbouring t-points t = {:.4f} and ' +
-                      't = {:.4f}\n').format(self._t_points[i], self._t_points[i + 1]))
+            _print(self, ('Checking neighbouring t-points t = {0:.4f} and ' +
+                      't = {1:.4f}\n').format(self._t_points[i], self._t_points[i + 1]))
             #-----------------------------------------------------------#
             res = func(self, i)
             #-----------------------------------------------------------#
@@ -96,7 +96,7 @@ class PrintFunctions:
         def inner(self, i):
             res = func(self, i)
             if res:
-                _print(self, 'Added string at t = {}\n\n'.format(self._t_points[i + 1]))
+                _print(self, 'Added string at t = {0}\n\n'.format(self._t_points[i + 1]))
             else:
                 _print(self, 'Reached minimum distance between neighbours\n\n')
             return res

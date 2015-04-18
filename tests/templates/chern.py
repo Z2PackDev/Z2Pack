@@ -34,7 +34,7 @@ class TbExplicitHTestCase(CommonTestCase):
 
         res = in_place_replace(surface.chern())
 
-        self.assertDictAlmostEqual(res, surface.chern())
+        self.assertFullAlmostEqual(res, surface.chern())
 
 if __name__ == "__main__":
     unittest.main()    

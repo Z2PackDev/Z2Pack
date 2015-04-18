@@ -53,7 +53,7 @@ class TbExampleTestCase(CommonTestCase):
         
         res = in_place_replace(tb_surface.get_res())
 
-        self.assertDictAlmostEqual(tb_surface.get_res(), res)
+        self.assertFullAlmostEqual(tb_surface.get_res(), res)
 
     def test_res2(self):
         """ test pos_check=False """
@@ -68,7 +68,7 @@ class TbExampleTestCase(CommonTestCase):
 
         res = in_place_replace(tb_surface.get_res())
 
-        self.assertDictAlmostEqual(tb_surface.get_res(), res)
+        self.assertFullAlmostEqual(tb_surface.get_res(), res)
 
     def test_res3(self):
         """ test gap_tol=None """
@@ -83,7 +83,7 @@ class TbExampleTestCase(CommonTestCase):
 
         res = in_place_replace(tb_surface.get_res())
 
-        self.assertDictAlmostEqual(tb_surface.get_res(), res)
+        self.assertFullAlmostEqual(tb_surface.get_res(), res)
 
     def test_res4(self):
         """ test move_tol=None """
@@ -98,7 +98,7 @@ class TbExampleTestCase(CommonTestCase):
 
         res = in_place_replace(tb_surface.get_res())
 
-        self.assertDictAlmostEqual(tb_surface.get_res(), res)
+        self.assertFullAlmostEqual(tb_surface.get_res(), res)
 
     def test_res5(self):
         """ test gap_tol=None and move_tol=None"""
@@ -114,7 +114,7 @@ class TbExampleTestCase(CommonTestCase):
 
         res = in_place_replace(tb_surface.get_res())
 
-        self.assertDictAlmostEqual(tb_surface.get_res(), res)
+        self.assertFullAlmostEqual(tb_surface.get_res(), res)
 
     def test_saveload(self):
         self.createH(0.1, 0.3)
@@ -123,7 +123,7 @@ class TbExampleTestCase(CommonTestCase):
         surface2 = tb_system.surface(lambda kx: [kx / 2, 0, 0], [0, 1, 0], pickle_file='samples/tb_pickle.txt')
         surface1.wcc_calc(verbose=False)
         surface2.load()
-        self.assertDictAlmostEqual(surface1.get_res(), surface2.get_res())
+        self.assertFullAlmostEqual(surface1.get_res(), surface2.get_res())
 
     def testkwargcheck1(self):
         """ test kwarg check on wcc_calc """

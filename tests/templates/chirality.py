@@ -33,7 +33,7 @@ class ChiralityTestCase(CommonTestCase):
 
         res = in_place_replace(surface.get_res())
 
-        self.assertDictAlmostEqual(res, surface.get_res())
+        self.assertFullAlmostEqual(res, surface.get_res())
 
     def test_negative(self):
         def tb_hamiltonian(k):
@@ -52,7 +52,7 @@ class ChiralityTestCase(CommonTestCase):
 
         res = in_place_replace(surface.get_res())
 
-        self.assertDictAlmostEqual(res, surface.get_res())
+        self.assertFullAlmostEqual(res, surface.get_res())
 
 
 if __name__ == "__main__":

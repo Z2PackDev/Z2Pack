@@ -9,7 +9,6 @@ from __future__ import division, print_function
 
 from . import vectors
 
-import copy
 import numpy as np
 import scipy.linalg as la
 
@@ -47,11 +46,11 @@ class Hamilton(object):
         """
 
         # check input
-        if(len(position) != 3):
+        if len(position) != 3:
             raise ValueError('position must be a list/tuple of length 3')
-        if(len(element) != 2):
+        if len(element) != 2:
             raise ValueError("bad argument for 'element' input variable")
-        if not(isinstance(element[1], int)):
+        if not isinstance(element[1], int):
             raise ValueError("num_electrons must be an integer")
 
         # add the atom - store as (orbitals, num_electrons, position)
@@ -59,7 +58,8 @@ class Hamilton(object):
         # return the index the atom will get
         return len(self._atoms) - 1
 
-    def add_hopping(self, orbital_pairs, rec_lattice_vec, overlap, phase=None, add_conjugate=True):
+    def add_hopping(self, orbital_pairs, rec_lattice_vec,
+                    overlap, phase=None, add_conjugate=True):
         r"""
         Adds a hopping term between orbitals. If the orbitals are not equal,
         the complex conjugate term is also added.
@@ -103,11 +103,11 @@ class Hamilton(object):
             # check if there are multiple rec_lattice_vec
             if(hasattr(rec_lattice_vec[0], '__getitem__') and
                hasattr(rec_lattice_vec[0], '__iter__')):
-                if(phase is None):
+                if phase is None:
                     phase = 1
-                if(hasattr(phase, '__getitem__') and
-                   hasattr(phase, '__iter__')):
-                    if(len(phase) == 1):
+                if (hasattr(phase, '__getitem__') and
+                        hasattr(phase, '__iter__')):
+                    if len(phase) == 1:
                         for vec in rec_lattice_vec:
                             self.add_hopping(orbital_pairs,
                                              vec,
@@ -123,32 +123,34 @@ class Hamilton(object):
 
             else:
                 # check rec_lattice_vec
-                if(len(rec_lattice_vec) != 3):
+                if len(rec_lattice_vec) != 3:
                     raise ValueError('length of rec_lattice_vec must be 3')
                 for coord in rec_lattice_vec:
-                    if not(isinstance(coord, int)):
+                    if not isinstance(coord, int):
                         raise ValueError('rec_lattice_vec must consist \
                                          of integers')
 
                 # add hopping
+                rec_lattice_vec = np.array(rec_lattice_vec)
                 indices_1 = (orbital_pairs[0][0], orbital_pairs[0][1])
                 indices_2 = (orbital_pairs[1][0], orbital_pairs[1][1])
                 self._hoppings.append((overlap,
                                        indices_1,
                                        indices_2,
                                        rec_lattice_vec))
-                if(add_conjugate):
+                if add_conjugate:
                     self._hoppings.append((overlap.conjugate(),
                                            indices_2,
                                            indices_1,
-                                           [-x for x in rec_lattice_vec]))
+                                           -rec_lattice_vec))
 
-    def explicit_hamiltonian(self, hamiltonian, atoms_at_origin=True, occupied=None):
+    def explicit_hamiltonian(self, hamiltonian, atoms_at_origin=True,
+                             occupied=None):
         r"""
         Specify the hamiltonian explicitly. The atom positions can be either
-        set to all be at the origin, or they can be 
+        set to all be at the origin, or they can be
 
-        
+
         :param hamiltonian: A function returning the matrix hamiltonian
             given k.
         :type hamiltonian: function
@@ -175,13 +177,13 @@ class Hamilton(object):
         self._parse_atoms()
 
         if len(self._T_list) != size:
-            raise ValueError('The number of orbitals found in the atoms ({}) does not match the size of the Hamiltonian ({})'.format(len(self._T_list), size))
+            raise ValueError('The number of orbitals found in the atoms ({0}) does not match the size of the Hamiltonian ({1})'.format(len(self._T_list), size))
 
         if occupied is not None:
             self._num_electrons = occupied
 
         self.hamiltonian = hamiltonian
-        
+
 
     def create_hamiltonian(self):
         """
@@ -192,17 +194,41 @@ class Hamilton(object):
         """
         self._parse_atoms()
 
-        def _H(k):
-            H = [list(row) for row in np.diag([energy for atom in self._atoms
-                 for energy in atom[0]])]
+        # checking for the minimum and maximum rec_lattice vecs
+        xmin = xmax = ymin = ymax = zmin = zmax = 0
+        for hopping in self._hoppings:
+            vec = hopping[3]
+            xmin = min(xmin, vec[0])
+            ymin = min(ymin, vec[1])
+            zmin = min(zmin, vec[2])
+            xmax = max(xmax, vec[0])
+            ymax = max(ymax, vec[1])
+            zmax = max(zmax, vec[2])
 
+        pow_fac = 2j * np.pi
+        def _H(k):
+            # precomputing the exponential
+            k = np.array(k)
+            exp_precomputed = []
+            for x in range(xmin, xmax + 1):
+                tmp_x = []
+                for y in range(ymin, ymax + 1):
+                    tmp_y = []
+                    for z in range(zmin, zmax + 1):
+                        tmp_z = np.exp(pow_fac *  np.dot([x, y, z], k))
+                        tmp_y.append(tmp_z)
+                    tmp_x.append(tmp_y)
+                exp_precomputed.append(tmp_x)
+
+            # setting up the hamiltonian
+            H = np.diag([complex(energy) for atom in self._atoms for energy in atom[0]])
             for hopping in self._hoppings:
-                # add entry for hopping
-                index_1 = self._orbital_to_index[hopping[1][0]][hopping[1][1]]
-                index_2 = self._orbital_to_index[hopping[2][0]][hopping[2][1]]
-                phase = np.exp(1j * self._dot_prod(hopping[3], k))
-                H[index_1][index_2] += hopping[0] * phase
+                index1 = self._orbital_to_index[hopping[1][0]][hopping[1][1]]
+                index2 = self._orbital_to_index[hopping[2][0]][hopping[2][1]]
+                mat_element = hopping[0] * exp_precomputed[hopping[3][0] - xmin][hopping[3][1] - ymin][hopping[3][2] - zmin]
+                H[index1, index2] += mat_element
             return H
+
         self.hamiltonian = _H
         return self.hamiltonian
 
@@ -211,16 +237,16 @@ class Hamilton(object):
         count = 0
         self._orbital_to_index = []
         self._T_list = []
-        for atom_num, atom in enumerate(self._atoms):
+        for _, atom in enumerate(self._atoms):
             num_orbitals = len(atom[0])
             self._orbital_to_index.append([count + i for i in range(num_orbitals)])
             for i in range(num_orbitals):
                 self._T_list.append(atom[2])
             count += num_orbitals
-        # needed for _getM
+        # needed for _get_m
         self._num_electrons = sum(atom[1] for atom in self._atoms)
 
-    def _getM(self, kpt):
+    def _get_m(self, kpt):
         """
         returns:        M-matrices
 
@@ -257,25 +283,12 @@ class Hamilton(object):
             deltak = list(np.array(kpt[i + 1]) - np.array(kpt[i]))
             Mnew = [[sum(np.conjugate(eigs[i][j, m]) *
                      eigs[i + 1][j, n] *
-                     np.exp(-1j * self._dot_prod(deltak, self._T_list[j]))
+                     np.exp(-2j * np.pi * np.dot(deltak, self._T_list[j]))
                      for j in range(eigsize))
                      for n in range(eignum)]
                     for m in range(eignum)]
             M.append(Mnew)
         return M
-
-    def _dot_prod(self, k_vec, x_vec):
-        """
-        helper function for dot product of real space with reciprocal space
-        vectors (both w.r.t. their basis)
-        order or k_vec / x_vec not important
-        assumes x_vec / k_vec are w.r.t. the unit cell / reciprocal lattice
-            where a_i.b_j = 2*Pi*KroneckerDelta(i,j)
-        """
-        n = len(k_vec)
-        if(len(x_vec) != n):
-            raise ValueError('k_vec and x_vec must be of the same size')
-        return 2 * np.pi * sum(x_vec[i]*k_vec[i] for i in range(n))
 
 
 #-----------------------------------------------------------------------#
@@ -304,5 +317,5 @@ class System(_Z2PackSystem):
         self._defaults = kwargs
         self._tb_hamilton = tb_hamilton
 
-        self._m_handle = self._tb_hamilton._getM
+        self._m_handle = self._tb_hamilton._get_m
 

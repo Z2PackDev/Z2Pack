@@ -7,11 +7,3 @@ Core Module
     :imported-members:
 
 
-Helper Modules
-==============
-
-Shapes
-------
-
-.. automodule:: z2pack.shapes
-    :members:

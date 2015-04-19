@@ -43,6 +43,8 @@ class System(object):
 
     :param kwargs: Keyword arguments are passed to the :class:`Surface` constructor unless overwritten by kwargs to :func:`surface`
     """
+    # TODO when all systems are new-style_remove (keyword RM_V2)
+    _new_style_system = False
 
     def __init__(self, m_handle, **kwargs):
         self._defaults = kwargs
@@ -50,21 +52,20 @@ class System(object):
 
     def surface(self, param_fct, string_vec=None, **kwargs):
         r"""
-        Creates a :class:`Surface` instance.  The surface's position is
-        specified by a function ``param_fct``: :math:`t \in [0, 1]
-        \rightarrow \mathbb{R}^3` (or, if you want to stay in the same
-        UC, :math:`[0, 1]^3`) connecting a pumping parameter :math:`t`
-        to the edge of the surface. The direction along which the surface
-        extends from this edge, then, is given by ``string_vec``.
+        Creates a :class:`Surface` instance. For a detailed
+        description consult the :ref:`Tutorial <creating-surface>`.
 
-        :param param_fct: Returns the start of the k-point string
-            as function of the pumping parameter t.
-
-        :param string_vec: Direction of the individual k-point strings.
+        :param param_fct: Parametrizes either the full surface
+            (``string_vec == None``) or its edge (``string_vec != None``),
+            with the parameter going from :math:`0` to :math:`1`.
+        :type param_fct: function
+    
+        :param string_vec: Direction of the individual k-point strings,
+            if ``param_fct`` only parametrizes the edge of the surface.
             Note that ``string_vec`` must connect equivalent k-points
             (i.e. it must be a reciprocal lattice vector). Typically,
             it is one of ``[1, 0, 0]``, ``[0, 1, 0]``, ``[0, 0, 1]``.
-        :type string_vec: list (float)
+        :type string_vec: list
 
         :param kwargs: Keyword arguments are passed to the :class:`Surface`
             constructor. They take precedence over kwargs from the
@@ -79,6 +80,19 @@ class System(object):
         kw_arguments = copy.copy(self._defaults)
         kw_arguments.update(kwargs)
 
+        # RM_V2
+        if self._new_style_system:
+            if string_vec is not None:
+                warnings.warn('The parameter string_vec is soon to be ' +
+                    'deprecated and will be removed when all System ' +
+                    'classes support arbitrary surfaces.', DeprecationWarning, stacklevel=2)
+        else:
+            if string_vec is None:
+                warnings.warn('This type of system cannot be used ' +
+                    'to calculate arbitrary surfaces (yet). It is recommended ' +
+                    'to use string_vec != None.', stacklevel=2)
+        # end RM_V2
+            
         if string_vec is not None:
             def param_fct_proxy(t, k):
                 return list(np.array(param_fct(t)) + k * np.array(string_vec))
@@ -506,7 +520,8 @@ class Surface(object):
         r"""
         Deprecated alias for :meth:`wcc_plot`.
         """
-        warnings.warn('Using deprecated function plot. Use wcc_plot instead.')
+        warnings.warn('Using deprecated function plot. Use wcc_plot instead.',
+            DeprecationWarning, stacklevel=2)
         return self.wcc_plot(*args, **kwargs)
 
     @_plot

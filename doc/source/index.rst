@@ -50,6 +50,7 @@ Documentation
     :maxdepth: 2
 
     core.rst
+    helpers.rst
     fp.rst
     tb.rst
 

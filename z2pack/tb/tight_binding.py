@@ -311,6 +311,9 @@ class System(_Z2PackSystem):
         :meth:`.surface`, which passes them to :meth:`.wcc_calc`, precedence:
         :meth:`.wcc_calc` > :meth:`.surface` > this (newer kwargs take precedence)
     """
+    # RM_V2
+    _new_style_system = True
+    
     def __init__(self,
                  tb_hamilton,
                  **kwargs):

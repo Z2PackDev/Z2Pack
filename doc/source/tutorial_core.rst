@@ -65,6 +65,8 @@ create an instance of :class:`System<z2pack.System>`, please refer to its subcla
 In both cases, the :class:`System<z2pack.System>` instance is used to create the
 different surfaces on which to compute the Z2 topological invariant.
 
+.. _creating-surface:
+
 Creating a :class:`.Surface`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Having defined a system, the next step is creating a surface for which the
@@ -227,6 +229,23 @@ Getting the results
 The Z2 invariant can be calculated by calling the :meth:`.invariant()`
 method, which returns 0 for topologically trivial surfaces or 1 for
 non-trivial ones.
+
+The Chern number can be calculated using the :meth:`.chern()` method,
+which returns the Chern number, which returns a `dict` containing the
+following:
+
+*   ``chern``: The Chern number.
+*   ``pol``: The polarization (sum of WCC) for each string of k-points. Because
+    the polarization is defined only :math:`\mod 1`, its value is chosen
+    to be in :math:`[0, 1)`.
+*   ``step``: The change in polarization between different k-point strings.
+    It is also defined only up to an integer constant, and is chosen
+    s.t. its absolute value is minimized. The Chern number is equal to the
+    sum of steps.
+
+.. note:: A good way of estimating the convergence of the Chern number is
+    looking at the maximum absolute value in ``step``. The value should
+    be well below :math:`0.5`.
 
 Wannier charge centers, k-points, :math:`\Lambda` matrices etc.
 can be extracted by using the :meth:`.get_res()` method. Its return value is

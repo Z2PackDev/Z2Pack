@@ -8,7 +8,6 @@
 from common import *
 
 import types
-import unittest
 
 class CheckpointTestCase(CommonTestCase):
     def createH(self, t1, t2):

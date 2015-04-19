@@ -7,8 +7,6 @@
 
 from common import *
 
-import unittest
-
 
 class TbVectorsTestCase(CommonTestCase):
     """

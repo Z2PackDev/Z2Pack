@@ -8,7 +8,6 @@
 
 from common import *
 
-import unittest
 import numpy as np
 
 pauli_x = np.array([[0, 1], [1, 0]], dtype=complex)

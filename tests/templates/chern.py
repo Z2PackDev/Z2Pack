@@ -5,20 +5,17 @@
 # Date:    13.04.2015 16:52:29 CEST
 # File:    chern.py
 
-
 from common import *
 
-import unittest
 import numpy as np
 
-pauli_x = np.array([[0, 1], [1, 0]], dtype=complex)
-pauli_y = np.array([[0, -1j], [1j, 0]], dtype=complex)
-pauli_z = np.array([[1, 0], [0, -1]], dtype=complex)
-pauli_vector = list([pauli_x, pauli_y, pauli_z])
-
-class TbExplicitHTestCase(CommonTestCase):
+class ChernTestCase(CommonTestCase):
 
     def tb_hamiltonian(self, k):
+        pauli_x = np.array([[0, 1], [1, 0]], dtype=complex)
+        pauli_y = np.array([[0, -1j], [1j, 0]], dtype=complex)
+        pauli_z = np.array([[1, 0], [0, -1]], dtype=complex)
+        pauli_vector = list([pauli_x, pauli_y, pauli_z])
         k[2] = -k[2]
         res = np.zeros((2, 2), dtype=complex)
         for kval, p_mat in zip(k, pauli_vector):
@@ -38,4 +35,3 @@ class TbExplicitHTestCase(CommonTestCase):
 
 if __name__ == "__main__":
     unittest.main()    
-

@@ -8,8 +8,6 @@
 from common import *
 
 import types
-import unittest
-
 
 class TbExampleTestCase(CommonTestCase):
 

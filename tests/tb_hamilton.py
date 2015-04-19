@@ -7,7 +7,6 @@
 
 from common import *
 
-import unittest
 import numpy as np
 
 class TbHamiltonTestCase(CommonTestCase):

@@ -5,10 +5,10 @@
 # Date:    10.03.2015 10:53:12 CET
 # File:    quietload.py
 
+
 from common import *
 
 import types
-import unittest
 
 class QuietLoadTestCase(CommonTestCase):
     def test_q(self):

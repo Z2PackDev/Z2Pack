@@ -5,11 +5,10 @@
 # Date:    15.10.2014 13:38:41 CEST
 # File:    read_mmn.py
 
+
 from common import *
 
 import ast
-import unittest
-
 
 class ReadMmnTestCase(CommonTestCase):
 

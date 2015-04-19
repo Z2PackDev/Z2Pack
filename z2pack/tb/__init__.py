@@ -11,5 +11,5 @@ The :mod:`z2pack.tb` module: Contains the classes :class:`Hamilton`
 :class:`z2pack.System` for interfacing to the Core).
 """
 
-from .tight_binding import *
+from ._tight_binding import *
 #~ from . import w90

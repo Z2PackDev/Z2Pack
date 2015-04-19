@@ -13,5 +13,5 @@ codes interfacing to Wannier90.
     consult the :ref:`Tutorial<Wannier90_setup>` for details.
 """
 
-from .first_principles import *
+from ._first_principles import *
 

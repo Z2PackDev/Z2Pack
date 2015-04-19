@@ -15,7 +15,7 @@ from __future__ import division
 from .ptools import string_tools
 from .ptools import logger
 
-from . import verbose_prt
+from . import _verbose_prt
 
 import re
 import sys
@@ -251,7 +251,7 @@ class Surface(object):
     #                support functions for wcc                          #
     #-------------------------------------------------------------------#
 
-    @verbose_prt.dispatcher
+    @_verbose_prt.dispatcher
     def _wcc_calc_main(self):
         """
         main calculation part
@@ -307,7 +307,7 @@ class Surface(object):
         self._neighbour_check = [False for i in
                                  range(len(self._wcc_list) - 1)]
 
-    @verbose_prt.dispatcher
+    @_verbose_prt.dispatcher
     def _check_neighbours(self):
         """
         checks the neighbour conditions, adds a value in k_points when
@@ -337,7 +337,7 @@ class Surface(object):
                         return False
             return True
 
-    @verbose_prt.dispatcher
+    @_verbose_prt.dispatcher
     def _check_single_neighbour(self, i):
         """
         Performs the gap check and move check for neighbours at
@@ -354,7 +354,7 @@ class Surface(object):
             self._neighbour_check[i] = True
         return neighbour_check, move_check
 
-    @verbose_prt.dispatcher
+    @_verbose_prt.dispatcher
     def _add_string(self, i):
         """
         Adds a string between i and i + 1. returns False if it failed
@@ -386,7 +386,7 @@ class Surface(object):
         return True
 
     # calculating one string
-    @verbose_prt.dispatcher
+    @_verbose_prt.dispatcher
     def _getwcc(self, t):
         """
         calculates WCC along a string by increasing the number of steps
@@ -414,7 +414,7 @@ class Surface(object):
                 converged = False
         return sorted(x), lambda_, converged
 
-    @verbose_prt.dispatcher
+    @_verbose_prt.dispatcher
     def _trywcc(self, all_m):
         """
         Calculates the WCC from the MMN matrices

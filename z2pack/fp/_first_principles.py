@@ -7,7 +7,7 @@
 
 from . import kpts
 from .. import System as _Z2PackSystem
-from . import read_mmn as mmn
+from . import _read_mmn as mmn
 
 import os
 import re

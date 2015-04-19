@@ -48,7 +48,7 @@ class TbExampleTestCase(CommonTestCase):
         self.createH(0.2, 0.3)
         # call to Z2Pack
         tb_system = z2pack.tb.System(self.H)
-        tb_surface = tb_system.surface(lambda kx: [kx / 2, 0, 0], [0, 1, 0])
+        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
         tb_surface.wcc_calc(verbose=False, num_strings=20, pickle_file=None)
         
         res = in_place_replace(tb_surface.get_res())
@@ -60,7 +60,7 @@ class TbExampleTestCase(CommonTestCase):
         self.createH(0, 0.3)
         # call to Z2Pack
         tb_system = z2pack.tb.System(self.H)
-        tb_surface = tb_system.surface(lambda kx: [kx / 2, 0, 0], [0, 1, 0])
+        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
         tb_surface.wcc_calc(verbose=False,
                             num_strings=20,
                             pickle_file=None,
@@ -75,7 +75,7 @@ class TbExampleTestCase(CommonTestCase):
         self.createH(0.1, 0.3)
         # call to Z2Pack
         tb_system = z2pack.tb.System(self.H)
-        tb_surface = tb_system.surface(lambda kx: [kx / 2, 0, 0], [0, 1, 0])
+        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
         tb_surface.wcc_calc(verbose=False,
                             num_strings=20,
                             pickle_file=None,
@@ -90,7 +90,7 @@ class TbExampleTestCase(CommonTestCase):
         self.createH(0.1, 0.3)
         # call to Z2Pack
         tb_system = z2pack.tb.System(self.H)
-        tb_surface = tb_system.surface(lambda kx: [kx / 2, 0, 0], [0, 1, 0])
+        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
         tb_surface.wcc_calc(verbose=False,
                           num_strings=20,
                           pickle_file=None,
@@ -105,7 +105,7 @@ class TbExampleTestCase(CommonTestCase):
         self.createH(0.1, 0.3)
         # call to Z2Pack
         tb_system = z2pack.tb.System(self.H)
-        tb_surface = tb_system.surface(lambda kx: [kx / 2, 0, 0], [0, 1, 0])
+        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
         tb_surface.wcc_calc(verbose=False,
                             num_strings=20,
                             pickle_file=None,
@@ -116,11 +116,23 @@ class TbExampleTestCase(CommonTestCase):
 
         self.assertFullAlmostEqual(tb_surface.get_res(), res)
 
+    def test_warning(self):
+        """ test the warning that is given when string_vec != None"""
+        self.createH(0.1, 0.3)
+        # call to Z2Pack
+        tb_system = z2pack.tb.System(self.H)
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
+            tb_surface = tb_system.surface(lambda kx: [kx / 2, 0, 0], [0, 1, 0])
+            assert len(w) == 1
+            assert w[-1].category == DeprecationWarning
+            assert "string_vec" in str(w[-1].message)
+
     def test_saveload(self):
         self.createH(0.1, 0.3)
         tb_system = z2pack.tb.System(self.H)
-        surface1 = tb_system.surface(lambda kx: [kx / 2, 0, 0], [0, 1, 0], pickle_file='samples/tb_pickle.txt')
-        surface2 = tb_system.surface(lambda kx: [kx / 2, 0, 0], [0, 1, 0], pickle_file='samples/tb_pickle.txt')
+        surface1 = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file='samples/tb_pickle.txt')
+        surface2 = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file='samples/tb_pickle.txt')
         surface1.wcc_calc(verbose=False)
         surface2.load()
         self.assertFullAlmostEqual(surface1.get_res(), surface2.get_res())
@@ -130,7 +142,7 @@ class TbExampleTestCase(CommonTestCase):
         self.createH(0.1, 0.3)
         # call to Z2Pack
         tb_system = z2pack.tb.System(self.H)
-        tb_surface = tb_system.surface(lambda kx: [kx / 2, 0, 0], [0, 1, 0])
+        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
         self.assertRaises(
             TypeError,
             tb_surface.wcc_calc,

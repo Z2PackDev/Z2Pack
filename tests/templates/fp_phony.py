@@ -66,5 +66,24 @@ class FpPhonyTestCase(CommonTestCase):
         self.assertFullAlmostEqual(
             surface.get_res(), in_place_replace(surface.get_res()))
 
+    def test_warnings(self):
+        """
+        test the warning that is given if new style surfaces are used
+        """
+        sys = z2pack.fp.System(
+            'samples' + self._sep + 'varw90.mmn',
+            lambda x: '',
+            "kpts",
+            "",
+            build_folder='samples' + self._sep + 'build',
+            mmn_path='varw90.mmn')
+
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
+            surface = sys.surface(lambda kx, ky: [ky, kx / 2, 0], pickle_file=None)
+            assert len(w) == 1
+            assert w[-1].category == UserWarning
+            assert "recommended to use string_vec != None" in str(w[-1].message)
+
 if __name__ == "__main__":
     unittest.main()

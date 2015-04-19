@@ -16,6 +16,9 @@ except ImportError:
 
 import types
 import inspect
+import warnings
+warnings.simplefilter('always')
+
 import unittest
 # ugly hack to enable in-place replacement of arrays
 from numpy import array

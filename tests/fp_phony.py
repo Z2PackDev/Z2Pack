@@ -2244,5 +2244,24 @@ class FpPhonyTestCase(CommonTestCase):
         self.assertFullAlmostEqual(
             surface.get_res(), {'t_par': [0.0, 0.10000000000000001, 0.20000000000000001, 0.30000000000000004, 0.40000000000000002, 0.5, 0.60000000000000009, 0.70000000000000007, 0.80000000000000004, 0.90000000000000002, 1.0], 'wcc': [[], [], [], [], [], [], [], [], [], [], []], 'lambda_': [[], [], [], [], [], [], [], [], [], [], []], 'kpt': [[0.0, 0.0, 0.0], [0.0, 0.050000000000000003, 0.0], [0.0, 0.10000000000000001, 0.0], [0.0, 0.15000000000000002, 0.0], [0.0, 0.20000000000000001, 0.0], [0.0, 0.25, 0.0], [0.0, 0.30000000000000004, 0.0], [0.0, 0.35000000000000003, 0.0], [0.0, 0.40000000000000002, 0.0], [0.0, 0.45000000000000001, 0.0], [0.0, 0.5, 0.0]], 'gap': [None, None, None, None, None, None, None, None, None, None, None]})
 
+    def test_warnings(self):
+        """
+        test the warning that is given if new style surfaces are used
+        """
+        sys = z2pack.fp.System(
+            'samples' + self._sep + 'varw90.mmn',
+            lambda x: '',
+            "kpts",
+            "",
+            build_folder='samples' + self._sep + 'build',
+            mmn_path='varw90.mmn')
+
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
+            surface = sys.surface(lambda kx, ky: [ky, kx / 2, 0], pickle_file=None)
+            assert len(w) == 1
+            assert w[-1].category == UserWarning
+            assert "recommended to use string_vec != None" in str(w[-1].message)
+
 if __name__ == "__main__":
     unittest.main()

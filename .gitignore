@@ -1,5 +1,6 @@
 # Python binaries
 *.pyc
+*.pyo
 *__pycache__*
 
 # hidden files garbage
@@ -19,6 +20,8 @@ scf_files
 res_pickle.txt
 examples/tb/results
 examples/fp/**/results
+# VASP license
+POTCAR 
 
 # Installation/setup related
 dist

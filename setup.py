@@ -25,7 +25,7 @@ the Wannier90 code package (fp).
 
 setup(
     name='z2pack',
-    version='1.1.0',
+    version='1.1.2',
     url='http://z2pack.ethz.ch',
     author='Dominik Gresch',
     author_email='greschd@gmx.ch',

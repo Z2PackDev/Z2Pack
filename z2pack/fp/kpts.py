@@ -53,6 +53,7 @@ def qe(kpt):
     start_point = kpt[0]
     end_point = kpt[-1]
     last_point = kpt[-2]
+    N = len(kpt) - 1
     for point in kpt:
         if len(point) != 3:
             raise ValueError('dimension of point != 3')
@@ -76,6 +77,7 @@ def wannier90(kpt):
         if len(point) != 3:
             raise ValueError('dimension of point != 3')
 
+    N = len(kpt) - 1
     string = "mp_grid: " + str(int(N)) + " 1 1 \nbegin kpoints"
     for k in kpt[:-1]:
         string += '\n'
@@ -88,6 +90,10 @@ def vasp(kpt):
     """
     Creates a k-point input for  **VASP**, using explicit points
     """
+    for point in kpt:
+        if len(point) != 3:
+            raise ValueError('dimension of point != 3')
+            
     N = len(kpt) - 1
     string = 'Explicit k-points\n' + str(N) + '\nReciprocal\n'
     for k in kpt[:-1]:

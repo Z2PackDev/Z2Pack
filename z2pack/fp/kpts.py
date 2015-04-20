@@ -92,5 +92,5 @@ def vasp(kpt):
     string = 'Explicit k-points\n' + str(N) + '\nReciprocal\n'
     for k in kpt[:-1]:
         string += '{0} {1} {2} 1.'.format(*list(k))
-    string += '\n'
+        string += '\n'
     return string

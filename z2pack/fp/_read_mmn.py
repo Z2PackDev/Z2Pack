@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Author:  Dominik Gresch <greschd@ethz.ch>
+# Author:  Dominik Gresch <greschd@gmx.ch>
 # Date:    11.04.2014 13:08:23 CEST
-# File:    read_mmn.py
+# File:    _read_mmn.py
 
 import re
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Author:  Dominik Gresch <greschd@ethz.ch>
+# Author:  Dominik Gresch <greschd@gmx.ch>
 # Date:    06.07.2014 20:20:43 CEST
 # File:    string_tools.py
 

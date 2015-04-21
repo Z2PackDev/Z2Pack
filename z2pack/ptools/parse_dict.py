@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Author:  Dominik Gresch <greschd@ethz.ch>
+# Author:  Dominik Gresch <greschd@gmx.ch>
 # Date:    06.10.2014 13:42:33 CEST
 # File:    parse_dict.py
 

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Author:  Dominik Gresch <greschd@ethz.ch>
+# Author:  Dominik Gresch <greschd@gmx.ch>
 # Date:    26.09.2014 22:44:18 CEST
-# File:    first_principles.py
+# File:    _first_principles.py
 
 from . import kpts
 from .. import System as _Z2PackSystem

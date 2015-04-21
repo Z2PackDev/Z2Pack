@@ -1,9 +1,9 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Author:  Dominik Gresch <greschd@gmx.ch>
 # Date:    15.10.2014 12:20:27 CEST
-# File:    kpts_abinit.py
+# File:    kpts.py
 """Module containing the TestCase for Abinit k-point generation"""
 
 from common import *

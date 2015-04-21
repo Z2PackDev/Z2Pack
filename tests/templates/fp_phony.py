@@ -2,7 +2,7 @@
 #
 # Author:  Dominik Gresch <greschd@gmx.ch>
 # Date:    15.10.2014 14:49:25 CEST
-# File:    tb_hamilton.py
+# File:    fp_phony.py
 
 from common import *
 

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Author:  Dominik Gresch <greschd@ethz.ch>
+# Author:  Dominik Gresch <greschd@gmx.ch>
 # Date:    25.09.2014 13:46:52 CEST
-# File:    tb_vectors.py
+# File:    vectors.py
 
 """
 A collection of functions to easily create multiple reciprocal lattice vectors.

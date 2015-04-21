@@ -1,9 +1,9 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Author:  Dominik Gresch <greschd@gmx.ch>
 # Date:    15.10.2014 10:22:43 CEST
-# File:    tbexample.py
+# File:    tb_example.py
 
 from common import *
 

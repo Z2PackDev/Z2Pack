@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Authors:  Dominik Gresch <greschd@ethz.ch>, Gabriel Autes
+# Authors:  Dominik Gresch <greschd@gmx.ch>, Gabriel Autes
 # Date:    27.09.2014 21:27:27 CEST
 # File:    kpts.py
 r"""

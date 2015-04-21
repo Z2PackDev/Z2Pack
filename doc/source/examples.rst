@@ -10,3 +10,4 @@ This is a collection of examples demonstrating the basic use of Z2Pack.
 
     example_abinit.rst
     example_tb.rst
+    example_weyl.rst

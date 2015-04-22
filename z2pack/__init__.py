@@ -13,9 +13,10 @@ specialisations) and Surface (responsible for all the calculations / \
 plots etc.)
 """
 
+from ._version import __version__
+
 from ._core import *
 from . import shapes
 
 from . import fp
 from . import tb
-

@@ -5,6 +5,7 @@
 # Date:    20.10.2014 11:27:40 CEST
 # File:    setup.py
 
+import re
 try:
     from setuptools import setup
 except:
@@ -23,9 +24,13 @@ the Wannier90 code package (fp).
 - Online interface: http://z2pack.ethz.ch/online
 """
 
+with open('./z2pack/_version.py', 'r') as f:
+    match_expr = "__version__[^'" + '"]+([' + "'" + r'"])([^\1]+)\1'
+    version = re.search(match_expr, f.read()).group(2)
+
 setup(
     name='z2pack',
-    version='1.1.2',
+    version=version,
     url='http://z2pack.ethz.ch',
     author='Dominik Gresch',
     author_email='greschd@gmx.ch',

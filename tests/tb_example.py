@@ -42,6 +42,7 @@ class TbExampleTestCase(CommonTestCase):
                            phase=[1])
 
     # this test may produce false negatives due to small numerical differences
+    @unittest.skipIf(not run_vasp)
     def test_res1(self):
         self.createH(0.2, 0.3)
         # call to Z2Pack

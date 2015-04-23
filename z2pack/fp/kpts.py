@@ -101,13 +101,17 @@ def wannier90(kpt):
         #~ string += '\n'
     #~ return string
 
-def vasp(start_point, last_point, end_point, N):
+def vasp(kpt):
     """
     Creates a k-point input for  **VASP**. It uses the automatic
     generation scheme with a Gamma centered grid. Note that VASP
     does **not** support any kind of k-point line **unless** they are
     exactly along one of the reciprocal lattice vectors.
     """
+    start_point = kpt[0]
+    end_point = kpt[-1]
+    last_point = kpt[-2]
+    N = len(kpt) - 1
     string = 'Automatic mesh\n0              ! number of k-points = 0 ->automatic generation scheme\nGamma          ! generate a Gamma centered grid\n'
     num_dirs = 0
     for i in range(3):

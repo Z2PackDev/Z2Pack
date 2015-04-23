@@ -9,6 +9,7 @@ import os
 import re
 import types
 import unittest
+from optparse import OptionParser
 
 expr = re.compile(r'\.py$')
 
@@ -16,6 +17,16 @@ expr = re.compile(r'\.py$')
 imports all classes inherited from unittest.TestCase from modules located
 in the test folder
 """
+parser = OptionParser()
+
+parser.add_option('-v', '--vasp', dest='vasp', help='run vasp tests')    
+parser.add_option('-a', '--abinit', dest='abinit', help='run abinit tests')
+
+(options, args) = parser.parse_args()
+global run_vasp 
+global run_abinit
+run_vasp = options.vasp
+run_abinit = options.abinit
 
 exclude_list = ['test.py', 'create_tests.py']
 for filename in os.listdir(os.path.dirname(os.path.abspath(__file__))):
@@ -33,4 +44,5 @@ for filename in os.listdir(os.path.dirname(os.path.abspath(__file__))):
 if __name__ == "__main__":
     print("Note: Tests including iterative steps may fail due to " +
     "small numerical \n      differences. This is not a cause for concern")
+    
     unittest.main()

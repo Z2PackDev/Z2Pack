@@ -1,9 +1,9 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Author:  Dominik Gresch <greschd@gmx.ch>
 # Date:    15.10.2014 10:22:43 CEST
-# File:    tbexample.py
+# File:    tb_example.py
 
 from common import *
 
@@ -42,7 +42,6 @@ class TbExampleTestCase(CommonTestCase):
                            phase=[1])
 
     # this test may produce false negatives due to small numerical differences
-    @unittest.skipIf(not run_vasp)
     def test_res1(self):
         self.createH(0.2, 0.3)
         # call to Z2Pack

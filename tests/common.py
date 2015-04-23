@@ -9,6 +9,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)) + '/../')
 import z2pack
+# for create_tests
 try:
     from z2pack.ptools.replace import *
 except ImportError:
@@ -19,7 +20,11 @@ import inspect
 import warnings
 warnings.simplefilter('always')
 
-import unittest
+if sys.version <= '2.6.x':
+    import unittest2 as unittest
+else:
+    import unittest
+
 # ugly hack to enable in-place replacement of arrays
 from numpy import array
 
@@ -79,3 +84,10 @@ class CommonTestCase(unittest.TestCase):
             assertFullAlmostEqual, self)
         self.assertFullEqual = types.MethodType(
             assertFullEqual, self)
+
+class VaspTestCase(CommonTestCase):
+    pass
+
+class AbinitTestCase(CommonTestCase):
+    pass
+

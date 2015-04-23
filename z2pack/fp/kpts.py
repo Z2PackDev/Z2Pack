@@ -85,11 +85,14 @@ def wannier90(kpt):
             string += str(coord).replace('e', 'd') + ' '
     string += '\nend kpoints\n'
     return string
+
+# FOR A FUTURE VERSION WHEN VASP MIGHT SUPPORT EXPLICIT K-POINTS
 #~ 
 #~ def vasp(kpt):
     #~ """
     #~ Creates a k-point input for  **VASP**, using explicit points
     #~ """
+            #~ 
     #~ for point in kpt:
         #~ if len(point) != 3:
             #~ raise ValueError('dimension of point != 3')
@@ -108,6 +111,9 @@ def vasp(kpt):
     does **not** support any kind of k-point line **unless** they are
     exactly along one of the reciprocal lattice vectors.
     """
+    for point in kpt:
+        if len(point) != 3:
+            raise ValueError('dimension of point != 3')
     start_point = kpt[0]
     end_point = kpt[-1]
     last_point = kpt[-2]
@@ -115,7 +121,7 @@ def vasp(kpt):
     string = 'Automatic mesh\n0              ! number of k-points = 0 ->automatic generation scheme\nGamma          ! generate a Gamma centered grid\n'
     num_dirs = 0
     for i in range(3):
-        if(max([abs(pt[i] - start_point[i]) for pt in kpt]) > 0.2):
+        if(max([abs(pt[i] - start_point[i]) for pt in kpt]) > 0.01):
             string += str(N)
             num_dirs += 1
         else:

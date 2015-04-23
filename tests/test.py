@@ -5,44 +5,46 @@
 # Date:    14.10.2014 11:51:20 CEST
 # File:    test.py
 
+
 import os
 import re
+import sys
 import types
 import unittest
-from optparse import OptionParser
+import argparse
 
-expr = re.compile(r'\.py$')
+from common import *
+
 
 """
 imports all classes inherited from unittest.TestCase from modules located
-in the test folder
+in the test folder (fp tests can be switched on or off).
 """
-parser = OptionParser()
-
-parser.add_option('-v', '--vasp', dest='vasp', help='run vasp tests')    
-parser.add_option('-a', '--abinit', dest='abinit', help='run abinit tests')
-
-(options, args) = parser.parse_args()
-global run_vasp 
-global run_abinit
-run_vasp = options.vasp
-run_abinit = options.abinit
-
-exclude_list = ['test.py', 'create_tests.py']
-for filename in os.listdir(os.path.dirname(os.path.abspath(__file__))):
-    if(filename in exclude_list):
-        continue
-    match = expr.search(filename)
-    if match is not None:
-        for key, val in vars(__import__(filename[:match.start()])).items():
-            try:
-                if(issubclass(val, unittest.TestCase)):
-                    vars()[key] = val
-            except:
-                pass
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-v', '--vasp', action='store_true', dest='vasp')
+    parser.add_argument('-a', '--abinit', action='store_true', dest='abinit')
+    arguments = parser.parse_args(sys.argv[1:])
+    sys.argv = [sys.argv[0]] 
+
+    special_cases = [(VaspTestCase, arguments.vasp), (AbinitTestCase, arguments.abinit)]
+
+    expr = re.compile(r'\.py$')
+    exclude_list = ['test.py', 'create_tests.py']
+    for filename in os.listdir(os.path.dirname(os.path.abspath(__file__))):
+        if(filename in exclude_list):
+            continue
+        match = expr.search(filename)
+        if match is not None:
+            for key, val in vars(__import__(filename[:match.start()])).items():
+                try:
+                    if issubclass(val, unittest.TestCase):
+                        if all([(not issubclass(val, case[0])) or case[1] for case in special_cases]):
+                            vars()[key] = val
+                except:
+                    pass
+
     print("Note: Tests including iterative steps may fail due to " +
     "small numerical \n      differences. This is not a cause for concern")
-    
     unittest.main()

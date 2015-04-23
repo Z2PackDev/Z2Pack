@@ -85,18 +85,43 @@ def wannier90(kpt):
             string += str(coord).replace('e', 'd') + ' '
     string += '\nend kpoints\n'
     return string
+#~ 
+#~ def vasp(kpt):
+    #~ """
+    #~ Creates a k-point input for  **VASP**, using explicit points
+    #~ """
+    #~ for point in kpt:
+        #~ if len(point) != 3:
+            #~ raise ValueError('dimension of point != 3')
+            #~ 
+    #~ N = len(kpt) - 1
+    #~ string = 'Explicit k-points\n' + str(N) + '\nReciprocal\n'
+    #~ for k in kpt[:-1]:
+        #~ string += '{0} {1} {2} 1.'.format(*list(k))
+        #~ string += '\n'
+    #~ return string
 
-def vasp(kpt):
+def vasp(start_point, last_point, end_point, N):
     """
-    Creates a k-point input for  **VASP**, using explicit points
+    Creates a k-point input for  **VASP**. It uses the automatic
+    generation scheme with a Gamma centered grid. Note that VASP
+    does **not** support any kind of k-point line **unless** they are
+    exactly along one of the reciprocal lattice vectors.
     """
-    for point in kpt:
-        if len(point) != 3:
-            raise ValueError('dimension of point != 3')
-            
-    N = len(kpt) - 1
-    string = 'Explicit k-points\n' + str(N) + '\nReciprocal\n'
-    for k in kpt[:-1]:
-        string += '{0} {1} {2} 1.'.format(*list(k))
-        string += '\n'
+    string = 'Automatic mesh\n0              ! number of k-points = 0 ->automatic generation scheme\nGamma          ! generate a Gamma centered grid\n'
+    num_dirs = 0
+    for i in range(3):
+        if(abs(end_point[i] - start_point[i]) > 0.8):
+            string += str(N)
+            num_dirs += 1
+        else:
+            string += '1'
+        string += ' '
+    if num_dirs != 1:
+        raise ValueError('VASP only supports k-point strings along the' +
+                         'axes of the reciprocal lattice.')
+    string += '        ! subdivisions\n'
+    for coord in start_point:
+            string += str(coord).replace('e', 'd') + ' '
+    string += '         ! shift\n'
     return string

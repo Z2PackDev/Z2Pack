@@ -115,14 +115,14 @@ def vasp(kpt):
     string = 'Automatic mesh\n0              ! number of k-points = 0 ->automatic generation scheme\nGamma          ! generate a Gamma centered grid\n'
     num_dirs = 0
     for i in range(3):
-        if(abs(end_point[i] - start_point[i]) > 0.8):
+        if(max([abs(pt[i] - start_point[i]) for pt in kpt]) > 0.2):
             string += str(N)
             num_dirs += 1
         else:
             string += '1'
         string += ' '
     if num_dirs != 1:
-        raise ValueError('VASP only supports k-point strings along the' +
+        raise ValueError('VASP only supports k-point strings along the ' +
                          'axes of the reciprocal lattice.')
     string += '        ! subdivisions\n'
     for coord in start_point:

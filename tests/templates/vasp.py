@@ -26,11 +26,11 @@ class BiVaspTestCase(VaspTestCase):
         self.input_files = [self.input_folder + self._sep + name for name in
                             ['CHGCAR', 'INCAR', 'POSCAR', 'POTCAR', 'wannier90.win']]
 
-        super(FpPhonyTestCase, self).__init__(*args, **kwargs)
+        super(BiVaspTestCase, self).__init__(*args, **kwargs)
 
     def test_bismuth(self):
         sys = z2pack.fp.System(
-            self.input_files
+            self.input_files,
             z2pack.fp.kpts.vasp,
             'KPOINTS',
             'mpirun $VASP >& log',

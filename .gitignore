@@ -22,6 +22,8 @@ examples/tb/results
 examples/fp/**/results
 # VASP license
 POTCAR 
+# to work with old git on Brutus
+tests/samples/vasp/POTCAR
 
 # Installation/setup related
 dist
@@ -45,3 +47,8 @@ z2pack/ptools/*.py
 
 # debug folder
 debug
+
+# testing files from Brutus
+lsf.*
+test_log.txt
+decorator.py

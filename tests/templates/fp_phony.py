@@ -6,10 +6,12 @@
 
 from common import *
 
+import os
 import re
-import platform
 import types
+import shutil
 import unittest
+import platform
 
 
 class FpPhonyTestCase(CommonTestCase):
@@ -18,6 +20,7 @@ class FpPhonyTestCase(CommonTestCase):
             self._sep = '\\'
         else:
             self._sep = '/'
+        self.build_folder = 'build' + self._sep + 'fp_phony'
 
         super(FpPhonyTestCase, self).__init__(*args, **kwargs)
 
@@ -27,7 +30,7 @@ class FpPhonyTestCase(CommonTestCase):
             lambda x: '',
             "kpts",
             "",
-            build_folder='samples' + self._sep + 'build')
+            build_folder=self.build_folder)
 
         surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], pickle_file=None)
 
@@ -41,7 +44,7 @@ class FpPhonyTestCase(CommonTestCase):
             lambda x: '',
             "kpts",
             "",
-            build_folder='samples' + self._sep + 'build',
+            build_folder=self.build_folder,
             file_names='wannier90.mmn')
 
         surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], pickle_file=None)
@@ -57,7 +60,7 @@ class FpPhonyTestCase(CommonTestCase):
             lambda x: '',
             "kpts",
             "",
-            build_folder='samples' + self._sep + 'build',
+            build_folder=self.build_folder,
             mmn_path='varw90.mmn')
 
         surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], pickle_file=None)
@@ -75,7 +78,7 @@ class FpPhonyTestCase(CommonTestCase):
             lambda x: '',
             "kpts",
             "",
-            build_folder='samples' + self._sep + 'build',
+            build_folder=self.build_folder,
             mmn_path='varw90.mmn')
 
         with warnings.catch_warnings(record=True) as w:

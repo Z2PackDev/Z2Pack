@@ -7,9 +7,28 @@
 
 from common import *
 
+import os
+import re
 import types
+import shutil
+import platform
 
 class CheckpointTestCase(CommonTestCase):
+    def __init__(self, *args, **kwargs):
+        if(re.match('Windows', platform.platform(), re.IGNORECASE)):
+            self._sep = '\\'
+        else:
+            self._sep = '/'
+        self.build_folder = 'build' + self._sep + 'checkpoints'
+        try:
+            shutil.rmtree(self.build_folder)
+        except OSError:
+            pass
+        os.mkdir(self.build_folder)
+        self.pickle_file = self.build_folder + self._sep + 'chkpt.txt'
+
+        super(CheckpointTestCase, self).__init__(*args, **kwargs)
+        
     def createH(self, t1, t2):
 
         self.H = z2pack.tb.Hamilton()
@@ -44,9 +63,9 @@ class CheckpointTestCase(CommonTestCase):
         self.createH(0.2, 0.3)
         system = z2pack.tb.System(self.H)
         surface = system.surface(lambda kx, ky: [kx / 2, ky, 0])
-        surface.wcc_calc(verbose=False, num_strings=20, pickle_file='samples/chkpt.txt', pos_tol=None, gap_tol=None, move_tol=None)
+        surface.wcc_calc(verbose=False, num_strings=20, pickle_file=self.pickle_file, pos_tol=None, gap_tol=None, move_tol=None)
         res0 = surface.get_res()
-        surface.wcc_calc(verbose=False, num_strings=20, pickle_file='samples/chkpt.txt', pos_tol=1e-23, gap_tol=None, move_tol=None)
+        surface.wcc_calc(verbose=False, num_strings=20, pickle_file=self.pickle_file, pos_tol=1e-23, gap_tol=None, move_tol=None)
         res1 = surface.get_res()
         self.assertFullAlmostEqual(res0, res1)
 
@@ -54,9 +73,9 @@ class CheckpointTestCase(CommonTestCase):
         self.createH(0.2, 0.3)
         system = z2pack.tb.System(self.H)
         surface = system.surface(lambda kx, ky: [kx / 2, ky, 0])
-        surface.wcc_calc(verbose=False, num_strings=20, pickle_file='samples/chkpt.txt', pos_tol=None, gap_tol=None, move_tol=None)
+        surface.wcc_calc(verbose=False, num_strings=20, pickle_file=self.pickle_file, pos_tol=None, gap_tol=None, move_tol=None)
         res0 = surface.get_res()
-        surface.wcc_calc(verbose=False, num_strings=50, pickle_file='samples/chkpt.txt', pos_tol=1e-23, gap_tol=None, move_tol=None)
+        surface.wcc_calc(verbose=False, num_strings=50, pickle_file=self.pickle_file, pos_tol=1e-23, gap_tol=None, move_tol=None)
         res1 = surface.get_res()
         self.assertFullAlmostEqual(res0, res1)
 
@@ -65,11 +84,11 @@ class CheckpointTestCase(CommonTestCase):
         system = z2pack.tb.System(self.H)
 
         surface0 = system.surface(lambda kx, ky: [kx / 2, ky, 0])
-        surface0.wcc_calc(verbose=False, num_strings=20, pickle_file='samples/chkpt.txt', pos_tol=None, gap_tol=None, move_tol=None)
+        surface0.wcc_calc(verbose=False, num_strings=20, pickle_file=self.pickle_file, pos_tol=None, gap_tol=None, move_tol=None)
         surface0.wcc_calc(verbose=False, num_strings=20, pickle_file=None, pos_tol=None)
         res0 = surface0.get_res()
 
-        surface1 = system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file='samples/chkpt.txt')
+        surface1 = system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=self.pickle_file)
         surface1.wcc_calc(verbose=False, num_strings=20, pos_tol=None)
         res1 = surface1.get_res()
         self.assertFullAlmostEqual(res0, res1)
@@ -82,7 +101,7 @@ class CheckpointTestCase(CommonTestCase):
         surface0.wcc_calc(verbose=False, num_strings=20, pos_tol=None)
         res0 = surface0.get_res()
 
-        surface1 = system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file='samples/chkpt.txt')
+        surface1 = system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=self.pickle_file)
         surface1.wcc_calc(verbose=False, num_strings=20, pos_tol=None, gap_tol=None, move_tol=None)
         surface1.wcc_calc(verbose=False, num_strings=20, pos_tol=None)
         res1 = surface1.get_res()
@@ -92,8 +111,8 @@ class CheckpointTestCase(CommonTestCase):
         self.createH(0.2, 0.3)
         system = z2pack.tb.System(self.H)
         surface = system.surface(lambda kx, ky: [kx / 2, ky, 0])
-        surface.wcc_calc(verbose=False, num_strings=20, pickle_file='samples/chkpt.txt', pos_tol=None, gap_tol=None, move_tol=None)
-        surface.wcc_calc(verbose=False, num_strings=50, pickle_file='samples/chkpt.txt', pos_tol=None, gap_tol=None, move_tol=None, overwrite=True)
+        surface.wcc_calc(verbose=False, num_strings=20, pickle_file=self.pickle_file, pos_tol=None, gap_tol=None, move_tol=None)
+        surface.wcc_calc(verbose=False, num_strings=50, pickle_file=self.pickle_file, pos_tol=None, gap_tol=None, move_tol=None, overwrite=True)
         res = surface.get_res()
         assert(len(res['kpt']) == 50)
         

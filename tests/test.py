@@ -10,6 +10,7 @@ import os
 import re
 import sys
 import types
+import shutil
 import unittest
 import argparse
 
@@ -22,6 +23,12 @@ in the test folder (fp tests can be switched on or off).
 """
 
 if __name__ == "__main__":
+    try:
+        shutil.rmtree('build')
+    except OSError:
+        pass
+    os.mkdir('build')
+
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--vasp', action='store_true', dest='vasp')
     parser.add_argument('-a', '--abinit', action='store_true', dest='abinit')

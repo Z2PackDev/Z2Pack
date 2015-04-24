@@ -9,12 +9,11 @@ from common import *
 import sys
 
 import os
+import shutil
 import subprocess
 
 
-subprocess.call("cp templates/* ./", shell = True)
-execfile('test.py', globals(), locals())
-
 if __name__ == "__main__":
-    print("create_tests.py")
+    subprocess.call("cp templates/* ./", shell = True)
+    execfile('test.py', globals(), locals())
     

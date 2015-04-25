@@ -5,6 +5,7 @@
 # Date:    15.10.2014 10:18:11 CEST
 # File:    common.py
 
+import re
 import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)) + '/../')
@@ -16,6 +17,7 @@ except ImportError:
     pass
 
 import types
+import shutil
 import inspect
 import warnings
 warnings.simplefilter('always')
@@ -85,9 +87,19 @@ class CommonTestCase(unittest.TestCase):
         self.assertFullEqual = types.MethodType(
             assertFullEqual, self)
 
-class VaspTestCase(CommonTestCase):
+class BuildDirTestCase(CommonTestCase):
+    def __init__(self, *args, **kwargs):
+        self._name = re.search("'([\w]+).[\w]+'", str(type(self))).group(1)
+        self._build_folder = 'build/' + self._name
+        try:
+            shutil.rmtree(self._build_folder)
+        except OSError:
+            pass
+        os.mkdir(self._build_folder)
+        super(BuildDirTestCase, self).__init__(*args, **kwargs)
+
+class VaspTestCase(BuildDirTestCase):
     pass
 
-class AbinitTestCase(CommonTestCase):
+class AbinitTestCase(BuildDirTestCase):
     pass
-

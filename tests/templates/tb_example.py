@@ -7,9 +7,11 @@
 
 from common import *
 
+import os
 import types
+import shutil
 
-class TbExampleTestCase(CommonTestCase):
+class TbExampleTestCase(BuildDirTestCase):
 
     def createH(self, t1, t2):
 
@@ -129,8 +131,8 @@ class TbExampleTestCase(CommonTestCase):
     def test_saveload(self):
         self.createH(0.1, 0.3)
         tb_system = z2pack.tb.System(self.H)
-        surface1 = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file='samples/tb_pickle.txt')
-        surface2 = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file='samples/tb_pickle.txt')
+        surface1 = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file='build/tb_example/tb_pickle.txt')
+        surface2 = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file='build/tb_example/tb_pickle.txt')
         surface1.wcc_calc(verbose=False)
         surface2.load()
         self.assertFullAlmostEqual(surface1.get_res(), surface2.get_res())

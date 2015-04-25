@@ -1,9 +1,14 @@
 # examples are provided via GitHub
 prune examples
 
-# keep tests, but not the test-creators
+# keep tests, but not the test-creators, and not the fp code tests
 recursive-include tests *.py *.txt *.mmn
-prune tests/samples/build
+prune tests/samples/vasp
+prune tests/samples/abinit
+prune tests/samples/quantumespresso
+exclude tests/vasp.py
+exclude tests/abinit.py
+exclude tests/quantumespresso.py
 prune tests/build
 prune tests/templates
 exclude tests/create_tests.py

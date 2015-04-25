@@ -73,6 +73,19 @@ def wannier90(kpt):
     first-principles code does not generate the k-points in
     ``wannier90.win`` (e.g. with Quantum Espresso).
     """
+    #~ num_dirs = 0
+    #~ for i in range(3):
+        #~ if(max([abs(pt[i] - start_point[i]) for pt in kpt]) > 0.01):
+            #~ string += str(N)
+            #~ num_dirs += 1
+        #~ else:
+            #~ string += '1'
+        #~ string += ' '
+    #~ if num_dirs != 1:
+        #~ raise ValueError('VASP only supports k-point strings along the ' +
+                         #~ 'axes of the reciprocal lattice.')
+    #~ string += '        ! subdivisions\n'
+    #~ 
     for point in kpt:
         if len(point) != 3:
             raise ValueError('dimension of point != 3')

@@ -13,7 +13,6 @@
 *.pdf
 lsf.*
 build
-results*
 status.txt
 HgTe_strain*
 scf_files

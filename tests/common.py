@@ -103,3 +103,6 @@ class VaspTestCase(BuildDirTestCase):
 
 class AbinitTestCase(BuildDirTestCase):
     pass
+    
+class EspressoTestCase(BuildDirTestCase):
+    pass

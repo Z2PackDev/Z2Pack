@@ -23,29 +23,22 @@ class BiVaspTestCase(VaspTestCase):
 
         super(BiVaspTestCase, self).__init__(*args, **kwargs)
 
-    def test_bismuth_0(self):
-        sys = z2pack.fp.System(
+        self.system = z2pack.fp.System(
             self._input_files,
             z2pack.fp.kpts.vasp,
             'KPOINTS',
             'mpirun $VASP >& log',
             build_folder=self._build_folder)
 
-        surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], pickle_file=None)
-        surface.wcc_calc(pos_tol=None, gap_tol=None, verbose=False)
+    def test_bismuth_0(self):
+        surface = self.system.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], pickle_file=None)
+        surface.wcc_calc(pos_tol=None, gap_tol=None, verbose=False, num_strings=4)
         res = in_place_replace(surface.get_res())
         self.assertFullAlmostEqual(res, surface.get_res())
 
     def test_bismuth_1(self):
-        sys = z2pack.fp.System(
-            self._input_files,
-            z2pack.fp.kpts.vasp,
-            'KPOINTS',
-            'mpirun $VASP >& log',
-            build_folder=self._build_folder)
-
-        surface = sys.surface(lambda kx: [0, kx, kx], [1, 0, 0], pickle_file=None)
-        surface.wcc_calc(pos_tol=None, gap_tol=None, verbose=False)
+        surface = self.system.surface(lambda kx: [0, kx, kx], [1, 0, 0], pickle_file=None)
+        surface.wcc_calc(pos_tol=None, gap_tol=None, verbose=False, num_strings=4)
         res = in_place_replace(surface.get_res())
         self.assertFullAlmostEqual(res, surface.get_res())
 

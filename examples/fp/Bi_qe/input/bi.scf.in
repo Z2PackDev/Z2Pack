@@ -2,7 +2,7 @@
     calculation     = 'scf'
     prefix          = 'bi',
     outdir          = './'
-    pseudo_dir      = '../'
+    pseudo_dir      = '../input'
     wf_collect      = .true.
     verbosity       = 'high'
     nstep           = 200

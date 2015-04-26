@@ -1,5 +1,5 @@
-An effective 2D model (tb)
-==========================
+An effective 2D model (tight-binding)
+=====================================
 
 In this example, we set up a tight-binding model for a quasi - 2D system. We consider 2 - sublattice square lattice with nearest-neighbour (inter-sublattice) and next - nearest - neighbour (intra-sublattice) hopping terms.
 

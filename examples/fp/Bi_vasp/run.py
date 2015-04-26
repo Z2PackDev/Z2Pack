@@ -19,6 +19,9 @@ system = z2pack.fp.System(["input/CHGCAR", "input/INCAR", "input/POSCAR", "input
                           "KPOINTS",
                           "mpirun $VASP >& log" 
                     )
+
+if not os.path.exists('./results'):
+    os.mkdir('./results')
     
 
 # Creating two surfaces, both with the pumping parameter t changing

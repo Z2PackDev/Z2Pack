@@ -28,7 +28,7 @@ class BiAbinitTestCase(AbinitTestCase):
                 self._input_files,
                 z2pack.fp.kpts.abinit,
                 "Bi_nscf.in",
-                "mpirun -np 7 abinit < Bi_nscf.files >& log",
+                "mpirun -np 4 abinit < Bi_nscf.files >& log",
                 executable='/bin/bash',
                 build_folder=self._build_folder)
 

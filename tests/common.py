@@ -80,6 +80,14 @@ def assertFullEqual(TestCase, x, y):
     else:
         TestCase.assertEqual(x, y)
 
+def assertWccConv(TestCase, x, y, epsilon = 1e-6):
+    """
+    Compares two WCC lists
+    """
+    assert(len(x) == len(y))
+    for x_wcc, y_wcc in zip(x, y):
+        TestCase.assertTrue(z2pack._core._convcheck(x_wcc, y_wcc, epsilon))
+
 class CommonTestCase(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(CommonTestCase, self).__init__(*args, **kwargs)
@@ -87,6 +95,8 @@ class CommonTestCase(unittest.TestCase):
             assertFullAlmostEqual, self)
         self.assertFullEqual = types.MethodType(
             assertFullEqual, self)
+        self.assertWccConv = types.MethodType(
+            assertWccConv, self)
 
 class BuildDirTestCase(CommonTestCase):
     def __init__(self, *args, **kwargs):

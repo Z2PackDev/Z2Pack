@@ -49,20 +49,29 @@ class BiEspressoTestCase(EspressoTestCase):
     def test_bismuth_0(self):
         surface = self.system.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], pickle_file=None)
         surface.wcc_calc(pos_tol=None, move_tol=None, verbose=False, num_strings=4)
-        res = in_place_replace(surface.get_res())
-        self.assertFullAlmostEqual(res, surface.get_res())
+
+        wcc = in_place_replace(surface.get_res()['wcc'])
+        t_par = in_place_replace(surface.get_res()['t_par'])
+        self.assertWccConv(wcc, surface.get_res()['wcc'])
+        self.assertFullAlmostEqual(t_par, surface.get_res()['t_par'])
 
     def test_bismuth_1(self):
         surface = self.system.surface(lambda kx: [0, kx, kx], [1, 0, 0], pickle_file=None)
         surface.wcc_calc(pos_tol=None, gap_tol=None, verbose=False, num_strings=4)
-        res = in_place_replace(surface.get_res())
-        self.assertFullAlmostEqual(res, surface.get_res())
+
+        wcc = in_place_replace(surface.get_res()['wcc'])
+        t_par = in_place_replace(surface.get_res()['t_par'])
+        self.assertWccConv(wcc, surface.get_res()['wcc'])
+        self.assertFullAlmostEqual(t_par, surface.get_res()['t_par'])
         
     def test_bismuth_2(self):
         surface = self.system.surface(lambda kx: [0, 0, kx / 2.], [1, 1, 0], pickle_file=None)
         surface.wcc_calc(move_tol=None, gap_tol=None, verbose=False, num_strings=4)
-        res = in_place_replace(surface.get_res())
-        self.assertFullAlmostEqual(res, surface.get_res())
+
+        wcc = in_place_replace(surface.get_res()['wcc'])
+        t_par = in_place_replace(surface.get_res()['t_par'])
+        self.assertWccConv(wcc, surface.get_res()['wcc'])
+        self.assertFullAlmostEqual(t_par, surface.get_res()['t_par'])
 
 
 if __name__ == "__main__":

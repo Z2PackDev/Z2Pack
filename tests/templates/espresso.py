@@ -11,8 +11,6 @@ import re
 import types
 import shutil
 import unittest
-import platform
-
 
 class BiEspressoTestCase(EspressoTestCase):
     def __init__(self, *args, **kwargs):

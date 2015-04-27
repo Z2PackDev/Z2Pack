@@ -1,5 +1,5 @@
 &inputpp
-  outdir='../../samples/espresso/scf'
+  outdir='../scf'
   prefix='bi'
   seedname='bi'
   wan_mode='standalone'  

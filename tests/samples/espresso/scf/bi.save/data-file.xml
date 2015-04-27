@@ -312,7 +312,7 @@ F
  1.000000000000000E+002
     </RHO_CUTOFF>
     <MAX_NUMBER_OF_GK-VECTORS type="integer" size="1">
-      2849
+      2902
     </MAX_NUMBER_OF_GK-VECTORS>
     <GAMMA_ONLY type="logical" size="1">
 F
@@ -393,30 +393,43 @@ F
   </OCCUPATIONS>
   <BRILLOUIN_ZONE>
     <NUMBER_OF_K-POINTS type="integer" size="1">
-         8
+        32
     </NUMBER_OF_K-POINTS>
     <UNITS_FOR_K-POINTS UNITS="2 pi / a"/>
-    <MONKHORST_PACK_GRID nk1="0" nk2="0" nk3="0"/>
+    <MONKHORST_PACK_GRID nk1="6" nk2="6" nk3="6"/>
     <MONKHORST_PACK_OFFSET k1="0" k2="0" k3="0"/>
-    <K-POINT.1 XYZ="-9.569591594011356E-001 5.525006282838122E-001 7.334912053006679E-001" WEIGHT="1.250000000000000E-001"/>
-    <K-POINT.2 XYZ="-8.264647285737555E-001 4.771596335178653E-001 7.835019692984191E-001" WEIGHT="1.250000000000000E-001"/>
-    <K-POINT.3 XYZ="-6.959702977463753E-001 4.018186387519181E-001 8.335127332961704E-001" WEIGHT="1.250000000000000E-001"/>
-    <K-POINT.4 XYZ="-5.654758669189952E-001 3.264776439859712E-001 8.835234972939217E-001" WEIGHT="1.250000000000000E-001"/>
-    <K-POINT.5 XYZ="-4.349814360916151E-001 2.511366492200242E-001 9.335342612916729E-001" WEIGHT="1.250000000000000E-001"/>
-    <K-POINT.6 XYZ="-3.044870052642351E-001 1.757956544540773E-001 9.835450252894241E-001" WEIGHT="1.250000000000000E-001"/>
-    <K-POINT.7 XYZ="-1.739925744368548E-001 1.004546596881303E-001 1.033555789287175E+000" WEIGHT="1.250000000000000E-001"/>
-    <K-POINT.8 XYZ="-4.349814360947468E-002 2.511366492218325E-002 1.083566553284927E+000" WEIGHT="1.250000000000000E-001"/>
-    <STARTING_K-POINTS type="integer" size="1">
-         8
-    </STARTING_K-POINTS>
-    <K-POINT_START.1 XYZ="-9.569591594011356E-001 5.525006282838122E-001 7.334912053006679E-001" WEIGHT="1.000000000000000E+000"/>
-    <K-POINT_START.2 XYZ="-8.264647285737555E-001 4.771596335178653E-001 7.835019692984191E-001" WEIGHT="1.000000000000000E+000"/>
-    <K-POINT_START.3 XYZ="-6.959702977463753E-001 4.018186387519181E-001 8.335127332961704E-001" WEIGHT="1.000000000000000E+000"/>
-    <K-POINT_START.4 XYZ="-5.654758669189952E-001 3.264776439859712E-001 8.835234972939217E-001" WEIGHT="1.000000000000000E+000"/>
-    <K-POINT_START.5 XYZ="-4.349814360916151E-001 2.511366492200242E-001 9.335342612916729E-001" WEIGHT="1.000000000000000E+000"/>
-    <K-POINT_START.6 XYZ="-3.044870052642351E-001 1.757956544540773E-001 9.835450252894241E-001" WEIGHT="1.000000000000000E+000"/>
-    <K-POINT_START.7 XYZ="-1.739925744368548E-001 1.004546596881303E-001 1.033555789287175E+000" WEIGHT="1.000000000000000E+000"/>
-    <K-POINT_START.8 XYZ="-4.349814360947468E-002 2.511366492218325E-002 1.083566553284927E+000" WEIGHT="1.000000000000000E+000"/>
+    <K-POINT.1 XYZ="0.000000000000000E+000 0.000000000000000E+000 0.000000000000000E+000" WEIGHT="4.629629629629629E-003"/>
+    <K-POINT.2 XYZ="-1.739925744365068E-001 -1.004546596879293E-001 6.668101866366835E-002" WEIGHT="2.777777777777777E-002"/>
+    <K-POINT.3 XYZ="-3.479851488730137E-001 -2.009093193758587E-001 1.333620373273367E-001" WEIGHT="2.777777777777777E-002"/>
+    <K-POINT.4 XYZ="5.219777233095205E-001 3.013639790637880E-001 -2.000430559910051E-001" WEIGHT="1.388888888888888E-002"/>
+    <K-POINT.5 XYZ="-1.739925744365068E-001 1.004546596879293E-001 1.333620373273456E-001" WEIGHT="2.777777777777777E-002"/>
+    <K-POINT.6 XYZ="-3.479851488730137E-001 0.000000000000000E+000 2.000430559910140E-001" WEIGHT="5.555555555555554E-002"/>
+    <K-POINT.7 XYZ="5.219777233095205E-001 5.022732984396466E-001 -1.333620373273278E-001" WEIGHT="5.555555555555554E-002"/>
+    <K-POINT.8 XYZ="3.479851488730137E-001 4.018186387517173E-001 -6.668101866365943E-002" WEIGHT="5.555555555555554E-002"/>
+    <K-POINT.9 XYZ="1.739925744365068E-001 3.013639790637880E-001 8.965050923848139E-015" WEIGHT="2.777777777777777E-002"/>
+    <K-POINT.10 XYZ="-3.479851488730137E-001 2.009093193758587E-001 2.667240746546913E-001" WEIGHT="2.777777777777777E-002"/>
+    <K-POINT.11 XYZ="5.219777233095205E-001 7.031826178155053E-001 -6.668101866365045E-002" WEIGHT="5.555555555555554E-002"/>
+    <K-POINT.12 XYZ="3.479851488730137E-001 6.027279581275760E-001 1.787459069646502E-014" WEIGHT="2.777777777777777E-002"/>
+    <K-POINT.13 XYZ="5.219777233095205E-001 -3.013639790637880E-001 -4.000861119820370E-001" WEIGHT="1.388888888888888E-002"/>
+    <K-POINT.14 XYZ="0.000000000000000E+000 0.000000000000000E+000 2.000430559910140E-001" WEIGHT="9.259259259259257E-003"/>
+    <K-POINT.15 XYZ="-1.739925744365068E-001 -1.004546596879293E-001 2.667240746546823E-001" WEIGHT="2.777777777777777E-002"/>
+    <K-POINT.16 XYZ="6.959702977460274E-001 4.018186387517173E-001 -6.668101866365941E-002" WEIGHT="2.777777777777777E-002"/>
+    <K-POINT.17 XYZ="5.219777233095206E-001 3.013639790637880E-001 8.909539772616881E-015" WEIGHT="2.777777777777777E-002"/>
+    <K-POINT.18 XYZ="3.479851488730137E-001 2.009093193758586E-001 6.668101866367730E-002" WEIGHT="2.777777777777777E-002"/>
+    <K-POINT.19 XYZ="-1.739925744365068E-001 1.004546596879293E-001 3.334050933183597E-001" WEIGHT="2.777777777777777E-002"/>
+    <K-POINT.20 XYZ="6.959702977460274E-001 6.027279581275760E-001 1.790234627208065E-014" WEIGHT="5.555555555555554E-002"/>
+    <K-POINT.21 XYZ="5.219777233095206E-001 5.022732984396466E-001 6.668101866368623E-002" WEIGHT="5.555555555555554E-002"/>
+    <K-POINT.22 XYZ="3.479851488730137E-001 4.018186387517173E-001 1.333620373273546E-001" WEIGHT="5.555555555555554E-002"/>
+    <K-POINT.23 XYZ="6.959702977460274E-001 -4.018186387517173E-001 -3.334050933183687E-001" WEIGHT="2.777777777777777E-002"/>
+    <K-POINT.24 XYZ="5.219777233095206E-001 -5.022732984396466E-001 -2.667240746547003E-001" WEIGHT="5.555555555555554E-002"/>
+    <K-POINT.25 XYZ="3.479851488730137E-001 -6.027279581275760E-001 -2.000430559910319E-001" WEIGHT="2.777777777777777E-002"/>
+    <K-POINT.26 XYZ="5.219777233095206E-001 -3.013639790637881E-001 -2.000430559910230E-001" WEIGHT="2.777777777777777E-002"/>
+    <K-POINT.27 XYZ="0.000000000000000E+000 0.000000000000000E+000 4.000861119820280E-001" WEIGHT="9.259259259259257E-003"/>
+    <K-POINT.28 XYZ="8.699628721825342E-001 5.022732984396466E-001 6.668101866368623E-002" WEIGHT="2.777777777777777E-002"/>
+    <K-POINT.29 XYZ="6.959702977460274E-001 4.018186387517173E-001 1.333620373273545E-001" WEIGHT="2.777777777777777E-002"/>
+    <K-POINT.30 XYZ="8.699628721825342E-001 -5.022732984396466E-001 -2.667240746547003E-001" WEIGHT="2.777777777777777E-002"/>
+    <K-POINT.31 XYZ="6.959702977460274E-001 -6.027279581275760E-001 -2.000430559910319E-001" WEIGHT="2.777777777777777E-002"/>
+    <K-POINT.32 XYZ="0.000000000000000E+000 0.000000000000000E+000 -6.001291679730421E-001" WEIGHT="4.629629629629629E-003"/>
     <NORM-OF-Q type="real" size="1">
  0.000000000000000E+000
     </NORM-OF-Q>
@@ -452,7 +465,7 @@ F
   </CHARGE-DENSITY>
   <BAND_STRUCTURE_INFO>
     <NUMBER_OF_K-POINTS type="integer" size="1">
-         8
+        32
     </NUMBER_OF_K-POINTS>
     <NUMBER_OF_SPIN_COMPONENTS type="integer" size="1">
          4
@@ -464,7 +477,7 @@ T
         16
     </NUMBER_OF_ATOMIC_WFC>
     <NUMBER_OF_BANDS type="integer" size="1">
-        10
+        18
     </NUMBER_OF_BANDS>
     <NUMBER_OF_ELECTRONS type="real" size="1">
  1.000000000000000E+001
@@ -478,10 +491,10 @@ T
   <EIGENVALUES>
     <K-POINT.1>
       <K-POINT_COORDS type="real" size="3" columns="3">
--9.569591594011356E-001  5.525006282838122E-001  7.334912053006679E-001
+ 0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
       </K-POINT_COORDS>
       <WEIGHT type="real" size="1">
- 1.250000000000000E-001
+ 4.629629629629629E-003
       </WEIGHT>
       <DATAFILE iotk_link="./K00001/eigenval.xml">
         <!--This is a link to the file indicated in the iotk_link attribute-->
@@ -489,10 +502,10 @@ T
     </K-POINT.1>
     <K-POINT.2>
       <K-POINT_COORDS type="real" size="3" columns="3">
--8.264647285737555E-001  4.771596335178653E-001  7.835019692984191E-001
+-1.739925744365068E-001 -1.004546596879293E-001  6.668101866366835E-002
       </K-POINT_COORDS>
       <WEIGHT type="real" size="1">
- 1.250000000000000E-001
+ 2.777777777777777E-002
       </WEIGHT>
       <DATAFILE iotk_link="./K00002/eigenval.xml">
         <!--This is a link to the file indicated in the iotk_link attribute-->
@@ -500,10 +513,10 @@ T
     </K-POINT.2>
     <K-POINT.3>
       <K-POINT_COORDS type="real" size="3" columns="3">
--6.959702977463753E-001  4.018186387519181E-001  8.335127332961704E-001
+-3.479851488730137E-001 -2.009093193758587E-001  1.333620373273367E-001
       </K-POINT_COORDS>
       <WEIGHT type="real" size="1">
- 1.250000000000000E-001
+ 2.777777777777777E-002
       </WEIGHT>
       <DATAFILE iotk_link="./K00003/eigenval.xml">
         <!--This is a link to the file indicated in the iotk_link attribute-->
@@ -511,10 +524,10 @@ T
     </K-POINT.3>
     <K-POINT.4>
       <K-POINT_COORDS type="real" size="3" columns="3">
--5.654758669189952E-001  3.264776439859712E-001  8.835234972939217E-001
+ 5.219777233095205E-001  3.013639790637880E-001 -2.000430559910051E-001
       </K-POINT_COORDS>
       <WEIGHT type="real" size="1">
- 1.250000000000000E-001
+ 1.388888888888888E-002
       </WEIGHT>
       <DATAFILE iotk_link="./K00004/eigenval.xml">
         <!--This is a link to the file indicated in the iotk_link attribute-->
@@ -522,10 +535,10 @@ T
     </K-POINT.4>
     <K-POINT.5>
       <K-POINT_COORDS type="real" size="3" columns="3">
--4.349814360916151E-001  2.511366492200242E-001  9.335342612916729E-001
+-1.739925744365068E-001  1.004546596879293E-001  1.333620373273456E-001
       </K-POINT_COORDS>
       <WEIGHT type="real" size="1">
- 1.250000000000000E-001
+ 2.777777777777777E-002
       </WEIGHT>
       <DATAFILE iotk_link="./K00005/eigenval.xml">
         <!--This is a link to the file indicated in the iotk_link attribute-->
@@ -533,10 +546,10 @@ T
     </K-POINT.5>
     <K-POINT.6>
       <K-POINT_COORDS type="real" size="3" columns="3">
--3.044870052642351E-001  1.757956544540773E-001  9.835450252894241E-001
+-3.479851488730137E-001  0.000000000000000E+000  2.000430559910140E-001
       </K-POINT_COORDS>
       <WEIGHT type="real" size="1">
- 1.250000000000000E-001
+ 5.555555555555554E-002
       </WEIGHT>
       <DATAFILE iotk_link="./K00006/eigenval.xml">
         <!--This is a link to the file indicated in the iotk_link attribute-->
@@ -544,10 +557,10 @@ T
     </K-POINT.6>
     <K-POINT.7>
       <K-POINT_COORDS type="real" size="3" columns="3">
--1.739925744368548E-001  1.004546596881303E-001  1.033555789287175E+000
+ 5.219777233095205E-001  5.022732984396466E-001 -1.333620373273278E-001
       </K-POINT_COORDS>
       <WEIGHT type="real" size="1">
- 1.250000000000000E-001
+ 5.555555555555554E-002
       </WEIGHT>
       <DATAFILE iotk_link="./K00007/eigenval.xml">
         <!--This is a link to the file indicated in the iotk_link attribute-->
@@ -555,23 +568,287 @@ T
     </K-POINT.7>
     <K-POINT.8>
       <K-POINT_COORDS type="real" size="3" columns="3">
--4.349814360947468E-002  2.511366492218325E-002  1.083566553284927E+000
+ 3.479851488730137E-001  4.018186387517173E-001 -6.668101866365943E-002
       </K-POINT_COORDS>
       <WEIGHT type="real" size="1">
- 1.250000000000000E-001
+ 5.555555555555554E-002
       </WEIGHT>
       <DATAFILE iotk_link="./K00008/eigenval.xml">
         <!--This is a link to the file indicated in the iotk_link attribute-->
       </DATAFILE>
     </K-POINT.8>
+    <K-POINT.9>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+ 1.739925744365068E-001  3.013639790637880E-001  8.965050923848139E-015
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 2.777777777777777E-002
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00009/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.9>
+    <K-POINT.10>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+-3.479851488730137E-001  2.009093193758587E-001  2.667240746546913E-001
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 2.777777777777777E-002
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00010/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.10>
+    <K-POINT.11>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+ 5.219777233095205E-001  7.031826178155053E-001 -6.668101866365045E-002
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 5.555555555555554E-002
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00011/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.11>
+    <K-POINT.12>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+ 3.479851488730137E-001  6.027279581275760E-001  1.787459069646502E-014
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 2.777777777777777E-002
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00012/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.12>
+    <K-POINT.13>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+ 5.219777233095205E-001 -3.013639790637880E-001 -4.000861119820370E-001
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 1.388888888888888E-002
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00013/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.13>
+    <K-POINT.14>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+ 0.000000000000000E+000  0.000000000000000E+000  2.000430559910140E-001
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 9.259259259259257E-003
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00014/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.14>
+    <K-POINT.15>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+-1.739925744365068E-001 -1.004546596879293E-001  2.667240746546823E-001
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 2.777777777777777E-002
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00015/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.15>
+    <K-POINT.16>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+ 6.959702977460274E-001  4.018186387517173E-001 -6.668101866365941E-002
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 2.777777777777777E-002
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00016/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.16>
+    <K-POINT.17>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+ 5.219777233095206E-001  3.013639790637880E-001  8.909539772616881E-015
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 2.777777777777777E-002
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00017/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.17>
+    <K-POINT.18>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+ 3.479851488730137E-001  2.009093193758586E-001  6.668101866367730E-002
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 2.777777777777777E-002
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00018/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.18>
+    <K-POINT.19>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+-1.739925744365068E-001  1.004546596879293E-001  3.334050933183597E-001
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 2.777777777777777E-002
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00019/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.19>
+    <K-POINT.20>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+ 6.959702977460274E-001  6.027279581275760E-001  1.790234627208065E-014
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 5.555555555555554E-002
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00020/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.20>
+    <K-POINT.21>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+ 5.219777233095206E-001  5.022732984396466E-001  6.668101866368623E-002
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 5.555555555555554E-002
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00021/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.21>
+    <K-POINT.22>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+ 3.479851488730137E-001  4.018186387517173E-001  1.333620373273546E-001
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 5.555555555555554E-002
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00022/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.22>
+    <K-POINT.23>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+ 6.959702977460274E-001 -4.018186387517173E-001 -3.334050933183687E-001
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 2.777777777777777E-002
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00023/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.23>
+    <K-POINT.24>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+ 5.219777233095206E-001 -5.022732984396466E-001 -2.667240746547003E-001
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 5.555555555555554E-002
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00024/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.24>
+    <K-POINT.25>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+ 3.479851488730137E-001 -6.027279581275760E-001 -2.000430559910319E-001
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 2.777777777777777E-002
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00025/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.25>
+    <K-POINT.26>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+ 5.219777233095206E-001 -3.013639790637881E-001 -2.000430559910230E-001
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 2.777777777777777E-002
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00026/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.26>
+    <K-POINT.27>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+ 0.000000000000000E+000  0.000000000000000E+000  4.000861119820280E-001
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 9.259259259259257E-003
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00027/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.27>
+    <K-POINT.28>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+ 8.699628721825342E-001  5.022732984396466E-001  6.668101866368623E-002
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 2.777777777777777E-002
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00028/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.28>
+    <K-POINT.29>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+ 6.959702977460274E-001  4.018186387517173E-001  1.333620373273545E-001
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 2.777777777777777E-002
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00029/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.29>
+    <K-POINT.30>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+ 8.699628721825342E-001 -5.022732984396466E-001 -2.667240746547003E-001
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 2.777777777777777E-002
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00030/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.30>
+    <K-POINT.31>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+ 6.959702977460274E-001 -6.027279581275760E-001 -2.000430559910319E-001
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 2.777777777777777E-002
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00031/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.31>
+    <K-POINT.32>
+      <K-POINT_COORDS type="real" size="3" columns="3">
+ 0.000000000000000E+000  0.000000000000000E+000 -6.001291679730421E-001
+      </K-POINT_COORDS>
+      <WEIGHT type="real" size="1">
+ 4.629629629629629E-003
+      </WEIGHT>
+      <DATAFILE iotk_link="./K00032/eigenval.xml">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </DATAFILE>
+    </K-POINT.32>
   </EIGENVALUES>
   <EIGENVECTORS>
     <MAX_NUMBER_OF_GK-VECTORS type="integer" size="1">
-      2849
+      2902
     </MAX_NUMBER_OF_GK-VECTORS>
     <K-POINT.1>
       <NUMBER_OF_GK-VECTORS type="integer" size="1">
-      2836
+      2837
       </NUMBER_OF_GK-VECTORS>
       <GK-VECTORS iotk_link="./K00001/gkvectors.dat">
         <!--This is a link to the file indicated in the iotk_link attribute-->
@@ -585,7 +862,7 @@ T
     </K-POINT.1>
     <K-POINT.2>
       <NUMBER_OF_GK-VECTORS type="integer" size="1">
-      2845
+      2843
       </NUMBER_OF_GK-VECTORS>
       <GK-VECTORS iotk_link="./K00002/gkvectors.dat">
         <!--This is a link to the file indicated in the iotk_link attribute-->
@@ -599,7 +876,7 @@ T
     </K-POINT.2>
     <K-POINT.3>
       <NUMBER_OF_GK-VECTORS type="integer" size="1">
-      2843
+      2845
       </NUMBER_OF_GK-VECTORS>
       <GK-VECTORS iotk_link="./K00003/gkvectors.dat">
         <!--This is a link to the file indicated in the iotk_link attribute-->
@@ -613,7 +890,7 @@ T
     </K-POINT.3>
     <K-POINT.4>
       <NUMBER_OF_GK-VECTORS type="integer" size="1">
-      2845
+      2848
       </NUMBER_OF_GK-VECTORS>
       <GK-VECTORS iotk_link="./K00004/gkvectors.dat">
         <!--This is a link to the file indicated in the iotk_link attribute-->
@@ -627,7 +904,7 @@ T
     </K-POINT.4>
     <K-POINT.5>
       <NUMBER_OF_GK-VECTORS type="integer" size="1">
-      2848
+      2845
       </NUMBER_OF_GK-VECTORS>
       <GK-VECTORS iotk_link="./K00005/gkvectors.dat">
         <!--This is a link to the file indicated in the iotk_link attribute-->
@@ -641,7 +918,7 @@ T
     </K-POINT.5>
     <K-POINT.6>
       <NUMBER_OF_GK-VECTORS type="integer" size="1">
-      2849
+      2855
       </NUMBER_OF_GK-VECTORS>
       <GK-VECTORS iotk_link="./K00006/gkvectors.dat">
         <!--This is a link to the file indicated in the iotk_link attribute-->
@@ -655,7 +932,7 @@ T
     </K-POINT.6>
     <K-POINT.7>
       <NUMBER_OF_GK-VECTORS type="integer" size="1">
-      2840
+      2852
       </NUMBER_OF_GK-VECTORS>
       <GK-VECTORS iotk_link="./K00007/gkvectors.dat">
         <!--This is a link to the file indicated in the iotk_link attribute-->
@@ -669,7 +946,7 @@ T
     </K-POINT.7>
     <K-POINT.8>
       <NUMBER_OF_GK-VECTORS type="integer" size="1">
-      2838
+      2845
       </NUMBER_OF_GK-VECTORS>
       <GK-VECTORS iotk_link="./K00008/gkvectors.dat">
         <!--This is a link to the file indicated in the iotk_link attribute-->
@@ -681,6 +958,342 @@ T
         <!--This is a link to the file indicated in the iotk_link attribute-->
       </WFC.2>
     </K-POINT.8>
+    <K-POINT.9>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2850
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00009/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00009/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00009/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.9>
+    <K-POINT.10>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2856
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00010/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00010/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00010/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.10>
+    <K-POINT.11>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2849
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00011/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00011/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00011/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.11>
+    <K-POINT.12>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2852
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00012/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00012/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00012/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.12>
+    <K-POINT.13>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2842
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00013/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00013/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00013/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.13>
+    <K-POINT.14>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2858
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00014/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00014/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00014/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.14>
+    <K-POINT.15>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2844
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00015/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00015/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00015/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.15>
+    <K-POINT.16>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2857
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00016/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00016/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00016/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.16>
+    <K-POINT.17>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2848
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00017/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00017/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00017/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.17>
+    <K-POINT.18>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2846
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00018/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00018/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00018/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.18>
+    <K-POINT.19>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2858
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00019/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00019/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00019/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.19>
+    <K-POINT.20>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2860
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00020/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00020/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00020/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.20>
+    <K-POINT.21>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2848
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00021/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00021/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00021/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.21>
+    <K-POINT.22>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2850
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00022/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00022/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00022/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.22>
+    <K-POINT.23>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2848
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00023/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00023/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00023/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.23>
+    <K-POINT.24>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2847
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00024/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00024/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00024/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.24>
+    <K-POINT.25>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2842
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00025/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00025/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00025/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.25>
+    <K-POINT.26>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2858
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00026/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00026/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00026/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.26>
+    <K-POINT.27>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2861
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00027/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00027/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00027/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.27>
+    <K-POINT.28>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2866
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00028/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00028/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00028/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.28>
+    <K-POINT.29>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2842
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00029/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00029/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00029/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.29>
+    <K-POINT.30>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2872
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00030/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00030/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00030/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.30>
+    <K-POINT.31>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2860
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00031/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00031/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00031/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.31>
+    <K-POINT.32>
+      <NUMBER_OF_GK-VECTORS type="integer" size="1">
+      2902
+      </NUMBER_OF_GK-VECTORS>
+      <GK-VECTORS iotk_link="./K00032/gkvectors.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </GK-VECTORS>
+      <WFC.1 iotk_link="./K00032/evc1.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.1>
+      <WFC.2 iotk_link="./K00032/evc2.dat">
+        <!--This is a link to the file indicated in the iotk_link attribute-->
+      </WFC.2>
+    </K-POINT.32>
   </EIGENVECTORS>
 </Root>
 

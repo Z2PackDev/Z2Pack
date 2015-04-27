@@ -14,23 +14,14 @@ import unittest
 import platform
 
 
-class FpPhonyTestCase(CommonTestCase):
-    def __init__(self, *args, **kwargs):
-        if(re.match('Windows', platform.platform(), re.IGNORECASE)):
-            self._sep = '\\'
-        else:
-            self._sep = '/'
-        self.build_folder = 'build' + self._sep + 'fp_phony'
-
-        super(FpPhonyTestCase, self).__init__(*args, **kwargs)
-
+class FpPhonyTestCase(BuildDirTestCase):
     def testphony1(self):
         sys = z2pack.fp.System(
-            'samples' + self._sep + 'wannier90.mmn',
+            'samples/wannier90.mmn',
             lambda x: '',
             "kpts",
             "",
-            build_folder=self.build_folder)
+            build_folder=self._build_folder)
 
         surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], pickle_file=None)
 
@@ -40,11 +31,11 @@ class FpPhonyTestCase(CommonTestCase):
 
     def testphony2(self):
         sys = z2pack.fp.System(
-            'samples' + self._sep + 'varw90.mmn',
+            'samples/varw90.mmn',
             lambda x: '',
             "kpts",
             "",
-            build_folder=self.build_folder,
+            build_folder=self._build_folder,
             file_names='wannier90.mmn')
 
         surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], pickle_file=None)
@@ -56,11 +47,11 @@ class FpPhonyTestCase(CommonTestCase):
 
     def testphony3(self):
         sys = z2pack.fp.System(
-            'samples' + self._sep + 'varw90.mmn',
+            'samples/varw90.mmn',
             lambda x: '',
             "kpts",
             "",
-            build_folder=self.build_folder,
+            build_folder=self._build_folder,
             mmn_path='varw90.mmn')
 
         surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], pickle_file=None)
@@ -74,11 +65,11 @@ class FpPhonyTestCase(CommonTestCase):
         test the warning that is given if new style surfaces are used
         """
         sys = z2pack.fp.System(
-            'samples' + self._sep + 'varw90.mmn',
+            'samples/varw90.mmn',
             lambda x: '',
             "kpts",
             "",
-            build_folder=self.build_folder,
+            build_folder=self._build_folder,
             mmn_path='varw90.mmn')
 
         with warnings.catch_warnings(record=True) as w:

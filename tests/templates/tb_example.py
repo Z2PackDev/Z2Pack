@@ -131,8 +131,8 @@ class TbExampleTestCase(BuildDirTestCase):
     def test_saveload(self):
         self.createH(0.1, 0.3)
         tb_system = z2pack.tb.System(self.H)
-        surface1 = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file='build/tb_example/tb_pickle.txt')
-        surface2 = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file='build/tb_example/tb_pickle.txt')
+        surface1 = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=self._build_folder + '/tb_pickle.txt')
+        surface2 = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=self._build_folder + '/tb_pickle.txt')
         surface1.wcc_calc(verbose=False)
         surface2.load()
         self.assertFullAlmostEqual(surface1.get_res(), surface2.get_res())

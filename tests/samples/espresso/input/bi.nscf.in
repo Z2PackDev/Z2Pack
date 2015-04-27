@@ -1,8 +1,8 @@
 &control
     calculation     = 'bands'
     prefix          = 'bi',
-    pseudo_dir      = '../../samples/espresso/input'
-    outdir          = '../../samples/espresso/scf'   
+    pseudo_dir      = '../scf'
+    outdir          = '../scf'   
     wf_collect      = .true.
     verbosity       = 'high'
     nstep           = 200

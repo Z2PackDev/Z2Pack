@@ -21,6 +21,7 @@ import shutil
 import inspect
 import warnings
 warnings.simplefilter('always')
+import traceback
 
 if sys.version <= '2.6.x':
     import unittest2 as unittest
@@ -89,7 +90,9 @@ class CommonTestCase(unittest.TestCase):
 
 class BuildDirTestCase(CommonTestCase):
     def __init__(self, *args, **kwargs):
-        self._name = re.search("'([\w]+).[\w]+'", str(type(self))).group(1)
+        self._name = traceback.extract_stack()[0][0].split('.')[0]
+        if self._name in ['test', 'create_tests']:
+            self._name = re.search("'([\w]+).[\w]+'", str(type(self))).group(1)
         self._build_folder = 'build/' + self._name
         try:
             shutil.rmtree(self._build_folder)

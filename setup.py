@@ -35,7 +35,7 @@ setup(
     url='http://z2pack.ethz.ch',
     author='Dominik Gresch',
     author_email='greschd@gmx.ch',
-    description='A tool for computing topological invariants',
+    description='Automating the computation of topological numbers of band-structures',
     install_requires=['numpy', 'scipy', 'decorator'],
     extras_require = {'plot':  ['matplotlib']},
     long_description=readme,
@@ -45,7 +45,7 @@ setup(
                  'Programming Language :: Python :: 2.6',
                  'Programming Language :: Python :: 2.7',
                  'Programming Language :: Python :: 3',
-                 'Intended Audience :: Science/Research'
+                 'Intended Audience :: Science/Research',
                  'Topic :: Scientific/Engineering :: Physics'],
     license='GPL',
     packages=['z2pack',

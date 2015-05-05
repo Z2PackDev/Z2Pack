@@ -12,16 +12,20 @@ Tutorial on the :mod:`z2pack.tb` submodule.
 Setting up the :class:`.tb.Hamilton`
 ------------------------------------
 The first task in calculating a tight-binding model is setting up the
-model itself. This is done using the :class:`.tb.Hamilton` class. After
-the :class:`.tb.Hamilton` instance, atoms are added to the model using
-:meth:`.add_atom`. After that, hopping terms between
-orbitals are added using :meth:`.add_hopping`
+model itself. This can be done either manually or from a ``*_hr.dat`` file
+produced by Wannier90.
+
+Manually creating a Hamiltonian
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+For manually setting up a Hamiltonian, the :class:`.tb.Hamilton` class is used.
+After creating the :class:`.tb.Hamilton` instance, atoms are added to the model using
+:meth:`.add_atom`. Finally, hopping terms between orbitals are added using :meth:`.add_hopping`
 
 .. note:: All positions are to be given **relative to the reduced unit cell**
     vectors. The reduced unit cell vectors themselves are not needed as an input. 
 
 Adding atoms
-~~~~~~~~~~~~
+''''''''''''
 Adding an atom requires information about both the type of atom (``element``) and its ``position``. In this simplified picture, the element is specified just by providing the orbitals that can be occupied with their respective energies, and the number of electrons.
 
 * ``element``: tuple ``(orbitals, num_electrons)``
@@ -37,7 +41,7 @@ Calling the method :meth:`.add_atom` with these parameters adds the specified at
     All energies are to be specified in **arbitrary**, but consistent, **units**. A constant (positive) factor on both orbital energies and hopping will not change the output. 
 
 Adding hopping terms
-~~~~~~~~~~~~~~~~~~~~
+''''''''''''''''''''
 
 The method :meth:`.add_hopping` is used to add hopping terms. 
 
@@ -57,6 +61,23 @@ Finally, ``phase`` (a list of float) can be used to give a different (real or co
 
 .. note::
     The complex conjugate of a given hopping term is added automatically.
+
+
+Hamiltonian from a ``*_hr.dat`` file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Alternatively, the Hamiltonian can be set up using a file specifying
+the overlaps between the orbitals, in the format used by the file
+``seedname_hr.dat`` that is created by Wannier90 (see their User Guide
+for details).
+
+The class :class:`.tb.HrHamilton` which is used to create such a Hamiltonian
+requires the following arguments:
+
+* ``hr_file``: The path to the ``*_hr.dat`` file
+* ``num_occ``: The number of occupied bands
+* ``positions`` (optional): The position of each orbital w.r.t. the reduced
+  unit cell. By default, all orbitals are placed at the origin. This will
+  change the individual WCC, but not the overall topology of the system.
 
 Creating the :class:`.tb.System`
 --------------------------------

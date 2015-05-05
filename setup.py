@@ -11,17 +11,18 @@ try:
 except:
     from distutils.core import setup
 
-readme = r"""Z2Pack is a tool for calculating topological invariants on
-first-principles (z2pack.fp) and tight-binding (z2pack.tb) systems.
+import sys
+if sys.version_info < (2, 5):
+    raise 'must use Python version 2.6 or higher, or 3.x'
 
-It uses the method described in http://journals.aps.org/prb/abstract/10.1103/PhysRevB.83.235401
-to calculate the Z2 topological invariant.
+readme = r"""Z2Pack is a tool that computes topological invariants and illustrates non-trivial features of Berry curvature. It works as a post-processing tool with all major first-principles codes (z2pack.fp), as well as with tight-binding models (z2pack.tb). 
 
-Overlap matrices are calculated either directly (for tb) or via
-the Wannier90 code package (fp).
+It tracks the charge centers of hybrid Wannier functions - as described `here <http://journals.aps.org/prb/abstract/10.1103/PhysRevB.83.235401>`_ - to calculate these topological invariants.
 
-- Documentation: http://z2pack.ethz.ch/doc
-- Online interface: http://z2pack.ethz.ch/online
+The Wannier charge centers are computed from overlap matrices that are obtained either directly (for tb) or via the Wannier90 code package (fp).
+
+- `Documentation <http://z2pack.ethz.ch/doc>`_
+- `Online interface <http://z2pack.ethz.ch/online>`_ (tight-binding only)
 """
 
 with open('./z2pack/_version.py', 'r') as f:
@@ -38,7 +39,15 @@ setup(
     install_requires=['numpy', 'scipy', 'decorator'],
     extras_require = {'plot':  ['matplotlib']},
     long_description=readme,
-    license='LICENSE.txt',
+    classifiers=['License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+                 'Natural Language :: English',
+                 'Operating System :: Unix',
+                 'Programming Language :: Python :: 2.6',
+                 'Programming Language :: Python :: 2.7',
+                 'Programming Language :: Python :: 3',
+                 'Intended Audience :: Science/Research'
+                 'Topic :: Scientific/Engineering :: Physics'],
+    license='GPL',
     packages=['z2pack',
               'z2pack.ptools',
               'z2pack.tb',

@@ -5,6 +5,8 @@
 |
 |
 
+.. title:: Overview
+
 Welcome!
 ========
 Z2Pack is a tool for calculating the Z2 topological invariant. It can be

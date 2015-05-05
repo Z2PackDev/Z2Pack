@@ -13,4 +13,3 @@ The :mod:`z2pack.tb` module: Contains the classes :class:`Hamilton`
 
 from ._tight_binding import *
 from ._hr_hamilton import HrHamilton
-#~ from . import w90

@@ -500,12 +500,6 @@ class Surface(object):
 
         :returns:       :class:`matplotlib figure` instance (only if 
             ``ax == None``)
-
-        .. note:: This plotting tool is meant mainly as a quick way of 
-            looking at the results calculated by Z2Pack, and has 
-            limited flexibility. If you wish to create beautiful 
-            plots, it might be necessary to fetch the data with 
-            :meth:`.get_res()` and utilize the full power of matplotlib.
         """
         if gaps:
             for offset in [-1, 0, 1]:

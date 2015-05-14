@@ -105,12 +105,12 @@ class System(object):
 class Surface(object):
     r"""
     Describes a surface (or generalised 2D surface) in reciprocal space
-    for which the Z2 topological invariant is to be calculated. It is
+    for which topological invariants are to be calculated. It is
     created by using the :class:`System`'s :meth:`surface()<System.surface>` method.
 
     A :class:`Surface` instance is the main object used to perform Z2Pack
-    tasks like calculating WCC and the Z2 invariant, getting results, plotting
-    etc.
+    tasks like calculating WCC, Chern number and the Z2 invariant, getting
+    results, plotting etc.
 
     :param m_handle:        Function that returns a list of overlap matrices
         given the pumping parameter :math:`t` and the number of k-points in
@@ -211,7 +211,7 @@ class Surface(object):
         :type overwrite:            bool
 
         :returns:                   ``None``. Use :meth:`get_res` and
-            :meth:`invariant` to get the results.
+            :meth:`z2` to get the results.
         """
         self._current = copy.deepcopy(self._defaults)
         self._current.update(kwargs)
@@ -563,7 +563,7 @@ class Surface(object):
         """
         return {'t_par': self._t_points, 'kpt': self._kpt_list, 'wcc': self._wcc_list, 'gap': self._gaps, 'lambda_': self._lambda_list}
 
-    def invariant(self):
+    def z2(self):
         """
         Calculates the Z2 topological invariant.
 
@@ -581,7 +581,15 @@ class Surface(object):
             return 1 if inv == -1 else 0
         except (NameError, AttributeError):
             raise RuntimeError('WCC not yet calculated')
-
+            
+    def invariant(self):
+        r"""
+        Deprecated alias for :meth:`z2`.
+        """
+        warnings.warn('Using deprecated function invariant. Use z2 instead.',
+            DeprecationWarning, stacklevel=2)
+        return self.z2()
+        
     def chern(self):
         r"""
         Calculates the evolution of polarization (sum of WCC) along the

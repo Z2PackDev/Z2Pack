@@ -23,6 +23,8 @@ system = z2pack.fp.System(["input/CHGCAR", "input/INCAR", "input/POSCAR", "input
 
 if not os.path.exists('./results'):
     os.mkdir('./results')
+if not os.path.exists('./plots'):
+    os.mkdir('./plots')
     
 
 # Creating two surfaces, both with the pumping parameter t changing

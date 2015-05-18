@@ -226,7 +226,7 @@ Convergence options
 Getting the results
 ~~~~~~~~~~~~~~~~~~~
 
-The Z2 invariant can be calculated by calling the :meth:`.invariant()`
+The Z2 invariant can be calculated by calling the :meth:`.z2()`
 method, which returns 0 for topologically trivial surfaces or 1 for
 non-trivial ones.
 

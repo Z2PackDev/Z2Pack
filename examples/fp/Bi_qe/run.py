@@ -71,5 +71,5 @@ surface_0.wcc_plot(show=False, axis=ax[0])
 surface_1.wcc_plot(show=False, axis=ax[1])
 plt.savefig('plots/plot.pdf', bbox_inches='tight')
 
-print('Z2 topological invariant at kx = 0: {0}'.format(surface_0.invariant()))
-print('Z2 topological invariant at kx = 0.5: {0}'.format(surface_1.invariant()))
+print('Z2 topological invariant at kx = 0: {0}'.format(surface_0.z2()))
+print('Z2 topological invariant at kx = 0.5: {0}'.format(surface_1.z2()))

@@ -62,5 +62,5 @@ tb_surface.wcc_plot()
 tb_surface.chern_plot()
 
 # Printing the results
-print("t1: {0}, t2: {1}, Z2 invariant: {2}".format(t1, t2, tb_surface.invariant()))
+print("t1: {0}, t2: {1}, Z2 invariant: {2}".format(t1, t2, tb_surface.z2()))
 print("Chern number: {0}".format(tb_surface.chern()['chern']))

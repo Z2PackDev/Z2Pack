@@ -5,6 +5,7 @@
 # Date:    07.02.2015 04:21:23 CET
 # File:    run.py
 
+import os
 import z2pack
 import matplotlib
 matplotlib.use('Agg')
@@ -41,8 +42,8 @@ surface_1.wcc_calc()
 
 # Combining the two plots
 fig, ax = plt.subplots(1, 2, sharey=True, figsize = (9,5))
-surface_0.plot(show=False, axis=ax[0])
-surface_1.plot(show=False, axis=ax[1])
+surface_0.wcc_plot(show=False, axis=ax[0])
+surface_1.wcc_plot(show=False, axis=ax[1])
 plt.savefig('plots/plot.pdf', bbox_inches = 'tight')
 
 print('Z2 topological invariant at kx = 0: {0}'.format(surface_0.invariant()))

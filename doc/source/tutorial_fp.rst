@@ -98,39 +98,11 @@ The function given in ``kpt_fct`` must have the following syntax:
 
 ::
 
-    def function_name(start_point, last_point, end_point, N):
+    def function_name(kpt):
         ...
         return string
 
-===============   ==========================  =========================
-variable name     description                 format
-===============   ==========================  =========================
-``start_point``   First k - point             ``[float, float, float]``
----------------   --------------------------  -------------------------
-``last_point``    Last k - point              ``[float, float, float]``
----------------   --------------------------  -------------------------
-``end_point``      start_point + string_vec   ``[float, float, float]``
----------------   --------------------------  -------------------------
-``N``               number of k-points        ``int``
-===============   ==========================  =========================
-
-
-
-Depending on how your first-principles code works, it might be easier
-to use either ``last_point`` or ``end_point``. Note that ``end_point``
-itself should not be in the k-points used.
-
-+----------------------------------------+--------------------------------+
-|sample input                            |   desired k-points             |
-+=================+======================+================================+
-|``start_point``  | ``[0, 0.5, 0]``      |``[0, 0.5, 0], [0, 0.5, 0.2]``  |
-+-----------------+----------------------+                                |
-|``last_point``   | ``[0, 0.5, 0.8]``    |``[0, 0.5, 0.4], [0, 0.5, 0.6]``|
-+-----------------+----------------------+                                |
-|``end_point``    |``[0, 0.5, 1]``       |                                |
-+-----------------+----------------------+``[0, 0.5, 0.8]``               |
-|``N``            |  ``5``               |                                |
-+-----------------+----------------------+--------------------------------+
+where ``kpt`` is a ``list`` containing the desired k-points *including* the periodic image of the first point. Hence to compute a string with ``N`` k-points, ``N + 1`` points are given, and the last point is a periodic image of the first. Note thus that the function should be constructed in such a way that the first-principles code will not use the last point in its calculation. 
 
 3. Call to the first-principles code
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -12,8 +12,8 @@ Tutorial on the :mod:`z2pack.tb` submodule.
 Setting up the :class:`.tb.Hamilton`
 ------------------------------------
 The first task in calculating a tight-binding model is setting up the
-model itself. This can be done either manually or from a ``*_hr.dat`` file
-produced by Wannier90.
+model itself. This can be done either manually, from a ``*_hr.dat`` file
+produced by Wannier90, or by specifying the matrix Hamiltonian as a function.
 
 Manually creating a Hamiltonian
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -74,6 +74,19 @@ The class :class:`.tb.HrHamilton` which is used to create such a Hamiltonian
 requires the following arguments:
 
 * ``hr_file``: The path to the ``*_hr.dat`` file
+* ``num_occ``: The number of occupied bands
+* ``positions`` (optional): The position of each orbital w.r.t. the reduced
+  unit cell. By default, all orbitals are placed at the origin. This will
+  change the individual WCC, but not the overall topology of the system.
+
+Explicit Hamiltonian from a function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Finally, the Hamiltonian can be set up by specifying a function which creates the matrix Hamiltonian, given the wavevector ``k`` as a ``list`` with three entries.
+
+The class :class:`.tb.ExplicitHamilton` which is used to create such a Hamiltonian
+requires the following arguments:
+
+* ``hamiltonian``: The function creating the matrix Hamiltonian.
 * ``num_occ``: The number of occupied bands
 * ``positions`` (optional): The position of each orbital w.r.t. the reduced
   unit cell. By default, all orbitals are placed at the origin. This will

@@ -9,6 +9,7 @@ from __future__ import division, print_function
 
 from . import vectors
 
+import warnings
 import numpy as np
 import scipy.linalg as la
 
@@ -147,25 +148,10 @@ class Hamilton(object):
     def explicit_hamiltonian(self, hamiltonian, atoms_at_origin=True,
                              occupied=None):
         r"""
-        Specify the hamiltonian explicitly. The atom positions can be either
-        set to all be at the origin, or they can be
-
-
-        :param hamiltonian: A function returning the matrix hamiltonian
-            given k.
-        :type hamiltonian: function
-
-        :param atoms_at_origin: Specifies wheter the atoms are automatically
-            positioned at the origin. Alternatively they can be added via
-            :meth:`.add_atom()` **before** using :meth:`.explicit_hamiltonian()`.
-        :type atoms_at_origin: bool
-
-        :param occupied: The number of occupied states. By default
-            (``occupied=None``), the value given to :meth:`.add_atoms()`
-            is taken if ``atoms_at_origin=False``, and all states
-            are occupied else.
-        :type occupied: int
+        Deprecated function for creating a Hamiltonian from an explicit function. Use the :class:`ExplicitHamilton` class instead.
         """
+        warnings.warn('Using deprecated function explicit_hamiltonian. Use the ExplicitHamilton class instead.',
+            DeprecationWarning, stacklevel=2)
         size = len(hamiltonian([0, 0, 0])) # assuming to be square...
 
         # add one atom for each orbital in the hamiltonian

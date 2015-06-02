@@ -17,16 +17,12 @@ pauli_vector = list([pauli_x, pauli_y, pauli_z])
 class ChiralityTestCase(CommonTestCase):
 
     def test_positive(self):
-        def tb_hamiltonian(k):
+        def hamilton(k):
             res = np.zeros((2, 2), dtype=complex)
             for kval, p_mat in zip(k, pauli_vector):
                 res += kval * p_mat
             return res
-        H = z2pack.tb.Hamilton()
-        H.add_atom(([0, 0], 1), [0, 0, 0])
-        H.create_hamiltonian()
-        H.hamiltonian = tb_hamiltonian
-        system = z2pack.tb.System(H)
+        system = z2pack.em.System(hamilton)
         surface = system.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.01))
         surface.wcc_calc(pickle_file=None, verbose=False)
 
@@ -35,17 +31,13 @@ class ChiralityTestCase(CommonTestCase):
         self.assertFullAlmostEqual(res, surface.get_res())
 
     def test_negative(self):
-        def tb_hamiltonian(k):
+        def hamilton(k):
             k[2] = -k[2]
             res = np.zeros((2, 2), dtype=complex)
             for kval, p_mat in zip(k, pauli_vector):
                 res += kval * p_mat
             return res
-        H = z2pack.tb.Hamilton()
-        H.add_atom(([0, 0], 1), [0, 0, 0])
-        H.create_hamiltonian()
-        H.hamiltonian = tb_hamiltonian
-        system = z2pack.tb.System(H)
+        system = z2pack.em.System(hamilton)
         surface = system.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.04))
         surface.wcc_calc(pickle_file=None, verbose=False)
 

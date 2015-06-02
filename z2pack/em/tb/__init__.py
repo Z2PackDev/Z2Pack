@@ -6,11 +6,10 @@
 # File:    __init__.py (z2pack.tb)
 
 r"""
-The :mod:`z2pack.tb` module: Contains the classes :class:`Hamilton`
-(for creating a tight-binding model) and :class:`System` (subclass of
-:class:`z2pack.System` for interfacing to the Core).
+The :mod:`z2pack.em.tb` module contains classes related to tight-binding
+effective models.
 """
 
 from ._tight_binding import *
+from ._hamilton import Hamilton
 from ._hr_hamilton import HrHamilton
-from ._explicit_hamilton import ExplicitHamilton

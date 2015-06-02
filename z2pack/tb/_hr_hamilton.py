@@ -5,7 +5,6 @@
 # Date:    05.05.2015 12:04:36 CEST
 # File:    _hr_hamilton.py
 
-
 from ..ptools.csv_parser import read_file
 from ._tight_binding import Hamilton
 
@@ -25,11 +24,18 @@ class HrHamilton(Hamilton):
         file, w.r.t the reduced unit cell.
         Per default, all orbitals are put at the origin.
     :type positions: list
+
+    :param h_cutoff: Minimum absolute value for hopping parameters to
+        be included. This is useful if the ``hr_file`` contains many
+        zero entries. Default: ``None`` (no hopping entries are excluded).
+    :type h_cutoff: float
     """
-    def __init__(self, hr_file, num_occ, positions=None):
+    def __init__(self, hr_file, num_occ, positions=None, h_cutoff=None):
         super(HrHamilton, self).__init__()
         
         num_wann, h_entries = _read_hr(hr_file)
+        if h_cutoff is not None:
+            h_entries = [hopping for hopping in h_entries if (abs(hopping[2]) > h_cutoff)]
         if positions is None:
             positions = [[0., 0., 0.]] * num_wann
         if not num_wann == len(positions):

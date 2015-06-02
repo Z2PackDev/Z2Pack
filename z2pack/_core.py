@@ -450,7 +450,7 @@ class Surface(object):
         import matplotlib
         import matplotlib.cbook
         import matplotlib.pyplot as plt
-        if not axis:
+        if axis is None:
             return_fig = True
             fig = plt.figure()
             axis = fig.add_subplot(111)

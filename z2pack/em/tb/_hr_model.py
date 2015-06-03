@@ -36,12 +36,12 @@ class HrModel(Model):
         if h_cutoff is not None:
             h_entries = [hopping for hopping in h_entries if (abs(hopping[3]) > h_cutoff)]
                              
-        super(HrModel, self).__init__(on_site=on_site, hop=h_entries, pos=pos, occ=occ add_cc=False)
+        super(HrModel, self).__init__(on_site=on_site, hop=h_entries, pos=pos, occ=occ, add_cc=False)
         
 def _read_hr(filename):
     r"""
     read the number of wannier functions and the hopping entries
-    from *hr.dat
+    from *hr.dat and converts them into the right format
     """
     data = read_file(filename, separator=" ", ignore=[0])
 
@@ -59,8 +59,8 @@ def _read_hr(filename):
 
     h_entries = []
     for i, entry in enumerate(data[2]):
-        h_entries.append([entry[3],
-                          entry[4],
+        h_entries.append([entry[3] - 1,
+                          entry[4] - 1,
                           entry[:3],
                           (entry[5] + 1j * entry[6]) /
                           float(deg_pts[int(i / (num_wann * num_wann))])])

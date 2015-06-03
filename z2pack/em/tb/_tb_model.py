@@ -38,10 +38,10 @@ class Model(object):
         self._on_site = on_site
         
         # take pos if given, else default to [0., 0., 0.] * number of orbitals
-        if len(pos) == len(self._on_site):
-            self._pos = [np.array(pos) for pos in pos]
-        elif pos is None:
+        if pos is None:
             self._pos = [np.array([0., 0., 0.]) for i in self._on_site]
+        elif len(pos) == len(self._on_site):
+            self._pos = [np.array(pos) for pos in pos]
         else:
             raise ValueError('invalid argument for "pos": must be either None or of the same length as the number of orbitals (on_site)')
             

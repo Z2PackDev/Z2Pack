@@ -32,13 +32,13 @@ H.add_atom(([-1, -1], 1), [0.5, 0.5, 0])
 # Add hopping between different atoms
 # The first hopping is between the first orbital of the first atom and
 # the second orbital of the second atom, (inter-sublattice interation)
-H.add_hopping(((0, 0), (1, 1)),
+H.add_hopping(((0, 0), (1, 0)),
               tb.vectors.combine([0, -1], [0, -1], 0),
               t1,
               phase=[1, -1j, 1j, -1])
 # The second interaction is also inter-sublattice, but with the other
 # two orbitals. The strength is the same, but the phase is conjugated.
-H.add_hopping(((0, 1), (1, 0)),
+H.add_hopping(((0, 1), (1, 1)),
               tb.vectors.combine([0, -1], [0, -1], 0),
               t1,
               phase=[1, 1j, -1j, -1])

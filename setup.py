@@ -50,5 +50,6 @@ setup(
     license='GPL',
     packages=['z2pack',
               'z2pack.ptools',
-              'z2pack.tb',
+              'z2pack.em',
+              'z2pack.em.tb',
               'z2pack.fp'])

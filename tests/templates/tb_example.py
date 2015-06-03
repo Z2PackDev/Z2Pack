@@ -15,39 +15,40 @@ class TbExampleTestCase(BuildDirTestCase):
 
     def createH(self, t1, t2):
 
-        self.H = z2pack.tb.Hamilton()
+        builder = z2pack.em.tb.Builder()
 
         # create the two atoms
-        self.H.add_atom(([1, 1], 1), [0, 0, 0])
-        self.H.add_atom(([-1, -1], 1), [0.5, 0.5, 0])
+        builder.add_atom([1, 1], [0, 0, 0], 1)
+        builder.add_atom([-1, -1], [0.5, 0.5, 0], 1)
 
         # add hopping between different atoms
-        self.H.add_hopping(((0, 0), (1, 1)),
-                           z2pack.tb.vectors.combine([0, -1], [0, -1], 0),
+        builder.add_hopping(((0, 0), (1, 1)),
+                           z2pack.em.tb.vectors.combine([0, -1], [0, -1], 0),
                            t1,
                            phase=[1, -1j, 1j, -1])
-        self.H.add_hopping(((0, 1), (1, 0)),
-                           z2pack.tb.vectors.combine([0, -1], [0, -1], 0),
+        builder.add_hopping(((0, 1), (1, 0)),
+                           z2pack.em.tb.vectors.combine([0, -1], [0, -1], 0),
                            t1,
                            phase=[1, 1j, -1j, -1])
 
         # add hopping between neighbouring orbitals of the same type
-        self.H.add_hopping((((0, 0), (0, 0)), ((0, 1), (0, 1))),
-                           z2pack.tb.vectors.neighbours([0, 1],
+        builder.add_hopping((((0, 0), (0, 0)), ((0, 1), (0, 1))),
+                           z2pack.em.tb.vectors.neighbours([0, 1],
                                                         forward_only=True),
                            t2,
                            phase=[1])
-        self.H.add_hopping((((1, 1), (1, 1)), ((1, 0), (1, 0))),
-                           z2pack.tb.vectors.neighbours([0, 1],
+        builder.add_hopping((((1, 1), (1, 1)), ((1, 0), (1, 0))),
+                           z2pack.em.tb.vectors.neighbours([0, 1],
                                                         forward_only=True),
                            -t2,
                            phase=[1])
+        self.model = builder.create()
 
     # this test may produce false negatives due to small numerical differences
     def test_res1(self):
         self.createH(0.2, 0.3)
         # call to Z2Pack
-        tb_system = z2pack.tb.System(self.H)
+        tb_system = z2pack.em.tb.System(self.model)
         tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
         tb_surface.wcc_calc(verbose=False, num_strings=20, pickle_file=None)
         
@@ -59,7 +60,7 @@ class TbExampleTestCase(BuildDirTestCase):
         """ test pos_check=False """
         self.createH(0, 0.3)
         # call to Z2Pack
-        tb_system = z2pack.tb.System(self.H)
+        tb_system = z2pack.em.tb.System(self.model)
         tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
         tb_surface.wcc_calc(verbose=False,
                             num_strings=20,
@@ -74,7 +75,7 @@ class TbExampleTestCase(BuildDirTestCase):
         """ test gap_tol=None """
         self.createH(0.1, 0.3)
         # call to Z2Pack
-        tb_system = z2pack.tb.System(self.H)
+        tb_system = z2pack.em.tb.System(self.model)
         tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
         tb_surface.wcc_calc(verbose=False,
                             num_strings=20,
@@ -89,7 +90,7 @@ class TbExampleTestCase(BuildDirTestCase):
         """ test move_tol=None """
         self.createH(0.1, 0.3)
         # call to Z2Pack
-        tb_system = z2pack.tb.System(self.H)
+        tb_system = z2pack.em.tb.System(self.model)
         tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
         tb_surface.wcc_calc(verbose=False,
                           num_strings=20,
@@ -104,7 +105,7 @@ class TbExampleTestCase(BuildDirTestCase):
         """ test gap_tol=None and move_tol=None"""
         self.createH(0.1, 0.3)
         # call to Z2Pack
-        tb_system = z2pack.tb.System(self.H)
+        tb_system = z2pack.em.tb.System(self.model)
         tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
         tb_surface.wcc_calc(verbose=False,
                             num_strings=20,
@@ -120,7 +121,7 @@ class TbExampleTestCase(BuildDirTestCase):
         """ test the warning that is given when string_vec != None"""
         self.createH(0.1, 0.3)
         # call to Z2Pack
-        tb_system = z2pack.tb.System(self.H)
+        tb_system = z2pack.em.tb.System(self.model)
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter('always')
             tb_surface = tb_system.surface(lambda kx: [kx / 2, 0, 0], [0, 1, 0])
@@ -130,7 +131,7 @@ class TbExampleTestCase(BuildDirTestCase):
 
     def test_saveload(self):
         self.createH(0.1, 0.3)
-        tb_system = z2pack.tb.System(self.H)
+        tb_system = z2pack.em.tb.System(self.model)
         surface1 = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=self._build_folder + '/tb_pickle.txt')
         surface2 = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=self._build_folder + '/tb_pickle.txt')
         surface1.wcc_calc(verbose=False)
@@ -141,7 +142,7 @@ class TbExampleTestCase(BuildDirTestCase):
         """ test kwarg check on wcc_calc """
         self.createH(0.1, 0.3)
         # call to Z2Pack
-        tb_system = z2pack.tb.System(self.H)
+        tb_system = z2pack.em.tb.System(self.model)
         tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
         self.assertRaises(
             TypeError,
@@ -152,7 +153,7 @@ class TbExampleTestCase(BuildDirTestCase):
         """ test kwarg check on __init__ """
         self.createH(0, 0.3)
         # call to Z2Pack
-        tb_system = z2pack.tb.System(self.H)
+        tb_system = z2pack.em.tb.System(self.model)
         self.assertRaises(
             TypeError,
             tb_system.surface,

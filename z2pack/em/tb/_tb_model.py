@@ -5,8 +5,6 @@
 # Date:    02.06.2015 17:50:33 CEST
 # File:    _orbital_hamilton.py
 
-from ._hamilton import Hamilton
-
 import numpy as np
 
 class Model(object):

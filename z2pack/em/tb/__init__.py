@@ -13,6 +13,6 @@ effective models.
 from ._tb_model import Model
 from ._tb_system import System
 from ._hr_model import HrModel
-#~ from ._tight_binding import *
-#~ from ._hamilton import Hamilton
-#~ from ._hr_hamilton import HrHamilton
+from ._builder import Builder
+
+from . import vectors

@@ -10,11 +10,18 @@ from .. import System as _EmSystem
 
 class System(_EmSystem):
     r"""
-    System class for tight-binding models
+    System class for tight-binding models.
     
     :param tb_model: The tight-binding model.
     :type tb_model: Instance of :class:`z2pack.em.tb.Model` or one of its subclasses.
+    
+    :param kwargs:          are passed to the :class:`.Surface` constructor via
+        :meth:`.surface`, which passes them to :meth:`.wcc_calc`, precedence:
+        :meth:`.wcc_calc` > :meth:`.surface` > this (newer kwargs take precedence)
     """
+    # RM_V2
+    _new_style_system = True
+
     def __init__(self, tb_model, **kwargs):
         super(System, self).__init__(
             hamilton=tb_model.hamilton,

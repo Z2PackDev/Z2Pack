@@ -154,6 +154,6 @@ class Builder(object):
             # create orbital_to_index (for hop)
             orbital_to_index.append([count + i for i in range(num_orbitals_atom)])
             count += num_orbitals_atom
-        orbital_to_index = np.array(orbital_to_index)
-        hop_total = [[orbital_to_index[idx0], orbital_to_index[idx1], G, t] for t, idx0, idx1, G in self._hoppings]
+        # use orbital_to_index to create hoppings with the correct (orbital) labels
+        hop_total = [[orbital_to_index[idx0[0]][idx0[1]], orbital_to_index[idx1[0]][idx1[1]], G, t] for t, idx0, idx1, G in self._hoppings]
         return Model(on_site=orbitals_total, hop=hop_total, pos=pos_total, occ=occ_total, add_cc=add_cc)

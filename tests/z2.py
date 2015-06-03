@@ -12,39 +12,40 @@ import numpy as np
 class Z2TestCase(CommonTestCase):
 
     def createH(self, t1, t2):
-        self.H = z2pack.tb.Hamilton()
+
+        builder = z2pack.em.tb.Builder()
 
         # create the two atoms
-        self.H.add_atom(([1, 1], 1), [0, 0, 0])
-        self.H.add_atom(([-1, -1], 1), [0.5, 0.5, 0])
+        builder.add_atom([1, 1], [0, 0, 0], 1)
+        builder.add_atom([-1, -1], [0.5, 0.5, 0], 1)
 
         # add hopping between different atoms
-        self.H.add_hopping(((0, 0), (1, 1)),
-                           z2pack.tb.vectors.combine([0, -1], [0, -1], 0),
+        builder.add_hopping(((0, 0), (1, 1)),
+                           z2pack.em.tb.vectors.combine([0, -1], [0, -1], 0),
                            t1,
                            phase=[1, -1j, 1j, -1])
-        self.H.add_hopping(((0, 1), (1, 0)),
-                           z2pack.tb.vectors.combine([0, -1], [0, -1], 0),
+        builder.add_hopping(((0, 1), (1, 0)),
+                           z2pack.em.tb.vectors.combine([0, -1], [0, -1], 0),
                            t1,
                            phase=[1, 1j, -1j, -1])
 
         # add hopping between neighbouring orbitals of the same type
-        self.H.add_hopping((((0, 0), (0, 0)), ((0, 1), (0, 1))),
-                           z2pack.tb.vectors.neighbours([0, 1],
+        builder.add_hopping((((0, 0), (0, 0)), ((0, 1), (0, 1))),
+                           z2pack.em.tb.vectors.neighbours([0, 1],
                                                         forward_only=True),
                            t2,
                            phase=[1])
-        self.H.add_hopping((((1, 1), (1, 1)), ((1, 0), (1, 0))),
-                           z2pack.tb.vectors.neighbours([0, 1],
+        builder.add_hopping((((1, 1), (1, 1)), ((1, 0), (1, 0))),
+                           z2pack.em.tb.vectors.neighbours([0, 1],
                                                         forward_only=True),
                            -t2,
                            phase=[1])
-
+        self.model = builder.create()
 
     def test_z2_1(self):
         self.createH(0.2, 0.3)
         # call to Z2Pack
-        tb_system = z2pack.tb.System(self.H)
+        tb_system = z2pack.em.tb.System(self.model)
         tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
         tb_surface.wcc_calc(verbose=False, num_strings=20, pickle_file=None)
         
@@ -56,7 +57,7 @@ class Z2TestCase(CommonTestCase):
         """ test pos_check=False """
         self.createH(0, 0.3)
         # call to Z2Pack
-        tb_system = z2pack.tb.System(self.H)
+        tb_system = z2pack.em.tb.System(self.model)
         tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
         tb_surface.wcc_calc(verbose=False,
                             num_strings=20,

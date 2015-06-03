@@ -11,7 +11,7 @@ import numpy as np
 
 class ChernTestCase(CommonTestCase):
 
-    def tb_hamiltonian(self, k):
+    def kp_hamilton(self, k):
         pauli_x = np.array([[0, 1], [1, 0]], dtype=complex)
         pauli_y = np.array([[0, -1j], [1j, 0]], dtype=complex)
         pauli_z = np.array([[1, 0], [0, -1]], dtype=complex)
@@ -23,9 +23,7 @@ class ChernTestCase(CommonTestCase):
         return res
 
     def test_chern(self):
-        H = z2pack.tb.Hamilton()
-        H.explicit_hamiltonian(self.tb_hamiltonian, occupied=1)
-        system = z2pack.tb.System(H)
+        system = z2pack.em.System(self.kp_hamilton)
         surface = system.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.04))
         surface.wcc_calc(pickle_file=None, verbose=False)
 

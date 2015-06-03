@@ -31,37 +31,38 @@ class CheckpointTestCase(CommonTestCase):
         
     def createH(self, t1, t2):
 
-        self.H = z2pack.tb.Hamilton()
+        builder = z2pack.em.tb.Builder()
 
         # create the two atoms
-        self.H.add_atom(([1, 1], 1), [0, 0, 0])
-        self.H.add_atom(([-1, -1], 1), [0.5, 0.5, 0])
+        builder.add_atom([1, 1], [0, 0, 0], 1)
+        builder.add_atom([-1, -1], [0.5, 0.5, 0], 1)
 
         # add hopping between different atoms
-        self.H.add_hopping(((0, 0), (1, 1)),
-                           z2pack.tb.vectors.combine([0, -1], [0, -1], 0),
+        builder.add_hopping(((0, 0), (1, 1)),
+                           z2pack.em.tb.vectors.combine([0, -1], [0, -1], 0),
                            t1,
                            phase=[1, -1j, 1j, -1])
-        self.H.add_hopping(((0, 1), (1, 0)),
-                           z2pack.tb.vectors.combine([0, -1], [0, -1], 0),
+        builder.add_hopping(((0, 1), (1, 0)),
+                           z2pack.em.tb.vectors.combine([0, -1], [0, -1], 0),
                            t1,
                            phase=[1, 1j, -1j, -1])
 
         # add hopping between neighbouring orbitals of the same type
-        self.H.add_hopping((((0, 0), (0, 0)), ((0, 1), (0, 1))),
-                           z2pack.tb.vectors.neighbours([0, 1],
+        builder.add_hopping((((0, 0), (0, 0)), ((0, 1), (0, 1))),
+                           z2pack.em.tb.vectors.neighbours([0, 1],
                                                         forward_only=True),
                            t2,
                            phase=[1])
-        self.H.add_hopping((((1, 1), (1, 1)), ((1, 0), (1, 0))),
-                           z2pack.tb.vectors.neighbours([0, 1],
+        builder.add_hopping((((1, 1), (1, 1)), ((1, 0), (1, 0))),
+                           z2pack.em.tb.vectors.neighbours([0, 1],
                                                         forward_only=True),
                            -t2,
                            phase=[1])
+        self.model = builder.create()
 
     def test_strings_redone(self):
         self.createH(0.2, 0.3)
-        system = z2pack.tb.System(self.H)
+        system = z2pack.em.tb.System(self.model)
         surface = system.surface(lambda kx, ky: [kx / 2, ky, 0])
         surface.wcc_calc(verbose=False, num_strings=20, pickle_file=self.pickle_file, pos_tol=None, gap_tol=None, move_tol=None)
         res0 = surface.get_res()
@@ -71,7 +72,7 @@ class CheckpointTestCase(CommonTestCase):
 
     def test_num_strings(self):
         self.createH(0.2, 0.3)
-        system = z2pack.tb.System(self.H)
+        system = z2pack.em.tb.System(self.model)
         surface = system.surface(lambda kx, ky: [kx / 2, ky, 0])
         surface.wcc_calc(verbose=False, num_strings=20, pickle_file=self.pickle_file, pos_tol=None, gap_tol=None, move_tol=None)
         res0 = surface.get_res()
@@ -81,7 +82,7 @@ class CheckpointTestCase(CommonTestCase):
 
     def test_load(self):
         self.createH(0.2, 0.3)
-        system = z2pack.tb.System(self.H)
+        system = z2pack.em.tb.System(self.model)
 
         surface0 = system.surface(lambda kx, ky: [kx / 2, ky, 0])
         surface0.wcc_calc(verbose=False, num_strings=20, pickle_file=self.pickle_file, pos_tol=None, gap_tol=None, move_tol=None)
@@ -95,7 +96,7 @@ class CheckpointTestCase(CommonTestCase):
 
     def test_conv_change(self):
         self.createH(0.2, 0.3)
-        system = z2pack.tb.System(self.H)
+        system = z2pack.em.tb.System(self.model)
 
         surface0 = system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=None)
         surface0.wcc_calc(verbose=False, num_strings=20, pos_tol=None)
@@ -109,7 +110,7 @@ class CheckpointTestCase(CommonTestCase):
 
     def test_overwrite(self):
         self.createH(0.2, 0.3)
-        system = z2pack.tb.System(self.H)
+        system = z2pack.em.tb.System(self.model)
         surface = system.surface(lambda kx, ky: [kx / 2, ky, 0])
         surface.wcc_calc(verbose=False, num_strings=20, pickle_file=self.pickle_file, pos_tol=None, gap_tol=None, move_tol=None)
         surface.wcc_calc(verbose=False, num_strings=50, pickle_file=self.pickle_file, pos_tol=None, gap_tol=None, move_tol=None, overwrite=True)

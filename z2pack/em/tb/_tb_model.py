@@ -43,7 +43,7 @@ class Model(object):
         elif pos is None:
             self._pos = [np.array([0., 0., 0.]) for i in self._on_site]
         else:
-            raise ValueError('invalid argument for "pos": must be either None or of the same length as on_site')
+            raise ValueError('invalid argument for "pos": must be either None or of the same length as the number of orbitals (on_site)')
             
         # adding hoppings and complex conjugates if required
         self._hop = [[i0, i1, np.array(G), t] for i0, i1, G, t in hop]

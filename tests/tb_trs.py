@@ -11,7 +11,7 @@ import os
 import types
 import shutil
 
-class TbExampleTestCase(BuildDirTestCase):
+class TbTrsExampleTestCase(BuildDirTestCase):
 
     def createH(self, t1, t2):
 

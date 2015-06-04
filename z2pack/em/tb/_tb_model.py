@@ -3,12 +3,13 @@
 #
 # Author:  Dominik Gresch <greschd@gmx.ch>
 # Date:    02.06.2015 17:50:33 CEST
-# File:    _orbital_hamilton.py
+# File:    _tb_model.py
 
 from __future__ import division
 
 import copy
 import numpy as np
+import scipy.linalg as la
 
 class Model(object):
     r"""
@@ -34,8 +35,15 @@ class Model(object):
     :param add_cc:  Determines whether the complex conjugates of the hopping
         parameters are added automatically. Default: ``True``.
     :type add_cc:   bool
+    
+    :param uc: Unit cell of the system. The lattice vectors :math:`a_i` are to be given as column vectors. By default, no unit cell is specified, meaning an Error will occur when adding electromagnetic field.
+    :type uc: 3x3 matrix
     """
-    def __init__(self, on_site, hop, pos=None, occ=None, add_cc=True):
+    def __init__(self, on_site, hop, pos=None, occ=None, add_cc=True, uc=None):
+        if uc is None:
+            self._uc = None
+        else:
+            self._uc = np.array(uc)
         self._on_site = np.array(on_site, dtype=float)
         
         # take pos if given, else default to [0., 0., 0.] * number of orbitals
@@ -79,18 +87,7 @@ class Model(object):
             H[i0, i1] += t * np.exp(2j * np.pi * np.dot(G, k))
         return H
 
-    def size(self):
-        """
-        Returns the size of the system (number of orbitals, number of hoppings, number of occupied states) as a ``dict``.
-        """
-        return dict(orbitals=len(self._on_site), hop=len(self._hop), occ=self._occ)
-        
-    def print_size():
-        """
-        Prints the size of the system.
-        """
-        print('Number of orbitals:\t\t{orbitals}\nNumber of hopping terms:\t {hop}\nNumber of occupied states:\t{occ}'.format(**self.size()))
-
+    #-------------------CREATING DERIVED MODELS-------------------------#
     def supercell(self, dim, periodic=[True, True, True], passivation=None):
         r"""
         Creates a new tight-binding model which describes a supercell.
@@ -109,6 +106,10 @@ class Model(object):
         per_x, per_y, per_z = periodic
 
         new_occ = sum(dim) * self._occ
+        if self._uc is None:
+            new_uc = None
+        else:
+            new_uc = self._uc * dim
 
         # the new positions, normalized to the supercell
         new_pos = []
@@ -159,7 +160,7 @@ class Model(object):
                     tmp_on_site += np.array(passivation(*_edge_detect_pos([i, j, k], dim)), dtype=float)
                     new_on_site.extend(tmp_on_site)
 
-        return Model(on_site=new_on_site, pos=new_pos, hop=new_hop, occ=new_occ, add_cc=False)
+        return Model(on_site=new_on_site, pos=new_pos, hop=new_hop, occ=new_occ, add_cc=False, uc=new_uc)
 
     def trs(self):
         """
@@ -173,21 +174,52 @@ class Model(object):
         for i0, i1, G, t in self._hop:
             # here you can either do -G or t.conjugate(), but not both
             new_hop.append([i1 + idx_offset, i0 + idx_offset, -G, t])
-        return Model(on_site=new_on_site, pos=new_pos, hop=new_hop, occ=new_occ, add_cc=False)
+        return Model(on_site=new_on_site, pos=new_pos, hop=new_hop, occ=new_occ, add_cc=False, uc=self._uc)
 
-#-----------------------------------------------------------------------#
-#                HELPER FUNCTIONS FOR SUPERCELL                         #
-#-----------------------------------------------------------------------#
+    def change_uc(self, uc):
+        """
+        Creates a new model with a different unit cell. The new unit cell must have the same volume as the previous one, i.e. the number of atoms per unit cell stays the same, and cannot change chirality.
+        
+        :param uc: The new unit cell, given w.r.t. to the old one. Lattice vectors are given as column vectors in a 3x3 matrix.
+        """
+        uc = np.array(uc)
+        if la.det(uc) != 1:
+             raise ValueError('The determinant of uc is {0}, but should be 1'.format(la.det(uc)))
+        if self._uc is not None:
+            new_uc = np.dot(self._uc, uc)
+        else:
+            new_uc = None
+        full_new_pos = [la.solve(uc, p) for p in self._pos]
+        pos_offset = [np.array(np.floor(p), dtype=int) for p in full_new_pos]
+        new_pos = [p % 1 for p in full_new_pos]
+        new_hop = [[i0, i1, G + pos_offset[i1] - pos_offset[i0], t] for i0, i1, G, t in self._hop] 
 
-# helper functions: index <-> position
+        return Model(on_site=self._on_site, pos=new_pos, hop=new_hop, occ=self._occ, add_cc=False, uc=new_uc)
+        
+    #-------------------------INSPECTION--------------------------------#
+    
+    def size(self):
+        """
+        Returns the size of the system (number of orbitals, number of hoppings, number of occupied states) as a ``dict``.
+        """
+        return dict(orbitals=len(self._on_site), hop=len(self._hop), occ=self._occ)
+        
+    def print_size():
+        """
+        Prints the size of the system.
+        """
+        print('Number of orbitals:\t\t{orbitals}\nNumber of hopping terms:\t {hop}\nNumber of occupied states:\t{occ}'.format(**self.size()))
+
+#----------------HELPER FUNCTIONS FOR SUPERCELL-------------------------#
 def _pos_to_idx(pos, dim):
+    """index -> position"""
     for p, d in zip(pos, dim):
         if p >= d:
             raise IndexError('pos is out of bounds')
     return ((pos[0] * dim[1]) + pos[1]) * dim[2] + pos[2]
 
-# helper functions: detect edges of the supercell
 def _edge_detect_pos(pos, dim):
+    """detect edges of the supercell"""
     for p, d in zip(pos, dim):
         if p >= d:
             raise IndexError('pos is out of bounds')

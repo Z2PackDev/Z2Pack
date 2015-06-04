@@ -17,26 +17,23 @@ class HrModel(Model):
     :param hr_file: Path to the ``*_hr.dat`` file.
     :type hr_file: str
 
-    :param pos:   Positions of the orbitals. By default (positions = ``None``),
-        all orbitals are put at the origin.
-    :type pos:    list
-    
-    :param occ: Number of occupied states. Default: Half the number of orbitals.
-    :type occ:  int
-
     :param h_cutoff: Minimum absolute value for hopping parameters to
         be included. This is useful if the ``hr_file`` contains many
         zero entries. Default: ``None`` (no hopping entries are excluded).
     :type h_cutoff: float
+    
+    :param kwargs: Keyword arguments are passed to :class:`Model` . For ``add_cc``, the default is ``False`` (unlike in :class:`Model` ).
     """
-    def __init__(self, hr_file, pos=None, occ=None, h_cutoff=None):
+    def __init__(self, hr_file, h_cutoff=None, **kwargs):
         
         num_wann, h_entries = _read_hr(hr_file)
         on_site = [0.] * num_wann
         if h_cutoff is not None:
             h_entries = [hopping for hopping in h_entries if (abs(hopping[3]) > h_cutoff)]
-                             
-        super(HrModel, self).__init__(on_site=on_site, hop=h_entries, pos=pos, occ=occ, add_cc=False)
+
+        if 'add_cc' not in kwargs.keys():
+            kwargs['add_cc'] = False
+        super(HrModel, self).__init__(on_site=on_site, hop=h_entries, **kwargs)
         
 def _read_hr(filename):
     r"""

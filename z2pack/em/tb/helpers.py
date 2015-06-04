@@ -9,6 +9,8 @@
 Helper functions for creating tight-binding models.
 """
 
+import numpy as np
+
 def matrix_to_hoppings(mat, orbitals=None, G=[0, 0, 0], multiplier=1.):
     """
     Turns a square matrix into a series of hopping terms.
@@ -29,7 +31,7 @@ def matrix_to_hoppings(mat, orbitals=None, G=[0, 0, 0], multiplier=1.):
     hop = []
     for i, row in enumerate(mat):
         for j, x in enumerate(row):
-            hop.append([orbitals[i], orbitals[i], np.array(G, dtype=int), multiplier * x])
+            hop.append([orbitals[i], orbitals[j], np.array(G, dtype=int), multiplier * x])
     return hop
 
     

@@ -64,6 +64,3 @@ def combine(x_vals, y_vals, z_vals):
             except TypeError:
                 res.append([x_vals, y_vals, z_vals])
     return res
-
-if __name__ == "__main__":
-    print("tb_vectors.py")

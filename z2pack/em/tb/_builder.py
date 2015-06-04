@@ -14,7 +14,7 @@ from ._tb_model import Model
 
 class Builder(object):
     """
-    Describes a tight-binding model for use with :class:`z2pack.tb.System`.
+    A helper tool to create a tight-binding :class:`.Model` .
     """
     def __init__(self):
         self._reset_atoms()
@@ -138,6 +138,12 @@ class Builder(object):
                                            -rec_lattice_vec))
 
     def create(self, add_cc=False):
+        r"""
+        Creates the :class:`.Model` instance.
+        
+        :param add_cc:  Determines whether the complex conjugate of each hopping term should be added automatically. By default, this is handled not withing :meth:`.create()` , but withing :meth:`.add_hopping()` .
+        :type add_cc:   bool
+        """
         # create conversion from index to orbital/vice versa
         count = 0
         orbital_to_index = []

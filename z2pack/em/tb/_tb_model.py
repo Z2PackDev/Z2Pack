@@ -84,7 +84,7 @@ class Model(object):
         """
         print('Number of orbitals:\t\t{orbitals}\nNumber of hopping terms:\t {hop}\nNumber of occupied states:\t{occ}'.format(**self.size()))
 
-    def supercell(self, dim, periodic=[True, True, True], passivation=None, add_cc=False):
+    def supercell(self, dim, periodic=[True, True, True], passivation=None):
         r"""
         Creates a new tight-binding model which describes a supercell.
 
@@ -96,9 +96,6 @@ class Model(object):
         
         :param passivation: Determines the passivation on the surface layers. It must be a function taking three input variables ``x, y, z``, which are lists ``[bottom, top]`` of booleans indicating whether a given unit cell inside the supercell touches the bottom and top edge in the given direction. The function returns a list of on-site energies (must be the same length as the initial number of orbitals) determining the passivation strength in said unit cell.
         :type passivation:  function
-        
-        :param add_cc:  Determines whether the complex conjugate of the hopping parameters are added when creating the supercell :class:`.Model` . The default is ``False`` because this is assumed to be done alreay in the existing :class:`.Model` .
-        :type add_cc: bool
         """
         nx, ny, nz = dim
         dim = np.array(dim, dtype=int)
@@ -155,7 +152,25 @@ class Model(object):
                     tmp_on_site += np.array(passivation(*_edge_detect_pos([i, j, k], dim)), dtype=float)
                     new_on_site.extend(tmp_on_site)
 
-        return Model(on_site=new_on_site, pos=new_pos, hop=new_hop, occ=new_occ, add_cc=add_cc)
+        return Model(on_site=new_on_site, pos=new_pos, hop=new_hop, occ=new_occ, add_cc=False)
+
+    def add_trs(self):
+        """
+        Creates a new Model which contains the current Model and its time-reversal image.
+        """
+        new_occ = self._occ * 2
+        new_pos = np.vstack([self._pos, self._pos])
+        new_on_site = np.hstack([self._on_site, self._on_site])
+        new_hop = copy.deepcopy(self._hop)
+        idx_offset = len(self._on_site) 
+        for i0, i1, G, t in self._hop:
+            # here you can either do -G or t.conjugate(), but not both
+            new_hop.append([i1 + idx_offset, i0 + idx_offset, -G, t])
+        return Model(on_site=new_on_site, pos=new_pos, hop=new_hop, occ=new_occ, add_cc=False)
+
+#-----------------------------------------------------------------------#
+#                HELPER FUNCTIONS FOR SUPERCELL                         #
+#-----------------------------------------------------------------------#
 
 # helper functions: index <-> position
 def _pos_to_idx(pos, dim):
@@ -163,16 +178,6 @@ def _pos_to_idx(pos, dim):
         if p >= d:
             raise IndexError('pos is out of bounds')
     return ((pos[0] * dim[1]) + pos[1]) * dim[2] + pos[2]
-
-#~ def _idx_to_pos(idx, dim):
-    #~ if idx >= np.prod(dim):
-        #~ raise IndexError('idx is out of bounds')
-    #~ pos = [None] * 3
-    #~ pos[2] = idx % dim[2]
-    #~ idx = int(idx / dim[2])
-    #~ pos[1] = idx % dim[1]
-    #~ pos[0] = int(idx / dim[1])
-    #~ return pos
 
 # helper functions: detect edges of the supercell
 def _edge_detect_pos(pos, dim):
@@ -184,9 +189,3 @@ def _edge_detect_pos(pos, dim):
         edges[i][0] = (pos[i] == 0)
         edges[i][1] = (pos[i] == dim[i] - 1)
     return edges
-
-#~ # wrapper for _edge_detect_pos in combination with _idx_to_pos
-#~ def _edge_detect_idx(idx, dim):
-    #~ return _edge_detect_pos(_idx_to_pos(idx, dim), dim)
-
-

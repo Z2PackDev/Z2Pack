@@ -56,6 +56,13 @@ class Model(object):
             self._occ = int(len(on_site) / 2)
         else:
             self._occ = int(occ)
+
+    def add_hop(self, hop):
+        """
+        Adds additional hopping terms. This can be useful for example if the Model was created as a :class:`HrModel` , but additional terms such as spin-orbit coupling need to be added.
+        """
+        self._hop.extend(hop)
+    
     
     def hamilton(self, k):
         """
@@ -154,7 +161,7 @@ class Model(object):
 
         return Model(on_site=new_on_site, pos=new_pos, hop=new_hop, occ=new_occ, add_cc=False)
 
-    def add_trs(self):
+    def trs(self):
         """
         Creates a new Model which contains the current Model and its time-reversal image.
         """

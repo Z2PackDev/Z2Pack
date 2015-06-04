@@ -16,3 +16,4 @@ from ._hr_model import HrModel
 from ._builder import Builder
 
 from . import vectors
+from . import helpers

@@ -17,17 +17,24 @@ if __name__ == "__main__":
     parser.add_argument('-v', '--vasp', action='store_true', dest='vasp')
     parser.add_argument('-e', '--espresso', action='store_true', dest='espresso')
     parser.add_argument('-a', '--abinit', action='store_true', dest='abinit')
+    parser.add_argument('-n', '--name', dest='name')
     arguments = parser.parse_args(sys.argv[1:])
     #~ sys.argv = [sys.argv[0]] # turns off forwarding the flags
 
-    exclude_list = {'abinit': arguments.abinit, 'vasp': arguments.vasp, 'espresso': arguments.espresso}
-
-    for filename in os.listdir('./templates'):
-        try:
-            if not exclude_list[filename.split('.')[0]]:
-                continue
-        except KeyError:
-            pass
+    if arguments.name is not None:
+        filename = arguments.name
         shutil.copyfile('./templates/' + filename, './' + filename)
-    execfile('test.py', globals(), locals())
+        sys.argv = [sys.argv[0]]
+        execfile(filename, globals(), locals())
+    else:
+        exclude_list = {'abinit': arguments.abinit, 'vasp': arguments.vasp, 'espresso': arguments.espresso}
+
+        for filename in os.listdir('./templates'):
+            try:
+                if not exclude_list[filename.split('.')[0]]:
+                    continue
+            except KeyError:
+                pass
+            shutil.copyfile('./templates/' + filename, './' + filename)
+        execfile('test.py', globals(), locals())
     

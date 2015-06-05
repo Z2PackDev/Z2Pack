@@ -53,7 +53,7 @@ def assertFullAlmostEqual(TestCase, x, y):
     # rest
     else:
         try:
-            TestCase.assertAlmostEqual(x, y)
+            TestCase.assertAlmostEqual(x, y, places=7)
         except TypeError:
             TestCase.assertEqual(x, y)
 

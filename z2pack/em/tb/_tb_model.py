@@ -7,9 +7,12 @@
 
 from __future__ import division
 
+import gc
 import copy
+import itertools
 import numpy as np
 import scipy.linalg as la
+import scipy.sparse as sparse
 
 class Model(object):
     r"""
@@ -96,21 +99,34 @@ class Model(object):
         k = np.array(k)
         H = copy.deepcopy(self._hamilton_diag)
         for i, G in enumerate(self._G_list):
-            H += self._hamilton_parts[i] * np.exp(2j * np.pi * np.dot(G, k))
-        return H
+            H += self._hamilton_parts[i].toarray() * np.exp(2j * np.pi * np.dot(G, k))
+        return np.array(H)
 
     def _precompute(self):
         self._hamilton_diag = np.array(np.diag(self._on_site), dtype=complex)
-        self._G_list = list(set([tuple(G) for i0, i1, G, t in self._hop]))
-        self._hamilton_parts = [np.zeros_like(self._hamilton_diag) for i in range(len(self._G_list))]
-        for i0, i1, G, t in self._hop:
-            for i, G2 in enumerate(self._G_list):
-                if all(G2 == G):
-                    self._hamilton_parts[i][i0, i1] += t
-                    break
-            else:
-                raise ValueError('G not found in G_list. This is a bug.')
+        self._G_list = list(sorted(list(set([tuple(G) for i0, i1, G, t in self._hop]))))
+        self._hamilton_parts = []
+        num_hop_added = 0
+        G_key = lambda x: tuple(x[2])
+        G_splitted_hop = [list(x) for val, x in itertools.groupby(sorted(self._hop, key=G_key), key=G_key)]
+        for G_group in G_splitted_hop:
+            tmp_hamilton_parts = np.zeros_like(self._hamilton_diag, dtype=complex)
+            for i0, i1, G, t in G_group:
+                tmp_hamilton_parts[i0, i1] += t
+                num_hop_added += 1
+            self._hamilton_parts.append(sparse.coo_matrix(tmp_hamilton_parts, dtype=complex))
+        assert(num_hop_added == len(self._hop))
         self._unchanged = True
+
+    def strip(self):
+        """
+        Precomputes the Hamiltonian and then DELETES the variables needed for precomputation. This should only be used if memory usage is a problem and the Model does not change at all afterwards.
+        """
+        if not self._unchanged:
+            self._precompute()
+        del self._hop
+        del self._on_site
+        gc.collect()
         
     #-------------------CREATING DERIVED MODELS-------------------------#
     def supercell(self, dim, periodic=[True, True, True], passivation=None):
@@ -164,11 +180,12 @@ class Model(object):
                         full_uc1_pos = uc0_pos + G
                         outside_supercell = [(p < 0) or (p >= d) for p, d in zip(full_uc1_pos, dim)]
                         # test if the hopping should be cut
-                        if any([not per and outside for per, outside in zip(periodic, outside_supercell)]):
+                        cut_hop = any([not per and outside for per, outside in zip(periodic, outside_supercell)])
+                        if cut_hop:
                             continue
                         else:
                             # G in terms of supercells
-                            new_G = np.array(full_uc1_pos / dim, dtype=int)
+                            new_G = np.array(np.floor(full_uc1_pos / dim), dtype=int)
                             # mapped into the supercell
                             uc1_pos = full_uc1_pos % dim
                             new_i1 = full_idx(uc1_pos, i1)
@@ -217,24 +234,10 @@ class Model(object):
         full_new_pos = [la.solve(uc, p) for p in self._pos]
         pos_offset = [np.array(np.floor(p), dtype=int) for p in full_new_pos]
         new_pos = [p % 1 for p in full_new_pos]
-        new_hop = [[i0, i1, G + pos_offset[i1] - pos_offset[i0], t] for i0, i1, G, t in self._hop] 
+        new_hop = [[i0, i1, np.array(la.solve(uc, G), dtype=int) + pos_offset[i1] - pos_offset[i0], t] for i0, i1, G, t in self._hop]
 
         return Model(on_site=self._on_site, pos=new_pos, hop=new_hop, occ=self._occ, add_cc=False, uc=new_uc)
         
-    #-------------------------INSPECTION--------------------------------#
-    
-    def size(self):
-        """
-        Returns the size of the system (number of orbitals, number of hoppings, number of occupied states) as a ``dict``.
-        """
-        return dict(orbitals=len(self._on_site), hop=len(self._hop), occ=self._occ)
-        
-    def print_size():
-        """
-        Prints the size of the system.
-        """
-        print('Number of orbitals:\t\t{orbitals}\nNumber of hopping terms:\t {hop}\nNumber of occupied states:\t{occ}'.format(**self.size()))
-
 #----------------HELPER FUNCTIONS FOR SUPERCELL-------------------------#
 def _pos_to_idx(pos, dim):
     """index -> position"""

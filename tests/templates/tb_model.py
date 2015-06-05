@@ -109,6 +109,101 @@ class TbModelTestCase(BuildDirTestCase):
 
         self.assertFullAlmostEqual(tb_surface.get_res(), res)
 
+    def test_change_uc(self):
+        """test chaning the unit cell"""
+        self.create_model(0.1, 0.3)
+        model = self.model.change_uc([[1, 1, 1], [0, 1, 1], [0, 0, 1]])
+        # call to Z2Pack
+        tb_system = z2pack.em.tb.System(model)
+        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
+        tb_surface.wcc_calc(verbose=False,
+                            num_strings=20,
+                            pickle_file=None,
+                            gap_tol=None,
+                            move_tol=None)
+
+        
+        res = in_place_replace(tb_surface.get_res())
+
+        self.assertFullAlmostEqual(tb_surface.get_res(), res)
+        
+    def test_change_uc_error(self):
+        """test chaning the unit cell"""
+        self.create_model(0.1, 0.3)
+        self.assertRaises(ValueError, self.model.change_uc, [[2, 1, 1], [0, 1, 1], [0, 0, 1]])
+
+    def test_supercell1(self):
+        """test creating a supercell"""
+        self.create_model(0.2, 0.3)
+        model = self.model.supercell([1, 1, 2], [True, True, False])
+        # call to Z2Pack
+        tb_system = z2pack.em.tb.System(model)
+        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
+        tb_surface.wcc_calc(verbose=False,
+                            num_strings=5,
+                            pickle_file=None,
+                            gap_tol=None,
+                            move_tol=None)
+
+        
+        res = in_place_replace(tb_surface.get_res())
+
+        self.assertFullAlmostEqual(tb_surface.get_res(), res)
+        
+    def test_supercell2(self):
+        """test creating a supercell"""
+        self.create_model(0.2, 0.3)
+        model = self.model.supercell([1, 1, 3], [True, True, True])
+        # call to Z2Pack
+        tb_system = z2pack.em.tb.System(model)
+        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
+        tb_surface.wcc_calc(verbose=False,
+                            num_strings=5,
+                            pickle_file=None,
+                            gap_tol=None,
+                            move_tol=None)
+
+        
+        res = in_place_replace(tb_surface.get_res())
+
+        self.assertFullAlmostEqual(tb_surface.get_res(), res)
+        
+    def test_supercell3(self):
+        """test creating a supercell"""
+        self.create_model(0.2, 0.3)
+        model = self.model.supercell([2, 1, 3], [True, True, True])
+        # call to Z2Pack
+        tb_system = z2pack.em.tb.System(model)
+        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
+        tb_surface.wcc_calc(verbose=False,
+                            num_strings=5,
+                            pickle_file=None,
+                            gap_tol=None,
+                            move_tol=None)
+
+        
+        res = in_place_replace(tb_surface.get_res())
+
+        self.assertFullAlmostEqual(tb_surface.get_res(), res)
+        
+    def test_supercell4(self):
+        """test creating a supercell"""
+        self.create_model(0.2, 0.3)
+        model = self.model.supercell([1, 1, 1], [False, False, False])
+        # call to Z2Pack
+        tb_system = z2pack.em.tb.System(model)
+        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
+        tb_surface.wcc_calc(verbose=False,
+                            num_strings=5,
+                            pickle_file=None,
+                            gap_tol=None,
+                            move_tol=None)
+
+        
+        res = in_place_replace(tb_surface.get_res())
+
+        self.assertFullAlmostEqual(tb_surface.get_res(), res)
+
     def test_precompute(self):
         """ test that precomputation will be redone after changing _hop or _on_site"""
         self.create_model(0.1, 0.3)

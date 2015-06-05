@@ -5,7 +5,7 @@
 # Date:    22.09.2014 14:23:12 CEST
 # File:    squarelattice.py
 
-import z2pack.tb as tb
+import z2pack.em.tb as tb
 # Setting the interaction strength
 t1, t2 = (0.2, 0.3)
 
@@ -22,12 +22,12 @@ settings = {'num_strings': 11,
            }
 
 # Creating an empty Hamilton instance
-H = tb.Hamilton()
+H = tb.Builder()
 
 # Creating the two atoms. The orbitals have opposite energies because
 # they are in different sublattices.
-H.add_atom(([1, 1], 1), [0, 0, 0])
-H.add_atom(([-1, -1], 1), [0.5, 0.5, 0])
+H.add_atom([1, 1], [0, 0, 0], 1)
+H.add_atom([-1, -1], [0.5, 0.5, 0], 1)
 
 # Add hopping between different atoms
 # The first hopping is between the first orbital of the first atom and
@@ -49,7 +49,7 @@ H.add_hopping((((0, 0), (0, 0)), ((0, 1), (0, 1))), tb.vectors.neighbours([0, 1]
 H.add_hopping((((1, 1), (1, 1)), ((1, 0), (1, 0))), tb.vectors.neighbours([0, 1]), -t2)
 
 # Creating the System
-tb_system = tb.System(H)
+tb_system = tb.System(H.create())
 
 # Creating a surface with strings along ky at kz=0
 tb_surface = tb_system.surface(lambda kx: [kx / 2., 0, 0], [0, 1, 0])

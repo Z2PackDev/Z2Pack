@@ -64,6 +64,16 @@ class Model(object):
             self._occ = int(len(on_site) / 2)
         else:
             self._occ = int(occ)
+        # for the precomputation of Hamilton terms
+        self._unchanged = False
+
+    def __setattr__(self, name, value):
+        """
+        Force the hamilton precomputation to be re-done when something changes.
+        """
+        if name in ['_hop', '_on_site']:
+            self._unchanged = False
+        super(Model, self).__setattr__(name, value)
 
     def add_hop(self, hop):
         """
@@ -81,12 +91,27 @@ class Model(object):
 
         :returns:   2D numpy array
         """
+        if not self._unchanged:
+            self._precompute()
         k = np.array(k)
-        H = np.array(np.diag(self._on_site), dtype=complex)
-        for i0, i1, G, t in self._hop:
-            H[i0, i1] += t * np.exp(2j * np.pi * np.dot(G, k))
+        H = copy.deepcopy(self._hamilton_diag)
+        for i, G in enumerate(self._G_list):
+            H += self._hamilton_parts[i] * np.exp(2j * np.pi * np.dot(G, k))
         return H
 
+    def _precompute(self):
+        self._hamilton_diag = np.array(np.diag(self._on_site), dtype=complex)
+        self._G_list = list(set([tuple(G) for i0, i1, G, t in self._hop]))
+        self._hamilton_parts = [np.zeros_like(self._hamilton_diag) for i in range(len(self._G_list))]
+        for i0, i1, G, t in self._hop:
+            for i, G2 in enumerate(self._G_list):
+                if all(G2 == G):
+                    self._hamilton_parts[i][i0, i1] += t
+                    break
+            else:
+                raise ValueError('G not found in G_list. This is a bug.')
+        self._unchanged = True
+        
     #-------------------CREATING DERIVED MODELS-------------------------#
     def supercell(self, dim, periodic=[True, True, True], passivation=None):
         r"""
@@ -147,7 +172,7 @@ class Model(object):
                             # mapped into the supercell
                             uc1_pos = full_uc1_pos % dim
                             new_i1 = full_idx(uc1_pos, i1)
-                            new_hop.append(new_i0, new_i1, new_G, t)
+                            new_hop.append([new_i0, new_i1, new_G, t])
 
         # new on_site terms, including passivation
         if passivation is None:

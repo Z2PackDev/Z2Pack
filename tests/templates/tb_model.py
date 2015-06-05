@@ -109,6 +109,16 @@ class TbModelTestCase(BuildDirTestCase):
 
         self.assertFullAlmostEqual(tb_surface.get_res(), res)
 
+    def test_precompute(self):
+        """ test that precomputation will be redone after changing _hop or _on_site"""
+        self.create_model(0.1, 0.3)
+        self.model._unchanged = True
+        self.model._hop = []
+        self.assertEqual(self.model._unchanged, False)
+        self.model._unchanged = True
+        self.model._on_site = []
+        self.assertEqual(self.model._unchanged, False)
+
     def test_warning(self):
         """ test the warning that is given when string_vec != None"""
         self.create_model(0.1, 0.3)

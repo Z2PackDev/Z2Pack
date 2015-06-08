@@ -51,9 +51,11 @@ class Model(object):
         
         # take pos if given, else default to [0., 0., 0.] * number of orbitals
         if pos is None:
-            self._pos = [np.array([0., 0., 0.]) for i in self._on_site]
+            self._pos = [np.array([0., 0., 0.]) for i in range(len(self._on_site))]
+            self._uc_offset = [np.array([0, 0, 0], dtype=int) for i in range(len(self._on_site))]
         elif len(pos) == len(self._on_site):
-            self._pos = [np.array(pos) for pos in pos]
+            self._pos = [np.array(p) for p in pos]
+            self._uc_offset = [np.array(np.floor(p), dtype=int) for p in pos]
         else:
             raise ValueError('invalid argument for "pos": must be either None or of the same length as the number of orbitals (on_site)')
             
@@ -104,10 +106,10 @@ class Model(object):
 
     def _precompute(self):
         self._hamilton_diag = np.array(np.diag(self._on_site), dtype=complex)
-        self._G_list = list(sorted(list(set([tuple(G) for i0, i1, G, t in self._hop]))))
+        G_key = lambda x: tuple(x[2] + self._uc_offset[x[1]] - self._uc_offset[x[0]])
+        self._G_list = list(sorted(list(set([tuple(G_key(x)) for x in self._hop]))))
         self._hamilton_parts = []
         num_hop_added = 0
-        G_key = lambda x: tuple(x[2])
         G_splitted_hop = [list(x) for val, x in itertools.groupby(sorted(self._hop, key=G_key), key=G_key)]
         for G_group in G_splitted_hop:
             tmp_hamilton_parts = np.zeros_like(self._hamilton_diag, dtype=complex)
@@ -117,6 +119,7 @@ class Model(object):
             self._hamilton_parts.append(sparse.coo_matrix(tmp_hamilton_parts, dtype=complex))
         assert(num_hop_added == len(self._hop))
         self._unchanged = True
+
 
     def strip(self):
         """
@@ -237,6 +240,18 @@ class Model(object):
         new_hop = [[i0, i1, np.array(la.solve(uc, G), dtype=int) + pos_offset[i1] - pos_offset[i0], t] for i0, i1, G, t in self._hop]
 
         return Model(on_site=self._on_site, pos=new_pos, hop=new_hop, occ=self._occ, add_cc=False, uc=new_uc)
+
+    def em_field(self, scalar_pot, vec_pot):
+        r"""
+        Creates a model including an electromagnetic field described by a scalar potential :math:`\Phi(\mathbf{r})` and a vector potential :math:`\mathbf{A}(\mathbf{r})` .
+        
+        :param scalar_pot:  TODO
+        :type scalar_pot:   TODO
+        
+        :param vec_pot: TODO
+        :type vec_pot:  TODO
+        """
+        raise NotImplementedError
         
 #----------------HELPER FUNCTIONS FOR SUPERCELL-------------------------#
 def _pos_to_idx(pos, dim):

@@ -299,35 +299,41 @@ class Model(object):
         :param in_place:    Determines whether the current model is modified (``in_place=True``) or a new model is returned, preserving the current one (``in_place=False``, default).
         :type in_place:     bool
         """
-        if self._uc is None:
-            raise ValueError('Unit cell is not specified')
-
         new_on_site = copy.deepcopy(self._on_site)
-        for i, p in self._pos:
-            if mode_scalar == 'relative':
-                new_on_site[i] += prefactor_scalar * scalar_pot(p)
-            elif mode_scalar == 'absolute':
-                new_on_site[i] += prefactor_scalar * scalar_pot(np.dot(self._uc, p))
-            else:
-                raise ValueError('Unrecognized value for mode_scalar. Must be either "absolute" or "relative"')
-        new_hop = []
-        for i0, i1, G, t in self._hop:
-            p0 = self._pos[i0]
-            p1 = self._pos[i0]
-            r0 = np.dot(self._uc, p0)
-            r1 = np.dot(self._uc, p1)
-            if mode_vec == 'absolute':
-                # project into the home UC
-                A0 = vec_pot(np.dot(self._uc, p0 % 1))
-                A1 = vec_pot(np.dot(self._uc, p1 % 1))
-            elif mode_vec == 'relative':
-                # project into the home UC
-                A0 = vec_pot(p0 % 1)
-                A1 = vec_pot(p1 % 1)
-            else:
-                raise ValueError('Unrecognized value for mode_vec. Must be either "absolute" or "relative"')
-            new_t = t * np.exp(-1j * prefactor_vec * np.dot(G + r1 - r0, A1 - A0))
-            new_hop.append(i0, i1, G, new_t)
+        if scalar_pot is not None:
+            for i, p in enumerate(self._pos):
+                if mode_scalar == 'relative':
+                    new_on_site[i] += prefactor_scalar * scalar_pot(p)
+                    #~ print('adding {1} to site {0}'.format(i, prefactor_scalar * scalar_pot(p)))
+                elif mode_scalar == 'absolute':
+                    new_on_site[i] += prefactor_scalar * scalar_pot(np.dot(self._uc, p))
+                else:
+                    raise ValueError('Unrecognized value for mode_scalar. Must be either "absolute" or "relative"')
+
+        if vec_pot is not None:
+            if self._uc is None:
+                raise ValueError('Unit cell is not specified')
+            new_hop = []
+            for i0, i1, G, t in self._hop:
+                p0 = self._pos[i0]
+                p1 = self._pos[i0]
+                r0 = np.dot(self._uc, p0)
+                r1 = np.dot(self._uc, p1)
+                if mode_vec == 'absolute':
+                    # project into the home UC
+                    A0 = vec_pot(np.dot(self._uc, p0 % 1))
+                    A1 = vec_pot(np.dot(self._uc, p1 % 1))
+                elif mode_vec == 'relative':
+                    # project into the home UC
+                    A0 = vec_pot(p0 % 1)
+                    A1 = vec_pot(p1 % 1)
+                else:
+                    raise ValueError('Unrecognized value for mode_vec. Must be either "absolute" or "relative"')
+                new_t = t * np.exp(-1j * prefactor_vec * np.dot(G + r1 - r0, A1 - A0))
+                new_hop.append(i0, i1, G, new_t)
+        else:
+            new_hop = copy.deepcopy(self._hop)
+
         return self._create_model(in_place, on_site=new_on_site, pos=self._pos, hop=new_hop, occ=self._occ, add_cc=False, uc=self._uc)
 
 #----------------HELPER FUNCTIONS FOR SUPERCELL-------------------------#

@@ -8,6 +8,7 @@
 from common import *
 
 import os
+import copy
 import types
 import shutil
 
@@ -117,6 +118,19 @@ class TbTrsExampleTestCase(BuildDirTestCase):
 
         self.assertFullAlmostEqual(trs_res, trs_surface.get_res())
         self.assertFullAlmostEqual(trs_res_z2, trs_surface_z2.get_res())
+
+    def test_trs_inplace(self):
+        self.createH(0.2, 0.3)
+        model2 = copy.deepcopy(self.model)
+        model2.trs(in_place=True)
+        system0 = z2pack.em.tb.System(self.trs_model)
+        surface0 = system0.surface(lambda kx, ky: [kx, ky, 0])
+        surface0.wcc_calc(verbose=False, num_strings=20, pickle_file=None)
+        system1 = z2pack.em.tb.System(model2)
+        surface1 = system1.surface(lambda kx, ky: [kx, ky, 0])
+        surface1.wcc_calc(verbose=False, num_strings=20, pickle_file=None)
+
+        self.assertFullAlmostEqual(surface0.get_res(), surface1.get_res())
 
 if __name__ == "__main__":
     unittest.main()

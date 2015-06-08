@@ -17,60 +17,70 @@ import scipy.sparse as sparse
 class Model(object):
     r"""
     Describes a tight-binding model.
-    
+
     :param on_site: On-site energies of the orbitals.
     :type on_site:  list
-    
+
     :param hop: Hopping terms. Each hopping terms is a list
         [O1, O2, G, t] where O1 and O2 are the indices of the two orbitals
         involved, G is the reciprocal lattice vector indicating the UC
         where O2 is located (if O1 is located in the home UC), and t
         is the hopping strength.
     :type hop: list
-    
+
     :param pos:   Positions of the orbitals. By default (positions = ``None``),
         all orbitals are put at the origin.
     :type pos:    list
-    
+
     :param occ: Number of occupied states. Default: Half the number of orbitals.
     :type occ:  int
-    
+
     :param add_cc:  Determines whether the complex conjugates of the hopping
         parameters are added automatically. Default: ``True``.
     :type add_cc:   bool
-    
+
     :param uc: Unit cell of the system. The lattice vectors :math:`a_i` are to be given as column vectors. By default, no unit cell is specified, meaning an Error will occur when adding electromagnetic field.
     :type uc: 3x3 matrix
     """
     def __init__(self, on_site, hop, pos=None, occ=None, add_cc=True, uc=None):
-        if uc is None:
-            self._uc = None
-        else:
-            self._uc = np.array(uc)
-        self._on_site = np.array(on_site, dtype=float)
-        
-        # take pos if given, else default to [0., 0., 0.] * number of orbitals
-        if pos is None:
-            self._pos = [np.array([0., 0., 0.]) for i in range(len(self._on_site))]
-            self._uc_offset = [np.array([0, 0, 0], dtype=int) for i in range(len(self._on_site))]
-        elif len(pos) == len(self._on_site):
-            self._pos = [np.array(p) for p in pos]
-            self._uc_offset = [np.array(np.floor(p), dtype=int) for p in pos]
-        else:
-            raise ValueError('invalid argument for "pos": must be either None or of the same length as the number of orbitals (on_site)')
-            
-        # adding hoppings and complex conjugates if required
-        self._hop = [[i0, i1, np.array(G, dtype=int), t] for i0, i1, G, t in hop]
-        if add_cc:
-            self._hop.extend([[i1, i0, -np.array(G), t.conjugate()] for i0, i1, G, t in hop])
+        self._create_model(True, on_site, hop, pos, occ, add_cc, uc)
 
-        # take occ if given, else default to half the number of orbitals
-        if occ is None:
-            self._occ = int(len(on_site) / 2)
+    def _create_model(self, in_place, on_site, hop, pos=None, occ=None, add_cc=True, uc=None):
+        """
+        Creates a new model if in_place=False and modifies the current one else.
+        """
+        if in_place:
+            if uc is None:
+                self._uc = None
+            else:
+                self._uc = np.array(uc)
+            self._on_site = np.array(on_site, dtype=float)
+
+            # take pos if given, else default to [0., 0., 0.] * number of orbitals
+            if pos is None:
+                self._pos = [np.array([0., 0., 0.]) for i in range(len(self._on_site))]
+                self._uc_offset = [np.array([0, 0, 0], dtype=int) for i in range(len(self._on_site))]
+            elif len(pos) == len(self._on_site):
+                self._pos = [np.array(p) for p in pos]
+                self._uc_offset = [np.array(np.floor(p), dtype=int) for p in pos]
+            else:
+                raise ValueError('invalid argument for "pos": must be either None or of the same length as the number of orbitals (on_site)')
+
+            # adding hoppings and complex conjugates if required
+            self._hop = [[i0, i1, np.array(G, dtype=int), t] for i0, i1, G, t in hop]
+            if add_cc:
+                self._hop.extend([[i1, i0, -np.array(G), t.conjugate()] for i0, i1, G, t in hop])
+
+            # take occ if given, else default to half the number of orbitals
+            if occ is None:
+                self._occ = int(len(on_site) / 2)
+            else:
+                self._occ = int(occ)
+            # for the precomputation of Hamilton terms
+            self._unchanged = False
+            return
         else:
-            self._occ = int(occ)
-        # for the precomputation of Hamilton terms
-        self._unchanged = False
+            return Model(on_site, hop, pos, occ, add_cc, uc)
 
     def __setattr__(self, name, value):
         """
@@ -85,12 +95,12 @@ class Model(object):
         Adds additional hopping terms. This can be useful for example if the Model was created as a :class:`HrModel` , but additional terms such as spin-orbit coupling need to be added.
         """
         self._hop.extend(hop)
-    
-    
+
+
     def hamilton(self, k):
         """
         Creates the Hamiltonian matrix.
-        
+
         :param k:   k-point
         :type k:    list
 
@@ -130,20 +140,23 @@ class Model(object):
         del self._hop
         del self._on_site
         gc.collect()
-        
-    #-------------------CREATING DERIVED MODELS-------------------------#
-    def supercell(self, dim, periodic=[True, True, True], passivation=None):
-        r"""
-        Creates a new tight-binding model which describes a supercell.
 
-        :param dim: The dimensions of the supercell in terms of the previous unit cell. 
+    #-------------------CREATING DERIVED MODELS-------------------------#
+    def supercell(self, dim, periodic=[True, True, True], passivation=None, in_place=False):
+        r"""
+        Creates a tight-binding model which describes a supercell.
+
+        :param dim: The dimensions of the supercell in terms of the previous unit cell.
         :type dim:  list(int)
-        
+
         :param periodic:    Determines whether periodicity is kept in each crystal direction. If not (entry is ``False``), hopping terms that go across the border of the supercell (in the given direction) are cut.
         :type periodic:     list(bool)
-        
+
         :param passivation: Determines the passivation on the surface layers. It must be a function taking three input variables ``x, y, z``, which are lists ``[bottom, top]`` of booleans indicating whether a given unit cell inside the supercell touches the bottom and top edge in the given direction. The function returns a list of on-site energies (must be the same length as the initial number of orbitals) determining the passivation strength in said unit cell.
         :type passivation:  function
+
+        :param in_place:    Determines whether the current model is modified (``in_place=True``) or a new model is returned, preserving the current one (``in_place=False``, default).
+        :type in_place:     bool
         """
         nx, ny, nz = dim
         dim = np.array(dim, dtype=int)
@@ -164,7 +177,7 @@ class Model(object):
                     tmp_offset = np.array([i, j, k]) / dim
                     for p in reduced_pos:
                         new_pos.append(tmp_offset + p)
-        
+
         # new hoppings, cutting those that cross the supercell boundary
         # in a non-periodic direction
         new_hop = []
@@ -205,27 +218,33 @@ class Model(object):
                     tmp_on_site += np.array(passivation(*_edge_detect_pos([i, j, k], dim)), dtype=float)
                     new_on_site.extend(tmp_on_site)
 
-        return Model(on_site=new_on_site, pos=new_pos, hop=new_hop, occ=new_occ, add_cc=False, uc=new_uc)
+        return self._create_model(in_place, on_site=new_on_site, pos=new_pos, hop=new_hop, occ=new_occ, add_cc=False, uc=new_uc)
 
-    def trs(self):
+    def trs(self, in_place=False):
         """
-        Creates a new Model which contains the current Model and its time-reversal image.
+        Adds a time-reversal image of the current model.
+
+        :param in_place:    Determines whether the current model is modified (``in_place=True``) or a new model is returned, preserving the current one (``in_place=False``, default).
+        :type in_place:     bool
         """
         new_occ = self._occ * 2
         new_pos = np.vstack([self._pos, self._pos])
         new_on_site = np.hstack([self._on_site, self._on_site])
         new_hop = copy.deepcopy(self._hop)
-        idx_offset = len(self._on_site) 
+        idx_offset = len(self._on_site)
         for i0, i1, G, t in self._hop:
             # here you can either do -G or t.conjugate(), but not both
             new_hop.append([i1 + idx_offset, i0 + idx_offset, -G, t])
-        return Model(on_site=new_on_site, pos=new_pos, hop=new_hop, occ=new_occ, add_cc=False, uc=self._uc)
+        return self._create_model(in_place, on_site=new_on_site, pos=new_pos, hop=new_hop, occ=new_occ, add_cc=False, uc=self._uc)
 
-    def change_uc(self, uc):
+    def change_uc(self, uc, in_place=False):
         """
         Creates a new model with a different unit cell. The new unit cell must have the same volume as the previous one, i.e. the number of atoms per unit cell stays the same, and cannot change chirality.
-        
+
         :param uc: The new unit cell, given w.r.t. to the old one. Lattice vectors are given as column vectors in a 3x3 matrix.
+
+        :param in_place:    Determines whether the current model is modified (``in_place=True``) or a new model is returned, preserving the current one (``in_place=False``, default).
+        :type in_place:     bool
         """
         uc = np.array(uc)
         if la.det(uc) != 1:
@@ -239,20 +258,78 @@ class Model(object):
         new_pos = [p % 1 for p in full_new_pos]
         new_hop = [[i0, i1, np.array(la.solve(uc, G), dtype=int) + pos_offset[i1] - pos_offset[i0], t] for i0, i1, G, t in self._hop]
 
-        return Model(on_site=self._on_site, pos=new_pos, hop=new_hop, occ=self._occ, add_cc=False, uc=new_uc)
+        return self._create_model(in_place, on_site=self._on_site, pos=new_pos, hop=new_hop, occ=self._occ, add_cc=False, uc=new_uc)
 
-    def em_field(self, scalar_pot, vec_pot):
+    def em_field(self, scalar_pot, vec_pot, prefactor_scalar=1, prefactor_vec=7.596337572e-6, mode_scalar='relative', mode_vec='relative', in_place=False):
         r"""
         Creates a model including an electromagnetic field described by a scalar potential :math:`\Phi(\mathbf{r})` and a vector potential :math:`\mathbf{A}(\mathbf{r})` .
-        
-        :param scalar_pot:  TODO
-        :type scalar_pot:   TODO
-        
-        :param vec_pot: TODO
-        :type vec_pot:  TODO
+
+        :param scalar_pot:  A function returning the scalar potential given the position as a numpy ``array`` of length 3.
+        :type scalar_pot:   function
+
+        :param vec_pot: A function returning the vector potential (``list`` or ``numpy array`` of length 3) given the position as a numpy ``array`` of length 3.
+        :type vec_pot:  function
+
+        The units in which the two potentials are given can be determined by specifying a multiplicative prefactor. By default, the scalar potential is given in :math:`\frac{\text{energy}}{\text{electron}}` in the given energy units, and the scalar potential is given in :math:`\text{T} \cdot {\buildrel _{\circ} \over {\mathrm{A}}}`, assuming that the unit cell is also given in Angstrom.
+
+        Given a ``prefactor_scalar`` :math:`p_s` and ``prefactor_vec`` :math:`p_v`, the on-site energies are modified by
+
+        :math:`\epsilon_{\alpha, \mathbf{R}} = \epsilon_{\alpha, \mathbf{R}}^0 + p_s \Phi(\mathbf{R})`
+
+        and the hopping terms are transformed by
+
+        :math:`t_{\alpha^\prime , \alpha } (\mathbf{R}, \mathbf{R}^\prime) = t_{\alpha^\prime , \alpha }^0 (\mathbf{R}, \mathbf{R}^\prime) \times \exp{\left[ -i ~ p_v~(\mathbf{R}^\prime - \mathbf{R})\cdot(\mathbf{A}(\mathbf{R}^\prime ) - \mathbf{A}(\mathbf{R})) \right]}`
+
+        :param prefactor_scalar:    Prefactor determining the unit of the scalar potential.
+        :type prefactor_scalar:     float
+
+        :param prefactor_vec:       Prefactor determining the unit of the vector potential.
+        :type prefactor_vec:        float
+
+        The positions :math:`\mathbf{r}` given to the potentials :math:`\Phi` and :math:`\mathbf{A}` can be either absolute or relative to the unit cell:
+
+        :param mode_scalar: Determines whether the input for the ``scalar_pot`` function is given as an absolute position (``mode_scalar=='absolute'``) or relative to the unit cell (``mode_scalar=='relative'``).
+        :type mode_scalar:  str
+
+        :param mode_vec:    Determines whether the input for the ``vec_pot`` function is given as an absolute position (``mode_vec=='absolute'``) or relative to the unit cell (``mode_vec=='relative'``).
+        :type mode_vec:     str
+
+        Additional parameters:
+
+        :param in_place:    Determines whether the current model is modified (``in_place=True``) or a new model is returned, preserving the current one (``in_place=False``, default).
+        :type in_place:     bool
         """
-        raise NotImplementedError
-        
+        if self._uc is None:
+            raise ValueError('Unit cell is not specified')
+
+        new_on_site = copy.deepcopy(self._on_site)
+        for i, p in self._pos:
+            if mode_scalar == 'relative':
+                new_on_site[i] += prefactor_scalar * scalar_pot(p)
+            elif mode_scalar == 'absolute':
+                new_on_site[i] += prefactor_scalar * scalar_pot(np.dot(self._uc, p))
+            else:
+                raise ValueError('Unrecognized value for mode_scalar. Must be either "absolute" or "relative"')
+        new_hop = []
+        for i0, i1, G, t in self._hop:
+            p0 = self._pos[i0]
+            p1 = self._pos[i0]
+            r0 = np.dot(self._uc, p0)
+            r1 = np.dot(self._uc, p1)
+            if mode_vec == 'absolute':
+                # project into the home UC
+                A0 = vec_pot(np.dot(self._uc, p0 % 1))
+                A1 = vec_pot(np.dot(self._uc, p1 % 1))
+            elif mode_vec == 'relative':
+                # project into the home UC
+                A0 = vec_pot(p0 % 1)
+                A1 = vec_pot(p1 % 1)
+            else:
+                raise ValueError('Unrecognized value for mode_vec. Must be either "absolute" or "relative"')
+            new_t = t * np.exp(-1j * prefactor_vec * np.dot(G + r1 - r0, A1 - A0))
+            new_hop.append(i0, i1, G, new_t)
+        return self._create_model(in_place, on_site=new_on_site, pos=self._pos, hop=new_hop, occ=self._occ, add_cc=False, uc=self._uc)
+
 #----------------HELPER FUNCTIONS FOR SUPERCELL-------------------------#
 def _pos_to_idx(pos, dim):
     """index -> position"""

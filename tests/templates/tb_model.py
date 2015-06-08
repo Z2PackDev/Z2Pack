@@ -127,6 +127,28 @@ class TbModelTestCase(BuildDirTestCase):
 
         self.assertFullAlmostEqual(tb_surface.get_res(), res)
         
+    def test_change_uc_inplace(self):
+        """test chaning the unit cell"""
+        self.create_model(0.1, 0.3)
+        model = self.model.change_uc([[1, 1, 1], [0, 1, 1], [0, 0, 1]])
+        self.model.change_uc([[1, 1, 1], [0, 1, 1], [0, 0, 1]], in_place=True)
+        system0 = z2pack.em.tb.System(model)
+        surface0 = system0.surface(lambda kx, ky: [kx / 2, ky, 0])
+        surface0.wcc_calc(verbose=False,
+                          num_strings=20,
+                          pickle_file=None,
+                          gap_tol=None,
+                          move_tol=None)
+        system1 = z2pack.em.tb.System(self.model)
+        surface1 = system1.surface(lambda kx, ky: [kx / 2, ky, 0])
+        surface1.wcc_calc(verbose=False,
+                          num_strings=20,
+                          pickle_file=None,
+                          gap_tol=None,
+                          move_tol=None)
+        
+        self.assertFullAlmostEqual(surface0.get_res(), surface1.get_res())
+        
     def test_change_uc_error(self):
         """test chaning the unit cell"""
         self.create_model(0.1, 0.3)
@@ -149,6 +171,28 @@ class TbModelTestCase(BuildDirTestCase):
         res = in_place_replace(tb_surface.get_res())
 
         self.assertFullAlmostEqual(tb_surface.get_res(), res)
+
+    def test_supercell_inplace(self):
+        """test creating a supercell"""
+        self.create_model(0.2, 0.3)
+        model = self.model.supercell([1, 1, 2], [True, True, False])
+        self.model.supercell([1, 1, 2], [True, True, False], in_place=True)
+        system0 = z2pack.em.tb.System(model)
+        surface0 = system0.surface(lambda kx, ky: [kx / 2, ky, 0])
+        surface0.wcc_calc(verbose=False,
+                          num_strings=20,
+                          pickle_file=None,
+                          gap_tol=None,
+                          move_tol=None)
+        system1 = z2pack.em.tb.System(self.model)
+        surface1 = system1.surface(lambda kx, ky: [kx / 2, ky, 0])
+        surface1.wcc_calc(verbose=False,
+                          num_strings=20,
+                          pickle_file=None,
+                          gap_tol=None,
+                          move_tol=None)
+        
+        self.assertFullAlmostEqual(surface0.get_res(), surface1.get_res())
         
     def test_supercell2(self):
         """test creating a supercell"""

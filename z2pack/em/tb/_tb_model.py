@@ -141,6 +141,7 @@ class Model(object):
         del self._on_site
         gc.collect()
 
+
     #-------------------CREATING DERIVED MODELS-------------------------#
     def supercell(self, dim, periodic=[True, True, True], passivation=None, in_place=False):
         r"""
@@ -181,6 +182,7 @@ class Model(object):
         # new hoppings, cutting those that cross the supercell boundary
         # in a non-periodic direction
         new_hop = []
+        cut_hop_list = np.zeros(len(self._on_site) * nx * ny * nz) # DEBUG
         # full index of an orbital in unit cell at uc_pos
         def full_idx(uc_pos, orbital_idx):
             uc_idx = _pos_to_idx(uc_pos, dim)
@@ -198,6 +200,9 @@ class Model(object):
                         # test if the hopping should be cut
                         cut_hop = any([not per and outside for per, outside in zip(periodic, outside_supercell)])
                         if cut_hop:
+                            # DEBUG
+                            cut_hop_list[new_i0] += abs(t)**2
+                            # END DEBUG
                             continue
                         else:
                             # G in terms of supercells
@@ -206,6 +211,10 @@ class Model(object):
                             uc1_pos = full_uc1_pos % dim
                             new_i1 = full_idx(uc1_pos, i1)
                             new_hop.append([new_i0, new_i1, new_G, t])
+        # DEBUG
+        for i in list(reversed(np.argsort(cut_hop_list)))[:28]:
+            print('orbital {}, uc no. {}, cut_t={}'.format(i % len(self._on_site), i // len(self._on_site), cut_hop_list[i]))
+        # END DEBUG
 
         # new on_site terms, including passivation
         if passivation is None:

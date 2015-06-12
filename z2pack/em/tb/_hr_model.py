@@ -8,8 +8,6 @@
 from ...ptools.csv_parser import read_file
 from ._tb_model import Model
 
-import numpy as np
-
 class HrModel(Model):
     r"""A subclass of :class:`tb.Model` designed to read the
     tight-binding model from the ``*_hr.dat`` file produced by Wannier90.
@@ -21,20 +19,20 @@ class HrModel(Model):
         be included. This is useful if the ``hr_file`` contains many
         zero entries. Default: ``None`` (no hopping entries are excluded).
     :type h_cutoff: float
-    
+
     :param kwargs: Keyword arguments are passed to :class:`Model` . For ``add_cc``, the default is ``False`` (unlike in :class:`Model` ).
     """
     def __init__(self, hr_file, h_cutoff=None, **kwargs):
-        
+
         num_wann, h_entries = _read_hr(hr_file)
         on_site = [0.] * num_wann
         if h_cutoff is not None:
-            h_entries = [hopping for hopping in h_entries if (abs(hopping[3]) > h_cutoff)]
+            h_entries = [hopping for hopping in h_entries if abs(hopping[3]) > h_cutoff]
 
         if 'add_cc' not in kwargs.keys():
             kwargs['add_cc'] = False
         super(HrModel, self).__init__(on_site=on_site, hop=h_entries, **kwargs)
-        
+
 def _read_hr(filename):
     r"""
     read the number of wannier functions and the hopping entries
@@ -52,7 +50,7 @@ def _read_hr(filename):
         deg_pts.extend(data[2][0])
         del data[2]
 
-    assert(len(deg_pts) == nrpts)
+    assert len(deg_pts) == nrpts
 
     h_entries = []
     for i, entry in enumerate(data[2]):

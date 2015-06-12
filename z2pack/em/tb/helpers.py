@@ -14,15 +14,15 @@ import numpy as np
 def matrix_to_hoppings(mat, orbitals=None, G=[0, 0, 0], multiplier=1.):
     """
     Turns a square matrix into a series of hopping terms.
-    
+
     :param mat: The matrix to be converted.
 
     :param orbitals:    Indices of the orbitals that make up the basis w.r.t. which the matrix is defined. By default (``orbitals=None``), the first ``len(mat)`` orbitals are used.
     :type orbitals:     list
-    
+
     :param G:   Reciprocal lattice vector for all the hopping terms.
     :type G:    list
-    
+
     :param multiplier:  Multiplicative constant for the hoppings strength.
     :type multiplier: float / complex
     """
@@ -34,4 +34,4 @@ def matrix_to_hoppings(mat, orbitals=None, G=[0, 0, 0], multiplier=1.):
             hop.append([orbitals[i], orbitals[j], np.array(G, dtype=int), multiplier * x])
     return hop
 
-    
+

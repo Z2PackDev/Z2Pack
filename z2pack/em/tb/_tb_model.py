@@ -57,11 +57,11 @@ class Model(object):
 
             # take pos if given, else default to [0., 0., 0.] * number of orbitals
             if pos is None:
-                self._pos = [np.array([0., 0., 0.]) for i in range(len(self._on_site))]
-                uc_offset = [np.array([0, 0, 0], dtype=int) for i in range(len(self._on_site))]
+                self.pos = [np.array([0., 0., 0.]) for _ in range(len(self._on_site))]
+                uc_offset = [np.array([0, 0, 0], dtype=int) for _ in range(len(self._on_site))]
             # all positions are mapped into the home unit cell
             elif len(pos) == len(self._on_site):
-                self._pos = [np.array(p) % 1 for p in pos]
+                self.pos = [np.array(p) % 1 for p in pos]
                 uc_offset = [np.array(np.floor(p), dtype=int) for p in pos]
             else:
                 raise ValueError('invalid argument for "pos": must be either None or of the same length as the number of orbitals (on_site)')
@@ -73,9 +73,9 @@ class Model(object):
 
             # take occ if given, else default to half the number of orbitals
             if occ is None:
-                self._occ = int(len(on_site) / 2)
+                self.occ = int(len(on_site) / 2)
             else:
-                self._occ = int(occ)
+                self.occ = int(occ)
             # for the precomputation of Hamilton terms
             self._unchanged = False
             return
@@ -115,19 +115,22 @@ class Model(object):
         return np.array(H)
 
     def _precompute(self):
+        """
+        Precomputes the matrices of H belonging to a given G.
+        """
         self._hamilton_diag = np.array(np.diag(self._on_site), dtype=complex)
         G_key = lambda x: tuple(x[2])
         self._G_list = list(sorted(list(set([tuple(G_key(x)) for x in self._hop]))))
         self._hamilton_parts = []
         num_hop_added = 0
-        G_splitted_hop = [list(x) for val, x in itertools.groupby(sorted(self._hop, key=G_key), key=G_key)]
+        G_splitted_hop = [list(x) for _, x in itertools.groupby(sorted(self._hop, key=G_key), key=G_key)]
         for G_group in G_splitted_hop:
             tmp_hamilton_parts = np.zeros_like(self._hamilton_diag, dtype=complex)
-            for i0, i1, G, t in G_group:
+            for i0, i1, _, t in G_group:
                 tmp_hamilton_parts[i0, i1] += t
                 num_hop_added += 1
             self._hamilton_parts.append(sparse.coo_matrix(tmp_hamilton_parts, dtype=complex))
-        assert(num_hop_added == len(self._hop))
+        assert num_hop_added == len(self._hop)
         self._unchanged = True
 
 
@@ -159,9 +162,8 @@ class Model(object):
         """
         nx, ny, nz = dim
         dim = np.array(dim, dtype=int)
-        per_x, per_y, per_z = periodic
 
-        new_occ = sum(dim) * self._occ
+        new_occ = sum(dim) * self.occ
         if self._uc is None:
             new_uc = None
         else:
@@ -169,7 +171,7 @@ class Model(object):
 
         # the new positions, normalized to the supercell
         new_pos = []
-        reduced_pos = [p / dim for p in self._pos]
+        reduced_pos = [p / dim for p in self.pos]
         for i in range(nx):
             for j in range(ny):
                 for k in range(nz):
@@ -183,6 +185,9 @@ class Model(object):
         #~ cut_hop_list = np.zeros(len(self._on_site) * nx * ny * nz) # FOR AUTO-PASSIVATION
         # full index of an orbital in unit cell at uc_pos
         def full_idx(uc_pos, orbital_idx):
+            """
+            Computes the full index of an orbital in a given unit cell.
+            """
             uc_idx = _pos_to_idx(uc_pos, dim)
             return uc_idx * len(self._on_site) + orbital_idx
         for i in range(nx):
@@ -234,8 +239,8 @@ class Model(object):
         :param in_place:    Determines whether the current model is modified (``in_place=True``) or a new model is returned, preserving the current one (``in_place=False``, default).
         :type in_place:     bool
         """
-        new_occ = self._occ * 2
-        new_pos = np.vstack([self._pos, self._pos])
+        new_occ = self.occ * 2
+        new_pos = np.vstack([self.pos, self.pos])
         new_on_site = np.hstack([self._on_site, self._on_site])
         new_hop = copy.deepcopy(self._hop)
         idx_offset = len(self._on_site)
@@ -255,17 +260,17 @@ class Model(object):
         """
         uc = np.array(uc)
         if la.det(uc) != 1:
-             raise ValueError('The determinant of uc is {0}, but should be 1'.format(la.det(uc)))
+            raise ValueError('The determinant of uc is {0}, but should be 1'.format(la.det(uc)))
         if self._uc is not None:
             new_uc = np.dot(self._uc, uc)
         else:
             new_uc = None
-        full_new_pos = [la.solve(uc, p) for p in self._pos]
+        full_new_pos = [la.solve(uc, p) for p in self.pos]
         pos_offset = [np.array(np.floor(p), dtype=int) for p in full_new_pos]
         new_pos = [p % 1 for p in full_new_pos]
         new_hop = [[i0, i1, np.array(la.solve(uc, G), dtype=int) + pos_offset[i1] - pos_offset[i0], t] for i0, i1, G, t in self._hop]
 
-        return self._create_model(in_place, on_site=self._on_site, pos=new_pos, hop=new_hop, occ=self._occ, add_cc=False, uc=new_uc)
+        return self._create_model(in_place, on_site=self._on_site, pos=new_pos, hop=new_hop, occ=self.occ, add_cc=False, uc=new_uc)
 
     def em_field(self, scalar_pot, vec_pot, prefactor_scalar=1, prefactor_vec=7.596337572e-6, mode_scalar='relative', mode_vec='relative', in_place=False):
         r"""
@@ -308,7 +313,7 @@ class Model(object):
         """
         new_on_site = copy.deepcopy(self._on_site)
         if scalar_pot is not None:
-            for i, p in enumerate(self._pos):
+            for i, p in enumerate(self.pos):
                 if mode_scalar == 'relative':
                     new_on_site[i] += prefactor_scalar * scalar_pot(p)
                     #~ print('adding {1} to site {0}'.format(i, prefactor_scalar * scalar_pot(p)))
@@ -322,8 +327,8 @@ class Model(object):
                 raise ValueError('Unit cell is not specified')
             new_hop = []
             for i0, i1, G, t in self._hop:
-                p0 = self._pos[i0]
-                p1 = self._pos[i0]
+                p0 = self.pos[i0]
+                p1 = self.pos[i0]
                 r0 = np.dot(self._uc, p0)
                 r1 = np.dot(self._uc, p1)
                 if mode_vec == 'absolute':
@@ -341,7 +346,7 @@ class Model(object):
         else:
             new_hop = copy.deepcopy(self._hop)
 
-        return self._create_model(in_place, on_site=new_on_site, pos=self._pos, hop=new_hop, occ=self._occ, add_cc=False, uc=self._uc)
+        return self._create_model(in_place, on_site=new_on_site, pos=self.pos, hop=new_hop, occ=self.occ, add_cc=False, uc=self._uc)
 
 #----------------HELPER FUNCTIONS FOR SUPERCELL-------------------------#
 def _pos_to_idx(pos, dim):

@@ -8,7 +8,6 @@
 from __future__ import division, print_function
 
 import numpy as np
-import scipy.linalg as la
 
 from ._tb_model import Model
 
@@ -20,6 +19,9 @@ class Builder(object):
         self._reset_atoms()
 
     def _reset_atoms(self):
+        """
+        Reset the system.
+        """
         self._atoms = []
         self._hoppings = []
         self._electrons = 0
@@ -31,7 +33,7 @@ class Builder(object):
         :param orbitals:    Orbitals of the atom, given as a ``list`` of their
             energies
         :type orbitals:     list
-        
+
         :param pos:    Position relative to the reciprocal lattice vector
         :type pos:     list of length 3
 
@@ -41,7 +43,7 @@ class Builder(object):
         :returns:       Index of the atom
         :rtype:         int
         """
-        
+
         # check input
         if len(pos) != 3:
             raise ValueError('position must be a list/tuple of length 3')
@@ -140,7 +142,7 @@ class Builder(object):
     def create(self, add_cc=False):
         r"""
         Creates the :class:`.Model` instance.
-        
+
         :param add_cc:  Determines whether the complex conjugate of each hopping term should be added automatically. By default, this is handled not withing :meth:`.create()` , but withing :meth:`.add_hopping()` .
         :type add_cc:   bool
         """

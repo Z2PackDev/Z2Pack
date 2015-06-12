@@ -7,14 +7,15 @@
 
 
 from .. import System as _EmSystem
+import copy
 
 class System(_EmSystem):
     r"""
     System class for tight-binding models.
-    
+
     :param tb_model: The tight-binding model.
     :type tb_model: Instance of :class:`z2pack.em.tb.Model` or one of its subclasses.
-    
+
     :param kwargs:          are passed to the :class:`.Surface` constructor via
         :meth:`.surface`, which passes them to :meth:`.wcc_calc`, precedence:
         :meth:`.wcc_calc` > :meth:`.surface` > this (newer kwargs take precedence)
@@ -25,7 +26,7 @@ class System(_EmSystem):
     def __init__(self, tb_model, **kwargs):
         super(System, self).__init__(
             hamilton=tb_model.hamilton,
-            pos=tb_model._pos,
-            occ=tb_model._occ,
+            pos=copy.deepcopy(tb_model.pos),
+            occ=tb_model.occ,
             **kwargs)
 

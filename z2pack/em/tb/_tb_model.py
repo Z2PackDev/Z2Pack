@@ -7,7 +7,6 @@
 
 from __future__ import division
 
-import gc
 import copy
 import itertools
 import numpy as np
@@ -59,17 +58,18 @@ class Model(object):
             # take pos if given, else default to [0., 0., 0.] * number of orbitals
             if pos is None:
                 self._pos = [np.array([0., 0., 0.]) for i in range(len(self._on_site))]
-                self._uc_offset = [np.array([0, 0, 0], dtype=int) for i in range(len(self._on_site))]
+                uc_offset = [np.array([0, 0, 0], dtype=int) for i in range(len(self._on_site))]
+            # all positions are mapped into the home unit cell
             elif len(pos) == len(self._on_site):
-                self._pos = [np.array(p) for p in pos]
-                self._uc_offset = [np.array(np.floor(p), dtype=int) for p in pos]
+                self._pos = [np.array(p) % 1 for p in pos]
+                uc_offset = [np.array(np.floor(p), dtype=int) for p in pos]
             else:
                 raise ValueError('invalid argument for "pos": must be either None or of the same length as the number of orbitals (on_site)')
 
             # adding hoppings and complex conjugates if required
-            self._hop = [[i0, i1, np.array(G, dtype=int), t] for i0, i1, G, t in hop]
+            self._hop = [[i0, i1, np.array(G, dtype=int) + uc_offset[i1] - uc_offset[i0], t] for i0, i1, G, t in hop]
             if add_cc:
-                self._hop.extend([[i1, i0, -np.array(G), t.conjugate()] for i0, i1, G, t in hop])
+                self._hop.extend([[i1, i0, -np.array(G, dtype=int) - uc_offset[i1] + uc_offset[i0], t.conjugate()] for i0, i1, G, t in hop])
 
             # take occ if given, else default to half the number of orbitals
             if occ is None:
@@ -116,7 +116,7 @@ class Model(object):
 
     def _precompute(self):
         self._hamilton_diag = np.array(np.diag(self._on_site), dtype=complex)
-        G_key = lambda x: tuple(x[2] + self._uc_offset[x[1]] - self._uc_offset[x[0]])
+        G_key = lambda x: tuple(x[2])
         self._G_list = list(sorted(list(set([tuple(G_key(x)) for x in self._hop]))))
         self._hamilton_parts = []
         num_hop_added = 0
@@ -139,8 +139,6 @@ class Model(object):
             self._precompute()
         del self._hop
         del self._on_site
-        gc.collect()
-
 
     #-------------------CREATING DERIVED MODELS-------------------------#
     def supercell(self, dim, periodic=[True, True, True], passivation=None, in_place=False):
@@ -182,7 +180,7 @@ class Model(object):
         # new hoppings, cutting those that cross the supercell boundary
         # in a non-periodic direction
         new_hop = []
-        cut_hop_list = np.zeros(len(self._on_site) * nx * ny * nz) # DEBUG
+        #~ cut_hop_list = np.zeros(len(self._on_site) * nx * ny * nz) # FOR AUTO-PASSIVATION
         # full index of an orbital in unit cell at uc_pos
         def full_idx(uc_pos, orbital_idx):
             uc_idx = _pos_to_idx(uc_pos, dim)
@@ -200,9 +198,9 @@ class Model(object):
                         # test if the hopping should be cut
                         cut_hop = any([not per and outside for per, outside in zip(periodic, outside_supercell)])
                         if cut_hop:
-                            # DEBUG
-                            cut_hop_list[new_i0] += abs(t)**2
-                            # END DEBUG
+                            #~ # FOR AUTO-PASSIVATION
+                            #~ cut_hop_list[new_i0] += abs(t)**2
+                            #~ # END AUTO-PASSIVATION
                             continue
                         else:
                             # G in terms of supercells
@@ -211,10 +209,10 @@ class Model(object):
                             uc1_pos = full_uc1_pos % dim
                             new_i1 = full_idx(uc1_pos, i1)
                             new_hop.append([new_i0, new_i1, new_G, t])
-        # DEBUG
-        for i in list(reversed(np.argsort(cut_hop_list)))[:28]:
-            print('orbital {}, uc no. {}, cut_t={}'.format(i % len(self._on_site), i // len(self._on_site), cut_hop_list[i]))
-        # END DEBUG
+        #~ # FOR AUTO-PASSIVATION
+        #~ for i in list(reversed(np.argsort(cut_hop_list)))[:28]:
+            #~ print('orbital {}, uc no. {}, cut_t={}'.format(i % len(self._on_site), i // len(self._on_site), cut_hop_list[i]))
+        #~ # END AUTO-PASSIVATION
 
         # new on_site terms, including passivation
         if passivation is None:

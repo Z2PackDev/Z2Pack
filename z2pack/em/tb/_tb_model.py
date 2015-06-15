@@ -265,12 +265,7 @@ class Model(object):
             new_uc = np.dot(self._uc, uc)
         else:
             new_uc = None
-        #~ full_new_pos = [la.solve(uc, p) for p in self.pos]
-        #~ pos_offset = [np.array(np.floor(p), dtype=int) for p in full_new_pos]
-        #~ new_pos = [p for p in full_new_pos]
-        #~ new_hop = [[i0, i1, np.array(la.solve(uc, G), dtype=int) + pos_offset[i1] - pos_offset[i0], t] for i0, i1, G, t in self._hop]
         new_pos = [la.solve(uc, p) for p in self.pos]
-        #~ pos_offset = [np.array(np.floor(p), dtype=int) for p in new_pos]
         new_hop = [[i0, i1, np.array(la.solve(uc, G), dtype=int), t] for i0, i1, G, t in self._hop]
 
         return self._create_model(in_place, on_site=self._on_site, pos=new_pos, hop=new_hop, occ=self.occ, add_cc=False, uc=new_uc)

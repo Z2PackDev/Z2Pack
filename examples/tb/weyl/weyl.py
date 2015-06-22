@@ -31,10 +31,8 @@ def hamiltonian1(k):
     return res
 
 # creating the two systems
-H0 = z2pack.tb.Hamilton()
-H1 = z2pack.tb.Hamilton()
-H0.explicit_hamiltonian(hamiltonian0, occupied=1)
-H1.explicit_hamiltonian(hamiltonian1, occupied=1)
+H0 = z2pack.tb.ExplicitHamilton(hamiltonian0, num_occ=1)
+H1 = z2pack.tb.ExplicitHamilton(hamiltonian1, num_occ=1)
 system0 = z2pack.tb.System(H0)
 system1 = z2pack.tb.System(H1)
 # the surface is a sphere around the Weyl point

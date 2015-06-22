@@ -100,9 +100,64 @@ class System(object):
 
         return Surface(self._m_handle, param_fct, **kw_arguments)
 
+class _Manifold(object):
+    r"""
+    Base class for manifolds (currently Line / Surface) on which topological invariants can be computed.
+    """
+    # calculating one string
+    @_verbose_prt.dispatcher
+    def _getwcc(self, N, *args, **kwargs):
+        """
+        calculates WCC along a string by increasing the number of steps
+        (k-points) along the string until the WCC converge
+        """
+        converged = True
 
+        # get new generator
+        iterator, self._current['iterator'] = itertools.tee(
+            self._current['iterator'], 2)
 
-class Surface(object):
+        N = next(iterator)
+        x, min_sv, lambda_ = self._trywcc(self._get_m(N, *args, **kwargs))
+
+        if self._current['pos_tol'] is not None:
+            for N in iterator:
+                xold = copy.copy(x)
+                x, min_sv, lambda_ = self._trywcc(self._get_m(N, *args, **kwargs))
+
+                # break conditions
+                if(_convcheck(x, xold, self._current['pos_tol'])):  # success
+                    break
+            # iterator ended
+            else:
+                converged = False
+        return sorted(x), lambda_, converged
+
+    @_verbose_prt.dispatcher
+    def _trywcc(self, all_m):
+        """
+        Calculates the WCC from the MMN matrices
+        """
+        lambda_ = np.eye(len(all_m[0]))
+        min_sv = 1
+        for M in all_m:
+            [V, E, W] = la.svd(M)
+            lambda_ = np.dot(np.dot(V, W).conjugate().transpose(), lambda_)
+            min_sv = min(min(E), min_sv)
+        # getting the wcc from the eigenvalues of lambda_
+        [eigs, _] = la.eig(lambda_)
+        return [(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs], min_sv, lambda_
+
+    def _get_kpt(self, t, N):
+        """
+        Gets the k-points INCLUDING the last one
+        """
+        return list(self._param_fct(t, k) for k in np.linspace(0., 1., N + 1))
+
+    def _get_m(self, N, *args, **kwargs):
+        return self._m_handle(self._get_kpt(N, *args, **kwargs))
+
+class Surface(_Manifold):
     r"""
     Describes a surface (or generalised 2D surface) in reciprocal space
     for which topological invariants are to be calculated. It is
@@ -385,58 +440,6 @@ class Surface(object):
                 return False
         return True
 
-    # calculating one string
-    @_verbose_prt.dispatcher
-    def _getwcc(self, t):
-        """
-        calculates WCC along a string by increasing the number of steps
-        (k-points) along the string until the WCC converge
-        """
-        converged = True
-
-        # get new generator
-        iterator, self._current['iterator'] = itertools.tee(
-            self._current['iterator'], 2)
-
-        N = next(iterator)
-        x, min_sv, lambda_ = self._trywcc(self._get_m(t, N))
-
-        if self._current['pos_tol'] is not None:
-            for N in iterator:
-                xold = copy.copy(x)
-                x, min_sv, lambda_ = self._trywcc(self._get_m(t, N))
-
-                # break conditions
-                if(_convcheck(x, xold, self._current['pos_tol'])):  # success
-                    break
-            # iterator ended
-            else:
-                converged = False
-        return sorted(x), lambda_, converged
-
-    @_verbose_prt.dispatcher
-    def _trywcc(self, all_m):
-        """
-        Calculates the WCC from the MMN matrices
-        """
-        lambda_ = np.eye(len(all_m[0]))
-        min_sv = 1
-        for M in all_m:
-            [V, E, W] = la.svd(M)
-            lambda_ = np.dot(np.dot(V, W).conjugate().transpose(), lambda_)
-            min_sv = min(min(E), min_sv)
-        # getting the wcc from the eigenvalues of lambda_
-        [eigs, _] = la.eig(lambda_)
-        return [(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs], min_sv, lambda_
-
-    def _get_kpt(self, t, N):
-        """
-        Gets the k-points INCLUDING the last one
-        """
-        return list(self._param_fct(t, k) for k in np.linspace(0., 1., N + 1))
-
-    def _get_m(self, t, N):
-        return self._m_handle(self._get_kpt(t, N))
     #----------------END OF SUPPORT FUNCTIONS---------------------------#
 
     def log(self):

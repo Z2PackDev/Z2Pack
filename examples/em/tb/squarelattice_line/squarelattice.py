@@ -12,8 +12,8 @@ t1, t2 = (0.2, 0.3)
 # Settings used for wcc_calc. Feel free to play around with the different
 # options.
 settings = {
-            'pos_tol': None,
-            'iterator': range(8, 27, 2),
+            'pos_tol': 1e-6,
+            'iterator': range(8, 57, 2),
             'verbose': True
            }
 
@@ -52,5 +52,4 @@ line = tb_system.line(lambda kx: [kx / 2., 0, 0])
 
 # Calculating WCC with standard settings
 line.wcc_calc(**settings)
-print(line.get_res())
 

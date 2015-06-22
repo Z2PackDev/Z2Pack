@@ -34,6 +34,7 @@ class Line(object):
     """
 
     @_validate_kwargs
+    @prt_dispatcher
     def wcc_calc(self, **kwargs):
         r"""
         Calculates the Wannier charge centers on the given line.
@@ -60,6 +61,7 @@ class Line(object):
         self._current.update(kwargs)
         self._param_check()
         self._wcc, self._lambda, self._converged = self._getwcc()
+
 
     # has to be below wcc_calc because _validate_kwargs needs access to
     # wcc_calc.__doc__
@@ -90,8 +92,6 @@ class Line(object):
             # instead, it is modified to reflect pos_tol=None
             self._current['iterator'] = [next(self._current['iterator'])]
 
-
-    # calculating one string
     @prt_dispatcher
     def _getwcc(self):
         """

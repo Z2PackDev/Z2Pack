@@ -285,7 +285,7 @@ class Surface(object):
         """
         param_fct_line = lambda kx: self._param_fct(t, kx)
         line = Line(self._m_handle, param_fct_line, pos_tol=self._current['pos_tol'], iterator=self._current['iterator'], verbose=self._current['verbose'])
-        line.wcc_calc()
+        line.wcc_calc._og_func(line)
         res = line.get_res()
         return res['wcc'], res['lambda'], res['converged']
     #----------------END OF SUPPORT FUNCTIONS---------------------------#

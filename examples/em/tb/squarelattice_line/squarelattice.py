@@ -11,13 +11,9 @@ t1, t2 = (0.2, 0.3)
 
 # Settings used for wcc_calc. Feel free to play around with the different
 # options.
-settings = {'num_strings': 11,
+settings = {
             'pos_tol': None,
-            'gap_tol': 2e-2,
-            'move_tol': 0.3,
             'iterator': range(8, 27, 2),
-            'min_neighbour_dist': 1e-2,
-            'pickle_file': 'res_pickle.txt',
             'verbose': True
            }
 
@@ -52,15 +48,9 @@ H.add_hopping((((1, 1), (1, 1)), ((1, 0), (1, 0))), tb.vectors.neighbours([0, 1]
 tb_system = tb.System(H.create())
 
 # Creating a surface with strings along ky at kz=0
-tb_surface = tb_system.surface(lambda kx: [kx / 2., 0, 0], [0, 1, 0])
+line = tb_system.line(lambda kx: [kx / 2., 0, 0])
 
 # Calculating WCC with standard settings
-tb_surface.wcc_calc(**settings)
+line.wcc_calc(**settings)
+print(line.get_res())
 
-# showing the plot
-tb_surface.wcc_plot()
-tb_surface.chern_plot()
-
-# Printing the results
-print("t1: {0}, t2: {1}, Z2 invariant: {2}".format(t1, t2, tb_surface.z2()))
-print("Chern number: {0}".format(tb_surface.chern()['chern']))

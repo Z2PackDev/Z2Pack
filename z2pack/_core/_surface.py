@@ -2,20 +2,17 @@
 # -*- coding: utf-8 -*-
 #
 # Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    27.01.2015 11:32:02 CET
-# File:    core.py
-
-"""
-Implementation of Core functionality
-"""
+# Date:    22.06.2015 12:00:56 CEST
+# File:    _surface.py
 
 from __future__ import division
 
+from ..ptools import logger
 
-from .ptools import string_tools
-from .ptools import logger
-
-from . import _verbose_prt
+from ._verbose_prt import dispatcher_surface as prt_dispatcher
+from ._utils import *
+from ._kwarg_validator import _validate_kwargs
+from ._line import Line
 
 import re
 import sys
@@ -26,81 +23,6 @@ import decorator
 import itertools
 import numpy as np
 import scipy.linalg as la
-
-#-----------------------------------------------------------------------#
-#-----------------------------------------------------------------------#
-#                           LIBRARY CORE                                #
-#-----------------------------------------------------------------------#
-#-----------------------------------------------------------------------#
-class System(object):
-    r"""
-    Describes the interface a Z2Pack specialisation must fulfil. Also, it
-    defines the :meth:`surface` method, which is used to create :class:`Surface`
-    instances.
-
-    :param m_handle: Creates the overlap matrices M given a list of k-points including the end point.
-    :type m_handle: function
-
-    :param kwargs: Keyword arguments are passed to the :class:`Surface` constructor unless overwritten by kwargs to :func:`surface`
-    """
-    # TODO when all systems are new-style_remove (keyword RM_V2)
-    _new_style_system = False
-
-    def __init__(self, m_handle, **kwargs):
-        self._defaults = kwargs
-        self._m_handle = m_handle
-
-    def surface(self, param_fct, string_vec=None, **kwargs):
-        r"""
-        Creates a :class:`Surface` instance. For a detailed
-        description consult the :ref:`Tutorial <creating-surface>`.
-
-        :param param_fct: Parametrizes either the full surface
-            (``string_vec == None``) or its edge (``string_vec != None``),
-            with the parameter going from :math:`0` to :math:`1`.
-        :type param_fct: function
-    
-        :param string_vec: Direction of the individual k-point strings,
-            if ``param_fct`` only parametrizes the edge of the surface.
-            Note that ``string_vec`` must connect equivalent k-points
-            (i.e. it must be a reciprocal lattice vector). Typically,
-            it is one of ``[1, 0, 0]``, ``[0, 1, 0]``, ``[0, 0, 1]``.
-        :type string_vec: list
-
-        :param kwargs: Keyword arguments are passed to the :class:`Surface`
-            constructor. They take precedence over kwargs from the
-            :class:`System` constructor.
-
-        :rtype: :class:`Surface`
-
-        .. note:: All directions / positions are given w.r.t. the
-            inverse lattice vectors.
-        """
-        # updating keyword arguments
-        kw_arguments = copy.copy(self._defaults)
-        kw_arguments.update(kwargs)
-
-        # RM_V2
-        if self._new_style_system:
-            if string_vec is not None:
-                warnings.warn('The parameter string_vec is soon to be ' +
-                    'deprecated and will be removed when all System ' +
-                    'classes support arbitrary surfaces.', DeprecationWarning, stacklevel=2)
-        else:
-            if string_vec is None:
-                warnings.warn('This type of system cannot be used ' +
-                    'to calculate arbitrary surfaces (yet). It is recommended ' +
-                    'to use string_vec != None.', stacklevel=2)
-        # end RM_V2
-            
-        if string_vec is not None:
-            def param_fct_proxy(t, k):
-                return list(np.array(param_fct(t)) + k * np.array(string_vec))
-            return Surface(self._m_handle, param_fct_proxy, **kw_arguments)
-
-        return Surface(self._m_handle, param_fct, **kw_arguments)
-
-
 
 class Surface(object):
     r"""
@@ -124,37 +46,6 @@ class Surface(object):
         constructor. They take precedence over kwargs from the
         :class:`System` constructor.
     """
-
-    def _validate_kwargs(func=None, target=None):
-        """
-        checks if kwargs are in target's docstring
-        if no target is given, target = func
-        """
-        @decorator.decorator
-        def inner(func, *args, **kwargs):
-            """decorated function"""
-            if target is None:
-                doc = func.__doc__
-            else:
-                doc = target.__doc__
-            valid_kwargs = re.findall(':[\s]*param[\s]+([^:\s]+)', doc)
-            for key in kwargs.keys():
-                if key not in valid_kwargs:
-                    if target is None:
-                        raise TypeError(func.__name__ +
-                                        ' got an unexpected keyword ' +
-                                        key)
-                    else:
-                        raise TypeError(func.__name__ +
-                                        ' got an unexpected keyword \'' +
-                                        key + '\' for use in ' +
-                                        target.__name__)
-            return func(*args, **kwargs)
-
-        if func is None:
-            return inner
-        else:
-            return inner(func)
 
     @_validate_kwargs
     def wcc_calc(self, **kwargs):
@@ -251,7 +142,7 @@ class Surface(object):
     #                support functions for wcc                          #
     #-------------------------------------------------------------------#
 
-    @_verbose_prt.dispatcher
+    @prt_dispatcher
     def _wcc_calc_main(self):
         """
         main calculation part
@@ -307,7 +198,7 @@ class Surface(object):
         self._neighbour_check = [False for i in
                                  range(len(self._wcc_list) - 1)]
 
-    @_verbose_prt.dispatcher
+    @prt_dispatcher
     def _check_neighbours(self):
         """
         checks the neighbour conditions, adds a value in k_points when
@@ -337,7 +228,7 @@ class Surface(object):
                         return False
             return True
 
-    @_verbose_prt.dispatcher
+    @prt_dispatcher
     def _check_single_neighbour(self, i):
         """
         Performs the gap check and move check for neighbours at
@@ -354,7 +245,7 @@ class Surface(object):
             self._neighbour_check[i] = True
         return neighbour_check, move_check
 
-    @_verbose_prt.dispatcher
+    @prt_dispatcher
     def _add_string(self, i):
         """
         Adds a string between i and i + 1. returns False if it failed
@@ -386,57 +277,17 @@ class Surface(object):
         return True
 
     # calculating one string
-    @_verbose_prt.dispatcher
+    @prt_dispatcher
     def _getwcc(self, t):
         """
         calculates WCC along a string by increasing the number of steps
         (k-points) along the string until the WCC converge
         """
-        converged = True
-
-        # get new generator
-        iterator, self._current['iterator'] = itertools.tee(
-            self._current['iterator'], 2)
-
-        N = next(iterator)
-        x, min_sv, lambda_ = self._trywcc(self._get_m(t, N))
-
-        if self._current['pos_tol'] is not None:
-            for N in iterator:
-                xold = copy.copy(x)
-                x, min_sv, lambda_ = self._trywcc(self._get_m(t, N))
-
-                # break conditions
-                if(_convcheck(x, xold, self._current['pos_tol'])):  # success
-                    break
-            # iterator ended
-            else:
-                converged = False
-        return sorted(x), lambda_, converged
-
-    @_verbose_prt.dispatcher
-    def _trywcc(self, all_m):
-        """
-        Calculates the WCC from the MMN matrices
-        """
-        lambda_ = np.eye(len(all_m[0]))
-        min_sv = 1
-        for M in all_m:
-            [V, E, W] = la.svd(M)
-            lambda_ = np.dot(np.dot(V, W).conjugate().transpose(), lambda_)
-            min_sv = min(min(E), min_sv)
-        # getting the wcc from the eigenvalues of lambda_
-        [eigs, _] = la.eig(lambda_)
-        return [(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs], min_sv, lambda_
-
-    def _get_kpt(self, t, N):
-        """
-        Gets the k-points INCLUDING the last one
-        """
-        return list(self._param_fct(t, k) for k in np.linspace(0., 1., N + 1))
-
-    def _get_m(self, t, N):
-        return self._m_handle(self._get_kpt(t, N))
+        param_fct_line = lambda kx: self._param_fct(t, kx)
+        line = Line(self._m_handle, param_fct_line, pos_tol=self._current['pos_tol'], iterator=self._current['iterator'], verbose=self._current['verbose'])
+        line.wcc_calc()
+        res = line.get_res()
+        return res['wcc'], res['lambda'], res['converged']
     #----------------END OF SUPPORT FUNCTIONS---------------------------#
 
     def log(self):
@@ -629,59 +480,3 @@ class Surface(object):
         except IOError as e:
             if not quiet:
                 raise e
-        
-
-#-------------------------------------------------------------------#
-#                CLASS - independent functions                      #
-#-------------------------------------------------------------------#
-def _convcheck(list_a, list_b, epsilon):
-    """
-    new style convergence check!!
-    """
-    full_list = copy.deepcopy(list_a)
-    full_list.extend(list_b)
-    gap = _gapfind(full_list)[0]
-    a_mod = sorted([(x + 1 - gap) % 1 for x in list_a])
-    b_mod = sorted([(x + 1 - gap) % 1 for x in list_b])
-    for i in range(len(a_mod)):
-        if _dist(a_mod[i], b_mod[i]) > epsilon:
-            return False
-    else:
-        return True
-    
-def _sgng(z, zplus, x):
-    """
-    calculates the invariant between two WCC strings
-    """
-    return -1 if (max(zplus, z) > x and min(zplus, z) < x) else 1
-
-def _gapfind(wcc):
-    """
-    finds the largest gap in vector wcc, modulo 1
-    """
-    wcc = sorted(wcc)
-    gapsize = 0
-    gappos = 0
-    N = len(wcc)
-    for i in range(0, N - 1):
-        temp = wcc[i + 1] - wcc[i]
-        if(temp > gapsize):
-            gapsize = temp
-            gappos = i
-    temp = wcc[0] - wcc[-1] + 1
-    if(temp > gapsize):
-        gapsize = temp
-        gappos = N - 1
-    return (wcc[gappos] + gapsize / 2) % 1, gapsize
-
-def _dist(x, y):
-    """
-    Returns the smallest distance on the periodic [0, 1) between x, y
-    where x, y should be in [0, 1)
-    """
-    x = x % 1
-    y = y % 1
-    return min(abs(1 + x - y) % 1, abs(1 - x + y) % 1)
-
-
-#----------------END CLASS INDEPENDENT FUNCTIONS---------------------#

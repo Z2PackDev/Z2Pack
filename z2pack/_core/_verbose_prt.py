@@ -7,20 +7,19 @@
 
 from __future__ import print_function
 
-from .ptools import string_tools
+from ..ptools import string_tools
 
 import sys
 import time
 import numpy as np
 
-class PrintFunctions:
+class LinePrintFunctions:
     def _getwcc(func):
-        def inner(self, t):
+        def inner(self):
             # initial output
-            _print(self, "Calculating string at t = {0:.4f}, k = {1}\n".
-                format(t, string_tools.fl_to_s(self._param_fct(t, 0.))))
+            _print(self, "Calculating string\n")
             #-----------------------------------------------------------#
-            res = func(self, t)
+            res = func(self)
             #-----------------------------------------------------------#
             if self._current['pos_tol'] is None:
                 _print(self, 'no iteration\n\n')
@@ -30,6 +29,49 @@ class PrintFunctions:
                     _print(self, "finished!\n\n")
                 else:
                     _print(self, 'iterator ends, failed to converge!\n\n')
+                    
+            return res
+        return inner
+
+    def _trywcc(func):
+        """
+        decorator to print wcc after a function call (if verbose)
+        """
+        def inner(self, all_m):
+            """
+            decorated function
+            """
+            _print(self, '    N = ' + str(len(all_m)))
+            #-----------------------------------------------------------#
+            res = func(self, all_m)
+            wcc = sorted(res[0])
+            #-----------------------------------------------------------#
+            _print(self, ' (' + '%.3f' % res[1] + ')\n        ')
+            _print(self, 'WCC positions:\n        ')
+            _print(self, '[')
+            line_length = 0
+            for val in wcc[:-1]:
+                line_length += len(str(val)) + 2
+                if(line_length > 60):
+                    _print(self, '\n        ')
+                    line_length = len(str(val)) + 2
+                _print(self, str(val) + ', ')
+            line_length += len(str(wcc[-1])) + 2
+            if(line_length > 60):
+                _print(self, '\n        ')
+            _print(self, str(wcc[-1]) + ']\n')
+            return res
+        return inner
+
+class SurfacePrintFunctions:
+    def _getwcc(func):
+        def inner(self, t):
+            # initial output
+            _print(self, "At t = {0:.4f}, k = {1}:\n".
+                format(t, string_tools.fl_to_s(self._param_fct(t, 0.))))
+            #-----------------------------------------------------------#
+            res = func(self, t)
+            #-----------------------------------------------------------#
             # check convergence flag
             if not res[-1]:
                 self._log.log('pos check', t, string_tools.fl_to_s(self._param_fct(t, 0.)))
@@ -137,5 +179,8 @@ def _print(self, string):
         print(string, end='')
         sys.stdout.flush()
 
-def dispatcher(func):
-    return PrintFunctions.__dict__[func.__name__](func)
+def dispatcher_line(func):
+    return LinePrintFunctions.__dict__[func.__name__](func)
+
+def dispatcher_surface(func):
+    return SurfacePrintFunctions.__dict__[func.__name__](func)

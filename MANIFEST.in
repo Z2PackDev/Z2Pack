@@ -4,6 +4,7 @@ prune examples
 # tests are used for development only
 prune tests
 prune dev_test
+prune TODO
 
 # Documentation is provided on http://z2pack.ethz.ch/doc
 prune doc

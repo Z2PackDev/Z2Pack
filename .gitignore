@@ -31,6 +31,7 @@ dist
 MANIFEST
 *.tar.gz
 files*.txt
+TODO
 
 # ignoring the ptools git
 z2pack/ptools/.git

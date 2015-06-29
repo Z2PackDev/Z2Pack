@@ -16,6 +16,7 @@ try:
 except ImportError:
     pass
 
+import copy
 import types
 import shutil
 import inspect
@@ -86,7 +87,20 @@ def assertWccConv(TestCase, x, y, epsilon = 1e-6):
     """
     assert(len(x) == len(y))
     for x_wcc, y_wcc in zip(x, y):
-        TestCase.assertTrue(z2pack._core._convcheck(x_wcc, y_wcc, epsilon))
+        TestCase.assertTrue(z2pack._core._utils._convcheck(x_wcc, y_wcc, epsilon))
+
+def assertResConv(TestCase, x, y, epsilon = 1e-6):
+    """
+    Compares two results of get_res
+    """
+    wcc_x = copy.deepcopy(x['wcc'])
+    wcc_y = copy.deepcopy(y['wcc'])
+    TestCase.assertWccConv(wcc_x, wcc_y, epsilon=epsilon)
+    res_x = copy.deepcopy(x)
+    res_y = copy.deepcopy(y)
+    del res_x['wcc']
+    del res_y['wcc']
+    TestCase.assertFullAlmostEqual(res_x, res_y)
 
 class CommonTestCase(unittest.TestCase):
     def __init__(self, *args, **kwargs):
@@ -97,6 +111,8 @@ class CommonTestCase(unittest.TestCase):
             assertFullEqual, self)
         self.assertWccConv = types.MethodType(
             assertWccConv, self)
+        self.assertResConv = types.MethodType(
+            assertResConv, self)
 
 class BuildDirTestCase(CommonTestCase):
     def __init__(self, *args, **kwargs):

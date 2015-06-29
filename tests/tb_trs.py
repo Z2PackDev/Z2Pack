@@ -120,7 +120,8 @@ class TbTrsExampleTestCase(BuildDirTestCase):
         self.assertFullAlmostEqual(trs_res_z2, trs_surface_z2.get_res())
 
     def test_trs_inplace(self):
-        self.createH(0.2, 0.3)
+        self.createH(0.2, 0.3)\
+        # create a second TRS model by in-place replacing
         model2 = copy.deepcopy(self.model)
         model2.trs(in_place=True)
         system0 = z2pack.em.tb.System(self.trs_model)

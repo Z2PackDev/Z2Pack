@@ -7,7 +7,7 @@
 
 from __future__ import division
 
-from ..ptools import logger
+from ..ptools import logger, string_tools
 
 from ._verbose_prt import dispatcher_surface as prt_dispatcher
 from ._utils import *

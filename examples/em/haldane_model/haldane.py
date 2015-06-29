@@ -26,9 +26,7 @@ def Hamilton(k, m, t1, t2, phi):
     return H
 
 def get_chern(m, t1, t2, phi):
-    H = z2pack.tb.Hamilton()
-    H.explicit_hamiltonian(lambda k: Hamilton(k, m, t1, t2, phi), atoms_at_origin=True, occupied=1)
-    system = z2pack.tb.System(H)
+    system = z2pack.em.System(lambda k: Hamilton(k, m, t1, t2, phi), occ=1)
     surface = system.surface(lambda s, t: [t, s, 0.])
     surface.wcc_calc(verbose=False, pickle_file=None)
     return surface.chern()['chern']

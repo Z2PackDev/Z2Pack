@@ -16,13 +16,13 @@ pauli_y = np.array([[0, -1j], [1j, 0]], dtype=complex)
 pauli_z = np.array([[1, 0], [0, -1]], dtype=complex)
 pauli_vector = list([pauli_x, pauli_y, pauli_z])
 
-def hamiltonian0(k):
+def hamilton0(k):
     """simple 2-band hamiltonian k.sigma with a Weyl point at k=0"""
     res = np.zeros((2, 2), dtype=complex)
     for kval, p_mat in zip(k, pauli_vector):
         res += kval * p_mat
     return res
-def hamiltonian1(k):
+def hamilton1(k):
     """2-band hamiltonian k.sigma with k_y -> -k_y"""
     k[2] = -k[2]
     res = np.zeros((2, 2), dtype=complex)
@@ -31,12 +31,8 @@ def hamiltonian1(k):
     return res
 
 # creating the two systems
-H0 = z2pack.tb.Hamilton()
-H1 = z2pack.tb.Hamilton()
-H0.explicit_hamiltonian(hamiltonian0, occupied=1)
-H1.explicit_hamiltonian(hamiltonian1, occupied=1)
-system0 = z2pack.tb.System(H0)
-system1 = z2pack.tb.System(H1)
+system0 = z2pack.em.System(hamilton0, occ=1)
+system1 = z2pack.em.System(hamilton1) # occ=1 is default (#orbitals / 2)
 # the surface is a sphere around the Weyl point
 surface0 = system0.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.01))
 surface1 = system1.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.01))

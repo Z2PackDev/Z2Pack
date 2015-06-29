@@ -116,6 +116,25 @@ class TbExampleTestCase(BuildDirTestCase):
 
         self.assertFullAlmostEqual(tb_surface.get_res(), res)
 
+    def test_res6(self):
+        """ Force convergence errors"""
+        self.createH(0.1, 0.3)
+        # call to Z2Pack
+        tb_system = z2pack.tb.System(self.H)
+        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
+        tb_surface.wcc_calc(verbose=False,
+                            num_strings=20,
+                            pickle_file=None,
+                            pos_tol=1e-12,
+                            iterator=range(6, 10, 2),
+                            gap_tol=1.,
+                            move_tol=1e-12,
+                            min_neighbour_dist=5e-3)
+
+        res = in_place_replace(tb_surface.get_res())
+
+        self.assertFullAlmostEqual(tb_surface.get_res(), res)
+
     def test_warning(self):
         """ test the warning that is given when string_vec != None"""
         self.createH(0.1, 0.3)

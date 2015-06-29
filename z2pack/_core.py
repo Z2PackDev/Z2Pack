@@ -241,11 +241,11 @@ class Surface(object):
                           }
         self._defaults.update(kwargs)
         self._current = copy.deepcopy(self._defaults)
-        self._log = logger.Logger(logger.ConvFail('pos check', 't = {}, k = {}'),
+        self._log = logger.Logger(logger.ConvFail('pos check', 't = {0}, k = {1}'),
                                    logger.ConvFail('gap check',
-                                    'between t = {}, k = {}\n    and t = {}, k = {}'),
+                                    'between t = {0}, k = {1}\n    and t = {2}, k = {3}'),
                                    logger.ConvFail('move check',
-                                    'between t = {}, k = {}\n    and t = {}, k = {}'))
+                                    'between t = {0}, k = {1}\n    and t = {2}, k = {3}'))
 
     #-------------------------------------------------------------------#
     #                support functions for wcc                          #

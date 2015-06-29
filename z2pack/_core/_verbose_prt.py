@@ -44,7 +44,7 @@ class LinePrintFunctions:
                 
             _print(self, 
                 string_tools.cbox(
-                    ["finished wcc calculation: {}".format(conv_message) + "\ntime: " + duration_string]) + '\n')
+                    ["finished wcc calculation: {0}".format(conv_message) + "\ntime: " + duration_string]) + '\n')
             return res
         res = decorator(inner, func)
         res._og_func = func

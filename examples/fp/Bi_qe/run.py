@@ -35,7 +35,7 @@ if not os.path.exists('./scf'):
     os.makedirs('./scf')
     print("Running the scf calculation")
     shutil.copyfile('input/bi.scf.in', 'scf/bi.scf.in')
-    subprocess.call(pwcmd+" < bi.scf.in > scf.out", shell=True, cwd='./scf')
+    subprocess.call(pwcmd + ' < bi.scf.in > scf.out', shell=True, cwd='./scf')
 
 # Creating the System. Note that the SCF charge file does not need to be
 # copied, but instead can be referenced in the .files file.

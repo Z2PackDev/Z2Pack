@@ -154,7 +154,7 @@ class Surface(object):
         while not (all(self._neighbour_check)):
             for i, t in enumerate(self._t_points):
                 if not(self._string_status[i]):
-                    self._wcc_list[i], self._lambda_list[i] = self._getwcc(t)
+                    self._wcc_list[i], self._lambda_list[i], self._max_move_list[i], self._num_iter_list[i] = self._getwcc(t)
                     self._gaps[i], self._gapsize[i] = _gapfind(self._wcc_list[i])
                     self._string_status[i] = True
                     self.save()
@@ -183,7 +183,12 @@ class Surface(object):
         initialization - creating data containers
         """
         if (not hasattr(self, '_wcc_list')) or self._current['overwrite']:
+            # the WCC
             self._wcc_list = [[] for i in range(self._current['num_strings'])]
+            # the maximum movement in POS_CHECK
+            self._max_move_list = [None for i in range(self._current['num_strings'])]
+            # the highest N used
+            self._num_iter_list = [0 for i in range(self._current['num_strings'])]
             self._t_points = list(np.linspace(0., 1., self._current['num_strings'],
                                               endpoint=True))
             self._kpt_list = [self._param_fct(t, 0.) for t in self._t_points]
@@ -262,6 +267,8 @@ class Surface(object):
                                   self._t_points[i + 1]) / 2)
             self._kpt_list.insert(i + 1, self._param_fct(self._t_points[i + 1], 0.))
             self._wcc_list.insert(i + 1, [])
+            self._max_move_list.insert(i + 1, None)
+            self._num_iter_list.insert(i + 1, 0)
             self._lambda_list.insert(i + 1, [])
             self._gaps.insert(i + 1, None)
             self._gapsize.insert(i + 1, None)
@@ -284,10 +291,10 @@ class Surface(object):
         (k-points) along the string until the WCC converge
         """
         param_fct_line = lambda kx: self._param_fct(t, kx)
-        line = Line(self._m_handle, param_fct_line, pos_tol=self._current['pos_tol'], iterator=self._current['iterator'], verbose=self._current['verbose'])
-        line.wcc_calc._og_func(line)
+        line = Line(self._m_handle, param_fct_line)
+        line.wcc_calc._og_func(line, pos_tol=self._current['pos_tol'], iterator=self._current['iterator'], verbose=self._current['verbose'])
         res = line.get_res()
-        return res['wcc'], res['lambda'], res['converged']
+        return res['wcc'], res['lambda'], res['converged'], res['max_move'], res['num_iter']
     #----------------END OF SUPPORT FUNCTIONS---------------------------#
 
     def log(self):
@@ -458,7 +465,7 @@ class Surface(object):
 
         Only works if ``pickle_file`` is not ``None`` and the path to ``pickle_file`` exists.
         """
-        to_save = ['_t_points', '_kpt_list', '_wcc_list', '_gaps', '_gapsize', '_lambda_list', '_string_status']
+        to_save = ['_t_points', '_kpt_list', '_wcc_list', '_gaps', '_gapsize', '_lambda_list', '_string_status', '_max_move_list', '_num_iter_list']
         data = dict((k, v) for k, v in self.__dict__.items() if k in to_save)
 
         if self._current['pickle_file'] is not None:

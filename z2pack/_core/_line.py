@@ -5,12 +5,13 @@
 # Date:    22.06.2015 11:47:40 CEST
 # File:    _line.py
 
-from __future__ import division
+from __future__ import division, print_function
 
-from ._verbose_prt import dispatcher_line as prt_dispatcher
 from ._utils import _convcheck
-from ._kwarg_validator import _validate_kwargs
+from ..ptools import string_tools
 
+import sys
+import time
 import copy
 import pickle
 import itertools
@@ -28,14 +29,14 @@ class Line(object):
     :type m_handle:         function
 
     :param param_fct: Parametrizes the line as a function of an input parameter :math:`t \in [0, 1]`
-
-    :param kwargs: Keyword arguments are passed to the :meth:`.wcc_calc()`
-        method.
     """
+    def __init__(self,
+                 m_handle,
+                 param_fct):
+        self._m_handle = m_handle
+        self._param_fct = param_fct
 
-    @_validate_kwargs
-    @prt_dispatcher
-    def wcc_calc(self, **kwargs):
+    def wcc_calc(self, pos_tol=1e-2, iterator=range(8, 27, 2), verbose=True):
         r"""
         Calculates the Wannier charge centers on the given line.
 
@@ -57,26 +58,54 @@ class Line(object):
 
         :returns:                   ``None``
         """
-        self._current = copy.deepcopy(self._defaults)
-        self._current.update(kwargs)
+        # could be replaced with inspect call for newer python versions
+        self._kwargs = {'pos_tol': pos_tol, 'iterator': iterator, 'verbose': verbose}
         self._param_check()
-        self._wcc, self._lambda, self._converged, self._max_move = self._getwcc()
-
-
-    # has to be below wcc_calc because _validate_kwargs needs access to
-    # wcc_calc.__doc__
-    @_validate_kwargs(target=wcc_calc)
-    def __init__(self,
-                 m_handle,
-                 param_fct,
-                 **kwargs):
-        self._m_handle = m_handle
-        self._param_fct = param_fct
-        self._defaults = {'pos_tol': 1e-2,
-                          'iterator': range(8, 27, 2),
-                          'verbose': True}
-        self._defaults.update(kwargs)
-        self._current = copy.deepcopy(self._defaults)
+        
+        #--------------INITIAL OUTPUT-------------------------------#
+        if self._kwargs['verbose'] == 'full':
+            start_time = time.time()
+            string = "starting wcc calculation\n\n"
+            length = max(len(key) for key in self._kwargs.keys()) + 2
+            for key in sorted(self._kwargs.keys()):
+                value = str(self._kwargs[key])
+                if(len(value) > 48):
+                    value = value[:45] + '...'
+                string += key.ljust(length) + value + '\n'
+            string = string[:-1]
+            print(string_tools.cbox(string))
+            
+        #--------------COMPUTATION----------------------------------#
+        self._getwcc()
+        
+        #--------------FINAL OUTPUT---------------------------------#
+        #--------------printout (reduced part)----------------------#
+        if self._kwargs['verbose'] in ['full', 'reduced']:
+            if self._kwargs['pos_tol'] is None:
+                print('no iteration\n')
+            else:
+                # check convergence flag
+                if self._converged:
+                    print("finished! ", end='')
+                else:
+                    print('iterator ends, failed to converge! ', end='')
+                if self._max_move is not None:
+                    print('final wcc movement <= {0:.2g}\n'.format(self._max_move))
+        #----------------printout (full part)----------------------#
+        if self._kwargs['verbose'] == 'full':
+            end_time = time.time()
+            duration = end_time - start_time
+            duration_string = str(int(np.floor(duration / 3600))) + \
+                " h " + str(int(np.floor(duration / 60)) % 60) + \
+                " min " + str(int(np.floor(duration)) % 60) + " sec"
+            if self._converged:
+                conv_message = 'CONVERGED'
+            else:
+                conv_message = 'NOT CONVERGED'
+                
+            print(
+                string_tools.cbox(
+                    ["finished wcc calculation: {0}".format(conv_message) + "\ntime: " + duration_string]))
 
     #-------------------------------------------------------------------#
     #                support functions for wcc                          #
@@ -85,47 +114,91 @@ class Line(object):
         """
         Checks the current parameters and deletes unnecessary ones.
         """
-        if self._current['pos_tol'] is None:
-            if not(hasattr(self._current['iterator'], '__next__')):
-                self._current['iterator'] = iter(self._current['iterator'])
+        if self._kwargs['verbose'] is True:
+            self._kwargs['verbose'] = 'full'
+        elif self._kwargs['verbose'] is False:
+            self._kwargs['verbose'] = 'none'
+        if not self._kwargs['verbose'] in ['full', 'reduced', 'none']:
+            raise ValueError('unknown verbosity level {0}'.format(self._kwargs['verbose']))
+        if self._kwargs['pos_tol'] is None:
+            if not(hasattr(self._kwargs['iterator'], '__next__')):
+                self._kwargs['iterator'] = iter(self._kwargs['iterator'])
             # iterator shouldn't be deleted (used for first step also)
             # instead, it is modified to reflect pos_tol=None
-            self._current['iterator'] = [next(self._current['iterator'])]
+            self._kwargs['iterator'] = [next(self._kwargs['iterator'])]
 
-    @prt_dispatcher
     def _getwcc(self):
         """
         calculates WCC along a string by increasing the number of steps
         (k-points) along the string until the WCC converge
         """
-        
         # get new generator
-        iterator, self._current['iterator'] = itertools.tee(
-            self._current['iterator'], 2)
-
+        iterator, self._kwargs['iterator'] = itertools.tee(
+            self._kwargs['iterator'], 2)
         N = next(iterator)
-        x, min_sv, lambda_ = self._trywcc(self._get_m(N))
 
-        if self._current['pos_tol'] is not None:
+        if self._kwargs['pos_tol'] is None:
+            # catch restart
+            if hasattr(self, '_wcc'):
+                # only exact match matters
+                if self._num_iter == N:
+                    if self._kwargs['verbose'] in ['full', 'reduced']:
+                        print('Number of k-points matches previous run. Skipping calculation.')
+                    return
+                else:
+                    x, min_sv, lambda_ = self._trywcc(self._get_m(N))
+                    converged = True
+                    max_move = 1.
+        else:
+            # catch restart
+            if hasattr(self, '_wcc'):
+                if self._max_move is None:
+                    self._max_move = 1.
+                    
+                # skip if the condition is fulfilled
+                if self._max_move < self._kwargs['pos_tol']:
+                    if self._kwargs['verbose'] in ['full', 'reduced']:
+                        print('pos_tol reached in a previous run!')
+                    return
+                # else fast-forward to N > previous max
+                else:
+                    if N <= self._num_iter:
+                        x = self._wcc
+                        while N <= self._num_iter:
+                            N = next(iterator)
+                        # re-attach last N to the iterator
+                        iterator = itertools.chain([N], iterator)
+                        if self._kwargs['verbose'] in ['full', 'reduced']:
+                            print('fast-forwarding to N = {0}.'.format(N))
+            # no restart
+            else:
+                x, min_sv, lambda_ = self._trywcc(self._get_m(N))
+            
             for N in iterator:
                 xold = copy.copy(x)
                 x, min_sv, lambda_ = self._trywcc(self._get_m(N))
 
                 # break conditions
-                converged, max_move = _convcheck(x, xold, self._current['pos_tol'])
+                converged, max_move = _convcheck(x, xold, self._kwargs['pos_tol'])
                 if(converged):  # success
                     break
-        # if there is no iteration, max_move cannot be calculated -> set to 1 (maximum value)
-        else:
-            converged = True
-            max_move = 1.
-        return sorted(x), lambda_, converged, max_move
 
-    @prt_dispatcher
+        # save results to Line object
+        self._wcc = sorted(x)
+        self._lambda = lambda_
+        self._converged = converged
+        self._max_move = max_move
+        self._num_iter = N
+
     def _trywcc(self, all_m):
         """
         Calculates the WCC from the MMN matrices
         """
+
+        #--------printout (if verbosity >= reduced)-----------------#
+        if self._kwargs['verbose'] in ['full', 'reduced']:
+            print('    N = ' + str(len(all_m)), end='')
+        #--------main function--------------------------------------#
         lambda_ = np.eye(len(all_m[0]))
         min_sv = 1
         for M in all_m:
@@ -134,7 +207,26 @@ class Line(object):
             min_sv = min(min(E), min_sv)
         # getting the wcc from the eigenvalues of lambda_
         [eigs, _] = la.eig(lambda_)
-        return [(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs], min_sv, lambda_
+        wcc = sorted([(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs])
+        #--------printout-------------------------------------------#
+        if self._kwargs['verbose'] in ['full', 'reduced']:
+            print(' (' + '%.3f' % min_sv + ')\n        ', end='')
+            print('WCC positions:\n        ', end='')
+            print('[', end='')
+            line_length = 0
+            for val in wcc[:-1]:
+                line_length += len(str(val)) + 2
+                if(line_length > 60):
+                    print('\n        ', end='')
+                    line_length = len(str(val)) + 2
+                print(str(val) + ', ', end='')
+            line_length += len(str(wcc[-1])) + 2
+            if(line_length > 60):
+                print('\n        ', end='')
+            print(str(wcc[-1]) + ']')
+            sys.stdout.flush()
+        #--------end printout---------------------------------------#
+        return wcc, min_sv, lambda_
 
     def _get_kpt(self, N):
         """
@@ -153,7 +245,7 @@ class Line(object):
         *  ``wcc``: the WCC positions
         * ``converged``: bool indicating whether the WCC calculation converged
         * ``max_move``:  the maximum movement between WCC in the last iteration step
-        * ``lambda``: the list of Lambda matrices,.
+        * ``lambda``: the list of Lambda matrices
+        * ``num_iter``: the number of k-points used for the final WCC result
         """
-        return {'wcc': self._wcc, 'lambda': self._lambda, 'converged': self._converged, 'max_move': self._max_move}
-
+        return {'wcc': self._wcc, 'lambda': self._lambda, 'converged': self._converged, 'max_move': self._max_move, 'num_iter': self._num_iter}

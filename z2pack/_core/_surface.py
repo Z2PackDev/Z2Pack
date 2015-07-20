@@ -240,7 +240,7 @@ class Surface(object):
             neighbour_check = self._check_gap_distance(i)
         if self._current['move_tol'] is not None:
             tolerance = self._current['move_tol'] * min(self._gapsize[i], self._gapsize[i + 1])
-            move_check = _convcheck(self._wcc_list[i], self._wcc_list[i + 1], tolerance)
+            move_check, _ = _convcheck(self._wcc_list[i], self._wcc_list[i + 1], tolerance)
         if neighbour_check and move_check:
             self._neighbour_check[i] = True
         return neighbour_check, move_check

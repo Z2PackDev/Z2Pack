@@ -18,11 +18,11 @@ def _convcheck(list_a, list_b, epsilon):
     gap = _gapfind(full_list)[0]
     a_mod = sorted([(x + 1 - gap) % 1 for x in list_a])
     b_mod = sorted([(x + 1 - gap) % 1 for x in list_b])
-    min_dist = 1
+    max_move = 0.
     for a_pos, b_pos in zip(a_mod, b_mod):
-        min_dist = min(_dist(a_pos, b_pos), min_dist)
+        max_move = max(_dist(a_pos, b_pos), max_move)
 
-    return min_dist < epsilon, min_dist
+    return max_move <= epsilon, max_move
     
 def _sgng(z, zplus, x):
     """

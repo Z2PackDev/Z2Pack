@@ -60,7 +60,7 @@ class Line(object):
         self._current = copy.deepcopy(self._defaults)
         self._current.update(kwargs)
         self._param_check()
-        self._wcc, self._lambda, self._converged = self._getwcc()
+        self._wcc, self._lambda, self._converged, self._max_move = self._getwcc()
 
 
     # has to be below wcc_calc because _validate_kwargs needs access to
@@ -98,8 +98,7 @@ class Line(object):
         calculates WCC along a string by increasing the number of steps
         (k-points) along the string until the WCC converge
         """
-        converged = True
-
+        
         # get new generator
         iterator, self._current['iterator'] = itertools.tee(
             self._current['iterator'], 2)
@@ -113,12 +112,14 @@ class Line(object):
                 x, min_sv, lambda_ = self._trywcc(self._get_m(N))
 
                 # break conditions
-                if(_convcheck(x, xold, self._current['pos_tol'])):  # success
+                converged, max_move = _convcheck(x, xold, self._current['pos_tol'])
+                if(converged):  # success
                     break
-            # iterator ended
-            else:
-                converged = False
-        return sorted(x), lambda_, converged
+        # if there is no iteration, max_move cannot be calculated -> set to 1 (maximum value)
+        else:
+            converged = True
+            max_move = 1.
+        return sorted(x), lambda_, converged, max_move
 
     @prt_dispatcher
     def _trywcc(self, all_m):

@@ -59,10 +59,11 @@ class LinePrintFunctions:
                 _print(self, 'no iteration\n\n')
             else:
                 # check convergence flag
-                if res[-1]:
-                    _print(self, "finished!\n\n")
+                if res[-2]:
+                    _print(self, "finished!\n")
                 else:
-                    _print(self, 'iterator ends, failed to converge!\n\n')
+                    _print(self, 'iterator ends, failed to converge!\n')
+                _print(self, 'final wcc movement <= {0}\n\n'.format(res[-1]))
                     
             return res
         return inner

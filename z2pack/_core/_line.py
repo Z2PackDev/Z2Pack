@@ -148,8 +148,12 @@ class Line(object):
 
     def get_res(self):
         r"""
-        Returns a ``dict`` with the following keys: ``wcc``, the WCC positions and 
-        ``lambda_``, the list of Lambda matrices.
+        Returns a ``dict`` with the following keys:
+        
+        *  ``wcc``: the WCC positions
+        * ``converged``: bool indicating whether the WCC calculation converged
+        * ``max_move``:  the maximum movement between WCC in the last iteration step
+        * ``lambda``: the list of Lambda matrices,.
         """
-        return {'wcc': self._wcc, 'lambda': self._lambda, 'converged': self._converged}
+        return {'wcc': self._wcc, 'lambda': self._lambda, 'converged': self._converged, 'max_move': self._max_move}
 

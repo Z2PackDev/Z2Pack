@@ -154,8 +154,8 @@ class Surface(object):
         while not (all(self._neighbour_check)):
             for i, t in enumerate(self._t_points):
                 if not(self._string_status[i]):
-                    self._wcc_list[i], self._lambda_list[i], self._max_move_list[i], self._num_iter_list[i] = self._getwcc(t)
-                    self._gaps[i], self._gapsize[i] = _gapfind(self._wcc_list[i])
+                    self._line_list[i] = self._getwcc(t)
+                    self._gaps[i], self._gapsize[i] = _gapfind(self._line_list[i].wcc)
                     self._string_status[i] = True
                     self.save()
 
@@ -182,13 +182,9 @@ class Surface(object):
         """
         initialization - creating data containers
         """
-        if (not hasattr(self, '_wcc_list')) or self._current['overwrite']:
-            # the WCC
-            self._wcc_list = [[] for i in range(self._current['num_strings'])]
-            # the maximum movement in POS_CHECK
-            self._max_move_list = [None for i in range(self._current['num_strings'])]
-            # the highest N used
-            self._num_iter_list = [0 for i in range(self._current['num_strings'])]
+        if (not hasattr(self, '_line_list')) or self._current['overwrite']:
+            # the Line objects
+            self._line_list = [None for i in range(self._current['num_strings'])]
             self._t_points = list(np.linspace(0., 1., self._current['num_strings'],
                                               endpoint=True))
             self._kpt_list = [self._param_fct(t, 0.) for t in self._t_points]
@@ -201,7 +197,7 @@ class Surface(object):
         # move_tol and gap_tol parameters between reloaded runs.
         # It is inexpensive to recreate in the opposite case. 
         self._neighbour_check = [False for i in
-                                 range(len(self._wcc_list) - 1)]
+                                 range(len(self._line_list) - 1)]
 
     @prt_dispatcher
     def _check_neighbours(self):
@@ -245,7 +241,7 @@ class Surface(object):
             neighbour_check = self._check_gap_distance(i)
         if self._current['move_tol'] is not None:
             tolerance = self._current['move_tol'] * min(self._gapsize[i], self._gapsize[i + 1])
-            move_check, _ = _convcheck(self._wcc_list[i], self._wcc_list[i + 1], tolerance)
+            move_check, _ = _convcheck(self._line_list[i].wcc, self._line_list[i + 1].wcc, tolerance)
         if neighbour_check and move_check:
             self._neighbour_check[i] = True
         return neighbour_check, move_check
@@ -266,10 +262,7 @@ class Surface(object):
             self._t_points.insert(i + 1, (self._t_points[i] +
                                   self._t_points[i + 1]) / 2)
             self._kpt_list.insert(i + 1, self._param_fct(self._t_points[i + 1], 0.))
-            self._wcc_list.insert(i + 1, [])
-            self._max_move_list.insert(i + 1, None)
-            self._num_iter_list.insert(i + 1, 0)
-            self._lambda_list.insert(i + 1, [])
+            self._line_list.insert(i + 1, [])
             self._gaps.insert(i + 1, None)
             self._gapsize.insert(i + 1, None)
         return True
@@ -278,7 +271,7 @@ class Surface(object):
         """
         checks if gap is too close to any of the elements in wcc
         """
-        for wcc_val in self._wcc_list[i + 1]:
+        for wcc_val in self._line_list[i + 1].wcc:
             if _dist(wcc_val, self._gaps[i]) < self._current['gap_tol']:
                 return False
         return True
@@ -292,9 +285,8 @@ class Surface(object):
         """
         param_fct_line = lambda kx: self._param_fct(t, kx)
         line = Line(self._m_handle, param_fct_line)
-        line.wcc_calc._og_func(line, pos_tol=self._current['pos_tol'], iterator=self._current['iterator'], verbose=self._current['verbose'])
-        res = line.get_res()
-        return res['wcc'], res['lambda'], res['converged'], res['max_move'], res['num_iter']
+        line.wcc_calc(pos_tol=self._current['pos_tol'], iterator=self._current['iterator'], verbose='reduced' if self._current['verbose'] else False)
+        return line
     #----------------END OF SUPPORT FUNCTIONS---------------------------#
 
     def log(self):
@@ -364,8 +356,8 @@ class Surface(object):
                 axis.plot(self._t_points, [(x + shift) % 1 + offset for x in self._gaps], **gap_settings)
         for i, kpt in enumerate(self._t_points):
             for offset in [-1, 0, 1]:
-                axis.scatter([kpt] * len(self._wcc_list[i]),
-                             [(x + shift) % 1 + offset for x in self._wcc_list[i]],
+                axis.scatter([kpt] * len(self._line_list[i].wcc),
+                             [(x + shift) % 1 + offset for x in self._line_list[i].wcc],
                              **wcc_settings)
 
     def plot(self, *args, **kwargs):
@@ -413,7 +405,7 @@ class Surface(object):
         ``gap`` the positions of the largest gap in each string and \
         ``lambda_``, a list of Gamma matrices for each string.
         """
-        return {'t_par': self._t_points, 'kpt': self._kpt_list, 'wcc': self._wcc_list, 'gap': self._gaps, 'lambda_': self._lambda_list}
+        return {'t_par': self._t_points, 'kpt': self._kpt_list, 'wcc': [line.wcc for line in self._line_list], 'gap': self._gaps, 'lambda_': self._lambda_list}
 
     def z2(self):
         """
@@ -424,11 +416,11 @@ class Surface(object):
         """
         try:
             inv = 1
-            for i in range(0, len(self._wcc_list)-1):
-                for j in range(0, len(self._wcc_list[0])):
+            for i in range(0, len(self._line_list)-1):
+                for j in range(0, len(self._line_list[0])):
                     inv *= _sgng(self._gaps[i],
                                  self._gaps[i+1],
-                                 self._wcc_list[i+1][j])
+                                 self._line_list[i+1].wcc[j])
 
             return 1 if inv == -1 else 0
         except (NameError, AttributeError):
@@ -450,7 +442,7 @@ class Surface(object):
 
         :returns:   A ``dict`` containing Chern number (``chern``), polarization evolution (``pol``), and the steps between the polarization values (``step``).
         """
-        pol = [sum(wcc) % 1 for wcc in self._wcc_list]
+        pol = [sum(line.wcc) % 1 for line in self._line_list]
         delta_pol = []
         for i in range(len(pol) - 1):
             diff = pol[i + 1] - pol[i]
@@ -465,7 +457,7 @@ class Surface(object):
 
         Only works if ``pickle_file`` is not ``None`` and the path to ``pickle_file`` exists.
         """
-        to_save = ['_t_points', '_kpt_list', '_wcc_list', '_gaps', '_gapsize', '_lambda_list', '_string_status', '_max_move_list', '_num_iter_list']
+        to_save = ['_t_points', '_kpt_list', '_gaps', '_gapsize', '_lambda_list', '_string_status', '_line_list']
         data = dict((k, v) for k, v in self.__dict__.items() if k in to_save)
 
         if self._current['pickle_file'] is not None:

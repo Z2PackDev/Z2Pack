@@ -17,7 +17,8 @@ settings = {'num_strings': 11,
             'move_tol': 0.3,
             'iterator': range(8, 27, 2),
             'min_neighbour_dist': 1e-2,
-            'pickle_file': 'res_pickle.txt',
+            #~ 'pickle_file': 'res_pickle.txt',
+            'pickle_file': None,
             'verbose': True
            }
 

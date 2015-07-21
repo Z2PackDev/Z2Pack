@@ -24,10 +24,10 @@ class SurfacePrintFunctions:
             res = func(self, t)
             #-----------------------------------------------------------#
             # check convergence flag
-            if not res[-1]:
+            if not res.get_res()['converged']:
                 self._log.log('pos check', t, string_tools.fl_to_s(self._param_fct(t, 0.)))
                     
-            return res[:-1] # cut out convergence flag
+            return res # cut out convergence flag
         return inner
 
     def _check_neighbours(func):

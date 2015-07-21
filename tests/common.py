@@ -37,7 +37,7 @@ def assertFullAlmostEqual(TestCase, x, y):
     Compares for almost equality
     """
     # str
-    if isinstance(x, str):
+    if isinstance(x, str) or x is None or y is None:
         TestCase.assertEqual(x, y)
     # dict
     elif hasattr(x, 'keys'):

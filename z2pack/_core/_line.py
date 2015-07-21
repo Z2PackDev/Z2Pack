@@ -33,8 +33,29 @@ class Line(object):
     def __init__(self,
                  m_handle,
                  param_fct):
+        self.inject(m_handle, param_fct)
+        self.wcc = None
+        self.lambda_ = None
+        self._converged = None
+        self._max_move = None
+        self._num_iter = None
+
+    def inject(self, m_handle, param_fct):
+        r"""
+        Injects the ``m_handle`` and ``param_fct``. This can be used for example after unpickling, because m_handle and param_fct cannot be pickled and are thus lost in the pickle/unpickle process.
+        """
         self._m_handle = m_handle
         self._param_fct = param_fct
+
+    def __getstate__(self):
+        r"""
+        Selects which item in the __dict__ should (or can) be saved by pickle. The __init__ function must be called again to make an unpickled Line valid, since m_handle and param_fct cannot be pickled.
+        """
+        res = {}
+        to_save = ['wcc', 'lambda_', '_converged', '_max_move', '_num_iter']
+        for key in to_save:
+            res[key] = self.__dict__[key]
+        return res
 
     def wcc_calc(self, pos_tol=1e-2, iterator=range(8, 27, 2), verbose=True):
         r"""
@@ -62,7 +83,7 @@ class Line(object):
         self._kwargs = {'pos_tol': pos_tol, 'iterator': iterator, 'verbose': verbose}
         self._param_check()
         
-        #--------------INITIAL OUTPUT-------------------------------#
+        # INITIAL OUTPUT
         if self._kwargs['verbose'] == 'full':
             start_time = time.time()
             string = "starting wcc calculation\n\n"
@@ -75,11 +96,11 @@ class Line(object):
             string = string[:-1]
             print(string_tools.cbox(string))
             
-        #--------------COMPUTATION----------------------------------#
+        # COMPUTATION
         self._getwcc()
         
-        #--------------FINAL OUTPUT---------------------------------#
-        #--------------printout (reduced part)----------------------#
+        # FINAL OUTPUT
+        # reduced & full
         if self._kwargs['verbose'] in ['full', 'reduced']:
             if self._kwargs['pos_tol'] is None:
                 print('no iteration\n')
@@ -91,7 +112,7 @@ class Line(object):
                     print('iterator ends, failed to converge! ', end='')
                 if self._max_move is not None:
                     print('final wcc movement <= {0:.2g}\n'.format(self._max_move))
-        #----------------printout (full part)----------------------#
+        # full only
         if self._kwargs['verbose'] == 'full':
             end_time = time.time()
             duration = end_time - start_time
@@ -106,6 +127,8 @@ class Line(object):
             print(
                 string_tools.cbox(
                     ["finished wcc calculation: {0}".format(conv_message) + "\ntime: " + duration_string]))
+        # CLEANUP
+        del self._kwargs
 
     #-------------------------------------------------------------------#
     #                support functions for wcc                          #
@@ -138,20 +161,18 @@ class Line(object):
         N = next(iterator)
 
         if self._kwargs['pos_tol'] is None:
-            # catch restart
-            if hasattr(self, '_wcc'):
-                # only exact match matters
-                if self._num_iter == N:
-                    if self._kwargs['verbose'] in ['full', 'reduced']:
-                        print('Number of k-points matches previous run. Skipping calculation.')
-                    return
-                else:
-                    x, min_sv, lambda_ = self._trywcc(self._get_m(N))
-                    converged = True
-                    max_move = 1.
+            # catch restart, only exact match matters
+            if self.wcc is not None and self._num_iter == N:
+                if self._kwargs['verbose'] in ['full', 'reduced']:
+                    print('Number of k-points matches previous run. Skipping calculation.')
+                return
+            else:
+                x, min_sv, lambda_ = self._trywcc(self._get_m(N))
+                converged = True
+                max_move = 1.
         else:
             # catch restart
-            if hasattr(self, '_wcc'):
+            if self.wcc is not None:
                 if self._max_move is None:
                     self._max_move = 1.
                     
@@ -185,7 +206,7 @@ class Line(object):
 
         # save results to Line object
         self.wcc = sorted(x)
-        self._lambda = lambda_
+        self.lambda_ = lambda_
         self._converged = converged
         self._max_move = max_move
         self._num_iter = N
@@ -248,4 +269,4 @@ class Line(object):
         * ``lambda``: the list of Lambda matrices
         * ``num_iter``: the number of k-points used for the final WCC result
         """
-        return {'wcc': self.wcc, 'lambda': self._lambda, 'converged': self._converged, 'max_move': self._max_move, 'num_iter': self._num_iter}
+        return {'wcc': self.wcc, 'lambda': self.lambda_, 'converged': self._converged, 'max_move': self._max_move, 'num_iter': self._num_iter}

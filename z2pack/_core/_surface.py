@@ -154,7 +154,7 @@ class Surface(object):
         while not (all(self._neighbour_check)):
             for i, t in enumerate(self._t_points):
                 if not(self._string_status[i]):
-                    self._line_list[i] = self._getwcc(t)
+                    self._call_line(i, t)
                     self._gaps[i], self._gapsize[i] = _gapfind(self._line_list[i].wcc)
                     self._string_status[i] = True
                     self.save()
@@ -190,14 +190,13 @@ class Surface(object):
             self._kpt_list = [self._param_fct(t, 0.) for t in self._t_points]
             self._gaps = [None for i in range(self._current['num_strings'])]
             self._gapsize = [None for i in range(self._current['num_strings'])]
-            self._lambda_list = [[] for i in range(self._current['num_strings'])]
-            self._string_status = [False for i in
-                                   range(self._current['num_strings'])]
         # this is DELIBERATELY always overwritten to allow changing the
-        # move_tol and gap_tol parameters between reloaded runs.
+        # move_tol, gap_tol, pos_tol parameters between reloaded runs.
         # It is inexpensive to recreate in the opposite case. 
         self._neighbour_check = [False for i in
                                  range(len(self._line_list) - 1)]
+        self._string_status = [False for i in
+                               range(len(self._line_list))]
 
     @prt_dispatcher
     def _check_neighbours(self):
@@ -262,7 +261,7 @@ class Surface(object):
             self._t_points.insert(i + 1, (self._t_points[i] +
                                   self._t_points[i + 1]) / 2)
             self._kpt_list.insert(i + 1, self._param_fct(self._t_points[i + 1], 0.))
-            self._line_list.insert(i + 1, [])
+            self._line_list.insert(i + 1, None)
             self._gaps.insert(i + 1, None)
             self._gapsize.insert(i + 1, None)
         return True
@@ -278,15 +277,16 @@ class Surface(object):
 
     # calculating one string
     @prt_dispatcher
-    def _getwcc(self, t):
+    def _call_line(self, i, t):
+        r"""
+        Creates the Line object if necessary and makes the call to its wcc_calc
         """
-        calculates WCC along a string by increasing the number of steps
-        (k-points) along the string until the WCC converge
-        """
-        param_fct_line = lambda kx: self._param_fct(t, kx)
-        line = Line(self._m_handle, param_fct_line)
-        line.wcc_calc(pos_tol=self._current['pos_tol'], iterator=self._current['iterator'], verbose='reduced' if self._current['verbose'] else False)
-        return line
+        if self._line_list[i] is None:
+            param_fct_line = lambda kx: self._param_fct(t, kx)
+            self._line_list[i] = Line(self._m_handle, param_fct_line)
+        self._line_list[i].wcc_calc(pos_tol=self._current['pos_tol'], iterator=self._current['iterator'], verbose='reduced' if self._current['verbose'] else False)
+        # get convergence flag to print function
+        return self._line_list[i].get_res()['converged']
     #----------------END OF SUPPORT FUNCTIONS---------------------------#
 
     def log(self):
@@ -403,9 +403,9 @@ class Surface(object):
         computed), ``kpt`` The list of starting points for each k-point\
          string, ``wcc``, the WCC positions at each of those positions, \
         ``gap`` the positions of the largest gap in each string and \
-        ``lambda_``, a list of Gamma matrices for each string.
+        ``lambda``, a list of Gamma matrices for each string.
         """
-        return {'t_par': self._t_points, 'kpt': self._kpt_list, 'wcc': [line.wcc for line in self._line_list], 'gap': self._gaps, 'lambda_': self._lambda_list}
+        return {'t_par': self._t_points, 'kpt': self._kpt_list, 'wcc': [line.wcc if line is not None else None for line in self._line_list], 'gap': self._gaps, 'lambda_': [line.lambda_ if line is not None else None for line in self._line_list]}
 
     def z2(self):
         """
@@ -417,7 +417,7 @@ class Surface(object):
         try:
             inv = 1
             for i in range(0, len(self._line_list)-1):
-                for j in range(0, len(self._line_list[0])):
+                for j in range(0, len(self._line_list[0].wcc)):
                     inv *= _sgng(self._gaps[i],
                                  self._gaps[i+1],
                                  self._line_list[i+1].wcc[j])
@@ -457,9 +457,10 @@ class Surface(object):
 
         Only works if ``pickle_file`` is not ``None`` and the path to ``pickle_file`` exists.
         """
-        to_save = ['_t_points', '_kpt_list', '_gaps', '_gapsize', '_lambda_list', '_string_status', '_line_list']
-        data = dict((k, v) for k, v in self.__dict__.items() if k in to_save)
 
+        to_save = ['_t_points', '_kpt_list', '_gaps', '_gapsize', '_line_list']
+        data = dict((k, v) for k, v in self.__dict__.items() if k in to_save)
+        
         if self._current['pickle_file'] is not None:
             with open(self._current['pickle_file'], "wb") as f:
                 pickle.dump(data, f)
@@ -476,6 +477,10 @@ class Surface(object):
             with open(self._current['pickle_file'], "rb") as f:
                 res = pickle.load(f)
                 self.__dict__.update(res)
+            # restore Line objects
+            for t, line in zip(self._t_points, self._line_list):
+                if line is not None:
+                    line.inject(self._m_handle, lambda kx: self._param_fct(t, kx))
         except IOError as e:
             if not quiet:
                 raise e

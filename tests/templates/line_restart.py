@@ -44,9 +44,9 @@ class LineRestartTestCase(BuildDirTestCase):
     def test_line(self):
         self.createH(0.3, 0.2)
         line = z2pack.em.tb.System(self.model).line(lambda x: [0.5 * x, 0.24, 0.])
-        line.wcc_calc(verbose='reduced')
         line.wcc_calc(verbose=False)
-        line.wcc_calc(pos_tol=0.0008, verbose='reduced')
+        line.wcc_calc(verbose=False)
+        line.wcc_calc(pos_tol=0.0008, verbose=False)
 
 if __name__ == "__main__":
     unittest.main()

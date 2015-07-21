@@ -15,19 +15,19 @@ import numpy as np
 from decorator import decorator
 
 class SurfacePrintFunctions:
-    def _getwcc(func):
-        def inner(self, t):
+    def _call_line(func):
+        def inner(self, i, t):
             # initial output
             _print(self, "Calculating string at t = {0:.4f}, k = {1}:\n".
                 format(t, string_tools.fl_to_s(self._param_fct(t, 0.))))
             #-----------------------------------------------------------#
-            res = func(self, t)
+            res = func(self, i, t)
             #-----------------------------------------------------------#
             # check convergence flag
-            if not res.get_res()['converged']:
+            if not res:
                 self._log.log('pos check', t, string_tools.fl_to_s(self._param_fct(t, 0.)))
                     
-            return res # cut out convergence flag
+            return # cut out convergence flag
         return inner
 
     def _check_neighbours(func):

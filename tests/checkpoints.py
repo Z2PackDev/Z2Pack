@@ -68,7 +68,7 @@ class CheckpointTestCase(CommonTestCase):
         res0 = surface.get_res()
         surface.wcc_calc(verbose=False, num_strings=20, pickle_file=self.pickle_file, pos_tol=1e-23, gap_tol=None, move_tol=None)
         res1 = surface.get_res()
-        self.assertFullAlmostEqual(res0, res1)
+        self.assertRaises(AssertionError, self.assertFullAlmostEqual, res0, res1)
 
     def test_num_strings(self):
         self.createH(0.2, 0.3)
@@ -76,7 +76,7 @@ class CheckpointTestCase(CommonTestCase):
         surface = system.surface(lambda kx, ky: [kx / 2, ky, 0])
         surface.wcc_calc(verbose=False, num_strings=20, pickle_file=self.pickle_file, pos_tol=None, gap_tol=None, move_tol=None)
         res0 = surface.get_res()
-        surface.wcc_calc(verbose=False, num_strings=50, pickle_file=self.pickle_file, pos_tol=1e-23, gap_tol=None, move_tol=None)
+        surface.wcc_calc(verbose=False, num_strings=50, pickle_file=self.pickle_file, pos_tol=None, gap_tol=None, move_tol=None)
         res1 = surface.get_res()
         self.assertFullAlmostEqual(res0, res1)
 

@@ -14,15 +14,12 @@ from ._utils import *
 from ._kwarg_validator import _validate_kwargs
 from ._line import Line
 
-import re
-import sys
 import copy
 import pickle
 import warnings
 import decorator
-import itertools
+import functools
 import numpy as np
-import scipy.linalg as la
 
 class Surface(object):
     r"""
@@ -120,23 +117,24 @@ class Surface(object):
         self._m_handle = m_handle
         self._param_fct = param_fct
         self._defaults = {
-                          'pos_tol': 1e-2,
-                          'gap_tol': 2e-2,
-                          'move_tol': 0.3,
-                          'iterator': range(8, 27, 2),
-                          'min_neighbour_dist': 0.01,
-                          'pickle_file': 'res_pickle.txt',
-                          'num_strings': 11,
-                          'verbose': True,
-                          'overwrite': False,
-                          }
+            'pos_tol': 1e-2,
+            'gap_tol': 2e-2,
+            'move_tol': 0.3,
+            'iterator': range(8, 27, 2),
+            'min_neighbour_dist': 0.01,
+            'pickle_file': 'res_pickle.txt',
+            'num_strings': 11,
+            'verbose': True,
+            'overwrite': False,
+            }
         self._defaults.update(kwargs)
         self._current = copy.deepcopy(self._defaults)
-        self._log = logger.Logger(logger.ConvFail('pos check', 't = {0}, k = {1}'),
-                                   logger.ConvFail('gap check',
-                                    'between t = {0}, k = {1}\n    and t = {2}, k = {3}'),
-                                   logger.ConvFail('move check',
-                                    'between t = {0}, k = {1}\n    and t = {2}, k = {3}'))
+        self._log = logger.Logger(
+            logger.ConvFail('pos check', 't = {0}, k = {1}'),
+            logger.ConvFail('gap check',
+                            'between t = {0}, k = {1}\n    and t = {2}, k = {3}'),
+            logger.ConvFail('move check',
+                            'between t = {0}, k = {1}\n    and t = {2}, k = {3}'))
 
     #-------------------------------------------------------------------#
     #                support functions for wcc                          #
@@ -151,9 +149,9 @@ class Surface(object):
         'true'
         """
         self._var_init()
-        while not (all(self._neighbour_check)):
+        while not all(self._neighbour_check):
             for i, t in enumerate(self._t_points):
-                if not(self._string_status[i]):
+                if not self._string_status[i]:
                     self._call_line(i, t)
                     self._gaps[i], self._gapsize[i] = _gapfind(self._line_list[i].wcc)
                     self._string_status[i] = True
@@ -166,11 +164,11 @@ class Surface(object):
         """
         Checks the current parameters and deletes unnecessary ones.
         """
-        if(self._current['num_strings'] < 2):
+        if self._current['num_strings'] < 2:
             raise ValueError("num_strings must be at least 2")
 
         if self._current['pos_tol'] is None:
-            if not(hasattr(self._current['iterator'], '__next__')):
+            if not hasattr(self._current['iterator'], '__next__'):
                 self._current['iterator'] = iter(self._current['iterator'])
             # iterator shouldn't be deleted (used for first step also)
             # instead, it is modified to reflect pos_tol=None
@@ -184,7 +182,7 @@ class Surface(object):
         """
         if (not hasattr(self, '_line_list')) or self._current['overwrite']:
             # the Line objects
-            self._line_list = [None for i in range(self._current['num_strings'])]
+            self._line_list = [None for _ in range(self._current['num_strings'])]
             self._t_points = list(np.linspace(0., 1., self._current['num_strings'],
                                               endpoint=True))
             self._kpt_list = [self._param_fct(t, 0.) for t in self._t_points]
@@ -192,7 +190,7 @@ class Surface(object):
             self._gapsize = [None for i in range(self._current['num_strings'])]
         # this is DELIBERATELY always overwritten to allow changing the
         # move_tol, gap_tol, pos_tol parameters between reloaded runs.
-        # It is inexpensive to recreate in the opposite case. 
+        # It is inexpensive to recreate in the opposite case.
         self._neighbour_check = [False for i in
                                  range(len(self._line_list) - 1)]
         self._string_status = [False for i in
@@ -258,8 +256,7 @@ class Surface(object):
         else:
             self._neighbour_check.insert(i + 1, False)
             self._string_status.insert(i + 1, False)
-            self._t_points.insert(i + 1, (self._t_points[i] +
-                                  self._t_points[i + 1]) / 2)
+            self._t_points.insert(i + 1, (self._t_points[i] + self._t_points[i + 1]) / 2)
             self._kpt_list.insert(i + 1, self._param_fct(self._t_points[i + 1], 0.))
             self._line_list.insert(i + 1, None)
             self._gaps.insert(i + 1, None)
@@ -310,21 +307,21 @@ class Surface(object):
         axis.set_xlim(-0.01, 1.01)
         axis.set_xticks(self._t_points, minor=True)
         func(self, show, axis, *args, **kwargs)
-        if(show):
+        if show:
             plt.show()
         if return_fig:
             return fig
 
     @_plot
     def wcc_plot(self,
-             show=True,
-             axis=None,
-             shift=0,
-             wcc_settings={'s': 50., 'lw': 1., 'facecolor': 'none'},
-             gaps=True,
-             gap_settings={'marker': 'D', 'color': 'b', 'linestyle': 'none'}):
+                 show=True,
+                 axis=None,
+                 shift=0,
+                 wcc_settings={'s': 50., 'lw': 1., 'facecolor': 'none'},
+                 gaps=True,
+                 gap_settings={'marker': 'D', 'color': 'b', 'linestyle': 'none'}):
         r"""
-        Plots the WCCs and the largest gaps (y-axis) against the t-points 
+        Plots the WCCs and the largest gaps (y-axis) against the t-points
         (x-axis).
 
         :param show:    Toggles showing the plot
@@ -337,7 +334,7 @@ class Surface(object):
         :type shift:    float
 
         :param wcc_settings:    Keyword arguments for the scatter plot of the wcc
-            positions. 
+            positions.
         :type wcc_settings:     dict
 
         :param gaps:    Controls whether the largest gaps are printed.
@@ -348,7 +345,7 @@ class Surface(object):
             positions.
         :type gap_settings:     dict
 
-        :returns:       :class:`matplotlib figure` instance (only if 
+        :returns:       :class:`matplotlib figure` instance (only if
             ``ax == None``)
         """
         if gaps:
@@ -365,7 +362,7 @@ class Surface(object):
         Deprecated alias for :meth:`wcc_plot`.
         """
         warnings.warn('Using deprecated function plot. Use wcc_plot instead.',
-            DeprecationWarning, stacklevel=2)
+                      DeprecationWarning, stacklevel=2)
         return self.wcc_plot(*args, **kwargs)
 
     @_plot
@@ -373,7 +370,7 @@ class Surface(object):
                    show=True,
                    axis=None,
                    settings={'marker': 'o', 'markerfacecolor': 'r', 'color': 'r'},
-                   ):
+                  ):
         r"""
         Plots the evolution of the polarization (sum of WCC) along the
         surface against the t-points.
@@ -385,7 +382,7 @@ class Surface(object):
         :type ax:       :mod:`matplotlib` ``axis``
 
         :param settings:    Keyword arguments passed to ``matplotlib.pyplot.plot()``
-        :type settings:     dict 
+        :type settings:     dict
         """
         res = self.chern()
         pol = res['pol']
@@ -425,15 +422,15 @@ class Surface(object):
             return 1 if inv == -1 else 0
         except (NameError, AttributeError):
             raise RuntimeError('WCC not yet calculated')
-            
+
     def invariant(self):
         r"""
         Deprecated alias for :meth:`z2`.
         """
         warnings.warn('Using deprecated function invariant. Use z2 instead.',
-            DeprecationWarning, stacklevel=2)
+                      DeprecationWarning, stacklevel=2)
         return self.z2()
-        
+
     def chern(self):
         r"""
         Calculates the evolution of polarization (sum of WCC) along the
@@ -446,7 +443,7 @@ class Surface(object):
         delta_pol = []
         for i in range(len(pol) - 1):
             diff = pol[i + 1] - pol[i]
-            delta_pol.append(min([diff, diff + 1, diff - 1], key=lambda x: abs(x)))
+            delta_pol.append(min([diff, diff + 1, diff - 1], key=abs))
         return {'chern': sum(delta_pol), 'pol': pol, 'step': delta_pol}
 
     # pickle: save and load
@@ -460,7 +457,7 @@ class Surface(object):
 
         to_save = ['_t_points', '_kpt_list', '_gaps', '_gapsize', '_line_list']
         data = dict((k, v) for k, v in self.__dict__.items() if k in to_save)
-        
+
         if self._current['pickle_file'] is not None:
             with open(self._current['pickle_file'], "wb") as f:
                 pickle.dump(data, f)
@@ -480,7 +477,7 @@ class Surface(object):
             # restore Line objects
             for t, line in zip(self._t_points, self._line_list):
                 if line is not None:
-                    line.inject(self._m_handle, lambda kx: self._param_fct(t, kx))
+                    line.inject(self._m_handle, functools.partial(self._param_fct, t))
         except IOError as e:
             if not quiet:
                 raise e

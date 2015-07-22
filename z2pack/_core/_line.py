@@ -13,11 +13,9 @@ from ..ptools import string_tools
 import sys
 import time
 import copy
-import pickle
 import itertools
 import numpy as np
 import scipy.linalg as la
-
 
 class Line(object):
     r"""
@@ -82,7 +80,7 @@ class Line(object):
         # could be replaced with inspect call for newer python versions
         self._kwargs = {'pos_tol': pos_tol, 'iterator': iterator, 'verbose': verbose}
         self._param_check()
-        
+
         # INITIAL OUTPUT
         if self._kwargs['verbose'] == 'full':
             start_time = time.time()
@@ -90,15 +88,15 @@ class Line(object):
             length = max(len(key) for key in self._kwargs.keys()) + 2
             for key in sorted(self._kwargs.keys()):
                 value = str(self._kwargs[key])
-                if(len(value) > 48):
+                if len(value) > 48:
                     value = value[:45] + '...'
                 string += key.ljust(length) + value + '\n'
             string = string[:-1]
             print(string_tools.cbox(string))
-            
+
         # COMPUTATION
         self._getwcc()
-        
+
         # FINAL OUTPUT
         # reduced & full
         if self._kwargs['verbose'] in ['full', 'reduced']:
@@ -123,7 +121,7 @@ class Line(object):
                 conv_message = 'CONVERGED'
             else:
                 conv_message = 'NOT CONVERGED'
-                
+
             print(
                 string_tools.cbox(
                     ["finished wcc calculation: {0}".format(conv_message) + "\ntime: " + duration_string]))
@@ -144,7 +142,7 @@ class Line(object):
         if not self._kwargs['verbose'] in ['full', 'reduced', 'none']:
             raise ValueError('unknown verbosity level {0}'.format(self._kwargs['verbose']))
         if self._kwargs['pos_tol'] is None:
-            if not(hasattr(self._kwargs['iterator'], '__next__')):
+            if not hasattr(self._kwargs['iterator'], '__next__'): # replace by abc.Iterator
                 self._kwargs['iterator'] = iter(self._kwargs['iterator'])
             # iterator shouldn't be deleted (used for first step also)
             # instead, it is modified to reflect pos_tol=None
@@ -173,9 +171,6 @@ class Line(object):
         else:
             # catch restart
             if self.wcc is not None:
-                if self._max_move is None:
-                    self._max_move = 1.
-                    
                 # skip if the condition is fulfilled
                 if self._max_move < self._kwargs['pos_tol']:
                     if self._kwargs['verbose'] in ['full', 'reduced']:
@@ -183,25 +178,24 @@ class Line(object):
                     return
                 # else fast-forward to N > previous max
                 else:
-                    if N <= self._num_iter:
-                        x = self.wcc
-                        while N <= self._num_iter:
-                            N = next(iterator)
-                        # re-attach last N to the iterator
-                        iterator = itertools.chain([N], iterator)
-                        if self._kwargs['verbose'] in ['full', 'reduced']:
-                            print('fast-forwarding to N = {0}.'.format(N))
+                    x = self.wcc
+                    while N <= self._num_iter:
+                        N = next(iterator)
+                    # re-attach last N to the iterator
+                    iterator = itertools.chain([N], iterator)
+                    if self._kwargs['verbose'] in ['full', 'reduced']:
+                        print('fast-forwarding to N = {0}.'.format(N))
             # no restart
             else:
                 x, min_sv, lambda_ = self._trywcc(self._get_m(N))
-            
+
             for N in iterator:
                 xold = copy.copy(x)
                 x, min_sv, lambda_ = self._trywcc(self._get_m(N))
 
                 # break conditions
                 converged, max_move = _convcheck(x, xold, self._kwargs['pos_tol'])
-                if(converged):  # success
+                if converged:  # success
                     break
 
         # save results to Line object
@@ -237,12 +231,12 @@ class Line(object):
             line_length = 0
             for val in wcc[:-1]:
                 line_length += len(str(val)) + 2
-                if(line_length > 60):
+                if line_length > 60:
                     print('\n        ', end='')
                     line_length = len(str(val)) + 2
                 print(str(val) + ', ', end='')
             line_length += len(str(wcc[-1])) + 2
-            if(line_length > 60):
+            if line_length > 60:
                 print('\n        ', end='')
             print(str(wcc[-1]) + ']')
             sys.stdout.flush()
@@ -262,7 +256,7 @@ class Line(object):
     def get_res(self):
         r"""
         Returns a ``dict`` with the following keys:
-        
+
         *  ``wcc``: the WCC positions
         * ``converged``: bool indicating whether the WCC calculation converged
         * ``max_move``:  the maximum movement between WCC in the last iteration step

@@ -7,5 +7,5 @@ set up by explicitly specifying its hamiltonian.
 Using a spherical surface around the Weyl point (``k=[0, 0, 0]``),
 the chirality of the point (Chern number of the surface) can be calculated. 
 
-.. include:: ../../examples/tb/weyl/weyl.py
+.. include:: ../../examples/em/weyl/weyl.py
     :code: python

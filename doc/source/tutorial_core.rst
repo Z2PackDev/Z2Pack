@@ -143,7 +143,7 @@ Keyword arguments
 +++++++++++++++++
 
 Keyword arguments given to :meth:`.surface` will be used as defaults for
-any :meth:`.wcc_calc` call for that Surface.
+any :meth:`Surface.wcc_calc` call for that Surface.
 
 .. warning:: Different instances of :class:`.Surface` should have different
     paths to the pickle file (keyword argument ``pickle_file``), otherwise they will overwrite each other's data.
@@ -160,7 +160,7 @@ demanding task. While it will be quite fast for tight-binding models, it
 can take anywhere from minutes to hours (or even days for larger systems)
 with first-principles calculations.
 
-The calculation of WCC is invoked by the method :meth:`.wcc_calc`.
+The calculation of WCC is invoked by the method :meth:`Surface.wcc_calc()`.
 By default, the WCC are calculated along 11 k-point strings evenly
 distributed between :math:`t = 0` and :math:`t=1`. This initial number
 of strings can be changed by setting the ``num_strings`` keyword value.
@@ -248,12 +248,12 @@ following:
     be well below :math:`0.5`.
 
 Wannier charge centers, k-points, :math:`\Lambda` matrices etc.
-can be extracted by using the :meth:`.get_res()` method. Its return value is
+can be extracted by using the :meth:`.get_res()<.Surface.get_res>` method. Its return value is
 a ``dict`` containing the data.
 
 Saving and loading with ``pickle``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-If ``pickle_file`` is set (not ``None``) for :meth:`.wcc_calc` (or when creating the :class:`.Surface`), the most important results will automatically be
+If ``pickle_file`` is set (not ``None``) for :meth:`Surface.wcc_calc()` (or when creating the :class:`.Surface`), the most important results will automatically be
 saved into the path given by ``pickle_file``. They can later be extracted
 by calling :meth:`.load`
 
@@ -263,14 +263,14 @@ by calling :meth:`.load`
     same as a fresh one. To make sure everything is set up properly,
     create the :class:`.Surface` with the same arguments as when you
     initially created it. However, there is no need to re-do the costly
-    :meth:`.wcc_calc`.
+    :meth:`wcc_calc<.Surface.wcc_calc>`.
 
 Restarting a calculation
 ~~~~~~~~~~~~~~~~~~~~~~~~
 When calculating the Wannier charge centers, Z2Pack automatically saves
 the progress each time a string of k-points has converged. This allows
 restarting a crashed calculation by calling :meth:`.load` before
-:meth:`.wcc_calc`.
+:meth:`wcc_calc<.Surface.wcc_calc>`.
 
 It can even be used to restart a calculation with more stringent values
 for ``pos_tol``, ``gap_tol`` and ``move_tol``. While the k-point strings

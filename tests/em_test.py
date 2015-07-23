@@ -28,24 +28,24 @@ class TestEmTestCase(CommonTestCase):
 
     def test_res_0(self):
         system = z2pack.em.System(self.tb_hamiltonian, pos=[[0, 0, 0], [0., 0., 0.]], occ=1)
-        surface = system.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.04))
-        surface.wcc_calc(pickle_file=None, verbose=False)
+        surface = system.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.04), pickle_file=None)
+        surface.wcc_calc(verbose=False)
 
         res = {'t_par': [0.0, 0.10000000000000001, 0.20000000000000001, 0.30000000000000004, 0.40000000000000002, 0.5, 0.60000000000000009, 0.70000000000000007, 0.80000000000000004, 0.90000000000000002, 1.0], 'wcc': [[0.0], [0.97700105140316218], [0.90910824353141262], [0.80034213787699182], [0.65926687257349847], [0.5], [0.34073312742650147], [0.19965786212300812], [0.09089175646858734], [0.022998948596837845], [0.0]], 'lambda_': [array([[ 1.+0.j]]), array([[ 0.98957707+0.14400425j]]), array([[ 0.84131241+0.54054919j]]), array([[ 0.31106078+0.95039002j]]), array([[-0.53971039+0.84185076j]]), array([[-1. -5.55111512e-17j]]), array([[-0.53971039-0.84185076j]]), array([[ 0.31106078-0.95039002j]]), array([[ 0.84131241-0.54054919j]]), array([[ 0.98957707-0.14400425j]]), array([[ 1.+0.j]])], 'kpt': [[0.0, 0.0, -0.040000000000000001], [0.012360679774997897, 0.0, -0.038042260651806145], [0.023511410091698926, 0.0, -0.032360679774997896], [0.032360679774997896, 0.0, -0.023511410091698923], [0.038042260651806145, 0.0, -0.012360679774997899], [0.040000000000000001, 0.0, -2.4492935982947064e-18], [0.038042260651806145, 0.0, 0.012360679774997902], [0.032360679774997896, 0.0, 0.023511410091698923], [0.02351141009169893, 0.0, 0.032360679774997896], [0.0123606797749979, 0.0, 0.038042260651806145], [4.8985871965894128e-18, 0.0, 0.040000000000000001]], 'gap': [0.5, 0.47700105140316218, 0.40910824353141262, 0.30034213787699171, 0.15926687257349847, 0.0, 0.84073312742650153, 0.69965786212300807, 0.59089175646858738, 0.52299894859683782, 0.5]}
         self.assertFullAlmostEqual(surface.get_res(), res)
 
     def test_res_1(self):
         system = z2pack.em.System(self.tb_hamiltonian, pos=[[0.25, 0.25, 0.25], [0., 0., 0.]], occ=1)
-        surface = system.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.04))
-        surface.wcc_calc(pickle_file=None, verbose=False)
+        surface = system.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.04), pickle_file=None)
+        surface.wcc_calc(verbose=False)
 
         res = {'t_par': [0.0, 0.10000000000000001, 0.20000000000000001, 0.30000000000000004, 0.40000000000000002, 0.5, 0.60000000000000009, 0.70000000000000007, 0.80000000000000004, 0.90000000000000002, 1.0], 'wcc': [[0.0], [0.97739579390899423], [0.91046316400096627], [0.80258295121698775], [0.66135676934080723], [0.5], [0.33652292044623267], [0.18998205512816774], [0.075954376465955709], [0.0043379091081855977], [0.97999999999999998]], 'lambda_': [array([[ 1.+0.j]]), array([[ 0.98993119+0.14154942j]]), array([[ 0.84588368+0.53336741j]]), array([[ 0.32441047+0.94591641j]]), array([[-0.52860966+0.84886502j]]), array([[-1. -2.77555756e-16j]]), array([[-0.51725425-0.85583178j]]), array([[ 0.36822938-0.92973497j]]), array([[ 0.88826816-0.45932525j]]), array([[ 0.99962858-0.02725251j]]), array([[ 0.9921147+0.12533323j]])], 'kpt': [[0.0, 0.0, -0.040000000000000001], [0.012360679774997897, 0.0, -0.038042260651806145], [0.023511410091698926, 0.0, -0.032360679774997896], [0.032360679774997896, 0.0, -0.023511410091698923], [0.038042260651806145, 0.0, -0.012360679774997899], [0.040000000000000001, 0.0, -2.4492935982947064e-18], [0.038042260651806145, 0.0, 0.012360679774997902], [0.032360679774997896, 0.0, 0.023511410091698923], [0.02351141009169893, 0.0, 0.032360679774997896], [0.0123606797749979, 0.0, 0.038042260651806145], [4.8985871965894128e-18, 0.0, 0.040000000000000001]], 'gap': [0.5, 0.47739579390899411, 0.41046316400096616, 0.30258295121698775, 0.16135676934080712, 0.0, 0.83652292044623267, 0.68998205512816768, 0.57595437646595571, 0.50433790910818554, 0.47999999999999998]}
         self.assertFullAlmostEqual(surface.get_res(), res)
         
     def test_res_2(self):
         system = z2pack.em.System(self.tb_hamiltonian, pos=[[0.25, 0.25, 0.25], [0., 0., 0.]], occ=2)
-        surface = system.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.04))
-        surface.wcc_calc(pickle_file=None, verbose=False)
+        surface = system.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.04), pickle_file=None)
+        surface.wcc_calc(verbose=False)
 
         res = {'t_par': [0.0, 0.10000000000000001, 0.20000000000000001, 0.30000000000000004, 0.40000000000000002, 0.5, 0.60000000000000009, 0.70000000000000007, 0.80000000000000004, 0.90000000000000002, 1.0], 'wcc': [[0.0, 0.02], [0.019021130325903118, 1.0], [0.016180339887498958, 0.99999999999999989], [0.011755705045849437, 0.99999999999999989], [4.8591807633470389e-17, 0.0061803398874989398], [4.5278729840279209e-17, 1.0], [4.4174370575882209e-18, 0.993819660112501], [0.98824429495415056, 1.0], [0.98381966011250099, 0.99999999999999989], [0.98097886967409686, 1.0], [4.417437057588214e-18, 0.97999999999999998]], 'lambda_': [array([[ 0.9921147-0.12533323j,  0.0000000+0.j        ],
        [ 0.0000000+0.j        ,  1.0000000+0.j        ]]), array([[ 0.99304135-0.11631124j,  0.00110214+0.01842189j],
@@ -67,23 +67,23 @@ class TestEmTestCase(CommonTestCase):
         
     def test_res_3(self):
         system1 = z2pack.em.System(self.tb_hamiltonian, pos=[[0.25, 0.25, 0.25], [0., 0., 0.]], occ=1)
-        surface1 = system1.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.04))
-        surface1.wcc_calc(pickle_file=None, verbose=False)
+        surface1 = system1.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.04), pickle_file=None)
+        surface1.wcc_calc(verbose=False)
 
         system2 = z2pack.em.System(self.tb_hamiltonian, pos=[[0.25, 0.25, 0.25], [0., 0., 0.]])
-        surface2 = system2.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.04))
-        surface2.wcc_calc(pickle_file=None, verbose=False)
+        surface2 = system2.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.04), pickle_file=None)
+        surface2.wcc_calc(verbose=False)
 
         self.assertFullAlmostEqual(surface1.get_res(), surface2.get_res())
         
     def test_res_4(self):
         system1 = z2pack.em.System(self.tb_hamiltonian, pos=[[0., 0., 0.], [0., 0., 0.]], occ=1)
-        surface1 = system1.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.04))
-        surface1.wcc_calc(pickle_file=None, verbose=False)
+        surface1 = system1.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.04), pickle_file=None)
+        surface1.wcc_calc(verbose=False)
 
         system2 = z2pack.em.System(self.tb_hamiltonian, occ = 1)
-        surface2 = system2.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.04))
-        surface2.wcc_calc(pickle_file=None, verbose=False)
+        surface2 = system2.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.04), pickle_file=None)
+        surface2.wcc_calc(verbose=False)
 
         self.assertFullAlmostEqual(surface1.get_res(), surface2.get_res())
 

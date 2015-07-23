@@ -46,8 +46,8 @@ class TbTrsExampleTestCase(BuildDirTestCase):
     def test_notrs(self):
         self.createH(0.2, 0.3)
         system = z2pack.em.tb.System(self.model)
-        surface = system.surface(lambda kx, ky: [kx, ky, 0])
-        surface.wcc_calc(verbose=False, num_strings=20, pickle_file=None)
+        surface = system.surface(lambda kx, ky: [kx, ky, 0], pickle_file=None)
+        surface.wcc_calc(verbose=False, num_strings=20)
 
         # explicitly compare to known results
         self.assertAlmostEqual(surface.chern()['chern'], 1.)
@@ -60,11 +60,11 @@ class TbTrsExampleTestCase(BuildDirTestCase):
     def test_trs(self):
         self.createH(0.2, 0.3)
         trs_system = z2pack.em.tb.System(self.trs_model)
-        trs_surface = trs_system.surface(lambda kx, ky: [kx, ky, 0])
-        trs_surface.wcc_calc(verbose=False, num_strings=20, pickle_file=None)
+        trs_surface = trs_system.surface(lambda kx, ky: [kx, ky, 0], pickle_file=None)
+        trs_surface.wcc_calc(verbose=False, num_strings=20)
 
-        trs_surface_z2 = trs_system.surface(lambda kx, ky: [kx / 2., ky, 0])
-        trs_surface_z2.wcc_calc(verbose=False, num_strings=20, pickle_file=None)
+        trs_surface_z2 = trs_system.surface(lambda kx, ky: [kx / 2., ky, 0], pickle_file=None)
+        trs_surface_z2.wcc_calc(verbose=False, num_strings=20)
 
         # explicitly compare to known results
         self.assertAlmostEqual(trs_surface.chern()['chern'], 0.)
@@ -83,11 +83,11 @@ class TbTrsExampleTestCase(BuildDirTestCase):
         model2 = copy.deepcopy(self.model)
         model2.trs(in_place=True)
         system0 = z2pack.em.tb.System(self.trs_model)
-        surface0 = system0.surface(lambda kx, ky: [kx, ky, 0])
-        surface0.wcc_calc(verbose=False, num_strings=20, pickle_file=None)
+        surface0 = system0.surface(lambda kx, ky: [kx, ky, 0], pickle_file=None)
+        surface0.wcc_calc(verbose=False, num_strings=20)
         system1 = z2pack.em.tb.System(model2)
-        surface1 = system1.surface(lambda kx, ky: [kx, ky, 0])
-        surface1.wcc_calc(verbose=False, num_strings=20, pickle_file=None)
+        surface1 = system1.surface(lambda kx, ky: [kx, ky, 0], pickle_file=None)
+        surface1.wcc_calc(verbose=False, num_strings=20)
 
         self.assertFullAlmostEqual(surface0.get_res(), surface1.get_res())
 

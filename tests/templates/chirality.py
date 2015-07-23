@@ -23,8 +23,8 @@ class ChiralityTestCase(CommonTestCase):
                 res += kval * p_mat
             return res
         system = z2pack.em.System(hamilton)
-        surface = system.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.01))
-        surface.wcc_calc(pickle_file=None, verbose=False)
+        surface = system.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.01), pickle_file=None)
+        surface.wcc_calc(verbose=False)
 
         res = in_place_replace(surface.get_res())
 
@@ -38,8 +38,8 @@ class ChiralityTestCase(CommonTestCase):
                 res += kval * p_mat
             return res
         system = z2pack.em.System(hamilton)
-        surface = system.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.04))
-        surface.wcc_calc(pickle_file=None, verbose=False)
+        surface = system.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.04), pickle_file=None)
+        surface.wcc_calc(verbose=False)
 
         res = in_place_replace(surface.get_res())
 

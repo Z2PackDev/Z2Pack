@@ -49,8 +49,8 @@ class TbExampleTestCase(BuildDirTestCase):
         self.createH(0.2, 0.3)
         # call to Z2Pack
         tb_system = z2pack.em.tb.System(self.model)
-        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
-        tb_surface.wcc_calc(verbose=False, num_strings=20, pickle_file=None)
+        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=None)
+        tb_surface.wcc_calc(verbose=False, num_strings=20)
         
         res = in_place_replace(tb_surface.get_res())
 
@@ -61,10 +61,9 @@ class TbExampleTestCase(BuildDirTestCase):
         self.createH(0, 0.3)
         # call to Z2Pack
         tb_system = z2pack.em.tb.System(self.model)
-        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
+        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=None)
         tb_surface.wcc_calc(verbose=False,
                             num_strings=20,
-                            pickle_file=None,
                             pos_tol=None)
 
         res = in_place_replace(tb_surface.get_res())
@@ -76,10 +75,9 @@ class TbExampleTestCase(BuildDirTestCase):
         self.createH(0.1, 0.3)
         # call to Z2Pack
         tb_system = z2pack.em.tb.System(self.model)
-        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
+        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=None)
         tb_surface.wcc_calc(verbose=False,
                             num_strings=20,
-                            pickle_file=None,
                             gap_tol=None)
 
         res = in_place_replace(tb_surface.get_res())
@@ -91,10 +89,9 @@ class TbExampleTestCase(BuildDirTestCase):
         self.createH(0.1, 0.3)
         # call to Z2Pack
         tb_system = z2pack.em.tb.System(self.model)
-        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
+        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=None)
         tb_surface.wcc_calc(verbose=False,
                           num_strings=20,
-                          pickle_file=None,
                           move_tol=None)
 
         res = in_place_replace(tb_surface.get_res())
@@ -106,10 +103,9 @@ class TbExampleTestCase(BuildDirTestCase):
         self.createH(0.1, 0.3)
         # call to Z2Pack
         tb_system = z2pack.em.tb.System(self.model)
-        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
+        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=None)
         tb_surface.wcc_calc(verbose=False,
                             num_strings=20,
-                            pickle_file=None,
                             gap_tol=None,
                             move_tol=None)
 
@@ -122,10 +118,9 @@ class TbExampleTestCase(BuildDirTestCase):
         self.createH(0.1, 0.3)
         # call to Z2Pack
         tb_system = z2pack.em.tb.System(self.model)
-        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
+        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=None)
         tb_surface.wcc_calc(verbose=False,
                             num_strings=11,
-                            pickle_file=None,
                             gap_tol=1.,
                             move_tol=1e-12,
                             pos_tol=1e-12,

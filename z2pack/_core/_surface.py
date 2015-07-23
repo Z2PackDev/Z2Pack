@@ -39,10 +39,23 @@ class Surface(object):
     :param param_fct: Returns the start of the k-point string
         as function of the pumping parameter t.
 
-    :param kwargs: Keyword arguments are passed to the :class:`Surface`
-        constructor. They take precedence over kwargs from the
-        :class:`System` constructor.
+    :param pickle_file:     Path to a file where the results are stored using
+        the :py:mod:`pickle` module. Can be ``None`` to disable pickling.
+    :type pickle_file:      str
     """
+    def __init__(self,
+                 m_handle,
+                 param_fct,
+                 pickle_file='res_pickle.txt'):
+        self._m_handle = m_handle
+        self._param_fct = param_fct
+        self._pickle_file = pickle_file
+        self._log = logger.Logger(
+            logger.ConvFail('pos check', 't = {0}, k = {1}'),
+            logger.ConvFail('gap check',
+                            'between t = {0}, k = {1}\n    and t = {2}, k = {3}'),
+            logger.ConvFail('move check',
+                            'between t = {0}, k = {1}\n    and t = {2}, k = {3}'))
 
     @_validate_kwargs
     def wcc_calc(self, **kwargs):
@@ -87,10 +100,6 @@ class Surface(object):
             ``Default: 0.01``
         :type min_neighbour_dist:   float
 
-        :param pickle_file:     Path to a file where the results are stored using
-            the :py:mod:`pickle` module. Can be ``None`` to disable pickling.
-        :type pickle_file:      str
-
         :param verbose:             Toggles printed output ``Default: True``
         :type verbose:              bool
 
@@ -101,40 +110,21 @@ class Surface(object):
         :returns:                   ``None``. Use :meth:`get_res` and
             :meth:`z2` to get the results.
         """
-        self._current = copy.deepcopy(self._defaults)
-        self._current.update(kwargs)
-        self._param_check()
-        self._log.reset()
-        self._wcc_calc_main()
-
-    # has to be below wcc_calc because _validate_kwargs needs access to
-    # wcc_calc.__doc__
-    @_validate_kwargs(target=wcc_calc)
-    def __init__(self,
-                 m_handle,
-                 param_fct,
-                 **kwargs):
-        self._m_handle = m_handle
-        self._param_fct = param_fct
-        self._defaults = {
+        self._current = {
             'pos_tol': 1e-2,
             'gap_tol': 2e-2,
             'move_tol': 0.3,
             'iterator': range(8, 27, 2),
             'min_neighbour_dist': 0.01,
-            'pickle_file': 'res_pickle.txt',
             'num_strings': 11,
             'verbose': True,
             'overwrite': False,
             }
-        self._defaults.update(kwargs)
-        self._current = copy.deepcopy(self._defaults)
-        self._log = logger.Logger(
-            logger.ConvFail('pos check', 't = {0}, k = {1}'),
-            logger.ConvFail('gap check',
-                            'between t = {0}, k = {1}\n    and t = {2}, k = {3}'),
-            logger.ConvFail('move check',
-                            'between t = {0}, k = {1}\n    and t = {2}, k = {3}'))
+        self._current.update(kwargs)
+        self._param_check()
+        self._log.reset()
+        self._wcc_calc_main()
+
 
     #-------------------------------------------------------------------#
     #                support functions for wcc                          #
@@ -458,8 +448,8 @@ class Surface(object):
         to_save = ['_t_points', '_kpt_list', '_gaps', '_gapsize', '_line_list']
         data = dict((k, v) for k, v in self.__dict__.items() if k in to_save)
 
-        if self._current['pickle_file'] is not None:
-            with open(self._current['pickle_file'], "wb") as f:
+        if self._pickle_file is not None:
+            with open(self._pickle_file, "wb") as f:
                 pickle.dump(data, f)
 
     def load(self, quiet=False):
@@ -471,7 +461,7 @@ class Surface(object):
         :type quiet:    bool
         """
         try:
-            with open(self._current['pickle_file'], "rb") as f:
+            with open(self._pickle_file, "rb") as f:
                 res = pickle.load(f)
                 self.__dict__.update(res)
             # restore Line objects

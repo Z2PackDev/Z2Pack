@@ -63,20 +63,20 @@ class CheckpointTestCase(CommonTestCase):
     def test_strings_redone(self):
         self.createH(0.2, 0.3)
         system = z2pack.em.tb.System(self.model)
-        surface = system.surface(lambda kx, ky: [kx / 2, ky, 0])
-        surface.wcc_calc(verbose=False, num_strings=20, pickle_file=self.pickle_file, pos_tol=None, gap_tol=None, move_tol=None)
+        surface = system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=self.pickle_file)
+        surface.wcc_calc(verbose=False, num_strings=20, pos_tol=None, gap_tol=None, move_tol=None)
         res0 = surface.get_res()
-        surface.wcc_calc(verbose=False, num_strings=20, pickle_file=self.pickle_file, pos_tol=1e-23, gap_tol=None, move_tol=None)
+        surface.wcc_calc(verbose=False, num_strings=20, pos_tol=1e-23, gap_tol=None, move_tol=None)
         res1 = surface.get_res()
-        self.assertFullAlmostEqual(res0, res1)
+        self.assertRaises(AssertionError, self.assertFullAlmostEqual, res0, res1)
 
     def test_num_strings(self):
         self.createH(0.2, 0.3)
         system = z2pack.em.tb.System(self.model)
-        surface = system.surface(lambda kx, ky: [kx / 2, ky, 0])
-        surface.wcc_calc(verbose=False, num_strings=20, pickle_file=self.pickle_file, pos_tol=None, gap_tol=None, move_tol=None)
+        surface = system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=self.pickle_file)
+        surface.wcc_calc(verbose=False, num_strings=20, pos_tol=None, gap_tol=None, move_tol=None)
         res0 = surface.get_res()
-        surface.wcc_calc(verbose=False, num_strings=50, pickle_file=self.pickle_file, pos_tol=1e-23, gap_tol=None, move_tol=None)
+        surface.wcc_calc(verbose=False, num_strings=50, pos_tol=None, gap_tol=None, move_tol=None)
         res1 = surface.get_res()
         self.assertFullAlmostEqual(res0, res1)
 
@@ -84,13 +84,12 @@ class CheckpointTestCase(CommonTestCase):
         self.createH(0.2, 0.3)
         system = z2pack.em.tb.System(self.model)
 
-        surface0 = system.surface(lambda kx, ky: [kx / 2, ky, 0])
-        surface0.wcc_calc(verbose=False, num_strings=20, pickle_file=self.pickle_file, pos_tol=None, gap_tol=None, move_tol=None)
-        surface0.wcc_calc(verbose=False, num_strings=20, pickle_file=None, pos_tol=None)
+        surface0 = system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=self.pickle_file)
+        surface0.wcc_calc(verbose=False, num_strings=20, pos_tol=None, gap_tol=None, move_tol=None)
         res0 = surface0.get_res()
 
         surface1 = system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=self.pickle_file)
-        surface1.wcc_calc(verbose=False, num_strings=20, pos_tol=None)
+        surface1.load()
         res1 = surface1.get_res()
         self.assertFullAlmostEqual(res0, res1)
 
@@ -102,7 +101,7 @@ class CheckpointTestCase(CommonTestCase):
         surface0.wcc_calc(verbose=False, num_strings=20, pos_tol=None)
         res0 = surface0.get_res()
 
-        surface1 = system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=self.pickle_file)
+        surface1 = system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=None)
         surface1.wcc_calc(verbose=False, num_strings=20, pos_tol=None, gap_tol=None, move_tol=None)
         surface1.wcc_calc(verbose=False, num_strings=20, pos_tol=None)
         res1 = surface1.get_res()
@@ -111,9 +110,9 @@ class CheckpointTestCase(CommonTestCase):
     def test_overwrite(self):
         self.createH(0.2, 0.3)
         system = z2pack.em.tb.System(self.model)
-        surface = system.surface(lambda kx, ky: [kx / 2, ky, 0])
-        surface.wcc_calc(verbose=False, num_strings=20, pickle_file=self.pickle_file, pos_tol=None, gap_tol=None, move_tol=None)
-        surface.wcc_calc(verbose=False, num_strings=50, pickle_file=self.pickle_file, pos_tol=None, gap_tol=None, move_tol=None, overwrite=True)
+        surface = system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=self.pickle_file)
+        surface.wcc_calc(verbose=False, num_strings=20, pos_tol=None, gap_tol=None, move_tol=None)
+        surface.wcc_calc(verbose=False, num_strings=50, pos_tol=None, gap_tol=None, move_tol=None, overwrite=True)
         res = surface.get_res()
         assert(len(res['kpt']) == 50)
         

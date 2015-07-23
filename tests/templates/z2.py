@@ -46,8 +46,8 @@ class Z2TestCase(CommonTestCase):
         self.createH(0.2, 0.3)
         # call to Z2Pack
         tb_system = z2pack.em.tb.System(self.model)
-        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
-        tb_surface.wcc_calc(verbose=False, num_strings=20, pickle_file=None)
+        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=None)
+        tb_surface.wcc_calc(verbose=False, num_strings=20)
         
         res = in_place_replace(tb_surface.z2())
 
@@ -58,10 +58,9 @@ class Z2TestCase(CommonTestCase):
         self.createH(0, 0.3)
         # call to Z2Pack
         tb_system = z2pack.em.tb.System(self.model)
-        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0])
+        tb_surface = tb_system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=None)
         tb_surface.wcc_calc(verbose=False,
                             num_strings=20,
-                            pickle_file=None,
                             pos_tol=None)
 
         res = in_place_replace(tb_surface.z2())

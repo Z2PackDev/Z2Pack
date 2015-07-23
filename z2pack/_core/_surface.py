@@ -9,9 +9,8 @@ from __future__ import division
 
 from ..ptools import logger, string_tools
 
-from ._verbose_prt import dispatcher_surface as prt_dispatcher
+from ._surface_prt import prt_dispatcher
 from ._utils import *
-from ._kwarg_validator import _validate_kwargs
 from ._line import Line
 
 import copy
@@ -46,7 +45,7 @@ class Surface(object):
     def __init__(self,
                  m_handle,
                  param_fct,
-                 pickle_file='res_pickle.txt'):
+                 pickle_file=None):
         self._m_handle = m_handle
         self._param_fct = param_fct
         self._pickle_file = pickle_file
@@ -57,8 +56,15 @@ class Surface(object):
             logger.ConvFail('move check',
                             'between t = {0}, k = {1}\n    and t = {2}, k = {3}'))
 
-    @_validate_kwargs
-    def wcc_calc(self, **kwargs):
+    def wcc_calc(self,
+                 pos_tol=1e-2,
+                 gap_tol=2e-2,
+                 move_tol=0.3,
+                 iterator=range(8, 27, 2),
+                 min_neighbour_dist=0.01,
+                 num_strings=11,
+                 verbose=True,
+                 overwrite=False):
         r"""
         Calculates the Wannier charge centers in the given surface
 
@@ -73,13 +79,11 @@ class Surface(object):
         :param pos_tol:     The maximum movement of a WCC for the iteration
             w.r.t. the number of k-points in a single string to converge.
             The iteration can be turned off by setting ``pos_tol=None``.
-            ``Default: 1e-2``
         :type pos_tol:              float
 
         :param gap_tol:     Smallest distance between a gap and its
             neighbouring WCC for the gap check to be satisfied.
             The check can be turned off by setting ``gap_tol=None``.
-            ``Default: 2e-2``
         :type gap_tol:              float
 
         :param move_tol:    Scaling factor for the maximum allowed
@@ -87,7 +91,6 @@ class Surface(object):
             the size of the largest gap between two wcc (from the two
             neighbouring strings, the smaller value is chosen). The check
             can be turned off by setting ``move_tol=None``.
-            ``Default: 0.3``
         :type move_tol:    float
 
         :param iterator:            Generator for the number of points in
@@ -97,10 +100,9 @@ class Surface(object):
 
         :param min_neighbour_dist:  Minimum distance between two strings (no
             new strings will be added, even if the gap check (gap check & move check) fails).
-            ``Default: 0.01``
         :type min_neighbour_dist:   float
 
-        :param verbose:             Toggles printed output ``Default: True``
+        :param verbose:             Toggles printed output.
         :type verbose:              bool
 
         :param overwrite:           Toggles whether existing data should be
@@ -110,17 +112,7 @@ class Surface(object):
         :returns:                   ``None``. Use :meth:`get_res` and
             :meth:`z2` to get the results.
         """
-        self._current = {
-            'pos_tol': 1e-2,
-            'gap_tol': 2e-2,
-            'move_tol': 0.3,
-            'iterator': range(8, 27, 2),
-            'min_neighbour_dist': 0.01,
-            'num_strings': 11,
-            'verbose': True,
-            'overwrite': False,
-            }
-        self._current.update(kwargs)
+        self._current = {key: value for key, value in locals().items() if key != 'self'}
         self._param_check()
         self._log.reset()
         self._wcc_calc_main()

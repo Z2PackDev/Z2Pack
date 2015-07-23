@@ -27,8 +27,8 @@ def Hamilton(k, m, t1, t2, phi):
 
 def get_chern(m, t1, t2, phi):
     system = z2pack.em.System(lambda k: Hamilton(k, m, t1, t2, phi), occ=1)
-    surface = system.surface(lambda s, t: [t, s, 0.])
-    surface.wcc_calc(verbose=False, pickle_file=None)
+    surface = system.surface(lambda s, t: [t, s, 0.], pickle_file=None)
+    surface.wcc_calc(verbose=False)
     return surface.chern()['chern']
 
 if __name__ == "__main__":

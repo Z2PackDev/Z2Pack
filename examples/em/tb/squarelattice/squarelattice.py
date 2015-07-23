@@ -17,8 +17,6 @@ settings = {'num_strings': 11,
             'move_tol': 0.3,
             'iterator': range(8, 27, 2),
             'min_neighbour_dist': 1e-2,
-            #~ 'pickle_file': 'res_pickle.txt',
-            'pickle_file': None,
             'verbose': True
            }
 
@@ -53,7 +51,7 @@ H.add_hopping((((1, 1), (1, 1)), ((1, 0), (1, 0))), tb.vectors.neighbours([0, 1]
 tb_system = tb.System(H.create())
 
 # Creating a surface with strings along ky at kz=0
-tb_surface = tb_system.surface(lambda kx: [kx / 2., 0, 0], [0, 1, 0])
+tb_surface = tb_system.surface(lambda kx: [kx / 2., 0, 0], [0, 1, 0], pickle_file=None)
 
 # Calculating WCC with standard settings
 tb_surface.wcc_calc(**settings)

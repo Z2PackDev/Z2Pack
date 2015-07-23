@@ -27,7 +27,7 @@ class System(object):
     def __init__(self, m_handle):
         self._m_handle = m_handle
 
-    def surface(self, param_fct, string_vec=None, **kwargs):
+    def surface(self, param_fct, string_vec=None, pickle_file='res_pickle.txt'):
         r"""
         Creates a :class:`Surface` instance. For a detailed
         description consult the :ref:`Tutorial <creating-surface>`.
@@ -44,9 +44,9 @@ class System(object):
             it is one of ``[1, 0, 0]``, ``[0, 1, 0]``, ``[0, 0, 1]``.
         :type string_vec: list
 
-        :param kwargs: Keyword arguments are passed to the :class:`Surface`
-            constructor. They take precedence over kwargs from the
-            :class:`System` constructor.
+        :param pickle_file:     Path to a file where the results are stored using
+            the :py:mod:`pickle` module. Can be ``None`` to disable pickling.
+        :type pickle_file:      str
 
         :rtype: :class:`Surface`
 
@@ -69,9 +69,9 @@ class System(object):
         if string_vec is not None:
             def param_fct_proxy(t, k):
                 return list(np.array(param_fct(t)) + k * np.array(string_vec))
-            return Surface(self._m_handle, param_fct_proxy, **kwargs)
+            return Surface(self._m_handle, param_fct_proxy, pickle_file)
 
-        return Surface(self._m_handle, param_fct, **kwargs)
+        return Surface(self._m_handle, param_fct, pickle_file)
 
     def line(self, param_fct, **kwargs):
         r"""TODO

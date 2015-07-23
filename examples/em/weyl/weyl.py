@@ -34,10 +34,10 @@ def hamilton1(k):
 system0 = z2pack.em.System(hamilton0, occ=1)
 system1 = z2pack.em.System(hamilton1) # occ=1 is default (#orbitals / 2)
 # the surface is a sphere around the Weyl point
-surface0 = system0.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.01))
-surface1 = system1.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.01))
-surface0.wcc_calc(pickle_file=None, verbose=False)
-surface1.wcc_calc(pickle_file=None, verbose=False)
+surface0 = system0.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.01), pickle_file=None)
+surface1 = system1.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.01), pickle_file=None)
+surface0.wcc_calc(verbose=False)
+surface1.wcc_calc(verbose=False)
 
 # plotting
 fig, ax = plt.subplots(1, 2)

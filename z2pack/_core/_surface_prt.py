@@ -14,7 +14,7 @@ import time
 import numpy as np
 from decorator import decorator
 
-class SurfacePrintFunctions:
+class PrintFunctions:
     def _call_line(func):
         def inner(self, i, t):
             # initial output
@@ -100,5 +100,5 @@ def _print(self, string):
         print(string, end='')
         sys.stdout.flush()
 
-def dispatcher_surface(func):
-    return SurfacePrintFunctions.__dict__[func.__name__](func)
+def prt_dispatcher(func):
+    return PrintFunctions.__dict__[func.__name__](func)

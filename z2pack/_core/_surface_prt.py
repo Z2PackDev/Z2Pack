@@ -5,6 +5,10 @@
 # Date:    16.02.2015 09:27:19 CET
 # File:    output.py
 
+r"""
+Handles verbose printing for the Surface class.
+"""
+
 from __future__ import print_function
 
 from ..ptools import string_tools
@@ -12,21 +16,23 @@ from ..ptools import string_tools
 import sys
 import time
 import numpy as np
-from decorator import decorator
 
-class PrintFunctions:
+class PrintFunctions(object):
+    r"""
+    Contains 'decorator' functions that carry the same name as the Surface method they decorate. This class acts as a namespace.
+    """
     def _call_line(func):
         def inner(self, i, t):
             # initial output
             _print(self, "Calculating string at t = {0:.4f}, k = {1}:\n".
-                format(t, string_tools.fl_to_s(self._param_fct(t, 0.))))
+                   format(t, string_tools.fl_to_s(self._param_fct(t, 0.))))
             #-----------------------------------------------------------#
             res = func(self, i, t)
             #-----------------------------------------------------------#
             # check convergence flag
             if not res:
                 self._log.log('pos check', t, string_tools.fl_to_s(self._param_fct(t, 0.)))
-                    
+
             return # cut out convergence flag
         return inner
 
@@ -37,11 +43,11 @@ class PrintFunctions:
                 _print(self, 'Skipping neighbour checks (gap check & move check).\n\n')
             return res
         return inner
-    
+
     def _check_single_neighbour(func):
         def inner(self, i):
             _print(self, ('Checking neighbouring t-points t = {0:.4f} and ' +
-                      't = {1:.4f}\n').format(self._t_points[i], self._t_points[i + 1]))
+                          't = {1:.4f}\n').format(self._t_points[i], self._t_points[i + 1]))
             #-----------------------------------------------------------#
             res = func(self, i)
             #-----------------------------------------------------------#
@@ -73,7 +79,7 @@ class PrintFunctions:
             length = max(len(key) for key in self._current.keys()) + 2
             for key in sorted(self._current.keys()):
                 value = str(self._current[key])
-                if(len(value) > 48):
+                if len(value) > 48:
                     value = value[:45] + '...'
                 string += key.ljust(length) + value + '\n'
             string = string[:-1]
@@ -86,17 +92,17 @@ class PrintFunctions:
             duration_string = str(int(np.floor(duration / 3600))) + \
                 " h " + str(int(np.floor(duration / 60)) % 60) + \
                 " min " + str(int(np.floor(duration)) % 60) + " sec"
-            _print(self, 
-                string_tools.cbox(
-                    ["finished wcc calculation" + "\ntime: " + duration_string,
-                     'CONVERGENCE REPORT\n------------------\n\n' +
-                    str(self._log)]) +
-                '\n')
+            _print(self,
+                   string_tools.cbox(
+                       ["finished wcc calculation" + "\ntime: " + duration_string,
+                        'CONVERGENCE REPORT\n------------------\n\n' +
+                        str(self._log)]) +
+                   '\n')
             return res
         return inner
 
 def _print(self, string):
-    if(self._current['verbose']):
+    if self._current['verbose']:
         print(string, end='')
         sys.stdout.flush()
 

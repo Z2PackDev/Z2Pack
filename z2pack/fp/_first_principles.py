@@ -5,13 +5,11 @@
 # Date:    26.09.2014 22:44:18 CEST
 # File:    _first_principles.py
 
-from . import kpts
 from .. import System as _Z2PackSystem
 from . import _read_mmn as mmn
 
 import os
 import re
-import sys
 import copy
 import shutil
 import platform
@@ -20,26 +18,26 @@ import subprocess
 
 class System(_Z2PackSystem):
     r"""
-    A subclass of :class:`z2pack.System` designed to work with various first - 
+    A subclass of :class:`z2pack.System` designed to work with various first -
     principles codes.
 
     :param input_files:             Path(s) of the input file(s)
     :type input_files:              str or list
 
-    :param kpts_fct:            Fct that creates a ``str`` specifying 
-        the k-points (in the language of the first-principles code used), 
-        given a ``starting_point``, ``last_point``, ``end point`` and number 
-        of k-points ``N``. Can also be a ``list`` of functions if k-points 
+    :param kpts_fct:            Fct that creates a ``str`` specifying
+        the k-points (in the language of the first-principles code used),
+        given a ``starting_point``, ``last_point``, ``end point`` and number
+        of k-points ``N``. Can also be a ``list`` of functions if k-points
         need to be written to more than one file.
 
-    :param kpts_path:           Name of the file where the k-points 
-        ``str`` belongs. Will append to a file if it matches one of the 
-        ``file_names``, and create a separate file else. 
-        If ``kpts_fct`` is a ``list``, ``kpts_path`` should also be 
+    :param kpts_path:           Name of the file where the k-points
+        ``str`` belongs. Will append to a file if it matches one of the
+        ``file_names``, and create a separate file else.
+        If ``kpts_fct`` is a ``list``, ``kpts_path`` should also be
         a list, specifying the path for each of the functions.
     :type kpts_path:            str or list of str
 
-    :param command:                 Command to execute the first principles 
+    :param command:                 Command to execute the first principles
         code
     :type command:                  str
 
@@ -50,23 +48,20 @@ class System(_Z2PackSystem):
         If nothing is specified, the ``subprocess`` default will be used.
     :type executable:               str
 
-    :param file_names:              Name(s) the input file(s) should get 
-        in the ``build_folder``. Default behaviour is taking the filenames 
+    :param file_names:              Name(s) the input file(s) should get
+        in the ``build_folder``. Default behaviour is taking the filenames
         from the input files.
     :type file_names:               str or list
 
-    :param mmn_path:                Path to the ``.mmn`` output file of 
+    :param mmn_path:                Path to the ``.mmn`` output file of
         ``Wannier90``
     :type mmn_path:                 str
 
-    :param clean_build:         Toggles deleting the content of 
+    :param clean_build:         Toggles deleting the content of
         ``build_folder`` before starting a new calculation.
     :type clean_build:          bool
 
-    :param kwargs:                  Are passed to the :class:`.Surface` 
-        constructor via :meth:`.surface`. More recent arguments take precendence.
-
-    .. note:: ``input_files`` and ``build_folder`` can be absolute or relative 
+    .. note:: ``input_files`` and ``build_folder`` can be absolute or relative
         paths, the rest is relative ``to build_folder``
     """
     def __init__(self,
@@ -79,7 +74,7 @@ class System(_Z2PackSystem):
                  file_names='copy',
                  mmn_path='wannier90.mmn',
                  clean_build=True,
-                 **kwargs):
+                ):
 
         self._system = _FirstPrinciplesSystem(input_files,
                                               kpts_fct,
@@ -90,12 +85,39 @@ class System(_Z2PackSystem):
                                               file_names,
                                               mmn_path,
                                               clean_build)
-        self._defaults = kwargs
-
-        self._m_handle = self._system._run
+        self._m_handle = self._system.run
 
 
-class _FirstPrinciplesSystem:
+class _FirstPrinciplesSystem(object):
+    """
+    args:
+    ~~~~
+    input_files:            path(s) of the input file(s) (str or list)
+    kpts_fct:           fct that creates k_point string, given
+                            starting point, last_point, end point, N
+    kpts_path:          name of the file where k_points belong
+                            will append to a file if it matches one
+                            of file_names, create a separate file
+                            else
+    build_folder:         folder where the created input files go
+    command:                command to execute the first principles
+                            code
+
+    kwargs:
+    ~~~~~~
+    file_names:             name(s) the input file(s) should get
+                            put 'copy' -> same as input_files
+    mmn_path:               path of the .mmn file (default:
+                            wannier90.mmn)
+    clean_build:        toggles deleting content of
+                            build_folder before starting a new
+                            calculation
+
+    file paths:
+    ~~~~~~~~~~
+    input_files and build_folder can be absolute or relative
+    paths, the rest is relative to build_folder
+    """
 
     def __init__(self,
                  input_files,
@@ -107,37 +129,8 @@ class _FirstPrinciplesSystem:
                  file_names='copy',
                  mmn_path='wannier90.mmn',
                  clean_build=True):
-        """
-        args:
-        ~~~~
-        input_files:            path(s) of the input file(s) (str or list)
-        kpts_fct:           fct that creates k_point string, given
-                                starting point, last_point, end point, N
-        kpts_path:          name of the file where k_points belong
-                                will append to a file if it matches one
-                                of file_names, create a separate file
-                                else
-        build_folder:         folder where the created input files go
-        command:                command to execute the first principles
-                                code
-
-        kwargs:
-        ~~~~~~
-        file_names:             name(s) the input file(s) should get
-                                put 'copy' -> same as input_files
-        mmn_path:               path of the .mmn file (default:
-                                wannier90.mmn)
-        clean_build:        toggles deleting content of
-                                build_folder before starting a new
-                                calculation
-
-        file paths:
-        ~~~~~~~~~~
-        input_files and build_folder can be absolute or relative
-        paths, the rest is relative to build_folder
-        """
         # catch Windows
-        if(re.match('Windows', platform.platform(), re.IGNORECASE)):
+        if re.match('Windows', platform.platform(), re.IGNORECASE):
             self._sep = '\\'
             self._is_windows = True
         else:
@@ -151,7 +144,7 @@ class _FirstPrinciplesSystem:
             self._input_files = [input_files]
 
         # copy to file_names and split off the name
-        if(file_names == 'copy'):
+        if file_names == 'copy':
             self._file_names = copy.copy(self._input_files)
             for i in range(len(self._input_files)):
                 self._file_names[i] = self._input_files[i].split(self._sep)[-1]
@@ -165,7 +158,7 @@ class _FirstPrinciplesSystem:
             self._file_names = [self._file_names]
 
         # check whether to append k-points or write separate file
-        if(kpts_path in self._file_names):
+        if kpts_path in self._file_names:
             self._k_mode = 'append'
         else:
             self._k_mode = 'separate'
@@ -187,24 +180,24 @@ class _FirstPrinciplesSystem:
 
         self._command = command
         self._executable = executable
-        if(isinstance(kpts_path, str)):
+        if isinstance(kpts_path, str):
             self._kpts_path = [kpts_path]
         else:
             self._kpts_path = kpts_path
-            
+
         # check if the number of functions matches the number of paths
-        if(len(self._kpts_path) != len(self._kpts_fct)):
+        if len(self._kpts_path) != len(self._kpts_fct):
             raise ValueError(
-                'kpts_fct ({0}) and kpts_path({1}) must have ' +
-                'the same length'.format(
-                    len(self._kpts_path), len(self._kpts_fct)))
+                ('kpts_fct ({0}) and kpts_path({1}) must have ' +
+                 'the same length').format(
+                     len(self._kpts_path), len(self._kpts_fct)))
         self._mmn_path = mmn_path
         self._clean_build = clean_build
 
         self._calling_path = os.getcwd()
 
         # working folder given as string
-        if(isinstance(build_folder, str)):
+        if isinstance(build_folder, str):
             self._create_build_folder(build_folder)
         # working folder given as a function of counter
         else:
@@ -214,11 +207,11 @@ class _FirstPrinciplesSystem:
     def _create_build_folder(self, build_folder):
         # check all paths: absolute / relative?
         # absolute
-        if(build_folder[0] == self._sep or build_folder[0] == "~"):
+        if build_folder[0] == self._sep or build_folder[0] == "~":
             self._build_folder = build_folder
         else:  # relative
             self._build_folder = (self._calling_path +
-                                    self._sep + build_folder)
+                                  self._sep + build_folder)
         # make file_names absolute (assumed to be relative to build_folder)
         self._file_names_abs = []
         for i in range(len(self._file_names)):
@@ -232,7 +225,7 @@ class _FirstPrinciplesSystem:
         self._mmn_path_abs = self._build_folder + self._sep + self._mmn_path
 
         # create working folder if it doesn't exist
-        if not(os.path.isdir(self._build_folder)):
+        if not os.path.isdir(self._build_folder):
             subprocess.call("mkdir " + self._build_folder, shell=True)
 
     def _create_input(self, *args):
@@ -243,8 +236,8 @@ class _FirstPrinciplesSystem:
         except (AttributeError, NameError):
             pass
 
-        if(self._clean_build):
-            if not(self._is_windows):
+        if self._clean_build:
+            if not self._is_windows:
                 subprocess.call('rm -rf ' + self._build_folder + self._sep
                                 + "*", shell=True)
             else:
@@ -262,24 +255,21 @@ class _FirstPrinciplesSystem:
 
 
         for i, f_path in enumerate(self._kpts_path_abs):
-            if(self._k_mode == 'append'):
+            if self._k_mode == 'append':
                 f = open(f_path, "a")
             else:
                 f = open(f_path, "a")
             f.write(self._kpts_fct[i](*args))
             f.close()
 
-    def _run(self, kpt):
-        start_point = kpt[0]
-        end_point = kpt[-1]
-        last_point = kpt[-2]
+    def run(self, kpt):
         N = len(kpt) - 1
 
         # create input
         self._create_input(kpt)
 
         # execute command
-        if(self._executable is not None):
+        if self._executable is not None:
             subprocess.call(
                 self._command,
                 cwd=self._build_folder,

@@ -5,7 +5,7 @@
 # Date:    27.09.2014 21:27:27 CEST
 # File:    kpts.py
 r"""
-A collection of functions for creating k-points input for different 
+A collection of functions for creating k-points input for different
 first-principles codes.
 
 All functions have the same calling structure as :func:`prototype`.
@@ -87,16 +87,16 @@ def wannier90(kpt):
     return string
 
 # FOR A FUTURE VERSION WHEN VASP MIGHT SUPPORT EXPLICIT K-POINTS
-#~ 
+#~
 #~ def vasp(kpt):
     #~ """
     #~ Creates a k-point input for  **VASP**, using explicit points
     #~ """
-            #~ 
+            #~
     #~ for point in kpt:
         #~ if len(point) != 3:
             #~ raise ValueError('dimension of point != 3')
-            #~ 
+            #~
     #~ N = len(kpt) - 1
     #~ string = 'Explicit k-points\n' + str(N) + '\nReciprocal\n'
     #~ for k in kpt[:-1]:
@@ -121,7 +121,7 @@ def vasp(kpt):
     string = 'Automatic mesh\n0              ! number of k-points = 0 ->automatic generation scheme\nGamma          ! generate a Gamma centered grid\n'
     num_dirs = 0
     for i in range(3):
-        if(max([abs(pt[i] - start_point[i]) for pt in kpt]) > 0.01):
+        if max([abs(pt[i] - start_point[i]) for pt in kpt]) > 0.01:
             string += str(N)
             num_dirs += 1
         else:
@@ -132,6 +132,6 @@ def vasp(kpt):
                          'axes of the reciprocal lattice.')
     string += '        ! subdivisions\n'
     for coord in start_point:
-            string += str(coord).replace('e', 'd') + ' '
+        string += str(coord).replace('e', 'd') + ' '
     string += '         ! shift\n'
     return string

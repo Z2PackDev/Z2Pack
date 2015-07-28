@@ -119,7 +119,7 @@ class BuildDirTestCase(CommonTestCase):
         self._name = traceback.extract_stack()[0][0].split('.')[0]
         if self._name in ['test', 'create_tests']:
             self._name = re.search("'([\w]+).[\w]+'", str(type(self))).group(1)
-        self._build_folder = 'build/' + self._name
+        self._build_folder = 'build/' + self._name + '/'
         try:
             shutil.rmtree(self._build_folder)
         except OSError:

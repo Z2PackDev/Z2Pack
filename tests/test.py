@@ -52,7 +52,7 @@ if __name__ == "__main__":
                     if issubclass(val, unittest.TestCase):
                         if all([(not issubclass(val, case[0])) or case[1] for case in special_cases]):
                             vars()[key] = val
-                except:
+                except TypeError:
                     pass
 
     print("Note: Tests including iterative steps may fail due to " +

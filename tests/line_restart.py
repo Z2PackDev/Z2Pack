@@ -7,6 +7,7 @@
 
 from common import *
 
+import pickle
 
 class LineRestartTestCase(BuildDirTestCase):
 
@@ -41,12 +42,54 @@ class LineRestartTestCase(BuildDirTestCase):
         self.model = builder.create()
 
     # this test may produce false negatives due to small numerical differences
-    def test_line(self):
+    def test_restart_1(self):
+        self.createH(0.3, 0.2)
+        line = z2pack.em.tb.System(self.model).line(lambda x: [0.5 * x, 0.24, 0.])
+        line2 = z2pack.em.tb.System(self.model).line(lambda x: [0.5 * x, 0.24, 0.])
+        line.wcc_calc(verbose=False)
+        line.wcc_calc(pos_tol=0.0008, verbose=False)
+        line2.wcc_calc(pos_tol=0.0008, verbose=False)
+        self.assertFullAlmostEqual(line.get_res(), line2.get_res())
+
+    def test_restart_2(self):
+        """
+        Check different restart scenarios.
+        """
+        self.createH(0.3, 0.2)
+        line = z2pack.em.tb.System(self.model).line(lambda x: [0.5 * x, 0.24, 0.])
+        line.wcc_calc(verbose=False, pos_tol=1e-12, iterator=range(5, 20, 2))
+        # make sure evaluation fails
+        del line._m_handle
+        # exact match when pos_tol=None
+        line.wcc_calc(verbose=False, pos_tol=None, iterator=19)
+        # higher pos_tol -> already reached
+        line.wcc_calc(verbose=False, pos_tol=5e-3)
+        # lower pos_tol -> error
+        self.assertRaises(AttributeError, line.wcc_calc, verbose=False, pos_tol=1e-3)
+        # false N -> error
+        self.assertRaises(AttributeError, line.wcc_calc, verbose=False, pos_tol=None, iterator=[18])
+
+    def test_restart_3(self):
+        self.createH(0.3, 0.2)
+        line = z2pack.em.tb.System(self.model).line(lambda x: [0.5 * x, 0.24, 0.])
+        line.wcc_calc(verbose=False, pos_tol=1e-12, iterator=range(5, 10, 2))
+        # make sure evaluation fails
+        del line._m_handle
+        # no fast-forwarding due to previous max < N
+        self.assertRaises(AttributeError, line.wcc_calc, verbose=False, pos_tol=1e-12, iterator=29)
+        # fast-forward past the iterator end
+        line.wcc_calc(verbose=False, pos_tol=1e-12, iterator=range(3, 8, 2))
+
+    def test_pickle(self):
         self.createH(0.3, 0.2)
         line = z2pack.em.tb.System(self.model).line(lambda x: [0.5 * x, 0.24, 0.])
         line.wcc_calc(verbose=False)
-        line.wcc_calc(verbose=False)
-        line.wcc_calc(pos_tol=0.0008, verbose=False)
+        with open(self._build_folder + 'res_pickle.txt', 'wb') as f:
+            pickle.dump(line, f)
+        with open(self._build_folder + 'res_pickle.txt', 'rb') as f:
+            line2 = pickle.load(f)
+        self.assertFullAlmostEqual(line.get_res(), line2.get_res())
+        
 
 if __name__ == "__main__":
     unittest.main()

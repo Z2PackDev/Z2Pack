@@ -141,9 +141,11 @@ class Line(object):
             self._kwargs['verbose'] = 'none'
         if not self._kwargs['verbose'] in ['full', 'reduced', 'none']:
             raise ValueError('unknown verbosity level {0}'.format(self._kwargs['verbose']))
+        if isinstance(self._kwargs['iterator'], int):
+            self._kwargs['iterator'] = iter([self._kwargs['iterator']])
+        if not hasattr(self._kwargs['iterator'], '__next__'): # replace by abc.Iterator
+            self._kwargs['iterator'] = iter(self._kwargs['iterator'])
         if self._kwargs['pos_tol'] is None:
-            if not hasattr(self._kwargs['iterator'], '__next__'): # replace by abc.Iterator
-                self._kwargs['iterator'] = iter(self._kwargs['iterator'])
             # iterator shouldn't be deleted (used for first step also)
             # instead, it is modified to reflect pos_tol=None
             self._kwargs['iterator'] = [next(self._kwargs['iterator'])]
@@ -180,7 +182,11 @@ class Line(object):
                 else:
                     x = self.wcc
                     while N <= self._num_iter:
-                        N = next(iterator)
+                        try:
+                            N = next(iterator)
+                        except StopIteration:
+                            self._converged = False
+                            return
                     # re-attach last N to the iterator
                     iterator = itertools.chain([N], iterator)
                     if self._kwargs['verbose'] in ['full', 'reduced']:

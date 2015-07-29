@@ -24,11 +24,11 @@ def neighbours(axes, forward_only=True):
     :type forward_only:     Boolean
     """
     res = []
-    if(isinstance(axes, int)):
+    if isinstance(axes, int):
         axes = [axes]
 
     for axis in axes:
-        if not(isinstance(axis, int)):
+        if not isinstance(axis, int):
             raise TypeError('axis must be an int')
         res.append([1 if(i == axis) else 0 for i in range(3)])
         if not forward_only:

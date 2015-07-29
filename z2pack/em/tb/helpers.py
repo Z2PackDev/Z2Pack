@@ -12,7 +12,7 @@ Helper functions for creating tight-binding models.
 import numpy as np
 
 def matrix_to_hoppings(mat, orbitals=None, G=[0, 0, 0], multiplier=1.):
-    """
+    r"""
     Turns a square matrix into a series of hopping terms.
 
     :param mat: The matrix to be converted.

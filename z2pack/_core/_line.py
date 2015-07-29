@@ -269,4 +269,4 @@ class Line(object):
         * ``lambda``: the list of Lambda matrices
         * ``num_iter``: the number of k-points used for the final WCC result
         """
-        return {'wcc': self.wcc, 'lambda': self.lambda_, 'converged': self._converged, 'max_move': self._max_move, 'num_iter': self._num_iter}
+        return copy.deepcopy({'wcc': self.wcc, 'lambda': self.lambda_, 'converged': self._converged, 'max_move': self._max_move, 'num_iter': self._num_iter})

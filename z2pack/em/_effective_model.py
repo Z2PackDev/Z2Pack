@@ -23,17 +23,17 @@ class System(_Z2PackSystem):
     :param pos: Positions of the orbitals w.r.t the reduced unit cell.
         Per default, all orbitals are put at the origin.
     :type pos: list
-    
+
     :param occ: Number of occupied bands. Default: 1/2 the size of the Hamiltonian.
     :type occ: int
-    
+
     :param kwargs:      are passed to the :class:`.Surface` constructor via
         :meth:`.surface`, which passes them to :meth:`wcc_calc<.Surface.wcc_calc>`, precedence:
         :meth:`wcc_calc<.Surface.wcc_calc>` > :meth:`.surface` > this (newer kwargs take precedence)
     """
     # RM_V2
     _new_style_system = True
-    
+
     def __init__(self,
                  hamilton,
                  pos=None,
@@ -41,11 +41,11 @@ class System(_Z2PackSystem):
                  **kwargs):
         self._defaults = kwargs
         self._hamilton = hamilton
-        
+
         size = len(self._hamilton([0, 0, 0])) # assuming to be square...
         # add one atom for each orbital in the hamiltonian
         if pos is None:
-            self._pos = [np.zeros(3) for i in range(size)]
+            self._pos = [np.zeros(3) for _ in range(size)]
         else:
             if len(pos) != size:
                 raise ValueError('The number of positions ({0}) does not match the size of the Hamiltonian ({1}).'.format(len(pos), size))
@@ -84,9 +84,9 @@ class System(_Z2PackSystem):
         for i in range(0, N):
             deltak = list(np.array(kpt[i + 1]) - np.array(kpt[i]))
             Mnew = [[sum(np.conjugate(eigs[i][j, m]) *
-                     eigs[i + 1][j, n] *
-                     np.exp(-2j * np.pi * np.dot(deltak, self._pos[j]))
-                     for j in range(eigsize))
+                         eigs[i + 1][j, n] *
+                         np.exp(-2j * np.pi * np.dot(deltak, self._pos[j]))
+                         for j in range(eigsize))
                      for n in range(eignum)]
                     for m in range(eignum)]
             M.append(Mnew)

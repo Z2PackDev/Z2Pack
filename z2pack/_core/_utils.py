@@ -23,7 +23,7 @@ def _convcheck(list_a, list_b, epsilon):
         max_move = max(_dist(a_pos, b_pos), max_move)
 
     return max_move <= epsilon, max_move
-    
+
 def _sgng(z, zplus, x):
     """
     calculates the invariant between two WCC strings
@@ -40,11 +40,11 @@ def _gapfind(wcc):
     N = len(wcc)
     for i in range(0, N - 1):
         temp = wcc[i + 1] - wcc[i]
-        if(temp > gapsize):
+        if temp > gapsize:
             gapsize = temp
             gappos = i
     temp = wcc[0] - wcc[-1] + 1
-    if(temp > gapsize):
+    if temp > gapsize:
         gapsize = temp
         gappos = N - 1
     return (wcc[gappos] + gapsize / 2) % 1, gapsize

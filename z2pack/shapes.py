@@ -15,7 +15,7 @@ import numpy as np
 class SimpleEllipsoid(object):
     r"""
     An ellipsoid whose symmetry axes correspond to :math:`k_x, k_y, k_z`.
-    
+
     :param center:  Center of the ellipsoid
     :type center:   list
 

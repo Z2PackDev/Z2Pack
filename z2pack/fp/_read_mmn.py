@@ -15,15 +15,20 @@ def getM(mmn_file):
     ~~~~
     mmn_file:           path to .mmn file
     """
-    with open(mmn_file, "r") as f:
-        f.readline()
+    try:
+        with open(mmn_file, "r") as f:
+            f.readline()
 
-        # read the first line
-        line = re.findall('[\d]+', f.readline())
-        num_bands, num_kpts, _ = [int(l) for l in line]
+            # read the first line
+            line = re.findall('[\d]+', f.readline())
+            num_bands, num_kpts, _ = [int(l) for l in line]
 
-        # read the rest of the file
-        data = f.read()
+            # read the rest of the file
+            data = f.read()
+    except IOError as e:
+        msg = str(e)
+        msg += '. Check that the path of the .mmn file is correct (mmn_path input variable). If that is the case, an error occured during the call to the first-principles code and Wannier90. Check the corresponding log/error files.'
+        raise IOError(msg)
 
     data = [entry for entry in data.split("\n") if entry]
     blocks = []

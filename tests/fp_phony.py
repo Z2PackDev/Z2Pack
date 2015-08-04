@@ -2257,5 +2257,25 @@ class FpPhonyTestCase(BuildDirTestCase):
             assert w[-1].category == UserWarning
             assert "recommended to use string_vec != None" in str(w[-1].message)
 
+
+    def test_error(self):
+        """
+        test the error when no .mmn file is found
+        """
+        sys = z2pack.fp.System(
+            'samples/wannier90.mmn',
+            lambda x: '',
+            "kpts",
+            "",
+            build_folder=self._build_folder,
+            mmn_path='falsepath.mmn')
+
+        surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], pickle_file=None)
+        try:
+            surface.wcc_calc(verbose=False)
+            raise ValueError('error not raised')
+        except IOError as e:
+            assert(str(e).endswith('. Check that the path of the .mmn file is correct (mmn_path input variable). If that is the case, an error occured during the call to the first-principles code and Wannier90. Check the corresponding log/error files.'))
+
 if __name__ == "__main__":
     unittest.main()

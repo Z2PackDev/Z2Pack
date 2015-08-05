@@ -21,7 +21,7 @@ class ReadMmnTestCase(CommonTestCase):
                 tester = ast.literal_eval(f.read())
 
         self.assertFullAlmostEqual(
-            tester, z2pack.fp._read_mmn.getM('./samples/wannier90.mmn')
+            tester, z2pack.fp._read_mmn.get_m('./samples/wannier90.mmn')
         )
 
 if __name__ == "__main__":

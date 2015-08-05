@@ -21,16 +21,12 @@ class Line(object):
     r"""
     Describes a line in reciprocal space on which Wannier charge centers are to be calculated. It is created by using the :class:`System`'s :meth:`line()<System.line>` method.
 
-    :param m_handle:        Function that returns a list of overlap matrices
-        given the pumping parameter :math:`t` and the number of k-points in
-        the string.
+    :param m_handle:        Function that returns a list of overlap matrices given the pumping parameter :math:`t` and the number of k-points in the string.
     :type m_handle:         function
 
     :param param_fct: Parametrizes the line as a function of an input parameter :math:`t \in [0, 1]`
     """
-    def __init__(self,
-                 m_handle,
-                 param_fct):
+    def __init__(self, m_handle, param_fct):
         self.inject(m_handle, param_fct)
         self.wcc = None
         self.lambda_ = None
@@ -61,21 +57,14 @@ class Line(object):
 
         * automated convergence in string direction
 
-        :param pos_tol:     The maximum movement of a WCC for the iteration
-            w.r.t. the number of k-points in a single string to converge.
-            The iteration can be turned off by setting ``pos_tol=None``.
-            ``Default: 1e-2``
+        :param pos_tol:     The maximum movement of a WCC for the iteration w.r.t. the number of k-points in a single string to converge. The iteration can be turned off by setting ``pos_tol=None``.
         :type pos_tol:              float
 
-        :param iterator:            Generator for the number of points in
-            a k-point string. The iterator should also take care of the maximum
-            number of iterations. It is needed even when ``pos_tol=None``, to
-            provide a starting value. ``Default: range(8, 27, 2)``.
+        :param iterator:            Generator for the number of points in a k-point string. The iterator should also take care of the maximum number of iterations. It is needed even when ``pos_tol=None``, to provide a starting value.
+        :type iterator:             Iterable
 
-        :param verbose:             Toggles printed output ``Default: True``
+        :param verbose:             Toggles printed output.
         :type verbose:              bool
-
-        :returns:                   ``None``
         """
         # could be replaced with inspect call for newer python versions
         self._kwargs = {'pos_tol': pos_tol, 'iterator': iterator, 'verbose': verbose}
@@ -167,7 +156,7 @@ class Line(object):
                     print('Number of k-points matches previous run. Skipping calculation.')
                 return
             else:
-                x, min_sv, lambda_ = self._trywcc(self._get_m(N))
+                x, _, lambda_ = self._trywcc(self._get_m(N))
                 converged = True
                 max_move = 1.
         else:
@@ -193,11 +182,11 @@ class Line(object):
                         print('fast-forwarding to N = {0}.'.format(N))
             # no restart
             else:
-                x, min_sv, lambda_ = self._trywcc(self._get_m(N))
+                x, _, lambda_ = self._trywcc(self._get_m(N))
 
             for N in iterator:
                 xold = copy.copy(x)
-                x, min_sv, lambda_ = self._trywcc(self._get_m(N))
+                x, _, lambda_ = self._trywcc(self._get_m(N))
 
                 # break conditions
                 converged, max_move = _convcheck(x, xold, self._kwargs['pos_tol'])

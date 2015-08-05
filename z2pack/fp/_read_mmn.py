@@ -7,7 +7,7 @@
 
 import re
 
-def getM(mmn_file):
+def get_m(mmn_file):
     """
     reads M-matrices from .mmn file
 
@@ -20,13 +20,13 @@ def getM(mmn_file):
             f.readline()
 
             # read the first line
-            line = re.findall('[\d]+', f.readline())
+            line = re.findall(r'[\d]+', f.readline())
             num_bands, num_kpts, _ = [int(l) for l in line]
 
             # read the rest of the file
             data = f.read()
-    except IOError as e:
-        msg = str(e)
+    except IOError as err:
+        msg = str(err)
         msg += '. Check that the path of the .mmn file is correct (mmn_path input variable). If that is the case, an error occured during the call to the first-principles code and Wannier90. Check the corresponding log/error files.'
         raise IOError(msg)
 
@@ -39,20 +39,23 @@ def getM(mmn_file):
     # extract k and k + b for each M
     idx_list = []
     for i in range(len(blocks)):
-        idx_list.append([int(el) for el in
-                         re.findall('[\d]+', blocks[i][0])[:2]])
+        idx_list.append(
+            [int(el) for el in re.findall(r'[\d]+', blocks[i][0])[:2]]
+        )
 
     # extract M
     M = []
     for i in range(len(blocks)):
         # check if element has to be in the string
-        if(idx_list[i][0] % num_kpts - idx_list[i][1] != -1):
+        if idx_list[i][0] % num_kpts - idx_list[i][1] != -1:
             continue
         # end check
         temp = []
         for j in range(1, len(blocks[i])):
-            temp2 = [float(k) for k in
-                     re.findall('[0-9.\-E]+', blocks[i][j])]
+            temp2 = [
+                float(k) for k in
+                re.findall(r'[0-9.\-E]+', blocks[i][j])
+            ]
             temp.append(temp2[0] + 1j * temp2[1])
 
         temp2 = []

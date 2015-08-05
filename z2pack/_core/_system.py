@@ -56,14 +56,18 @@ class System(object):
         # RM_V2
         if self._new_style_system:
             if string_vec is not None:
-                warnings.warn('The parameter string_vec is soon to be ' +
+                warnings.warn(
+                    'The parameter string_vec is soon to be ' +
                     'deprecated and will be removed when all System ' +
-                    'classes support arbitrary surfaces.', DeprecationWarning, stacklevel=2)
+                    'classes support arbitrary surfaces.', DeprecationWarning, stacklevel=2
+                )
         else:
             if string_vec is None:
-                warnings.warn('This type of system cannot be used ' +
+                warnings.warn(
+                    'This type of system cannot be used ' +
                     'to calculate arbitrary surfaces (yet). It is recommended ' +
-                    'to use string_vec != None.', stacklevel=2)
+                    'to use string_vec != None.', stacklevel=2
+                )
         # end RM_V2
             
         if string_vec is not None:

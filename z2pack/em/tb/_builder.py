@@ -88,12 +88,14 @@ class Builder(object):
                 raise ValueError("atom index out of range")
             if not(orbital_pairs[0][1] <
                    len(self._atoms[orbital_pairs[0][0]][0])):
-                raise ValueError("orbital index out of range \
-                                 (orbital_pairs[0])")
+                raise ValueError(
+                    "orbital index out of range (orbital_pairs[0])"
+                )
             if not(orbital_pairs[1][1] <
                    len(self._atoms[orbital_pairs[1][0]][0])):
-                raise ValueError("orbital index out of range \
-                                 (orbital_pairs[1])")
+                raise ValueError(
+                    "orbital index out of range (orbital_pairs[1])"
+                )
 
             # check if there are multiple rec_lattice_vec
             if(hasattr(rec_lattice_vec[0], '__getitem__') and
@@ -104,14 +106,18 @@ class Builder(object):
                         hasattr(phase, '__iter__')):
                     if len(phase) == 1:
                         for vec in rec_lattice_vec:
-                            self.add_hopping(orbital_pairs,
-                                             vec,
-                                             overlap * phase[0])
+                            self.add_hopping(
+                                orbital_pairs,
+                                vec,
+                                overlap * phase[0]
+                            )
                     else:
                         for i, vec in enumerate(rec_lattice_vec):
-                            self.add_hopping(orbital_pairs,
-                                             vec,
-                                             overlap * phase[i])
+                            self.add_hopping(
+                                orbital_pairs,
+                                vec,
+                                overlap * phase[i]
+                            )
                 else:
                     for vec in rec_lattice_vec:
                         self.add_hopping(orbital_pairs, vec, overlap * phase)
@@ -129,15 +135,23 @@ class Builder(object):
                 rec_lattice_vec = np.array(rec_lattice_vec)
                 indices_1 = (orbital_pairs[0][0], orbital_pairs[0][1])
                 indices_2 = (orbital_pairs[1][0], orbital_pairs[1][1])
-                self._hoppings.append((overlap,
-                                       indices_1,
-                                       indices_2,
-                                       rec_lattice_vec))
+                self._hoppings.append(
+                    (
+                        overlap,
+                        indices_1,
+                        indices_2,
+                        rec_lattice_vec
+                    )
+                )
                 if add_cc:
-                    self._hoppings.append((overlap.conjugate(),
-                                           indices_2,
-                                           indices_1,
-                                           -rec_lattice_vec))
+                    self._hoppings.append(
+                        (
+                            overlap.conjugate(),
+                            indices_2,
+                            indices_1,
+                            -rec_lattice_vec
+                        )
+                    )
 
     def create(self, add_cc=False):
         r"""

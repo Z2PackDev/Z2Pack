@@ -13,7 +13,6 @@ from ._surface_prt import prt_dispatcher
 from ._utils import *
 from ._line import Line
 
-import copy
 import pickle
 import warnings
 import decorator
@@ -42,10 +41,7 @@ class Surface(object):
         the :py:mod:`pickle` module. Can be ``None`` to disable pickling.
     :type pickle_file:      str
     """
-    def __init__(self,
-                 m_handle,
-                 param_fct,
-                 pickle_file=None):
+    def __init__(self, m_handle, param_fct, pickle_file=None):
         self._m_handle = m_handle
         self._param_fct = param_fct
         self._pickle_file = pickle_file
@@ -56,15 +52,17 @@ class Surface(object):
             logger.ConvFail('move check',
                             'between t = {0}, k = {1}\n    and t = {2}, k = {3}'))
 
-    def wcc_calc(self,
-                 pos_tol=1e-2,
-                 gap_tol=2e-2,
-                 move_tol=0.3,
-                 iterator=range(8, 27, 2),
-                 min_neighbour_dist=0.01,
-                 num_strings=11,
-                 verbose=True,
-                 overwrite=False):
+    def wcc_calc(
+        self,
+        pos_tol=1e-2,
+        gap_tol=2e-2,
+        move_tol=0.3,
+        iterator=range(8, 27, 2),
+        min_neighbour_dist=0.01,
+        num_strings=11,
+        verbose=True,
+        overwrite=False
+    ):
         r"""
         Calculates the Wannier charge centers in the given surface
 
@@ -96,7 +94,7 @@ class Surface(object):
         :param iterator:            Generator for the number of points in
             a k-point string. The iterator should also take care of the maximum
             number of iterations. It is needed even when ``pos_tol=None``, to
-            provide a starting value. ``Default: range(8, 27, 2)``.
+            provide a starting value.
 
         :param min_neighbour_dist:  Minimum distance between two strings (no
             new strings will be added, even if the gap check (gap check & move check) fails).
@@ -295,13 +293,15 @@ class Surface(object):
             return fig
 
     @_plot
-    def wcc_plot(self,
-                 show=True,
-                 axis=None,
-                 shift=0,
-                 wcc_settings={'s': 50., 'lw': 1., 'facecolor': 'none'},
-                 gaps=True,
-                 gap_settings={'marker': 'D', 'color': 'b', 'linestyle': 'none'}):
+    def wcc_plot(
+        self,
+        show=True,
+        axis=None,
+        shift=0,
+        wcc_settings={'s': 50., 'lw': 1., 'facecolor': 'none'},
+        gaps=True,
+        gap_settings={'marker': 'D', 'color': 'b', 'linestyle': 'none'}
+    ):
         r"""
         Plots the WCCs and the largest gaps (y-axis) against the t-points
         (x-axis).
@@ -348,11 +348,12 @@ class Surface(object):
         return self.wcc_plot(*args, **kwargs)
 
     @_plot
-    def chern_plot(self,
-                   show=True,
-                   axis=None,
-                   settings={'marker': 'o', 'markerfacecolor': 'r', 'color': 'r'},
-                  ):
+    def chern_plot(
+        self,
+        show=True,
+        axis=None,
+        settings={'marker': 'o', 'markerfacecolor': 'r', 'color': 'r'},
+    ):
         r"""
         Plots the evolution of the polarization (sum of WCC) along the
         surface against the t-points.

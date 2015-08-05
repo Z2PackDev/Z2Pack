@@ -64,18 +64,18 @@ class System(_Z2PackSystem):
     .. note:: ``input_files`` and ``build_folder`` can be absolute or relative
         paths, the rest is relative ``to build_folder``
     """
-    def __init__(self,
-                 input_files,
-                 kpts_fct,
-                 kpts_path,
-                 command,
-                 executable=None,
-                 build_folder='build',
-                 file_names='copy',
-                 mmn_path='wannier90.mmn',
-                 clean_build=True,
-                ):
-
+    def __init__(
+        self,
+        input_files,
+        kpts_fct,
+        kpts_path,
+        command,
+        executable=None,
+        build_folder='build',
+        file_names='copy',
+        mmn_path='wannier90.mmn',
+        clean_build=True,
+    ):
         self._system = _FirstPrinciplesSystem(input_files,
                                               kpts_fct,
                                               kpts_path,
@@ -119,16 +119,18 @@ class _FirstPrinciplesSystem(object):
     paths, the rest is relative to build_folder
     """
 
-    def __init__(self,
-                 input_files,
-                 kpts_fct,
-                 kpts_path,
-                 build_folder,
-                 command,
-                 executable=None,
-                 file_names='copy',
-                 mmn_path='wannier90.mmn',
-                 clean_build=True):
+    def __init__(
+        self,
+        input_files,
+        kpts_fct,
+        kpts_path,
+        build_folder,
+        command,
+        executable=None,
+        file_names='copy',
+        mmn_path='wannier90.mmn',
+        clean_build=True
+    ):
         # catch Windows
         if re.match('Windows', platform.platform(), re.IGNORECASE):
             self._sep = '\\'
@@ -173,10 +175,14 @@ class _FirstPrinciplesSystem(object):
 
         # make input_files absolute (check if already absolute)
         for i in range(len(self._input_files)):
-            if not(self._input_files[i][0] == self._sep or
-                   self._input_files[i][0] == "~"):  # relative
-                self._input_files[i] = self._calling_path + self._sep + \
+            if not(
+                self._input_files[i][0] == self._sep or
+                self._input_files[i][0] == "~"
+            ):  # relative
+                self._input_files[i] = (
+                    self._calling_path + self._sep + 
                     self._input_files[i]
+                )
 
         self._command = command
         self._executable = executable
@@ -188,9 +194,10 @@ class _FirstPrinciplesSystem(object):
         # check if the number of functions matches the number of paths
         if len(self._kpts_path) != len(self._kpts_fct):
             raise ValueError(
-                ('kpts_fct ({0}) and kpts_path({1}) must have ' +
-                 'the same length').format(
-                     len(self._kpts_path), len(self._kpts_fct)))
+                'kpts_fct ({0}) and kpts_path({1}) must have the same length'.format(
+                    len(self._kpts_path), len(self._kpts_fct)
+                )
+            )
         self._mmn_path = mmn_path
         self._clean_build = clean_build
 
@@ -282,7 +289,7 @@ class _FirstPrinciplesSystem(object):
                 shell=True)
 
         # read mmn file
-        M = mmn.getM(self._mmn_path_abs)
+        M = mmn.get_m(self._mmn_path_abs)
         if len(M) == 0:
             raise ValueError('No overlap matrices were found. Maybe switch from shell_list to search_shells in wannier90.win or add more k-points to the string.')
         if len(M) != N:

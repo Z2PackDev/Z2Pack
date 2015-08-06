@@ -28,5 +28,6 @@ class System(_EmSystem):
             hamilton=tb_model.hamilton,
             pos=copy.deepcopy(tb_model.pos),
             occ=tb_model.occ,
-            **kwargs)
+            **kwargs
+        )
 

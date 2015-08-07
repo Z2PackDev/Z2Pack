@@ -11,6 +11,7 @@ import os
 import shutil
 import subprocess
 import matplotlib.pyplot as plt
+import xml.etree.ElementTree as ET
 
 # Edit the paths to your Quantum Espresso and Wannier90 here
 qedir = '/home/greschd/software/espresso-5.1.2/bin/'
@@ -37,6 +38,16 @@ if not os.path.exists('./scf'):
     shutil.copyfile('input/bi.scf.in', 'scf/bi.scf.in')
     subprocess.call(pwcmd + ' < bi.scf.in > scf.out', shell=True, cwd='./scf')
 
+# Copying the lattice parameters from bi.save/data-file.xml into bi.win
+cell = ET.parse('scf/bi.save/data-file.xml').find('CELL').find('DIRECT_LATTICE_VECTORS')
+unit = cell[0].attrib['UNITS']
+lattice = '\n '.join([line.text.strip('\n ') for line in cell[1:]])
+
+with open('input/tpl_bi.win', 'r') as f:
+    tpl_bi_win = f.read()
+with open('input/bi.win', 'w') as f:
+    f.write(tpl_bi_win.format(unit=unit, lattice=lattice))
+
 # Creating the System. Note that the SCF charge file does not need to be
 # copied, but instead can be referenced in the .files file.
 # The k-points input is appended to the .in file
@@ -47,8 +58,6 @@ system = z2pack.fp.System(input_files,
                           z2cmd,
                           executable='/bin/bash',
                           mmn_path='bi.mmn')
-
-    
 
 # Creating two surfaces, both with the pumping parameter t changing
 # ky from 0 to 0.5, and strings along kz.

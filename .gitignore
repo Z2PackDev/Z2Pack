@@ -21,6 +21,7 @@ res_pickle.txt
 examples/tb/results
 examples/fp/**/results
 examples/fp/Bi_qe/scf
+examples/fp/Bi_qe/input/bi.win
 # VASP license
 POTCAR 
 # to work with old git on Brutus

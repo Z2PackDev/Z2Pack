@@ -16,9 +16,8 @@ class ChernTestCase(CommonTestCase):
         pauli_y = np.array([[0, -1j], [1j, 0]], dtype=complex)
         pauli_z = np.array([[1, 0], [0, -1]], dtype=complex)
         pauli_vector = list([pauli_x, pauli_y, pauli_z])
-        k[2] = -k[2]
         res = np.zeros((2, 2), dtype=complex)
-        for kval, p_mat in zip(k, pauli_vector):
+        for kval, p_mat in zip([k[0], k[1], -k[2]], pauli_vector):
             res += kval * p_mat
         return res
 

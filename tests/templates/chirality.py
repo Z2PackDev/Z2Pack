@@ -36,9 +36,8 @@ class ChiralityTestCase(CommonTestCase):
 
     def test_negative(self):
         def tb_hamiltonian(k):
-            k[2] = -k[2]
             res = np.zeros((2, 2), dtype=complex)
-            for kval, p_mat in zip(k, pauli_vector):
+            for kval, p_mat in zip([k[0], k[1], k[2]], pauli_vector):
                 res += kval * p_mat
             return res
         H = z2pack.tb.Hamilton()

@@ -24,9 +24,8 @@ def hamiltonian0(k):
     return res
 def hamiltonian1(k):
     """2-band hamiltonian k.sigma with k_y -> -k_y"""
-    k[2] = -k[2]
     res = np.zeros((2, 2), dtype=complex)
-    for kval, p_mat in zip(k, pauli_vector):
+    for kval, p_mat in zip([k[0], k[1], -k[2]], pauli_vector):
         res += kval * p_mat
     return res
 
@@ -54,7 +53,7 @@ ax[1].set_xticks([0, 1])
 ax[0].set_xticklabels([r'$0$', r'$\pi$'])
 ax[1].set_xticklabels([r'$0$', r'$\pi$'])
 ax[0].set_title(r'$\vec{k}.\vec{\sigma}$', fontsize=fs)
-ax[1].set_title(r'$(k_x, -k_y, k_z).\vec{\sigma}$', fontsize=fs)
+ax[1].set_title(r'$(k_x, k_y, -k_z).\vec{\sigma}$', fontsize=fs)
 
 # plotting the evolution of polarization
 surface0.chern_plot(axis=ax[0], show=False)

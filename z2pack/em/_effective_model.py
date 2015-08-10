@@ -27,6 +27,9 @@ class System(_Z2PackSystem):
     :param occ: Number of occupied bands. Default: 1/2 the size of the Hamiltonian.
     :type occ: int
 
+    :param hermitian_tol:   Maximum absolute value in the difference between the Hamiltonian and its hermitian conjugate. Use ``hermitian_tol=None`` to deactivate the test entirely.
+    :type hermitian_tol:    float
+
     :param kwargs:      are passed to the :class:`.Surface` constructor via
         :meth:`.surface`, which passes them to :meth:`wcc_calc<.Surface.wcc_calc>`, precedence:
         :meth:`wcc_calc<.Surface.wcc_calc>` > :meth:`.surface` > this (newer kwargs take precedence)
@@ -39,10 +42,12 @@ class System(_Z2PackSystem):
         hamilton,
         pos=None,
         occ=None,
+        hermitian_tol=1e-6,
         **kwargs
     ):
         self._defaults = kwargs
         self._hamilton = hamilton
+        self._hermitian_tol = hermitian_tol
 
         size = len(self._hamilton([0, 0, 0])) # assuming to be square...
         # add one atom for each orbital in the hamiltonian
@@ -68,7 +73,12 @@ class System(_Z2PackSystem):
         # get eigenvectors corr. to occupied states
         eigs = []
         for k in k_points:
-            eigval, eigvec = la.eig(self._hamilton(k))
+            ham = self._hamilton(k)
+            if self._hermitian_tol is not None:
+                diff = la.norm(ham - ham.conjugate().transpose(), ord=np.inf)
+                if  diff > self._hermitian_tol:
+                    raise ValueError('The Hamiltonian you used is not hermitian, with the maximum difference between the Hamiltonian and its adjoint being {0}. Use the ``hamilton_tol`` input parameter (in the ``tb.Hamilton`` constructor; currently {1}) to set the sensitivity of this test or turn it off completely (``hamilton_tol=None``).'.format(diff, self._hermitian_tol))
+            eigval, eigvec = la.eig(ham)
             eigval = np.real(eigval)
             idx = eigval.argsort()
             idx = idx[:self._occ]

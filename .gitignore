@@ -5,6 +5,7 @@
 
 # hidden files garbage
 *~
+TODO
 .fuse*
 
 # ab-initio/doc build files and example results
@@ -21,7 +22,8 @@ examples/tb/results
 examples/fp/**/results
 examples/fp/Bi_qe/scf
 examples/fp/Bi_qe/input/bi.win
-
+examples/fp/Bi2Se3_qe/scf
+examples/fp/Bi2Se3_qe/input/bi2se3.win
 # VASP license
 POTCAR 
 # to work with old git on Brutus
@@ -33,7 +35,6 @@ dist
 MANIFEST
 *.tar.gz
 files*.txt
-TODO
 
 # ignoring the ptools git
 z2pack/ptools/.git
@@ -44,6 +45,7 @@ z2pack/ptools/*.py
 !z2pack/ptools/__init__.py  
 !z2pack/ptools/replace.py  
 !z2pack/ptools/csv_parser.py  
+!z2pack/ptools/parse_dict.py  
 !z2pack/ptools/string_tools.py  
 !z2pack/ptools/logger.py
 

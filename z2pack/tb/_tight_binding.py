@@ -15,11 +15,15 @@ import scipy.linalg as la
 
 
 class Hamilton(object):
-    """
+    r"""
     Describes a tight-binding model for use with :class:`z2pack.tb.System`.
+    
+    :param hermitial_tol:   Maximum absolute value in the difference between the Hamiltonian and its hermitian conjugate. Use ``hermitian_tol=None`` to deactivate the test entirely.
+    :type hermitian_tol:    float
     """
-    def __init__(self):
+    def __init__(self, hermitian_tol=1e-6):
         self._reset_atoms()
+        self._hermitian_tol = hermitian_tol
 
     def _reset_atoms(self):
         self._atoms = []
@@ -250,6 +254,11 @@ class Hamilton(object):
         # get eigenvectors corr. to occupied states
         eigs = []
         for k in k_points:
+            hamilton = np.array(self.hamiltonian(k))
+            #~ if self._hermitian_tol is not None:
+                #~ diff = la.norm(hamilton - hamilton.conjugate().transpose(), ord=np.inf)
+                #~ if  diff > self._hermitian_tol:
+                    #~ raise ValueError('The Hamiltonian you used is not hermitian, with the maximum difference between the Hamiltonian and its adjoint being {0}. Use the ``hamilton_tol`` input parameter (in the ``tb.Hamilton`` constructor; currently {1}) to set the sensitivity of this test or turn it off completely (``hamilton_tol=None``).'.format(diff, self._hermitian_tol))
             eigval, eigvec = la.eig(self.hamiltonian(k))
             eigval = np.real(eigval)
             idx = eigval.argsort()

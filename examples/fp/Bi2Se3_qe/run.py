@@ -66,9 +66,9 @@ system = z2pack.fp.System(input_files,
 # ky from 0 to 0.5, and strings along kz.
 # The first plane is at kx = 0, the second one at kx = 0.5
 # Notice the different values of pickle_file to avoid overwriting the data.
-surface_0 = system.surface(lambda t: [0, t / 2, 0], [0, 0, 1],
+surface_0 = system.surface(lambda t: [0, t / 2., 0], [0, 0, 1],
                            pickle_file='./results/res_0.txt')
-surface_1 = system.surface(lambda t: [0.5, t / 2, 0], [0, 0, 1],
+surface_1 = system.surface(lambda t: [0.5, t / 2., 0], [0, 0, 1],
                            pickle_file='./results/res_1.txt')
 
 # WCC calculation - standard settings

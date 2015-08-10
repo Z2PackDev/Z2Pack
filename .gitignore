@@ -16,7 +16,10 @@ lsf.*
 build
 status.txt
 HgTe_strain*
-scf_files
+**/scf_files/*
+!*.files
+!*.in
+!*_o_DEN
 res_pickle.txt
 examples/tb/results
 examples/fp/**/results

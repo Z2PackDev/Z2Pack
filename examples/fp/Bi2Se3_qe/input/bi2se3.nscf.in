@@ -1,0 +1,38 @@
+ &CONTROL
+                 calculation = 'bands' ,
+                  wf_collect = .true. ,
+                  pseudo_dir = '../'
+                      outdir = '../scf'  
+                      prefix = 'bi2se3' ,
+                   verbosity = 'high' ,
+                       nstep = 200 ,
+ /
+ &SYSTEM
+                       ibrav = 5,
+                   celldm(1) = 18.5808776235075,
+                   celldm(4) =  0.911552255041400,
+                         nat = 5,
+                        ntyp = 2,
+                     ecutwfc = 60.0 ,
+                 occupations = 'smearing' ,
+                     degauss = 0.001 ,
+                    noncolin = .true. ,
+                    lspinorb = .true. ,
+                        nbnd = 38 ,
+
+ /
+ &ELECTRONS
+                    conv_thr = 1.0d-5 ,
+                 mixing_beta = 0.2 ,
+ /
+ATOMIC_SPECIES
+   Bi  208.98038  Bi_MT_PBE.UPF 
+   Se   78.96000  Se_MT_PBE.UPF 
+ATOMIC_POSITIONS crystal 
+   Bi      0.399000000    0.399000000    0.399000000    
+   Bi      0.601000000    0.601000000    0.601000000    
+   Se      0.000000000    0.000000000    0.000000000    
+   Se      0.206000000    0.206000000    0.206000000    
+   Se      0.794000000    0.794000000    0.794000000    
+
+

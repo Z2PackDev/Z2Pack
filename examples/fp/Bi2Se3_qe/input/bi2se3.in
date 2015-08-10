@@ -1,0 +1,8 @@
+&inputpp
+  outdir='../scf'
+  prefix='bi2se3'
+  seedname='bi2se3'
+  wan_mode='standalone'  
+  write_amn =.false.
+  write_mmn =.true.
+/  

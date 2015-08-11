@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Author:  Dominik Gresch <greschd@ethz.ch>
@@ -21,12 +21,13 @@ if __name__ == "__main__":
         os.makedirs('./results')
 
     # creating the z2pack.abinit object
-    Bi2Se3 = z2pack.fp.System(['input/' + name for name in ["Bi2Se3_nscf.files", "Bi2Se3_nscf.in", "wannier90.win" ]],
-                            z2pack.fp.kpts.abinit,
-                            "Bi2Se3_nscf.in",
-                            "abinit < Bi2Se3_nscf.files >& log",
-                            executable='/bin/bash'
-                            )
+    Bi2Se3 = z2pack.fp.System(
+        ['input/' + name for name in ["Bi2Se3_nscf.files", "Bi2Se3_nscf.in", "wannier90.win" ]],
+        z2pack.fp.kpts.abinit,
+        "Bi2Se3_nscf.in",
+        "mpirun -np 7 abinit < Bi2Se3_nscf.files >& log",
+        executable='/bin/bash'
+    )
 
     # surface at k1=0
     surface_0 = Bi2Se3.surface(lambda t: [0, t / 2, 0], [0, 0, 1], pickle_file = 'results/Bi2Se3_0.txt')

@@ -70,6 +70,24 @@ class PrintFunctions(object):
                 _print(self, 'Reached minimum distance between neighbours\n\n')
             return res
         return inner
+        
+    def _add_string_at(func):
+        def inner(self, t):
+            res = func(self, t)
+            string = '{0:<5}'.format('{0:.5f}'.format(t).rstrip('0'))
+            if res:
+                _print(self, 't = {0} added\n'.format(string))
+            else:
+                _print(self, 't = {0} exists\n'.format(string))
+            return res
+        return inner
+        
+    def _var_refresh(func):
+        def inner(self):
+            _print(self, 'Setting up strings:\n-------------------\n')
+            func(self)
+            _print(self, '\nMain calculation\n----------------\n')
+        return inner
 
     def _wcc_calc_main(func):
         def inner(self):
@@ -83,7 +101,8 @@ class PrintFunctions(object):
                     value = value[:45] + '...'
                 string += key.ljust(length) + value + '\n'
             string = string[:-1]
-            _print(self, string_tools.cbox(string) + '\n')
+            _print(self, string_tools.cbox(string) + '\n\n')
+            
             #----------------computation--------------------------------#
             res = func(self)
             #----------------final output-------------------------------#

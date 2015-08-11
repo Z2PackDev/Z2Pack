@@ -78,7 +78,7 @@ class CheckpointTestCase(CommonTestCase):
         res0 = surface.get_res()
         surface.wcc_calc(verbose=False, num_strings=50, pos_tol=None, gap_tol=None, move_tol=None)
         res1 = surface.get_res()
-        self.assertFullAlmostEqual(res0, res1)
+        self.assertRaises(AssertionError, self.assertFullAlmostEqual, res0, res1)
 
     def test_load(self):
         self.createH(0.2, 0.3)

@@ -51,6 +51,7 @@ class Surface(object):
                             'between t = {0}, k = {1}\n    and t = {2}, k = {3}'),
             logger.ConvFail('move check',
                             'between t = {0}, k = {1}\n    and t = {2}, k = {3}'))
+        self._var_init()
 
     def wcc_calc(
         self,
@@ -128,7 +129,7 @@ class Surface(object):
         a failed convergence (reaching lower limit) also produces
         'true'
         """
-        self._var_init()
+        self._var_refresh()
         while not all(self._neighbour_check):
             for i, t in enumerate(self._t_points):
                 if not self._string_status[i]:
@@ -153,24 +154,31 @@ class Surface(object):
             # iterator shouldn't be deleted (used for first step also)
             # instead, it is modified to reflect pos_tol=None
             self._current['iterator'] = [next(self._current['iterator'])]
-        if (self._current['gap_tol'] is None) and (self._current['move_tol'] is None):
-            del self._current['min_neighbour_dist']
 
     def _var_init(self):
         """
         initialization - creating data containers
         """
-        if (not hasattr(self, '_line_list')) or self._current['overwrite']:
-            # the Line objects
-            self._line_list = [None for _ in range(self._current['num_strings'])]
-            self._t_points = list(np.linspace(0., 1., self._current['num_strings'],
-                                              endpoint=True))
-            self._kpt_list = [self._param_fct(t, 0.) for t in self._t_points]
-            self._gaps = [None for i in range(self._current['num_strings'])]
-            self._gapsize = [None for i in range(self._current['num_strings'])]
+        self._line_list = []
+        self._t_points = []
+        self._kpt_list = []
+        self._gaps = []
+        self._gapsize = []
+        self._neighbour_check = []
+        self._string_status = []
+
+    @prt_dispatcher
+    def _var_refresh(self):
+        """
+        refresh variables for wcc_calc
+        """
+        if self._current['overwrite']:
+            self._var_init()
         # this is DELIBERATELY always overwritten to allow changing the
-        # move_tol, gap_tol, pos_tol parameters between reloaded runs.
+        # move_tol, gap_tol, pos_tol, num_strings parameters between reloaded runs.
         # It is inexpensive to recreate in the opposite case.
+        for t in np.linspace(0., 1., self._current['num_strings'], endpoint=True):
+            self._add_string_at(t)
         self._neighbour_check = [False for i in
                                  range(len(self._line_list) - 1)]
         self._string_status = [False for i in
@@ -224,9 +232,40 @@ class Surface(object):
         return neighbour_check, move_check
 
     @prt_dispatcher
+    def _add_string_at(self, t):
+        r"""
+        Adds a string at a specific pumping parameter t. Returns False if it failed due to the minimum neighbour distance, True else.
+        """
+        for i, tval in enumerate(self._t_points):
+            if tval > t:
+                pos = i
+                break
+        else:
+            pos = len(self._t_points)
+        # check if string already exists (up to min_neighbour_dist tolerance)
+        try:
+            if abs(self._t_points[pos - 1] - t) < self._current['min_neighbour_dist']:
+                return False
+        except IndexError:
+            pass
+        try:
+            if abs(self._t_points[pos] - t) < self._current['min_neighbour_dist']:
+                return False
+        except IndexError:
+            pass
+        self._neighbour_check.insert(pos, False)
+        self._string_status.insert(pos, False)
+        self._t_points.insert(pos, t)
+        self._kpt_list.insert(pos, self._param_fct(self._t_points[pos], 0.))
+        self._line_list.insert(pos, None)
+        self._gaps.insert(pos, None)
+        self._gapsize.insert(pos, None)
+        return True
+
+    @prt_dispatcher
     def _add_string(self, i):
         """
-        Adds a string between i and i + 1. returns False if it failed
+        Adds a string between i and i + 1. Returns False if it failed
         due to the minimum neighbour distance, True else.
         """
         if(self._t_points[i + 1] - self._t_points[i] <

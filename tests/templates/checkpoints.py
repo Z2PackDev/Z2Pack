@@ -13,7 +13,7 @@ import types
 import shutil
 import platform
 
-class CheckpointTestCase(CommonTestCase):
+class CheckpointTestCase(BuildDirTestCase):
     def __init__(self, *args, **kwargs):
         if(re.match('Windows', platform.platform(), re.IGNORECASE)):
             self._sep = '\\'

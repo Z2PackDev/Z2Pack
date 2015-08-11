@@ -148,6 +148,9 @@ class Surface(object):
         if self._current['num_strings'] < 2:
             raise ValueError("num_strings must be at least 2")
 
+        if self._current['min_neighbour_dist'] * (self._current['num_strings'] - 1) > 1:
+            warnings.warn('The input for \'min_neighbour_dist\' is larger than the spacing between the \'num_strings\' initial strings. This means that not all strings will actually be created. Decrease min_neighbour_dist or num_strings to solve this issue.', UserWarning, stacklevel=3)
+
         if self._current['pos_tol'] is None:
             if not hasattr(self._current['iterator'], '__next__'):
                 self._current['iterator'] = iter(self._current['iterator'])

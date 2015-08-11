@@ -13,7 +13,7 @@ import types
 import shutil
 import platform
 
-class CheckpointTestCase(CommonTestCase):
+class CheckpointTestCase(BuildDirTestCase):
     def __init__(self, *args, **kwargs):
         if(re.match('Windows', platform.platform(), re.IGNORECASE)):
             self._sep = '\\'
@@ -78,6 +78,7 @@ class CheckpointTestCase(CommonTestCase):
         res0 = surface.get_res()
         surface.wcc_calc(verbose=False, num_strings=50, pos_tol=None, gap_tol=None, move_tol=None)
         res1 = surface.get_res()
+        # test inverted after changing reload behaviour
         self.assertRaises(AssertionError, self.assertFullAlmostEqual, res0, res1)
 
     def test_load(self):

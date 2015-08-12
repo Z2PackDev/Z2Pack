@@ -21,10 +21,10 @@ if __name__ == "__main__":
         os.makedirs('./results')
 
     # creating the z2pack.abinit object
-    Bi2Se3 = z2pack.fp.System(['input/' + name for name in ["Bi2Se3_nscf.files", "Bi2Se3_nscf.in", "wannier90.win" ]],
+    Bi2Se3 = z2pack.fp.System(['input/' + name for name in ["Bi2Se3_nscf.files", "Bi2Se3_nscf.in", "w90.win", "w.win"]],
                             z2pack.fp.kpts.abinit,
                             "Bi2Se3_nscf.in",
-                            "abinit < Bi2Se3_nscf.files >& log",
+                            "mpirun $ABINIT < Bi2Se3_nscf.files >& log",
                             executable='/bin/bash'
                             )
 

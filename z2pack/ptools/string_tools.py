@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Author:  Dominik Gresch <greschd@gmx.ch>
 # Date:    06.07.2014 20:20:43 CEST

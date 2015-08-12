@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Author:  Gabriel Autes, Dominik Gresch <greschd@gmx.ch>
@@ -18,7 +18,7 @@ qedir = '/home/greschd/software/espresso-5.1.2/bin/'
 wandir = '/home/greschd/software/wannier90-1.2'
 
 # Commands to run pw, pw2wannier90, wannier90
-mpirun = 'mpirun -np 4 '
+mpirun = 'mpirun -np 7 '
 pwcmd = mpirun + qedir + '/pw.x '
 pw2wancmd = mpirun + qedir + '/pw2wannier90.x '
 wancmd = wandir + '/wannier90.x'
@@ -73,7 +73,7 @@ surface_1 = system.surface(lambda t: [0.5, t / 2., 0], [0, 0, 1],
 
 # WCC calculation - standard settings
 surface_0.load(quiet=True)
-surface_0.wcc_calc()    
+surface_0.wcc_calc()  
 surface_1.load(quiet=True)
 surface_1.wcc_calc()
 

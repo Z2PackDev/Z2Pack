@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Author:  Dominik Gresch <greschd@gmx.ch>
@@ -111,7 +111,12 @@ class Surface(object):
         :returns:                   ``None``. Use :meth:`get_res` and
             :meth:`z2` to get the results.
         """
-        self._current = {key: value for key, value in locals().items() if key != 'self'}
+        # Python 2.6: no dict comprehension!
+        #~ self._current = {key: value for key, value in locals().items() if key != 'self'}
+        self._current = {}
+        for key, value in locals().items():
+            if key != 'self':
+                self._current[key] = value
         self._param_check()
         self._log.reset()
         self._wcc_calc_main()

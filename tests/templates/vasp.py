@@ -1,8 +1,9 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Author:  Dominik Gresch <greschd@gmx.ch>
 # Date:    15.10.2014 14:49:25 CEST
-# File:    fp_phony.py
+# File:    vasp.py
 
 from common import *
 

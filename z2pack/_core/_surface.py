@@ -490,7 +490,8 @@ class Surface(object):
 
         if self._pickle_file is not None:
             with open(self._pickle_file, "wb") as f:
-                pickle.dump(data, f)
+                # protocol=2 makes the data cross-compatible between p2 and p3
+                pickle.dump(data, f, protocol=2)
 
     def load(self, quiet=False):
         r"""

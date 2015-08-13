@@ -612,7 +612,7 @@ class Surface(object):
 
         if self._current['pickle_file'] is not None:
             with open(self._current['pickle_file'], "wb") as f:
-                pickle.dump(data, f)
+                pickle.dump(data, f, protocol=2)
 
     def load(self, quiet=False):
         r"""

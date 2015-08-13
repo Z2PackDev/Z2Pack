@@ -477,12 +477,15 @@ class Surface(object):
         return {'chern': sum(delta_pol), 'pol': pol, 'step': delta_pol}
 
     # pickle: save and load
-    def save(self):
+    def save(self, protocol=pickle.HIGHEST_PROTOCOL):
         """
         Saves the data (t-points, k-points, wcc, gaps, gap sizes,
         lambda matrices, string statuses) to a pickle file.
+        
+        .. note:: This only works if ``pickle_file`` is not ``None`` and the path to ``pickle_file`` exists.
 
-        Only works if ``pickle_file`` is not ``None`` and the path to ``pickle_file`` exists.
+        :param protocol:    Which pickle protocol to use (gets forwarded to ``pickle.dump``). Choose ``protocol=2`` if you need your pickle files to be cross-compatible between Python 2.x and 3.x. Per default, the newest (best optimized) protocol available is used.
+        :type protocol:     int
         """
 
         to_save = ['_t_points', '_kpt_list', '_gaps', '_gapsize', '_line_list']
@@ -490,8 +493,7 @@ class Surface(object):
 
         if self._pickle_file is not None:
             with open(self._pickle_file, "wb") as f:
-                # protocol=2 makes the data cross-compatible between p2 and p3
-                pickle.dump(data, f, protocol=2)
+                pickle.dump(data, f, protocol=protocol)
 
     def load(self, quiet=False):
         r"""

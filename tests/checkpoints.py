@@ -13,21 +13,10 @@ import types
 import shutil
 import platform
 
-class CheckpointTestCase(CommonTestCase):
+class CheckpointTestCase(BuildDirTestCase):
     def __init__(self, *args, **kwargs):
-        if(re.match('Windows', platform.platform(), re.IGNORECASE)):
-            self._sep = '\\'
-        else:
-            self._sep = '/'
-        self.build_folder = 'build' + self._sep + 'checkpoints'
-        try:
-            shutil.rmtree(self.build_folder)
-        except OSError:
-            pass
-        os.mkdir(self.build_folder)
-        self.pickle_file = self.build_folder + self._sep + 'chkpt.txt'
-
         super(CheckpointTestCase, self).__init__(*args, **kwargs)
+        self.pickle_file = self._build_folder + '/chkpt.txt'
         
     def createH(self, t1, t2):
 

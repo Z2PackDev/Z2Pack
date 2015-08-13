@@ -32,8 +32,10 @@ if __name__ == "__main__":
 
     # surface at k1=0
     surface_0 = Bi2Se3.surface(lambda t: [0, t / 2, 0], [0, 0, 1], pickle_file = 'results/Bi2Se3_0.txt')
+    surface_0.load(quiet=True)
     surface_0.wcc_calc()
 
     # surface at k1=Pi
     surface_1 = Bi2Se3.surface(lambda t: [0.5, t / 2, 0], [0, 0, 1], pickle_file = 'results/Bi2Se3_1.txt')
+    surface_1.load(quiet=True)
     surface_1.wcc_calc()

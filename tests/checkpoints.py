@@ -54,8 +54,10 @@ class CheckpointTestCase(BuildDirTestCase):
         system = z2pack.em.tb.System(self.model)
         surface = system.surface(lambda kx, ky: [kx / 2, ky, 0], pickle_file=self.pickle_file)
         surface.wcc_calc(verbose=False, num_strings=20, pos_tol=None, gap_tol=None, move_tol=None)
+        #~ print(surface._num_iter)
         res0 = surface.get_res()
         surface.wcc_calc(verbose=False, num_strings=20, pos_tol=1e-23, gap_tol=None, move_tol=None)
+        #~ print(surface._num_iter)
         res1 = surface.get_res()
         self.assertRaises(AssertionError, self.assertFullAlmostEqual, res0, res1)
 

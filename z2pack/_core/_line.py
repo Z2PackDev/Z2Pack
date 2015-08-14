@@ -85,6 +85,11 @@ class Line(object):
 
         # COMPUTATION
         self._getwcc()
+        assert(hasattr(self, 'wcc'))
+        assert(hasattr(self, 'lambda_'))
+        assert(hasattr(self, '_num_iter'))
+        assert(hasattr(self, '_converged'))
+        assert(hasattr(self, '_max_move'))
 
         # FINAL OUTPUT
         # reduced & full
@@ -156,9 +161,11 @@ class Line(object):
                     print('Number of k-points matches previous run. Skipping calculation.')
                 return
             else:
-                x, _, lambda_ = self._trywcc(self._get_m(N))
-                converged = True
-                max_move = 1.
+                self.wcc, _, self.lambda_ = self._trywcc(self._get_m(N))
+                self._converged = True
+                self._max_move = 1.
+                self._num_iter = N
+                return
         else:
             # catch restart
             if self.wcc is not None:
@@ -169,7 +176,6 @@ class Line(object):
                     return
                 # else fast-forward to N > previous max
                 else:
-                    x = self.wcc
                     while N <= self._num_iter:
                         try:
                             N = next(iterator)
@@ -182,23 +188,15 @@ class Line(object):
                         print('fast-forwarding to N = {0}.'.format(N))
             # no restart
             else:
-                x, _, lambda_ = self._trywcc(self._get_m(N))
+                self.wcc, _, self.lambda_ = self._trywcc(self._get_m(N))
 
-            for N in iterator:
-                xold = copy.copy(x)
-                x, _, lambda_ = self._trywcc(self._get_m(N))
-
+            for self._num_iter in iterator:
+                wcc_old = copy.copy(self.wcc)
+                self.wcc, _, self.lambda_ = self._trywcc(self._get_m(self._num_iter))
                 # break conditions
-                converged, max_move = _convcheck(x, xold, self._kwargs['pos_tol'])
-                if converged:  # success
+                self._converged, self._max_move = _convcheck(self.wcc, wcc_old, self._kwargs['pos_tol'])
+                if self._converged:  # success
                     break
-
-        # save results to Line object
-        self.wcc = sorted(x)
-        self.lambda_ = lambda_
-        self._converged = converged
-        self._max_move = max_move
-        self._num_iter = N
 
     def _trywcc(self, all_m):
         """

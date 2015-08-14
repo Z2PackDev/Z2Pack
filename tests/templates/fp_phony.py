@@ -56,7 +56,6 @@ class FpPhonyTestCase(BuildDirTestCase):
             mmn_path='varw90.mmn')
 
         surface = sys.surface(lambda kx: [0, kx / 2, 0], [0, 0, 1], pickle_file=None)
-
         self.assertRaises(ValueError, surface.wcc_calc, verbose=False)
         self.assertFullAlmostEqual(
             surface.get_res(), in_place_replace(surface.get_res()))

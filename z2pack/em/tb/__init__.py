@@ -8,6 +8,8 @@
 r"""
 The :mod:`z2pack.em.tb` module contains classes related to tight-binding
 effective models.
+
+.. codeauthor:: Dominik Gresch <greschd@gmx.ch>
 """
 
 from ._tb_model import Model

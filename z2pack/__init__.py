@@ -11,6 +11,8 @@ specialisations of Z2Pack (first-principles, tight-binding), and interfaces \
 to those. It contains the classes System (which acts as hook for the \
 specialisations) and Surface (responsible for all the calculations / \
 plots etc.)
+
+.. codeauthor:: Dominik Gresch <greschd@gmx.ch>
 """
 
 from ._version import __version__

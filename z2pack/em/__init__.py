@@ -7,7 +7,9 @@
 
 
 """
-The em (effective models) module 
+The em (effective models) module
+
+.. codeauthor:: Dominik Gresch <greschd@gmx.ch>
 """
 
 from ._effective_model import System

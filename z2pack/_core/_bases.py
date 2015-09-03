@@ -46,15 +46,6 @@ class _AttributeCheck(six.with_metaclass(abc.ABCMeta, object)):
 
         super(_AttributeCheck, self).__init__(*args, **kwargs)
 
-    @classmethod
-    def __subclasshook__(cls, C):
-        """
-        Checks if C has all the required attributed that cls has.
-        """
-        for attrib in cls._required_attribs:
-            if attrib not in C._required_attribs:
-                return False
-
 class Surface(_AttributeCheck):
     r"""
     Abstract base class for Z2Pack Surface classes. Note that surfaces can be defined as a function only, but they may have reduced functionality.
@@ -68,15 +59,6 @@ class Surface(_AttributeCheck):
         """
         raise NotImplemented
 
-    @classmethod
-    def __subclasshook__(cls, C):
-        """
-        Checks for the existence of a __call__ method.
-        """
-        if not '__call__' in [mem[0] for mem in inspect.getmembers(C, predicate=inspect.ismethod)]:
-            return False
-        return super(Surface, cls).__subclasshook__(C)
-    
 class Line(_AttributeCheck):
     r"""
     Abstract base class for Z2Pack Line classes. Note that surfaces can be defined as a function only, but they may have reduced functionality.

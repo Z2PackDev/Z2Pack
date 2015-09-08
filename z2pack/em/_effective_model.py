@@ -62,7 +62,7 @@ class System(_Z2PackSystem):
         else:
             self._occ = occ
 
-    def _m_handle(self, kpt):
+    def get_m(self, kpt):
         """
         returns:        M-matrices
         """

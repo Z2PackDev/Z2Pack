@@ -51,22 +51,22 @@ def run_line(
     :param werr:    Determines whether warnings should raise Errors.
     :type werr:     bool
     """
-    impl = _RunLineImpl(
-        system=system,
-        line=line,
-        pos_tol=pos_tol,
-        iterator=iterator,
-        verbose=verbose,
-        result=result,
-        werr=werr
-    )
-    return impl.run()
+    return _RunLineImpl(**locals()).run()
 
 class _RunLineImpl(object):
     """
     Implementation of the run_line function.
     """
-    def __init__(self, system, line, pos_tol, iterator, verbose, result, werr):
+    def __init__(
+        self,
+        system,
+        line,
+        pos_tol,
+        iterator,
+        verbose,
+        result,
+        werr
+    ):
         self.get_m = lambda N: system.get_m(self._get_kpt(N))
         self.line = line
         self.pos_tol = pos_tol
@@ -99,11 +99,6 @@ class _RunLineImpl(object):
                 self.descriptor[name] = obj.descriptor
             except AttributeError:
                 self.descriptor[name] = None
-                
-        # ---- CREATE PRINT_VARS ----
-        if self.verbosity == 'full':
-            iterator, self.iterator = itertools.tee(self.iterator, 2)
-            self.print_vars = {'pos_tol': self.pos_tol, 'iterator': list(iterator), 'verbose': self.verbosity, 'werr': self.werr, 'descriptor': self.descriptor}
         
         # ---- CREATE LineResult ----
         if result is None:
@@ -116,8 +111,13 @@ class _RunLineImpl(object):
                 if werr:
                     raise ValueError(msg)
                 else:
-                    warnings.warng(msg)
+                    warnings.warn(msg)
             self.result = result
+                
+        # ---- CREATE PRINT_VARS ----
+        if self.verbosity == 'full':
+            iterator, self.iterator = itertools.tee(self.iterator, 2)
+            self.print_vars = {'pos_tol': self.pos_tol, 'iterator': list(iterator), 'verbose': self.verbosity, 'werr': self.werr, 'descriptor': self.descriptor}
 
     def run(self):
         """

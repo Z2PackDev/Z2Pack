@@ -118,7 +118,6 @@ class _RunLineImpl(object):
                 else:
                     warnings.warng(msg)
             self.result = result
-        
 
     def run(self):
         """

@@ -10,22 +10,48 @@ class SurfaceResult(object):
     r"""
     Result class for surface calculations.
     """
-    def __init__(self):
-        # Think: which are 'essential', which derived -> keep essential ones only.
+    def __init__(self, descriptor):
         self._t_points = []
-        self._kpt_list = [] # what is this?
-        self._gaps = []
-        self._gapsize = []
-        self._line_list = []
-        # probably only keep _line_list and _t_points
+        self._lines = []
+        self.descriptor = descriptor
 
+    def __getattr__(self, key):
+        if key == 'result':
+            return zip(self._t_points, self._lines)
+
+    def __getitem__(self, t):
+        try:
+            return self._lines[self._t_points.index(t)]
+        except ValueError:
+            raise KeyError('Line for t={} does not exist'.format(t))
+
+    def __setitem__(self, t, line):
+        tval = float(t)
+        # this means that lines are effectively "write-protected"
+        # except if they are manipulated from within
+        if tval in self._t_points:
+            raise ValueError('Cannot insert line at t={}: Line exists'.format(tval))
+        assert(isinstance(line, LineResult))
+        self._t_points.append(tval)
+        self._t_points = sorted(self._t_points)
+        self._lines.insert(self._t_points.index(tval), line)
+    
 class LineResult(object):
     r"""
     Result class for line calculations.
     """
-    def __init__(self):
+    def __init__(self, descriptor):
         self.wcc = None
         self.lambda_ = None
-        self._converged = None
-        self._max_move = None
-        self._num_iter = None
+        self.converged = None
+        self.max_move = None
+        self.num_iter = None
+        self.descriptor = descriptor
+
+    def set(self, wcc, lambda_, converged, max_move, num_iter):
+        self.wcc = wcc
+        self.lambda_ = lambda_
+        self.converged = converged
+        self.max_move = max_move
+        self.num_iter = num_iter
+

@@ -42,14 +42,18 @@ class LineResult(object):
     """
     def __init__(self, descriptor):
         self.wcc = None
+        self.gap = None
+        self.gapsize = None
         self.lambda_ = None
         self.converged = None
         self.max_move = None
         self.num_iter = None
         self.descriptor = descriptor
 
-    def set(self, wcc, lambda_, converged, max_move, num_iter):
+    def set(self, wcc, gap, gapsize, lambda_, converged, max_move, num_iter):
         self.wcc = wcc
+        self.gap = gap
+        self.gapsize = gapsize
         self.lambda_ = lambda_
         self.converged = converged
         self.max_move = max_move

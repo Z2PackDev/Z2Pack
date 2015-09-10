@@ -102,7 +102,7 @@ class _RunLineImpl(object):
         
         # ---- CREATE LineResult ----
         if result is None:
-            self.result = LineResult(self.descriptor['line'])
+            self.result = LineResult(self.descriptor)
         else:
             if not isinstance(result, LineResult):
                 raise TypeError('Invalid type of line result: {0}, must be LineResult'.format(type(result)))
@@ -229,7 +229,8 @@ class _RunLineImpl(object):
                 converged, max_move = _convcheck(wcc, wcc_old, self.pos_tol)
                 if converged:  # success
                     break
-        self.result.set(wcc=wcc, lambda_=lambda_, converged=converged, max_move=max_move, num_iter=num_iter)
+        gap, gapsize = self._get_gap(wcc)
+        self.result.set(wcc=wcc, lambda_=lambda_, gap=gap, gapsize=gapsize, converged=converged, max_move=max_move, num_iter=num_iter)
 
     def _trywcc(self, all_m):
         """
@@ -269,6 +270,25 @@ class _RunLineImpl(object):
         #--------end printout---------------------------------------#
         return wcc, min_sv, lambda_
 
+    def _get_gap(self, wcc):
+        """
+        Returns (gap position, gap size).
+        """
+        wcc = sorted(wcc)
+        gapsize = 0
+        gappos = 0
+        N = len(wcc)
+        for i in range(0, N - 1):
+            temp = wcc[i + 1] - wcc[i]
+            if temp > gapsize:
+                gapsize = temp
+                gappos = i
+        temp = wcc[0] - wcc[-1] + 1
+        if temp > gapsize:
+            gapsize = temp
+            gappos = N - 1
+        return (wcc[gappos] + gapsize / 2) % 1, gapsize
+
     def _get_kpt(self, N):
         """
         Gets the k-points INCLUDING the last one
@@ -277,4 +297,3 @@ class _RunLineImpl(object):
 
     #----------------END OF SUPPORT FUNCTIONS---------------------------#
 
-    

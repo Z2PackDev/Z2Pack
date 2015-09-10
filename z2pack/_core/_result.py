@@ -5,6 +5,7 @@
 # Date:    03.09.2015 12:00:27 CEST
 # File:    _result.py
 
+import copy
 
 class SurfaceResult(object):
     r"""
@@ -13,7 +14,10 @@ class SurfaceResult(object):
     def __init__(self, descriptor):
         self._t_points = []
         self._lines = []
-        self.descriptor = descriptor
+        self.descriptor = copy.deepcopy(descriptor)
+
+    def has_line(self, t):
+        return t in self._t_points
 
     def __getattr__(self, key):
         if key == 'result':
@@ -23,14 +27,19 @@ class SurfaceResult(object):
         try:
             return self._lines[self._t_points.index(t)]
         except ValueError:
+            #~ return None
             raise KeyError('Line for t={} does not exist'.format(t))
+
+    @property
+    def num_lines(self):
+        return len(self._t_points)
 
     def __setitem__(self, t, line):
         tval = float(t)
-        # this means that lines are effectively "write-protected"
-        # except if they are manipulated from within
-        if tval in self._t_points:
-            raise ValueError('Cannot insert line at t={}: Line exists'.format(tval))
+        #~ # this means that lines are effectively "write-protected"
+        #~ # except if they are manipulated from within
+        #~ if tval in self._t_points:
+            #~ raise ValueError('Cannot insert line at t={}: Line exists'.format(tval))
         assert(isinstance(line, LineResult))
         self._t_points.append(tval)
         self._t_points = sorted(self._t_points)
@@ -48,7 +57,7 @@ class LineResult(object):
         self.converged = None
         self.max_move = None
         self.num_iter = None
-        self.descriptor = descriptor
+        self.descriptor = copy.deepcopy(descriptor)
 
     def set(self, wcc, gap, gapsize, lambda_, converged, max_move, num_iter):
         self.wcc = wcc

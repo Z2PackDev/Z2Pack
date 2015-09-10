@@ -207,13 +207,25 @@ class _RunSurfaceImpl(object):
         """
         initialization - creating data containers
         """
-        #~ self._line_list = []
-        #~ self._t_points = []
-        #~ self._kpt_list = []
-        #~ self._gaps = []
-        #~ self._gapsize = []
-        self._neighbour_check = []
-        self._string_status = []
+        self._neighbour_check = [False] * self.result.num_lines
+        self._string_status = [False] * self.result.num_lines
+        self._t_values = []
+        self._insert_lines(np.linspace(0, 1, self.num_strings))
+
+    def _insert_lines(self, t_values):
+        """
+        Inserts lines (if possible) at the given t values.
+        """
+        for tval in t_values:
+            # add to _t_values and _neighbour_checks
+            assert(tval not in self._t_values)
+            self._t_values.append(tval)
+            self._t_values = sorted(self._t_values)
+            self._neighbour_check.insert(self._t_points.index(tval), False)
+
+            #~ # add line to results
+            #~ if not self.result.has_line(tval):
+                #~ self.result[tval] = LineResult()    
 
     def _raise_werr(self, msg, err_type=ValueError, w_type=UserWarning, w_stacklevel=3):
         r"""
@@ -223,25 +235,46 @@ class _RunSurfaceImpl(object):
             raise err_type(msg)
         else:
             warnings.warn(msg, w_type, stacklevel=w_stacklevel)
-            
 
 #----------------------- END OF INIT FUNCTIONS -------------------------#
 
     def run(self):
-        
-
         self._run_main()
         return self.result
 
     def _run_main(self):
-        pass
+        while not all(self._neighbour_check):
+            # calculate all current t_values
+            for t, status in self._t_values:
+                if not status:
+                    if self.result.has_line(t):
+                        # run with result as input
+                        self.result[t] = run_line(..., result=self.result[t])
+                    else:
+                        descriptor = {'system': self.descriptor['system'], 'line': {'surface': self.descriptor['surface'], 't_value': tval= {'system': self.descriptor['system'], 'line': {'surface': self.descriptor['surface'], 't_value': tval}}
+                        # TODO: Surface to Line, start line calculation
+                        self.result[t] = run_line()
+
+            # neighbour check: find new t-values
+            new_t = []
+            for i in range(len(self._neighbour_check)):
+                # re-check
+                if not self._neighbour_check[i]:
+                    if self._gap_check(i):
+                        if self._move_check(i):
+                            self._neighbour_check[i] = True
+                            continue # no need to insert t-value
+
+                new_t.append((self._t_values[i] + self._t_values[i + 1]) / 2.)
+
+            # add the new lines
+            self._insert_lines(new_t)
 
     def _save(self, protocol=pickle.HIGHEST_PROTOCOL):
         if self.pfile is not None:
             with open(self.pfile, 'wb') as f:
                 pickle.dump(self.result, f)
 
-    
 #-----------------------------------------------------------------------#
 
     #-------------------------------------------------------------------#
@@ -412,162 +445,154 @@ class old(object):
         """
         return str(self._log)
 
-    @decorator.decorator
-    def _plot(func, self, show, axis, *args, **kwargs):
-        import matplotlib
-        import matplotlib.cbook
-        import matplotlib.pyplot as plt
-        if axis is None:
-            return_fig = True
-            fig = plt.figure()
-            axis = fig.add_subplot(111)
-        else:
-            return_fig = False
-        axis.set_ylim(0, 1)
-        axis.set_xlim(-0.01, 1.01)
-        axis.set_xticks(self._t_points, minor=True)
-        func(self, show, axis, *args, **kwargs)
-        if show:
-            plt.show()
-        if return_fig:
-            return fig
-
-    @_plot
-    def wcc_plot(
-        self,
-        show=True,
-        axis=None,
-        shift=0,
-        wcc_settings={'s': 50., 'lw': 1., 'facecolor': 'none'},
-        gaps=True,
-        gap_settings={'marker': 'D', 'color': 'b', 'linestyle': 'none'}
-    ):
-        r"""
-        Plots the WCCs and the largest gaps (y-axis) against the t-points
-        (x-axis).
-
-        :param show:    Toggles showing the plot
-        :type show:     bool
-
-        :param ax:      Axis where the plot is drawn
-        :type ax:       :mod:`matplotlib` ``axis``
-
-        :param shift:   Shifts the plot in the y-axis
-        :type shift:    float
-
-        :param wcc_settings:    Keyword arguments for the scatter plot of the wcc
-            positions.
-        :type wcc_settings:     dict
-
-        :param gaps:    Controls whether the largest gaps are printed.
-            Default: ``True``
-        :type gaps:     bool
-
-        :param gap_settings:    Keyword arguments for the plot of the gap
-            positions.
-        :type gap_settings:     dict
-
-        :returns:       :class:`matplotlib figure` instance (only if
-            ``ax == None``)
-        """
-        if gaps:
-            for offset in [-1, 0, 1]:
-                axis.plot(self._t_points, [(x + shift) % 1 + offset for x in self._gaps], **gap_settings)
-        for i, kpt in enumerate(self._t_points):
-            for offset in [-1, 0, 1]:
-                axis.scatter([kpt] * len(self._line_list[i].wcc),
-                             [(x + shift) % 1 + offset for x in self._line_list[i].wcc],
-                             **wcc_settings)
-
-    def plot(self, *args, **kwargs):
-        r"""
-        Deprecated alias for :meth:`wcc_plot`.
-        """
-        warnings.warn('Using deprecated function plot. Use wcc_plot instead.',
-                      DeprecationWarning, stacklevel=2)
-        return self.wcc_plot(*args, **kwargs)
-
-    @_plot
-    def chern_plot(
-        self,
-        show=True,
-        axis=None,
-        settings={'marker': 'o', 'markerfacecolor': 'r', 'color': 'r'},
-    ):
-        r"""
-        Plots the evolution of the polarization (sum of WCC) along the
-        surface against the t-points.
-
-        :param show:    Toggles showing the plot
-        :type show:     bool
-
-        :param ax:      Axis where the plot is drawn
-        :type ax:       :mod:`matplotlib` ``axis``
-
-        :param settings:    Keyword arguments passed to ``matplotlib.pyplot.plot()``
-        :type settings:     dict
-        """
-        res = self.chern()
-        pol = res['pol']
-        steps = res['step']
-        for offset in [-1, 0, 1]:
-            for i in range(len(pol) - 1):
-                axis.plot(self._t_points[i:i+2], [pol[i] + offset, pol[i] + steps[i] + offset], **settings)
-            for i in range(len(pol) - 1):
-                axis.plot(self._t_points[i:i+2], [pol[i + 1] - steps[i] + offset, pol[i + 1] + offset], **settings)
-
-    def get_res(self):
-        """
-        Returns a ``dict`` with the following keys: ``t_par``, the \
-        pumping parameters t used (at which the WCCs were \
-        computed), ``kpt`` The list of starting points for each k-point\
-         string, ``wcc``, the WCC positions at each of those positions, \
-        ``gap`` the positions of the largest gap in each string and \
-        ``lambda``, a list of Gamma matrices for each string.
-        """
-        return {'t_par': self._t_points, 'kpt': self._kpt_list, 'wcc': [line.wcc if line is not None else None for line in self._line_list], 'gap': self._gaps, 'lambda_': [line.lambda_ if line is not None else None for line in self._line_list]}
-
-    def z2(self):
-        """
-        Calculates the Z2 topological invariant.
-
-        :returns:   Z2 topological invariant
-        :rtype:     int
-        """
-        try:
-            inv = 1
-            for i in range(0, len(self._line_list)-1):
-                for j in range(0, len(self._line_list[0].wcc)):
-                    inv *= _sgng(self._gaps[i],
-                                 self._gaps[i+1],
-                                 self._line_list[i+1].wcc[j])
-
-            return 1 if inv == -1 else 0
-        except (NameError, AttributeError):
-            raise RuntimeError('WCC not yet calculated')
-
-    def invariant(self):
-        r"""
-        Deprecated alias for :meth:`z2`.
-        """
-        warnings.warn('Using deprecated function invariant. Use z2 instead.',
-                      DeprecationWarning, stacklevel=2)
-        return self.z2()
-
-    def chern(self):
-        r"""
-        Calculates the evolution of polarization (sum of WCC) along the
-        pumping cycle, as well as the Chern number. To estimate convergence,
-        the largest jump in polarization is also calculated.
-
-        :returns:   A ``dict`` containing Chern number (``chern``), polarization evolution (``pol``), and the steps between the polarization values (``step``).
-        """
-        pol = [sum(line.wcc) % 1 for line in self._line_list]
-        delta_pol = []
-        for i in range(len(pol) - 1):
-            diff = pol[i + 1] - pol[i]
-            delta_pol.append(min([diff, diff + 1, diff - 1], key=abs))
-        return {'chern': sum(delta_pol), 'pol': pol, 'step': delta_pol}
+    #~ @decorator.decorator
+    #~ def _plot(func, self, show, axis, *args, **kwargs):
+        #~ import matplotlib
+        #~ import matplotlib.cbook
+        #~ import matplotlib.pyplot as plt
+        #~ if axis is None:
+            #~ return_fig = True
+            #~ fig = plt.figure()
+            #~ axis = fig.add_subplot(111)
+        #~ else:
+            #~ return_fig = False
+        #~ axis.set_ylim(0, 1)
+        #~ axis.set_xlim(-0.01, 1.01)
+        #~ axis.set_xticks(self._t_points, minor=True)
+        #~ func(self, show, axis, *args, **kwargs)
+        #~ if show:
+            #~ plt.show()
+        #~ if return_fig:
+            #~ return fig
+#~ 
+    #~ @_plot
+    #~ def wcc_plot(
+        #~ self,
+        #~ show=True,
+        #~ axis=None,
+        #~ shift=0,
+        #~ wcc_settings={'s': 50., 'lw': 1., 'facecolor': 'none'},
+        #~ gaps=True,
+        #~ gap_settings={'marker': 'D', 'color': 'b', 'linestyle': 'none'}
+    #~ ):
+        #~ r"""
+        #~ Plots the WCCs and the largest gaps (y-axis) against the t-points
+        #~ (x-axis).
+#~ 
+        #~ :param show:    Toggles showing the plot
+        #~ :type show:     bool
+#~ 
+        #~ :param ax:      Axis where the plot is drawn
+        #~ :type ax:       :mod:`matplotlib` ``axis``
+#~ 
+        #~ :param shift:   Shifts the plot in the y-axis
+        #~ :type shift:    float
+#~ 
+        #~ :param wcc_settings:    Keyword arguments for the scatter plot of the wcc
+            #~ positions.
+        #~ :type wcc_settings:     dict
+#~ 
+        #~ :param gaps:    Controls whether the largest gaps are printed.
+            #~ Default: ``True``
+        #~ :type gaps:     bool
+#~ 
+        #~ :param gap_settings:    Keyword arguments for the plot of the gap
+            #~ positions.
+        #~ :type gap_settings:     dict
+#~ 
+        #~ :returns:       :class:`matplotlib figure` instance (only if
+            #~ ``ax == None``)
+        #~ """
+        #~ if gaps:
+            #~ for offset in [-1, 0, 1]:
+                #~ axis.plot(self._t_points, [(x + shift) % 1 + offset for x in self._gaps], **gap_settings)
+        #~ for i, kpt in enumerate(self._t_points):
+            #~ for offset in [-1, 0, 1]:
+                #~ axis.scatter([kpt] * len(self._line_list[i].wcc),
+                             #~ [(x + shift) % 1 + offset for x in self._line_list[i].wcc],
+                             #~ **wcc_settings)
+#~ 
+    #~ def plot(self, *args, **kwargs):
+        #~ r"""
+        #~ Deprecated alias for :meth:`wcc_plot`.
+        #~ """
+        #~ warnings.warn('Using deprecated function plot. Use wcc_plot instead.',
+                      #~ DeprecationWarning, stacklevel=2)
+        #~ return self.wcc_plot(*args, **kwargs)
+#~ 
+    #~ @_plot
+    #~ def chern_plot(
+        #~ self,
+        #~ show=True,
+        #~ axis=None,
+        #~ settings={'marker': 'o', 'markerfacecolor': 'r', 'color': 'r'},
+    #~ ):
+        #~ r"""
+        #~ Plots the evolution of the polarization (sum of WCC) along the
+        #~ surface against the t-points.
+#~ 
+        #~ :param show:    Toggles showing the plot
+        #~ :type show:     bool
+#~ 
+        #~ :param ax:      Axis where the plot is drawn
+        #~ :type ax:       :mod:`matplotlib` ``axis``
+#~ 
+        #~ :param settings:    Keyword arguments passed to ``matplotlib.pyplot.plot()``
+        #~ :type settings:     dict
+        #~ """
+        #~ res = self.chern()
+        #~ pol = res['pol']
+        #~ steps = res['step']
+        #~ for offset in [-1, 0, 1]:
+            #~ for i in range(len(pol) - 1):
+                #~ axis.plot(self._t_points[i:i+2], [pol[i] + offset, pol[i] + steps[i] + offset], **settings)
+            #~ for i in range(len(pol) - 1):
+                #~ axis.plot(self._t_points[i:i+2], [pol[i + 1] - steps[i] + offset, pol[i + 1] + offset], **settings)
+#~ 
+    #~ def get_res(self):
+        #~ """
+        #~ Returns a ``dict`` with the following keys: ``t_par``, the \
+        #~ pumping parameters t used (at which the WCCs were \
+        #~ computed), ``kpt`` The list of starting points for each k-point\
+         #~ string, ``wcc``, the WCC positions at each of those positions, \
+        #~ ``gap`` the positions of the largest gap in each string and \
+        #~ ``lambda``, a list of Gamma matrices for each string.
+        #~ """
+        #~ return {'t_par': self._t_points, 'kpt': self._kpt_list, 'wcc': [line.wcc if line is not None else None for line in self._line_list], 'gap': self._gaps, 'lambda_': [line.lambda_ if line is not None else None for line in self._line_list]}
+#~ 
+    #~ def z2(self):
+        #~ """
+        #~ Calculates the Z2 topological invariant.
+#~ 
+        #~ :returns:   Z2 topological invariant
+        #~ :rtype:     int
+        #~ """
+        #~ try:
+            #~ inv = 1
+            #~ for i in range(0, len(self._line_list)-1):
+                #~ for j in range(0, len(self._line_list[0].wcc)):
+                    #~ inv *= _sgng(self._gaps[i],
+                                 #~ self._gaps[i+1],
+                                 #~ self._line_list[i+1].wcc[j])
+#~ 
+            #~ return 1 if inv == -1 else 0
+        #~ except (NameError, AttributeError):
+            #~ raise RuntimeError('WCC not yet calculated')
+#~ 
+    #~ def chern(self):
+        #~ r"""
+        #~ Calculates the evolution of polarization (sum of WCC) along the
+        #~ pumping cycle, as well as the Chern number. To estimate convergence,
+        #~ the largest jump in polarization is also calculated.
+#~ 
+        #~ :returns:   A ``dict`` containing Chern number (``chern``), polarization evolution (``pol``), and the steps between the polarization values (``step``).
+        #~ """
+        #~ pol = [sum(line.wcc) % 1 for line in self._line_list]
+        #~ delta_pol = []
+        #~ for i in range(len(pol) - 1):
+            #~ diff = pol[i + 1] - pol[i]
+            #~ delta_pol.append(min([diff, diff + 1, diff - 1], key=abs))
+        #~ return {'chern': sum(delta_pol), 'pol': pol, 'step': delta_pol}
 
     #~ # pickle: save and load
     #~ def save(self, protocol=pickle.HIGHEST_PROTOCOL):

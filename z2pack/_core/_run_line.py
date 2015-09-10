@@ -91,33 +91,18 @@ class _RunLineImpl(object):
             # instead, it is modified to reflect pos_tol=None
             self.iterator = [next(self.iterator)]
             
-        # ---- CREATE DESCRIPTOR ----
-        self.descriptor = dict()
-        described_objects = [['system', system], ['line', line]]
-        for name, obj in described_objects:
-            try:
-                self.descriptor[name] = obj.descriptor
-            except AttributeError:
-                self.descriptor[name] = None
-        
         # ---- CREATE LineResult ----
         if result is None:
-            self.result = LineResult(self.descriptor)
+            self.result = LineResult()
         else:
             if not isinstance(result, LineResult):
                 raise TypeError('Invalid type of line result: {0}, must be LineResult'.format(type(result)))
-            if self.descriptor != result.descriptor:
-                msg = 'Current line descriptor {0} does not match pre-existing descriptor {1}'.format(self.descriptor, result.descriptor)
-                if werr:
-                    raise ValueError(msg)
-                else:
-                    warnings.warn(msg)
             self.result = result
                 
         # ---- CREATE PRINT_VARS ----
         if self.verbosity == 'full':
             iterator, self.iterator = itertools.tee(self.iterator, 2)
-            self.print_vars = {'pos_tol': self.pos_tol, 'iterator': list(iterator), 'verbose': self.verbosity, 'werr': self.werr, 'descriptor': self.descriptor}
+            self.print_vars = {'pos_tol': self.pos_tol, 'iterator': list(iterator), 'verbose': self.verbosity, 'werr': self.werr}
 
     def run(self):
         """

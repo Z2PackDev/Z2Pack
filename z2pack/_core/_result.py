@@ -11,10 +11,9 @@ class SurfaceResult(object):
     r"""
     Result class for surface calculations.
     """
-    def __init__(self, descriptor):
+    def __init__(self):
         self._t_points = []
         self._lines = []
-        self.descriptor = copy.deepcopy(descriptor)
 
     def has_line(self, t):
         return t in self._t_points
@@ -49,7 +48,7 @@ class LineResult(object):
     r"""
     Result class for line calculations.
     """
-    def __init__(self, descriptor):
+    def __init__(self):
         self.wcc = None
         self.gap = None
         self.gapsize = None
@@ -57,7 +56,6 @@ class LineResult(object):
         self.converged = None
         self.max_move = None
         self.num_iter = None
-        self.descriptor = copy.deepcopy(descriptor)
 
     def set(self, wcc, gap, gapsize, lambda_, converged, max_move, num_iter):
         self.wcc = wcc

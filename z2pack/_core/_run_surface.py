@@ -94,9 +94,7 @@ class _RunSurfaceImpl(object):
         self._init_kwargs(kwargs, ignore_kwargs=['result'])
         # ---- NORMALIZE ITERATOR ----
         self._init_iterator()
-        # ---- CREATE DESCRIPTOR ----
-        self._init_descriptor(system, surface)
-        # ---- CREATE RESULT - CHECK DESCRIPTOR CONSISTENCY ----
+        # ---- CREATE RESULT ----
         self._init_result(kwargs['result'])
         # ---- CONSISTENCY CHECK FOR CONVERGENCE PARAMETERS ----
         self._init_convergence_params()
@@ -129,15 +127,6 @@ class _RunSurfaceImpl(object):
             # instead, it is modified to reflect pos_tol=None
             self.iterator = [next(self.iterator)]
     
-    def _init_descriptor(self, system, surface):
-        self.descriptor = dict()
-        described_objects = [['system', system], ['surface', surface]]
-        for name, obj in described_objects:
-            try:
-                self.descriptor[name] = obj.descriptor
-            except AttributeError:
-                self.descriptor[name] = None
-    
     def _init_result(self, result):
         # try loading result if it does not exist yet
         if (result is None) and (self.pfile is not None) and (not overwrite):
@@ -151,14 +140,11 @@ class _RunSurfaceImpl(object):
         if result is None:
             result_exists = False
             if not result_exists:
-                self.result = SurfaceResult(self.descriptor['surface'])
+                self.result = SurfaceResult()
         # check pre-existing result for consistency
         else:
             if not isinstance(result, SurfaceResult):
                 raise TypeError('Invalid type of surface result: {0}, must be SurfaceResult'.format(type(result)))
-            if self.descriptor != result.descriptor:
-                msg = 'Current surface descriptor {0} does not match pre-existing descriptor {1}'.format(self.descriptor, result.descriptor)
-                self._raise_werr(msg)
             self.result = result
 
     def _init_convergence_params(self):
@@ -247,13 +233,12 @@ class _RunSurfaceImpl(object):
             # calculate all current t_values
             for t, status in self._t_values:
                 if not status:
+                    # decide if there's a result input
                     if self.result.has_line(t):
-                        # run with result as input
-                        self.result[t] = run_line(..., result=self.result[t])
+                        res = self.result[t]
                     else:
-                        descriptor = {'system': self.descriptor['system'], 'line': {'surface': self.descriptor['surface'], 't_value': tval= {'system': self.descriptor['system'], 'line': {'surface': self.descriptor['surface'], 't_value': tval}}
-                        # TODO: Surface to Line, start line calculation
-                        self.result[t] = run_line()
+                        res = None
+                    self.result[t] = run_line(self.system, lambda s: self.surface(t, s), result=res)
 
             # neighbour check: find new t-values
             new_t = []

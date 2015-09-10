@@ -26,31 +26,10 @@ class System(six.with_metaclass(abc.ABCMeta, object)):
         """
         raise NotImplemented
 
-class _AttributeCheck(six.with_metaclass(abc.ABCMeta, object)):
-    r"""
-    Base class for classes that need to check for the existence of some attributes after creating an instance.
-    """
-    def __init__(self, *args, **kwargs):
-        """
-        Check for the existence of a descriptor.
-        """
-        print(locals())
-        print(globals())
-        #~ required_attribs = ['descriptor']
-        missing_attribs = []
-        for attrib in self._required_attribs:
-            if not hasattr(self, attrib):
-                missing_attribs.append(attrib)
-        if len(missing_attribs) > 0:
-            raise TypeError('Surface cannot be instanitated without required attribute(s) ' + ' '.join(missing_attribs) + '.')
-
-        super(_AttributeCheck, self).__init__(*args, **kwargs)
-
-class Surface(_AttributeCheck):
+class Surface(six.with_metaclass(abc.ABCMeta, object)):
     r"""
     Abstract base class for Z2Pack Surface classes. Note that surfaces can be defined as a function only, but they may have reduced functionality.
     """
-    _required_attribs = ['descriptor']
     
     @abc.abstractmethod
     def __call__(self, s, t):
@@ -59,11 +38,10 @@ class Surface(_AttributeCheck):
         """
         raise NotImplemented
 
-class Line(_AttributeCheck):
+class Line(six.with_metaclass(abc.ABCMeta, object)):
     r"""
     Abstract base class for Z2Pack Line classes. Note that surfaces can be defined as a function only, but they may have reduced functionality.
     """
-    _required_attribs = ['descriptor']
     
     @abc.abstractmethod
     def __call__(self, t):

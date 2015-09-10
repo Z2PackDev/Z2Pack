@@ -199,8 +199,7 @@ class Surface(object):
             ``Default: 0.01``
         :type min_neighbour_dist:   float
 
-        :param pickle_file:     Path to a file where the results are stored using
-            the :py:mod:`pickle` module. Can be ``None`` to disable pickling.
+        :param pickle_file:     Path to a file where the results are stored using the :py:mod:`pickle` module. Can be ``None`` to disable pickling. Note that the path ``pickle_file.backup`` will also be used to prevent data loss in case of a crash during saving.
         :type pickle_file:      str
 
         :param verbose:             Toggles printed output ``Default: True``
@@ -600,6 +599,7 @@ class Surface(object):
         return {'chern': sum(delta_pol), 'pol': pol, 'step': delta_pol}
 
     # pickle: save and load
+    # TODO: make saving safe (i.e. sigkill doesn't completely waste it)
     def save(self):
         """
         Saves the data (t-points, k-points, wcc, gaps, gap sizes,

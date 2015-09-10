@@ -22,4 +22,4 @@ def hamilton(k):
     return res
 
 system = z2pack.em.System(hamilton)
-z2pack.run_surface(system, lambda s, t: [s, t, 0])
+z2pack.run_surface(system, lambda s, t: [s, t, 0], verbose=True)

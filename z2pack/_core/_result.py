@@ -57,6 +57,10 @@ class LineResult(object):
         self.max_move = None
         self.num_iter = None
 
+    @property
+    def num_wcc(self):
+        return len(self.wcc)
+
     def set(self, wcc, gap, gapsize, lambda_, converged, max_move, num_iter):
         self.wcc = wcc
         self.gap = gap

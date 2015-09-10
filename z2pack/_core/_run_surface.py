@@ -7,13 +7,15 @@
 
 from __future__ import division, print_function
 
-from ._utils import _convcheck
-from ..ptools import logger, string_tools
+from ._utils import _convcheck, _dist
+from ._run_line import run_line
 from ._result import SurfaceResult
+from ..ptools import logger, string_tools
 
 import sys
 import time
 import copy
+import pickle
 import itertools
 import numpy as np
 import scipy.linalg as la
@@ -103,6 +105,8 @@ class _RunSurfaceImpl(object):
             self._init_print_vars()    
         # ---- CREATE LOGGER ----
         self._init_logger()
+        # ---- CREATE ITERATION / MAIN VARIABLES ----
+        self._init_vars()
 
 #----------------------- INIT SUPPORT FUNCTIONS-------------------------#
 
@@ -207,7 +211,7 @@ class _RunSurfaceImpl(object):
             assert(tval not in self._t_values)
             self._t_values.append(tval)
             self._t_values = sorted(self._t_values)
-            self._neighbour_check.insert(self._t_points.index(tval), False)
+            self._neighbour_check.insert(self._t_values.index(tval), False)
 
             #~ # add line to results
             #~ if not self.result.has_line(tval):
@@ -231,14 +235,22 @@ class _RunSurfaceImpl(object):
     def _run_main(self):
         while not all(self._neighbour_check):
             # calculate all current t_values
-            for t, status in self._t_values:
+            for i, (t, status) in enumerate(zip(self._t_values, self._string_status)):
                 if not status:
                     # decide if there's a result input
                     if self.result.has_line(t):
                         res = self.result[t]
                     else:
                         res = None
-                    self.result[t] = run_line(self.system, lambda s: self.surface(t, s), result=res)
+                    self.result[t] = run_line(
+                        self.system,
+                        lambda s: self.surface(t, s),
+                        pos_tol=self.pos_tol,
+                        iterator=self.iterator,
+                        verbose='reduced' if self.verbose else False,
+                        result=res,
+                    )
+                    self._string_status[i] = True
 
             # neighbour check: find new t-values
             new_t = []
@@ -255,6 +267,24 @@ class _RunSurfaceImpl(object):
             # add the new lines
             self._insert_lines(new_t)
 
+    def _move_check(self, idx):
+        t1 = self._t_values[i]
+        t2 = self._t_values[i + 1]
+        line1 = self.result[t1]
+        line2 = self.result[t2]
+        gap_min = min(line1.gapsize, line2.gapsize)
+        return _convcheck(
+            line1.wcc,
+            line2.wcc,
+            self._move_tol * gap_min
+        )
+
+    def _gap_check(self, idx):
+        wcc = self.result[self._t_values[idx + 1]].wcc
+        gap = self.result[self._t_values[idx]].gap
+        min_dist = min(_dist(x, gap) for x in wcc)
+        return min_dist > self.gap_tol
+    
     def _save(self, protocol=pickle.HIGHEST_PROTOCOL):
         if self.pfile is not None:
             with open(self.pfile, 'wb') as f:
@@ -265,168 +295,168 @@ class _RunSurfaceImpl(object):
     #-------------------------------------------------------------------#
     #                support functions for wcc                          #
     #-------------------------------------------------------------------#
-class old(object):
-    @prt_dispatcher
-    def _init_vars(self):
-        """
-        refresh variables for wcc_calc
-        """
-        if self._current['overwrite']:
-            self._var_init()
-        # this is DELIBERATELY always overwritten to allow changing the
-        # move_tol, gap_tol, pos_tol, num_strings parameters between reloaded runs.
-        # It is inexpensive to recreate in the opposite case.
-        for t in np.linspace(0., 1., self._current['num_strings'], endpoint=True):
-            self._add_string_at(t)
-        self._neighbour_check = [False for i in
-                                 range(len(self._line_list) - 1)]
-        self._string_status = [False for i in
-                               range(len(self._line_list))]
-    @prt_dispatcher
-    def _wcc_calc_main(self):
-        """
-        main calculation part
-        all gap checks can be true even if it did not converge!
-        a failed convergence (reaching lower limit) also produces
-        'true'
-        """
-        self._var_refresh()
-        while not all(self._neighbour_check):
-            for i, t in enumerate(self._t_points):
-                if not self._string_status[i]:
-                    self._call_line(i, t)
-                    self._gaps[i], self._gapsize[i] = _gapfind(self._line_list[i].wcc)
-                    self._string_status[i] = True
-                    self.save()
-
-            if self._check_neighbours() is None:
-                break
-
-
-    @prt_dispatcher
-    def _check_neighbours(self):
-        """
-        checks the neighbour conditions, adds a value in k_points when
-        they are not fulfilled
-        - adds at most one k_point per run
-        - returns Boolean: all neighbour conditions fulfilled <=> True
-        """
-        if (self._current['gap_tol'] is None) and (self._current['move_tol'] is None):
-            return None
-        else:
-            for i, status in enumerate(self._neighbour_check):
-                if not status:
-                    if self._string_status[i] and self._string_status[i + 1]:
-                        neighbour_check, move_check = self._check_single_neighbour(i)
-                        if not (neighbour_check and move_check):
-                            if not self._add_string(i):
-                                t1 = self._t_points[i]
-                                t2 = self._t_points[i + 1]
-                                k1 = string_tools.fl_to_s(self._param_fct(t1, 0.), 6)
-                                k2 = string_tools.fl_to_s(self._param_fct(t2, 0.), 6)
-                                if not neighbour_check:
-                                    self._log.log('gap check', t1, k1, t2, k2)
-                                if not move_check:
-                                    self._log.log('move check', t1, k1, t2, k2)
-                            return False
-                    else:
-                        return False
-            return True
-
-    @prt_dispatcher
-    def _check_single_neighbour(self, i):
-        """
-        Performs the gap check and move check for neighbours at
-        i and i + 1
-        """
-        neighbour_check = True
-        move_check = True
-        if self._current['gap_tol'] is not None:
-            neighbour_check = self._check_gap_distance(i)
-        if self._current['move_tol'] is not None:
-            tolerance = self._current['move_tol'] * min(self._gapsize[i], self._gapsize[i + 1])
-            move_check, _ = _convcheck(self._line_list[i].wcc, self._line_list[i + 1].wcc, tolerance)
-        if neighbour_check and move_check:
-            self._neighbour_check[i] = True
-        return neighbour_check, move_check
-
-    @prt_dispatcher
-    def _add_string_at(self, t):
-        r"""
-        Adds a string at a specific pumping parameter t. Returns False if it failed due to the minimum neighbour distance, True else.
-        """
-        for i, tval in enumerate(self._t_points):
-            if tval > t:
-                pos = i
-                break
-        else:
-            pos = len(self._t_points)
-        # check if string already exists (up to min_neighbour_dist tolerance)
-        try:
-            if abs(self._t_points[pos - 1] - t) < self._current['min_neighbour_dist']:
-                return False
-        except IndexError:
-            pass
-        try:
-            if abs(self._t_points[pos] - t) < self._current['min_neighbour_dist']:
-                return False
-        except IndexError:
-            pass
-        self._neighbour_check.insert(pos, False)
-        self._string_status.insert(pos, False)
-        self._t_points.insert(pos, t)
-        self._kpt_list.insert(pos, self._param_fct(self._t_points[pos], 0.))
-        self._line_list.insert(pos, None)
-        self._gaps.insert(pos, None)
-        self._gapsize.insert(pos, None)
-        return True
-
-    @prt_dispatcher
-    def _add_string(self, i):
-        """
-        Adds a string between i and i + 1. Returns False if it failed
-        due to the minimum neighbour distance, True else.
-        """
-        if(self._t_points[i + 1] - self._t_points[i] <
-           self._current['min_neighbour_dist']):
-            self._neighbour_check[i] = True
-            return False
-        else:
-            self._neighbour_check.insert(i + 1, False)
-            self._string_status.insert(i + 1, False)
-            self._t_points.insert(i + 1, (self._t_points[i] + self._t_points[i + 1]) / 2)
-            self._kpt_list.insert(i + 1, self._param_fct(self._t_points[i + 1], 0.))
-            self._line_list.insert(i + 1, None)
-            self._gaps.insert(i + 1, None)
-            self._gapsize.insert(i + 1, None)
-        return True
-
-    def _check_gap_distance(self, i):
-        """
-        checks if gap is too close to any of the elements in wcc
-        """
-        for wcc_val in self._line_list[i + 1].wcc:
-            if _dist(wcc_val, self._gaps[i]) < self._current['gap_tol']:
-                return False
-        return True
-
-    # calculating one string
-    @prt_dispatcher
-    def _call_line(self, i, t):
-        r"""
-        Creates the Line object if necessary and makes the call to its wcc_calc
-        """
-        if self._line_list[i] is None:
-            param_fct_line = lambda kx: self._param_fct(t, kx)
-            self._line_list[i] = Line(self._m_handle, param_fct_line)
-        self._line_list[i].wcc_calc(pos_tol=self._current['pos_tol'], iterator=self._current['iterator'], verbose='reduced' if self._current['verbose'] else False)
-        # get convergence flag to print function
-        return self._line_list[i].get_res()['converged']
-    #----------------END OF SUPPORT FUNCTIONS---------------------------#
-
-    def log(self):
-        """
-        Returns the convergence report for the wcc calculation.
-        """
-        return str(self._log)
-
+#~ class old(object):
+    #~ @prt_dispatcher
+    #~ def _init_vars(self):
+        #~ """
+        #~ refresh variables for wcc_calc
+        #~ """
+        #~ if self._current['overwrite']:
+            #~ self._var_init()
+        #~ # this is DELIBERATELY always overwritten to allow changing the
+        #~ # move_tol, gap_tol, pos_tol, num_strings parameters between reloaded runs.
+        #~ # It is inexpensive to recreate in the opposite case.
+        #~ for t in np.linspace(0., 1., self._current['num_strings'], endpoint=True):
+            #~ self._add_string_at(t)
+        #~ self._neighbour_check = [False for i in
+                                 #~ range(len(self._line_list) - 1)]
+        #~ self._string_status = [False for i in
+                               #~ range(len(self._line_list))]
+    #~ @prt_dispatcher
+    #~ def _wcc_calc_main(self):
+        #~ """
+        #~ main calculation part
+        #~ all gap checks can be true even if it did not converge!
+        #~ a failed convergence (reaching lower limit) also produces
+        #~ 'true'
+        #~ """
+        #~ self._var_refresh()
+        #~ while not all(self._neighbour_check):
+            #~ for i, t in enumerate(self._t_values):
+                #~ if not self._string_status[i]:
+                    #~ self._call_line(i, t)
+                    #~ self._gaps[i], self._gapsize[i] = _gapfind(self._line_list[i].wcc)
+                    #~ self._string_status[i] = True
+                    #~ self.save()
+#~ 
+            #~ if self._check_neighbours() is None:
+                #~ break
+#~ 
+#~ 
+    #~ @prt_dispatcher
+    #~ def _check_neighbours(self):
+        #~ """
+        #~ checks the neighbour conditions, adds a value in k_points when
+        #~ they are not fulfilled
+        #~ - adds at most one k_point per run
+        #~ - returns Boolean: all neighbour conditions fulfilled <=> True
+        #~ """
+        #~ if (self._current['gap_tol'] is None) and (self._current['move_tol'] is None):
+            #~ return None
+        #~ else:
+            #~ for i, status in enumerate(self._neighbour_check):
+                #~ if not status:
+                    #~ if self._string_status[i] and self._string_status[i + 1]:
+                        #~ neighbour_check, move_check = self._check_single_neighbour(i)
+                        #~ if not (neighbour_check and move_check):
+                            #~ if not self._add_string(i):
+                                #~ t1 = self._t_values[i]
+                                #~ t2 = self._t_values[i + 1]
+                                #~ k1 = string_tools.fl_to_s(self._param_fct(t1, 0.), 6)
+                                #~ k2 = string_tools.fl_to_s(self._param_fct(t2, 0.), 6)
+                                #~ if not neighbour_check:
+                                    #~ self._log.log('gap check', t1, k1, t2, k2)
+                                #~ if not move_check:
+                                    #~ self._log.log('move check', t1, k1, t2, k2)
+                            #~ return False
+                    #~ else:
+                        #~ return False
+            #~ return True
+#~ 
+    #~ @prt_dispatcher
+    #~ def _check_single_neighbour(self, i):
+        #~ """
+        #~ Performs the gap check and move check for neighbours at
+        #~ i and i + 1
+        #~ """
+        #~ neighbour_check = True
+        #~ move_check = True
+        #~ if self._current['gap_tol'] is not None:
+            #~ neighbour_check = self._check_gap_distance(i)
+        #~ if self._current['move_tol'] is not None:
+            #~ tolerance = self._current['move_tol'] * min(self._gapsize[i], self._gapsize[i + 1])
+            #~ move_check, _ = _convcheck(self._line_list[i].wcc, self._line_list[i + 1].wcc, tolerance)
+        #~ if neighbour_check and move_check:
+            #~ self._neighbour_check[i] = True
+        #~ return neighbour_check, move_check
+#~ 
+    #~ @prt_dispatcher
+    #~ def _add_string_at(self, t):
+        #~ r"""
+        #~ Adds a string at a specific pumping parameter t. Returns False if it failed due to the minimum neighbour distance, True else.
+        #~ """
+        #~ for i, tval in enumerate(self._t_values):
+            #~ if tval > t:
+                #~ pos = i
+                #~ break
+        #~ else:
+            #~ pos = len(self._t_values)
+        #~ # check if string already exists (up to min_neighbour_dist tolerance)
+        #~ try:
+            #~ if abs(self._t_values[pos - 1] - t) < self._current['min_neighbour_dist']:
+                #~ return False
+        #~ except IndexError:
+            #~ pass
+        #~ try:
+            #~ if abs(self._t_values[pos] - t) < self._current['min_neighbour_dist']:
+                #~ return False
+        #~ except IndexError:
+            #~ pass
+        #~ self._neighbour_check.insert(pos, False)
+        #~ self._string_status.insert(pos, False)
+        #~ self._t_values.insert(pos, t)
+        #~ self._kpt_list.insert(pos, self._param_fct(self._t_values[pos], 0.))
+        #~ self._line_list.insert(pos, None)
+        #~ self._gaps.insert(pos, None)
+        #~ self._gapsize.insert(pos, None)
+        #~ return True
+#~ 
+    #~ @prt_dispatcher
+    #~ def _add_string(self, i):
+        #~ """
+        #~ Adds a string between i and i + 1. Returns False if it failed
+        #~ due to the minimum neighbour distance, True else.
+        #~ """
+        #~ if(self._t_values[i + 1] - self._t_values[i] <
+           #~ self._current['min_neighbour_dist']):
+            #~ self._neighbour_check[i] = True
+            #~ return False
+        #~ else:
+            #~ self._neighbour_check.insert(i + 1, False)
+            #~ self._string_status.insert(i + 1, False)
+            #~ self._t_values.insert(i + 1, (self._t_values[i] + self._t_values[i + 1]) / 2)
+            #~ self._kpt_list.insert(i + 1, self._param_fct(self._t_values[i + 1], 0.))
+            #~ self._line_list.insert(i + 1, None)
+            #~ self._gaps.insert(i + 1, None)
+            #~ self._gapsize.insert(i + 1, None)
+        #~ return True
+#~ 
+    #~ def _check_gap_distance(self, i):
+        #~ """
+        #~ checks if gap is too close to any of the elements in wcc
+        #~ """
+        #~ for wcc_val in self._line_list[i + 1].wcc:
+            #~ if _dist(wcc_val, self._gaps[i]) < self._current['gap_tol']:
+                #~ return False
+        #~ return True
+#~ 
+    #~ # calculating one string
+    #~ @prt_dispatcher
+    #~ def _call_line(self, i, t):
+        #~ r"""
+        #~ Creates the Line object if necessary and makes the call to its wcc_calc
+        #~ """
+        #~ if self._line_list[i] is None:
+            #~ param_fct_line = lambda kx: self._param_fct(t, kx)
+            #~ self._line_list[i] = Line(self._m_handle, param_fct_line)
+        #~ self._line_list[i].wcc_calc(pos_tol=self._current['pos_tol'], iterator=self._current['iterator'], verbose='reduced' if self._current['verbose'] else False)
+        #~ # get convergence flag to print function
+        #~ return self._line_list[i].get_res()['converged']
+    #~ #----------------END OF SUPPORT FUNCTIONS---------------------------#
+#~ 
+    #~ def log(self):
+        #~ """
+        #~ Returns the convergence report for the wcc calculation.
+        #~ """
+        #~ return str(self._log)
+#~ 

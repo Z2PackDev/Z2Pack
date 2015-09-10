@@ -9,8 +9,8 @@
 from __future__ import division, print_function
 
 from ._utils import _convcheck
-from ..ptools import string_tools
 from ._result import LineResult
+from ..ptools import string_tools
 
 import sys
 import time

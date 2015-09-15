@@ -290,6 +290,10 @@ class _RunSurfaceImpl(object):
             with open(self.pfile, 'wb') as f:
                 pickle.dump(self.result, f)
 
+    def _create_result(self):
+        
+    
+
 #-----------------------------------------------------------------------#
 
     #-------------------------------------------------------------------#

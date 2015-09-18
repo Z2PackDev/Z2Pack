@@ -1,5 +1,5 @@
-num_wann 10
-num_bands 10
+num_wann {N}
+num_bands {N}
 spinors : true
 num_iter 0
 shell_list 1

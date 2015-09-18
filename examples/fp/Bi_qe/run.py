@@ -27,6 +27,9 @@ z2cmd = (wancmd + ' bi -pp;' +
          pwcmd + '< bi.nscf.in >& pw.log;' +
          pw2wancmd + '< bi.pw2wan.in >& pw2wan.log;')
 
+# Change this if you have a system with a different number of occupied bands
+num_wcc = 10
+
 # creating the results folder, running the SCF calculation if needed
 if not os.path.exists('./plots'):
     os.mkdir('./plots')
@@ -46,7 +49,7 @@ lattice = '\n '.join([line.text.strip('\n ') for line in cell[1:]])
 with open('input/tpl_bi.win', 'r') as f:
     tpl_bi_win = f.read()
 with open('input/bi.win', 'w') as f:
-    f.write(tpl_bi_win.format(unit=unit, lattice=lattice))
+    f.write(tpl_bi_win.format(unit=unit, lattice=lattice, N=num_wcc))
 
 # Creating the System. Note that the SCF charge file does not need to be
 # copied, but instead can be referenced in the .files file.

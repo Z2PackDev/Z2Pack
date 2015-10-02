@@ -275,12 +275,17 @@ class Hamilton(object):
         M = []
         for i in range(0, N):
             deltak = list(np.array(kpt[i + 1]) - np.array(kpt[i]))
-            Mnew = [[sum(np.conjugate(eigs[i][j, m]) *
-                     eigs[i + 1][j, n] *
-                     np.exp(-2j * np.pi * np.dot(deltak, self._T_list[j]))
-                     for j in range(eigsize))
-                     for n in range(eignum)]
-                    for m in range(eignum)]
+            dot_prod = [
+                np.exp(-2j * np.pi * np.dot(deltak, self._T_list[j]))
+                for j in range(eigsize)
+            ]
+            Mnew = [[sum(
+                        np.conjugate(eigs[i][:, m]) * eigs[i + 1][:, n] * dot_prod
+                    )
+                    for n in range(eignum)
+                ]
+                for m in range(eignum)
+            ]
             M.append(Mnew)
         return M
 
@@ -307,4 +312,3 @@ class System(_Z2PackSystem):
         self._tb_hamilton = tb_hamilton
 
         self._m_handle = self._tb_hamilton._get_m
-

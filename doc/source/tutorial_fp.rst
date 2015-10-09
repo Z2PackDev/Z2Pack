@@ -12,7 +12,9 @@ Tutorial on the :mod:`z2pack.fp` submodule.
 Setup and Compatibility
 -----------------------
 
-For the computation of overlap matrices, Z2Pack uses the Wannier90 software package. This means that Z2Pack can be used with any first - principles code that interfaces to Wannier90. If you are using Wannier90 **version 2.0.1** or higher, it is compatible with Z2Pack if ``skip_B1_tests = .TRUE.`` is set.
+For the computation of overlap matrices, Z2Pack uses the Wannier90 software package. This means that Z2Pack can be used with any first - principles code that interfaces to Wannier90. If you are using Wannier90 **version 2.0.2** or higher, it is compatible with Z2Pack if ``skip_B1_tests = .TRUE.`` is set.
+
+.. note:: Although the ``skip_B1_tests`` flag was introduced in Wannier90 v.2.0.1, this **does not work**.
 
 For first-principles codes that are not yet compatible with Wannier90 2.0, a modified version of Wannier90 1.2 is available here:
 
@@ -55,7 +57,12 @@ For VASP, the installation routine doesn't differ from installing VASP with
 a regular version of Wannier90. Compile the modified Wannier90 source and
 link to it when installing VASP.
 
+Quantum ESPRESSO Setup
+~~~~~~~~~~~~~~~~~~~~~~
+For Quantum ESPRESSO, no special setup is required. Instead, Wannier90 can be installed and executed independently from QE. You should use the Wannier90 version 1.2 provided above.
+
 .. _fp_System:
+
 
 Creating a :class:`fp.System`
 -----------------------------
@@ -115,4 +122,3 @@ code you are using. This is the ``command`` keyword argument to :class:`fp.Syste
 Finally, Z2Pack needs the path to where the overlap file ``wannier90.mmn``
 will be (Keyword argument ``mmn_path``). By default, it is assumed to be
 in the top level of the build directory.
-

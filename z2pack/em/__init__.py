@@ -13,4 +13,5 @@ The em (effective models) module
 """
 
 from ._effective_model import System
+
 from . import tb

@@ -5,7 +5,6 @@
 
 # hidden files garbage
 *~
-TODO
 .fuse*
 
 # ab-initio/doc build files and example results

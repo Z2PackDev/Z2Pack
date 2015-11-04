@@ -22,5 +22,5 @@ def hamilton(k):
     return res
 
 system = z2pack.em.System(hamilton)
-res = z2pack.run_line(system, lambda s: [s, 0, 0])
-z2pack.run_line(system, lambda s: [s, 0, 0], result=res)
+res = z2pack.line.run(system, lambda s: [s, 0, 0])
+z2pack.line.run(system, lambda s: [s, 0, 0], result=res)

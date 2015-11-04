@@ -49,4 +49,3 @@ class Line(six.with_metaclass(abc.ABCMeta, object)):
         Returns the k-point at a given :math:`s, t \in [0, 1]^2`
         """
         raise NotImplemented
-

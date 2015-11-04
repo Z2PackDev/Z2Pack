@@ -291,7 +291,7 @@ class _RunSurfaceImpl(object):
                 pickle.dump(self.result, f)
 
     def _create_result(self):
-        
+        raise NotImplementedError
     
 
 #-----------------------------------------------------------------------#

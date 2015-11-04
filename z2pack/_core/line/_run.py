@@ -10,7 +10,7 @@ from __future__ import division, print_function
 
 from ._utils import _convcheck
 from ._result import LineResult
-from ..ptools import string_tools
+from ...ptools import string_tools
 
 import sys
 import time
@@ -92,12 +92,9 @@ class _RunLineImpl(object):
             self.iterator = [next(self.iterator)]
             
         # ---- CREATE LineResult ----
-        if result is None:
-            self.result = LineResult()
-        else:
-            if not isinstance(result, LineResult):
-                raise TypeError('Invalid type of line result: {0}, must be LineResult'.format(type(result)))
-            self.result = result
+        if not isinstance(result, (LineResult, type(None))):
+            raise TypeError('Invalid type of line result: {0}, must be LineResult or NoneType'.format(type(result)))
+        self.result = copy.deepcopy(result)
                 
         # ---- CREATE PRINT_VARS ----
         if self.verbosity == 'full':
@@ -126,7 +123,7 @@ class _RunLineImpl(object):
         self._run_main()
         assert(hasattr(self.result, 'wcc'))
         assert(hasattr(self.result, 'lambda_'))
-        assert(hasattr(self.result, 'num_iter'))
+        assert(hasattr(self.result, 'num_kpts'))
         assert(hasattr(self.result, 'converged'))
         assert(hasattr(self.result, 'max_move'))
 
@@ -173,18 +170,19 @@ class _RunLineImpl(object):
 
         if self.pos_tol is None:
             # catch restart, only exact match matters
-            if self.result.wcc is not None and self.result.num_iter == N:
-                if self.verbosity in ['full', 'reduced']:
-                    print('Number of k-points matches previous run. Skipping calculation.')
-                return
+            if self.result is not None:
+                if self.result.num_kpts == N:
+                    if self.verbosity in ['full', 'reduced']:
+                        print('Number of k-points matches previous run. Skipping calculation.')
+                    return
             else:
                 wcc, _, lambda_ = self._trywcc(self.get_m(N))
                 converged = True
                 max_move = 1.
-                num_iter = N
+                num_kpts = N
         else:
             # catch restart
-            if self.result.wcc is not None:
+            if self.result is not None:
                 # skip if the condition is fulfilled
                 if self.result.max_move < self.pos_tol:
                     if self.verbosity in ['full', 'reduced']:
@@ -192,7 +190,7 @@ class _RunLineImpl(object):
                     return
                 # else fast-forward to N > previous max
                 else:
-                    while N <= self.result.num_iter:
+                    while N <= self.result.num_kpts:
                         try:
                             N = next(iterator)
                         except StopIteration:
@@ -207,15 +205,15 @@ class _RunLineImpl(object):
             else:
                 wcc, _, lambda_ = self._trywcc(self.get_m(N))
 
-            for num_iter in iterator:
+            for num_kpts in iterator:
                 wcc_old = copy.copy(wcc)
-                wcc, _, lambda_ = self._trywcc(self.get_m(num_iter))
+                wcc, _, lambda_ = self._trywcc(self.get_m(num_kpts))
                 # break conditions
                 converged, max_move = _convcheck(wcc, wcc_old, self.pos_tol)
                 if converged:  # success
                     break
         gap, gapsize = self._get_gap(wcc)
-        self.result.set(wcc=wcc, lambda_=lambda_, gap=gap, gapsize=gapsize, converged=converged, max_move=max_move, num_iter=num_iter)
+        self.result = LineResult(wcc=wcc, lambda_=lambda_, gap=gap, gapsize=gapsize, converged=converged, max_move=max_move, num_kpts=num_kpts)
 
     def _trywcc(self, all_m):
         """
@@ -281,4 +279,3 @@ class _RunLineImpl(object):
         return list(self.line(k) for k in np.linspace(0., 1., N + 1))
 
     #----------------END OF SUPPORT FUNCTIONS---------------------------#
-

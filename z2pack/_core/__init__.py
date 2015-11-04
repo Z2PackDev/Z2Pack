@@ -10,5 +10,7 @@ Implementation of Core functionality
 """
 
 from ._bases import System, Surface, Line
-from ._run_line import run_line
-from ._run_surface import run_surface
+#~ from . import run_line
+#~ from ._run_surface import run_surface
+
+from . import line

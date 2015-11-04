@@ -5,8 +5,12 @@
 # Date:    03.09.2015 12:00:27 CEST
 # File:    _result.py
 
+from ptools.locker import Locker
+
+import six
 import copy
 
+@six.add_metaclass(Locker)
 class SurfaceResult(object):
     r"""
     Result class for surface calculations.
@@ -32,6 +36,7 @@ class SurfaceResult(object):
     def __setitem__(self, idx, line):
         self._lines[idx] = line
 
+@six.add_metaclass(Locker)
 class LineResult(object):
     r"""
     Result class for line calculations.
@@ -41,7 +46,6 @@ class LineResult(object):
         self.gap = None
         self.gapsize = None
         self.lambda_ = None
-        self.converged = None
         self.max_move = None
         self.num_iter = None
 
@@ -49,12 +53,10 @@ class LineResult(object):
     def num_wcc(self):
         return len(self.wcc)
 
-    def set(self, wcc, gap, gapsize, lambda_, converged, max_move, num_iter):
+    def set(self, wcc, lambda_, max_move, num_iter):
         self.wcc = wcc
         self.gap = gap
         self.gapsize = gapsize
         self.lambda_ = lambda_
-        self.converged = converged
         self.max_move = max_move
         self.num_iter = num_iter
-

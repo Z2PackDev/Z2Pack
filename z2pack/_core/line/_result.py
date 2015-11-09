@@ -28,11 +28,3 @@ class LineResult(object):
     @property
     def num_wcc(self):
         return len(self.wcc)
-
-    #~ def set(self):
-        #~ self.wcc = wcc
-        #~ self.gap = gap
-        #~ self.gapsize = gapsize
-        #~ self.lambda_ = lambda_
-        #~ self.max_move = max_move
-        #~ self.num_kpts = num_kpts

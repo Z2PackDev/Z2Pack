@@ -9,7 +9,8 @@
 from __future__ import division, print_function
 
 from ._utils import _convcheck
-from ._result import LineResult
+#~ from ._result import LineResult
+from ._data import LineData
 from ...ptools import string_tools
 
 import sys

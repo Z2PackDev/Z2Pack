@@ -35,7 +35,7 @@ class LineData(object):
         super(Foo, self).__setattr__(key, value)
 
     @property
-    @_property_helper('_calculated_attrs', '_lambda_')
+    @_property_helper(_calculated_attrs, '_lambda_')
     def lambda_(self):
         lambda_ = np.eye(len(self.overlaps[0]))
         for M in self.overlaps:
@@ -44,18 +44,18 @@ class LineData(object):
         self._lambda_ = lambda_
 
     @property
-    @_property_helper('_calculated_attrs', '_wcc')
+    @_property_helper(_calculated_attrs, '_wcc')
     def wcc(self):
         eigs, _ = la.eig(self.lambda_)
         self._wcc = sorted([(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs])
 
     @property
-    @_property_helper('_calculated_attrs', '_gap_pos')
+    @_property_helper(_calculated_attrs, '_gap_pos')
     def gap_pos(self):
         self._calculate_gap()
 
     @property
-    @_property_helper('_calculated_attrs', '_gap_size')
+    @_property_helper(_calculated_attrs, '_gap_size')
     def gap_size(self):
         self._calculate_gap()
 

@@ -7,9 +7,9 @@
 
 import copy
 
-__all__ = ['_convcheck', '_sgng', '_gapfind', '_dist']
+__all__ = ['_get_max_move', '_sgng', '_gapfind', '_dist']
 
-def _convcheck(list_a, list_b, epsilon):
+def _get_max_move(list_a, list_b):
     """
     new style convergence check!!
     """
@@ -22,7 +22,7 @@ def _convcheck(list_a, list_b, epsilon):
     for a_pos, b_pos in zip(a_mod, b_mod):
         max_move = max(_dist(a_pos, b_pos), max_move)
 
-    return max_move <= epsilon, max_move
+    return max_move
 
 def _sgng(z, zplus, x):
     """

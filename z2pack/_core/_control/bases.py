@@ -17,7 +17,7 @@ class AbstractControl:
 
 class StatefulControl(abc.ABCMeta):
     """
-        ABC for control objects which have a state.
+        ABC for control objects which have a state. The state must not depend on the given convergence parameters.
         Concepts:
             * ``StatefulControl(state=s).state == s`` for any valid state s.
     """
@@ -26,8 +26,14 @@ class StatefulControl(abc.ABCMeta):
         pass
 
     @abc.abstractproperty
-    def state():
+    def state(self):
         pass
+
+    @abc.abstractproperty
+    @state.setter
+    def state(self, value):
+        pass
+    
 
 class DataControl(AbstractControl):
     """ABC for control objects which can be updated with data."""

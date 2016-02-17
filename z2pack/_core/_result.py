@@ -12,6 +12,6 @@ import six
 
 @six.add_metaclass(Locker)
 class Result(object):
-    def __init__(self, data, convergence):
+    def __init__(self, data, ctrl_states):
         self.data = data
-        self.convergence = convergence
+        self.ctrl_states = ctrl_states

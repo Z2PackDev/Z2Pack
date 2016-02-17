@@ -5,6 +5,8 @@
 # Date:    12.02.2016 16:04:45 CET
 # File:    _run.py
 
+from .._controls.bases import StatefulControl, IterationControl, DataControl, ConvergenceControl, LineControl
+
 def _run_line_impl():
     """
     Wrapper for:
@@ -22,9 +24,17 @@ def _run_line_impl(*controls, save_file=None):
         * Controls
         * file backend?
     """
-    stateful_ctrl = [ctrl for ctrl in controls if isinstance(ctrl, StatefulControl)]
-    iteration_ctrl = ...
-    data_ctrl = ...
-    conv_ctrl = ...
-    ...
+    for ctrl in controls:
+        if not isinstance(ctrl, LineControl):
+            raise ValueError('{} control object is not a LineControl instance.'.format(ctrl.__class__))
+
+    def filter_ctrl(ctrl_type):
+        return [ctrl for ctrl in controls if isinstance(ctrl, ctrl_type)]
+        
+    stateful_ctrl = filter_ctrl(StatefulControl)
+    iteration_ctrl = filter_ctrl(IterationControl)
+    data_ctrl = filter_ctrl(DataControl)
+    conv_ctrl = filter_ctrl(DataControl)
+
     # main loop
+    ...

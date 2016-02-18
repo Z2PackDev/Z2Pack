@@ -5,12 +5,13 @@
 # Date:    12.02.2016 16:04:45 CET
 # File:    _run.py
 
-from .._control.bases import StatefulControl, IterationControl, DataControl, ConvergenceControl, LineControl
 from ._data import LineData
+from ._control import StepCounter, WccConvergence
+from .._control_base import StatefulControl, IterationControl, DataControl, ConvergenceControl, LineControl
 from .._result import Result
 from ...ptools.serializer import serializer
 
-def run_line():
+def run_line(*, system, line, iterator=range(8, 27, 2), pos_tol=1e-2, save_file=None, init_result=None, load=False, load_quiet=True):
     """
     Wrapper for:
         * getting / disecting old result
@@ -21,8 +22,29 @@ def run_line():
         * setting up printing status
         * setting up file backend
     """
+    # setting up controls
+    controls = []
+    controls.append(StepCounter(iterator=iterator))
+    if pos_tol is not None:
+        controls.append(WccConvergence(pos_tol=pos_tol))
 
-def _run_line_impl(*controls, line, system, save_file=None, init_result=None):
+    # setting up init_result
+    if init_result is not None:
+        if load:
+            raise ValueError('Inconsistent input parameters "init_result != None" and "load == True". Cannot decide whether to load result from file or use given result.')
+    elif load:
+        if save_file is None:
+            raise ValueError('Cannot load result from file: No filename given in the "save_file" parameter.')
+        try:
+            init_result = serializer.load(save_file)
+        except IOError as e:
+            if not load_quiet:
+                raise e
+
+    return _run_line_impl(*controls, system=system, line=line, save_file=save_file, init_result=init_result)
+    
+
+def _run_line_impl(*controls, system, line, save_file=None, init_result=None):
     """
     Input parameters:
         * Controls

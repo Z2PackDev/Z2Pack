@@ -13,7 +13,7 @@ import six
 
 @six.add_metaclass(Locker)
 class StepCounter(IterationControl, StatefulControl, LineControl):
-    def __init__(self, *, state=0, iterator):
+    def __init__(self, *, iterator):
         self._iterator = iter(iterator)
         self.state = state
 
@@ -34,7 +34,7 @@ class StepCounter(IterationControl, StatefulControl, LineControl):
 
 @six.add_metaclass(Locker)
 class WccConvergence(ConvergenceControl, LineControl, StatefulControl):
-    def __init__(self, *, state=None, pos_tol):
+    def __init__(self, *, pos_tol):
         """
         :param state: Contains the maximum movement between the last two iterations, as well as the WCC of the last iteration.
         :type state: dict

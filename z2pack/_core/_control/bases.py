@@ -12,7 +12,7 @@ import six
 class AbstractControl:
     """ABC for all control objects. Instances must also have a 'state' attribute to work correctly, which is not enforced by the ABC."""
     @abc.abstractmethod
-    def __init__(self, *, **kwargs):
+    def __init__(self, **kwargs):
         pass
 
 class StatefulControl(abc.ABCMeta):

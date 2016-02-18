@@ -15,11 +15,15 @@ import six
 class StepCounter(IterationControl, StatefulControl, LineControl):
     def __init__(self, *, state=0, iterator):
         self._iterator = iter(iterator)
-        self._state = state
+        self.state = state
 
     @property
     def state(self):
         return self._state
+
+    @state.setter
+    def state(self, state):
+        self._state = state
 
     def __next__(self):
         new_val = next(self._iterator)
@@ -40,8 +44,7 @@ class WccConvergence(ConvergenceControl, LineControl, StatefulControl):
         """
         self.pos_tol = pos_tol
         if state is not None:
-            self.max_move = state['max_move']
-            self.last_wcc = state['last_wcc']
+            self.state = state
         else:
             self.max_move = None
             self.last_wcc = None
@@ -61,3 +64,8 @@ class WccConvergence(ConvergenceControl, LineControl, StatefulControl):
             max_move=self.max_move,
             last_wcc=self.last_wcc
         )
+
+    @state.setter
+    def state(self, state):
+        self.max_move = state['max_move']
+        self.last_wcc = state['last_wcc']

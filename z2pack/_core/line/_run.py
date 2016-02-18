@@ -5,9 +5,10 @@
 # Date:    12.02.2016 16:04:45 CET
 # File:    _run.py
 
-from .._controls.bases import StatefulControl, IterationControl, DataControl, ConvergenceControl, LineControl
+from .._control.bases import StatefulControl, IterationControl, DataControl, ConvergenceControl, LineControl
 from ._data import LineData
 from .._result import Result
+from ...ptools.serializer import serializer
 
 def run_line():
     """
@@ -28,7 +29,7 @@ def _run_line_impl(*controls, line, system, save_file=None, init_result=None):
         * file backend?
     """
     for ctrl in controls:
-    if not isinstance(ctrl, LineControl):
+        if not isinstance(ctrl, LineControl):
             raise ValueError('{} control object is not a LineControl instance.'.format(ctrl.__class__))
 
     def filter_ctrl(ctrl_type):
@@ -56,7 +57,8 @@ def _run_line_impl(*controls, line, system, save_file=None, init_result=None):
             try:
                 run_options.update(next(it_ctrl))
             except StopIteration:
-                return result # TODO
+                # TODO: report
+                return result
 
         data = LineData(system.get_m(
             list(line(k) for k in np.linspace(0., 1., options['N']))
@@ -70,6 +72,8 @@ def _run_line_impl(*controls, line, system, save_file=None, init_result=None):
             ctrl_states[s_ctrl.__class__] = s_ctrl.state
         result = Result(data, ctrl_states)
 
-        # save to file: TODO
+        # save to file
+        if save_file is not None:
+            serializer.dump(result, save_file)
 
     return result

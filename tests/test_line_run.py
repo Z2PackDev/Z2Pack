@@ -10,7 +10,7 @@ import z2pack
 import pytest
 import numpy as np
 
-def test_trivial_run():
+def test_trivial_run(compare_equal):
     sys = z2pack.em.System(lambda k: np.eye(4))
     line = lambda k: [0, 0, 0]
     result = z2pack.line.run(system=sys, line=line)

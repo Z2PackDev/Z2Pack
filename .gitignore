@@ -57,3 +57,7 @@ debug
 lsf.*
 test_log.txt
 decorator.py
+
+# pytest caches
+.cache
+.coverage

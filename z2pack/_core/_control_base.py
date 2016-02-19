@@ -13,7 +13,7 @@ class AbstractControl(metaclass=abc.ABCMeta):
     def __init__(self, **kwargs):
         pass
 
-class StatefulControl(abc.ABCMeta):
+class StatefulControl(metaclass=abc.ABCMeta):
     """
         ABC for control objects which have a state. The state must not depend on the given convergence parameters.
         Concepts:

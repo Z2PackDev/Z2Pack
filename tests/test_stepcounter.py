@@ -5,20 +5,39 @@
 # Date:    18.02.2016 18:14:05 MST
 # File:    test_stepcounter.py
 
-import sys
-import pytest
 from z2pack._core.line._control import StepCounter
 
-@pytest.fixture
-def N(request, params=list(range(20))):
+import pytest
+
+@pytest.fixture(params=list(range(1, 20)))
+def N1(request):
+    return request.param
+
+@pytest.fixture(params=list(range(1, 20)))
+def N2(request):
     return request.param
 
 
-def test_step():
-    sc = StepCounter(range(0, 100, 2))
-    for _ in range(N):
+def test_step(N1):
+    sc = StepCounter(iterator=range(0, 100, 2))
+    for _ in range(N1):
         n = next(sc)
-    assert n == 2 * N
+        assert sc.state == n
+    assert n == 2 * N1
 
-def test_state(N):
-    pass
+def test_nonzero_start(N1, N2):
+    sc = StepCounter(iterator=range(0, 1000, 3))
+    sc.state = N2
+    assert sc.state == N2
+    for _ in range(N1):
+        n = next(sc)
+        assert sc.state == n
+    assert n == 3 * (N1 + int(N2 / 3))
+
+def test_stopiteration(N1):
+    sc = StepCounter(iterator=range(0, 3 * N1, 2))
+    with pytest.raises(StopIteration):
+        while True:
+            n = next(sc)
+            assert sc.state == n
+    assert n == int((3 * N1 - 1) / 2) * 2

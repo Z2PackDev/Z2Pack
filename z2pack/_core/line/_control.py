@@ -6,18 +6,17 @@
 # File:    line.py
 
 from .._control_base import ConvergenceControl, IterationControl, LineControl, StatefulControl
-from ...ptools.locker import Locker
+#~ from ...ptools.locker import Locker
 from .._utils import _get_max_move
 
 class StepCounter(
     IterationControl,
     StatefulControl,
-    LineControl,
-    metaclass=Locker
+    LineControl
 ):
     def __init__(self, *, iterator):
         self._iterator = iter(iterator)
-        self.state = state
+        self._state = 0
 
     @property
     def state(self):
@@ -37,8 +36,7 @@ class StepCounter(
 class WccConvergence(
     ConvergenceControl,
     LineControl,
-    StatefulControl,
-    metaclass=Locker
+    StatefulControl
 ):
     def __init__(self, *, pos_tol):
         """

@@ -21,7 +21,7 @@ def compare_data(test_name, scope="session"):
     if not os.path.exists(cache_dir):
         os.mkdir(cache_dir)
     savefile_base =  cache_dir + test_name + '.p'
-    def inner(compare_fct, data=None, *, tag=None):
+    def inner(compare_fct, data=None, tag=None):
         # create savefile name
         if tag is None:
             tag = ''

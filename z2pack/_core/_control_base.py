@@ -6,10 +6,8 @@
 # File:    bases.py
 
 import abc
-import six
 
-@six.add_metaclass(abc.ABCMeta)
-class AbstractControl:
+class AbstractControl(metaclass=abc.ABCMeta):
     """ABC for all control objects. Instances must also have a 'state' attribute to work correctly, which is not enforced by the ABC."""
     @abc.abstractmethod
     def __init__(self, **kwargs):

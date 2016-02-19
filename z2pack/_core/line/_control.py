@@ -5,14 +5,16 @@
 # Date:    09.02.2016 13:38:55 CET
 # File:    line.py
 
-from .._control.bases import ConvergenceControl, IterationControl, LineControl, StatefulControl
-from ..ptools.locker import Locker
+from .._control_base import ConvergenceControl, IterationControl, LineControl, StatefulControl
+from ...ptools.locker import Locker
 from .._utils import _get_max_move
 
-import six
-
-@six.add_metaclass(Locker)
-class StepCounter(IterationControl, StatefulControl, LineControl):
+class StepCounter(
+    IterationControl,
+    StatefulControl,
+    LineControl,
+    metaclass=Locker
+):
     def __init__(self, *, iterator):
         self._iterator = iter(iterator)
         self.state = state
@@ -32,8 +34,12 @@ class StepCounter(IterationControl, StatefulControl, LineControl):
         self._state = new_val
         return self._state
 
-@six.add_metaclass(Locker)
-class WccConvergence(ConvergenceControl, LineControl, StatefulControl):
+class WccConvergence(
+    ConvergenceControl,
+    LineControl,
+    StatefulControl,
+    metaclass=Locker
+):
     def __init__(self, *, pos_tol):
         """
         :param state: Contains the maximum movement between the last two iterations, as well as the WCC of the last iteration.

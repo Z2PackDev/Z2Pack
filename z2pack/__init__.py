@@ -16,7 +16,7 @@ from ._version import __version__
 from ._core import *
 from . import shapes
 
-from . import fp
-from . import em
+#~ from . import fp
+#~ from . import em
 
 from .ptools.serializer import serializer

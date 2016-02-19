@@ -9,7 +9,7 @@
 Implementation of Core functionality
 """
 
-from ._bases import System, Surface, Line
+#~ from ._manifold_base import System, Surface, Line
 #~ from . import run_line
 #~ from ._run_surface import run_surface
 

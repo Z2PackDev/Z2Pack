@@ -6,3 +6,5 @@
 # File:    __init__.py
 
 #~ from ._run import run_line as run
+
+__package__ = 'z2pack.line'

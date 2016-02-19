@@ -6,7 +6,6 @@
 # File:    line.py
 
 from .._control_base import ConvergenceControl, IterationControl, LineControl, StatefulControl
-#~ from ...ptools.locker import Locker
 from .._utils import _get_max_move
 
 class StepCounter(
@@ -46,20 +45,22 @@ class WccConvergence(
         :param pos_tol: Tolerance in the maximum movement of a single WCC position.
         :type pos_tol: float
         """
+        if not (pos_tol > 0 and pos_tol <= 1):
+            raise ValueError('pos_tol must be in (0, 1]')
         self.pos_tol = pos_tol
-        if state is not None:
-            self.state = state
-        else:
-            self.max_move = None
-            self.last_wcc = None
+        self.max_move = None
+        self.last_wcc = None
 
     def update(self, data):
         new_wcc = data.wcc
-        self.max_move = _get_max_move(new_wcc, self.last_wcc)
+        if self.last_wcc is not None:
+            self.max_move = _get_max_move(new_wcc, self.last_wcc)
         self.last_wcc = new_wcc
 
     @property
-    def converged():
+    def converged(self):
+        if self.max_move is None:
+            return False
         return self.max_move < self.pos_tol
 
     @property

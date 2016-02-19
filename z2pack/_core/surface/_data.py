@@ -9,21 +9,21 @@ import six
 from ptools.locker import Locker
 from sortedcontainers import SortedList
 
-@six.add_metaclass(Locker)
-class SurfaceData(object):
+class SurfaceData(metaclass=Locker):
     def __init__(self):
         self.lines = SortedList(key=lambda x: x.t)
 
-    def add(self, t, line_data):
-        self.lines.add(SurfaceLine(t, line_data))
+    def add(self, t, line_result):
+        self.lines.add(SurfaceLine(t, line_result))
 
     @property
     def t(self):
         return tuple(line.t for line in self.lines)
-    
 
-@six.add_metaclass(Locker)
-class SurfaceLine(object):
+    def nearest_neighbour_dist(self, t):
+        return min(abs(t - tval) for tval in self.t)
+
+class SurfaceLine(metaclass=Locker):
     def __init__(self, t, line_data):
         self.t = t
-        self.line_data = line_data
+        self.line_result = line_result

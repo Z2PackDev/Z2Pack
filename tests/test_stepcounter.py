@@ -21,7 +21,7 @@ def N2(request):
 def test_step(N1):
     sc = StepCounter(iterator=range(0, 100, 2))
     for _ in range(N1):
-        n = next(sc)
+        n = next(sc)['num_steps']
         assert sc.state == n
     assert n == 2 * N1
 
@@ -30,7 +30,7 @@ def test_nonzero_start(N1, N2):
     sc.state = N2
     assert sc.state == N2
     for _ in range(N1):
-        n = next(sc)
+        n = next(sc)['num_steps']
         assert sc.state == n
     assert n == 3 * (N1 + int(N2 / 3))
 
@@ -38,6 +38,6 @@ def test_stopiteration(N1):
     sc = StepCounter(iterator=range(0, 3 * N1, 2))
     with pytest.raises(StopIteration):
         while True:
-            n = next(sc)
+            n = next(sc)['num_steps']
             assert sc.state == n
     assert n == int((3 * N1 - 1) / 2) * 2

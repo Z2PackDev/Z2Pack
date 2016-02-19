@@ -11,6 +11,8 @@ from .._control_base import StatefulControl, IterationControl, DataControl, Conv
 from .._result import Result
 from ...ptools.serializer import serializer
 
+import numpy as np
+
 def run_line(*, system, line, iterator=range(8, 27, 2), pos_tol=1e-2, save_file=None, init_result=None, load=False, load_quiet=True):
     """
     Wrapper for:
@@ -60,7 +62,7 @@ def _run_line_impl(*controls, system, line, save_file=None, init_result=None):
     stateful_ctrl = filter_ctrl(StatefulControl)
     iteration_ctrl = filter_ctrl(IterationControl)
     data_ctrl = filter_ctrl(DataControl)
-    conv_ctrl = filter_ctrl(ConvergenceControl)
+    convergence_ctrl = filter_ctrl(ConvergenceControl)
 
     # initialize stateful and data controls from old result
     if init_result is not None:
@@ -73,7 +75,7 @@ def _run_line_impl(*controls, system, line, save_file=None, init_result=None):
             d_ctrl.update(init_result.data)
 
     # main loop
-    while not all(ctrl.converged for ctrl in conv_ctrl):
+    while not all(c_ctrl.converged for c_ctrl in convergence_ctrl):
         run_options = dict()
         for it_ctrl in iteration_ctrl:
             try:
@@ -83,10 +85,10 @@ def _run_line_impl(*controls, system, line, save_file=None, init_result=None):
                 return result
 
         data = LineData(system.get_m(
-            list(line(k) for k in np.linspace(0., 1., options['N']))
+            list(line(k) for k in np.linspace(0., 1., run_options['num_steps']))
         ))
 
-        for d_ctrl in data_control:
+        for d_ctrl in data_ctrl:
             d_ctrl.update(data)
 
         ctrl_states = dict()

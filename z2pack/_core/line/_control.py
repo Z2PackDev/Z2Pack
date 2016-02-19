@@ -30,7 +30,7 @@ class StepCounter(
         while new_val <= self._state:
             new_val = next(self._iterator)
         self._state = new_val
-        return self._state
+        return dict(num_steps=self._state)
 
 class WccConvergence(
     ConvergenceControl,

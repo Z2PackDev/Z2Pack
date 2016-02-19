@@ -7,10 +7,8 @@
 
 
 import abc
-import six
 
-@six.add_metaclass(abc.ABCMeta)
-class System:
+class System(metaclass=abc.ABCMeta):
     r"""
     Abstract base class for Z2Pack System classes.
     """

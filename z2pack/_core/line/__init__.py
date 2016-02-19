@@ -5,6 +5,4 @@
 # Date:    04.11.2015 15:47:16 CET
 # File:    __init__.py
 
-#~ from ._run import run_line as run
-
-__package__ = 'z2pack.line'
+from ._run import run_line as run

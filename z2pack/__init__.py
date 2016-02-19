@@ -17,6 +17,6 @@ from ._core import *
 from . import shapes
 
 #~ from . import fp
-#~ from . import em
+from . import em
 
 from .ptools.serializer import serializer

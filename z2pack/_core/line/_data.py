@@ -5,9 +5,10 @@
 # Date:    08.02.2016 18:20:18 CET
 # File:    _data.py
 
+import numpy as np
 import scipy.linalg as la
 
-class LineData(object):
+class LineData:
     def __init__(self, overlaps):
         self.overlaps = overlaps
 
@@ -27,12 +28,12 @@ class LineData(object):
 
     def __setattr__(self, key, value):
         if key == 'overlaps':
-            for name in self.__class__._calculated_attributes:
+            for name in self.__class__._calculated_attrs:
                 try:
                     delattr(self, name)
                 except AttributeError:
                     pass
-        super(Foo, self).__setattr__(key, value)
+        super().__setattr__(key, value)
 
     @property
     @_property_helper(_calculated_attrs, '_lambda_')

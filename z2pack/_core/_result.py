@@ -5,13 +5,9 @@
 # Date:    08.02.2016 15:02:23 CET
 # File:    _result.py
 
-from ptools.locker import Locker
+from ..ptools.locker import Locker
 
-import six
-
-
-@six.add_metaclass(Locker)
-class Result(object):
+class Result(metaclass=Locker):
     def __init__(self, data, ctrl_states):
         self.data = data
         self.ctrl_states = ctrl_states

@@ -10,7 +10,7 @@ from __future__ import division, print_function
 import numpy as np
 import scipy.linalg as la
 
-from .. import System as _Z2PackSystem
+from .._core._system_base import System as _Z2PackSystem
 
 class System(_Z2PackSystem):
     r"""

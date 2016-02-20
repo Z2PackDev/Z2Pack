@@ -8,6 +8,9 @@
 from ..ptools.locker import Locker
 
 class Result(metaclass=Locker):
-    def __init__(self, data, ctrl_states):
+    def __init__(self, data, stateful_ctrl):
         self.data = data
+        ctrl_states = dict()
+        for s_ctrl in stateful_ctrl:
+            ctrl_states[s_ctrl.__class__] = s_ctrl.state
         self.ctrl_states = ctrl_states

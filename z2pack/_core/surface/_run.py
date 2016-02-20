@@ -8,9 +8,11 @@
 from __future__ import division, print_function
 
 from ._utils import _convcheck, _dist
-from ._run_line import run_line
-from ._result import SurfaceResult
-from ..ptools import logger, string_tools
+from ..line._run import _run_line_impl
+from ._data import SurfaceData
+from .._result import Result
+#~ from ..ptools import logger, string_tools
+from ...ptools.serializer import serializer
 
 import sys
 import time
@@ -126,23 +128,47 @@ def _run_surface_impl(
             init_result=init_line_result
         )
         data.add_line(t, line_result)
-    
+        # save to file
+        result = Result(data, stateful_ctrl)
+        if save_file is not None:
+            serializer.dump(result, save_file)
+        return result
+
     # initialize result from old result (re-running lines if necessary) 
     if init_result is not None:
         for line in init_result.lines
             add_line(line.t, line.result)
     # create lines required by num_strings
     for t in np.linspace(0, 1, num_strings):
-        add_line(t)
+        result = add_line(t)
 
     # update data controls
     for d_ctrl in data_ctrl:
         d_ctrl.update(data)
 
     def collect_convergence():
-        
+        """
+        Calculates which neighbours are not converged
+        """
+        res = np.array([True] * (len(data.lines) - 1))
+        for c_ctrl in convergence_ctrl:
+            res &= c_ctrl.converged
+        return res
         
     # main loop
-    while not all(
-        all(c_ctrl.converged) for c_ctrl in convergence_ctrl
-    ):
+    N = len(data.lines)
+    conv = collect_convergence()
+    while not all(conv):
+        # add lines for all non-converged values
+        for i in range(len(conv)):
+            if not conv[i]:
+                new_t = (data.t[i] + data.t[i + 1]) / 2
+                result = add_line(new_t)
+
+        # check if new lines appeared
+        N_new = len(data.lines)
+        if N == N_new:
+            break
+        N = N_new
+        conv = collect_convergence()
+    return result

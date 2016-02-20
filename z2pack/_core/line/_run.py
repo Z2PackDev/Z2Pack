@@ -72,13 +72,15 @@ def _run_line_impl(*controls, system, line, save_file=None, init_result=None):
 
     # initialize stateful and data controls from old result
     if init_result is not None:
+        for d_ctrl in data_ctrl:
+            # not necessary for StatefulControls
+            if d_ctrl not in stateful_ctrl:
+                d_ctrl.update(init_result.data)
         for s_ctrl in stateful_ctrl:
             try:
                 s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__]
             except KeyError:
                 pass
-        for d_ctrl in data_ctrl:
-            d_ctrl.update(init_result.data)
 
     # main loop
     while not all(c_ctrl.converged for c_ctrl in convergence_ctrl):

@@ -18,6 +18,15 @@ class StatefulControl(metaclass=abc.ABCMeta):
         ABC for control objects which have a state. The state must not depend on the given convergence parameters.
         Concepts:
             * ``StatefulControl(state=s).state == s`` for any valid state s.
+            * The state must be sufficient to uniquely determine the behaviour of the Control, for a given set of input parameters of the constructor.
+            That is, given two equivalent StatefulControl objects, when applying
+
+                sc1 = StatefulControl(*args, **kwargs)
+                sc2 = StatefulControl(*args, **kwargs)
+                ...working with sc1 and/or sc2...
+                sc2.state = sc1.state
+
+            sc1 and sc2 are again equivalent. In particular, it is not necessary to use update() on sc2 in the case of a DataControl.
     """
     @abc.abstractmethod
     def __init__(self, *, state=None, **kwargs):
@@ -46,7 +55,7 @@ class IterationControl(AbstractControl):
         pass
 
 class ConvergenceControl(DataControl):
-    """ABC for convergence tester objects. Enforces the existence of an update method, and the converged and state properties"""
+    """ABC for convergence tester objects. Enforces the existence of an update method, and the ``converged`` property. The converged property must be valid (False) also before the first update() call. TODO: Specify this more clearly for the case of SurfaceControl objects. How should the Control know what the number of lines is?"""
     @abc.abstractproperty
     def converged(self):
         pass

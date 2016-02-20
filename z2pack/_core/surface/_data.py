@@ -13,8 +13,8 @@ class SurfaceData(metaclass=Locker):
     def __init__(self):
         self.lines = SortedList(key=lambda x: x.t)
 
-    def add(self, t, line_result):
-        self.lines.add(SurfaceLine(t, line_result))
+    def add_line(self, t, result):
+        self.lines.add(SurfaceLine(t, result))
 
     @property
     def t(self):
@@ -24,6 +24,6 @@ class SurfaceData(metaclass=Locker):
         return min(abs(t - tval) for tval in self.t)
 
 class SurfaceLine(metaclass=Locker):
-    def __init__(self, t, line_data):
+    def __init__(self, t, result):
         self.t = t
-        self.line_result = line_result
+        self.result = result

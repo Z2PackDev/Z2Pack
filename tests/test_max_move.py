@@ -52,7 +52,7 @@ def test_move_all(N):
     l2 = copy.deepcopy(l1)
     real_max_move = 0
     for idx in range(N):
-        move = random.uniform(-1, 1) / N
+        move = random.uniform(-1, 1) / (2 * N)
         real_max_move = max(abs(move), real_max_move)
         l2[idx] += move
         l2[idx] %= 1

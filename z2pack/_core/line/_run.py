@@ -19,7 +19,17 @@ from ...ptools.serializer import serializer
 
 import numpy as np
 
-def run_line(*, system, line, iterator=range(8, 27, 2), pos_tol=1e-2, save_file=None, init_result=None, load=False, load_quiet=True):
+def run_line(
+    *,
+    system,
+    line,
+    iterator=range(8, 27, 2),
+    pos_tol=1e-2,
+    save_file=None,
+    init_result=None,
+    load=False,
+    load_quiet=True
+):
     """
     Wrapper for:
         * getting / disecting old result
@@ -52,7 +62,13 @@ def run_line(*, system, line, iterator=range(8, 27, 2), pos_tol=1e-2, save_file=
     return _run_line_impl(*controls, system=system, line=line, save_file=save_file, init_result=init_result)
     
 
-def _run_line_impl(*controls, system, line, save_file=None, init_result=None):
+def _run_line_impl(
+    *controls,
+    system,
+    line,
+    save_file=None,
+    init_result=None
+):
     """
     Input parameters:
         * Controls

@@ -55,7 +55,9 @@ class IterationControl(AbstractControl):
         pass
 
 class ConvergenceControl(DataControl):
-    """ABC for convergence tester objects. Enforces the existence of an update method, and the ``converged`` property. The converged property must be valid (False) also before the first update() call. TODO: Specify this more clearly for the case of SurfaceControl objects. How should the Control know what the number of lines is?"""
+    """ABC for convergence tester objects. Enforces the existence of an update method, and the ``converged`` property.
+    For LineControl objects, the converged property must be valid (False) also before the first update() call.
+    This is not required for SurfaceControl objects."""
     @abc.abstractproperty
     def converged(self):
         pass

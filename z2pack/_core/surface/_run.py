@@ -21,6 +21,7 @@ import numpy as np
 import scipy.linalg as la
 
 def run_surface(
+    *,
     system,
     surface,
     pos_tol=1e-2,
@@ -29,11 +30,11 @@ def run_surface(
     iterator=range(8, 27, 2),
     min_neighbour_dist=0.01,
     num_strings=11,
-    verbose=True,
-    result=None,
-    pfile=None,
-    overwrite=False,
-    werr=True,
+    #~ verbose=True,
+    init_result=None,
+    save_file=None,
+    load=False,
+    load_quiet=True
 ):
     r"""
     TODO: fix
@@ -85,5 +86,63 @@ def run_surface(
     """
     return _RunSurfaceImpl(**locals()).run()
 
-def _run_surface_impl(*controls, system, line, save_file=None, init_result=None):
-    pass
+def _run_surface_impl(
+    *controls,
+    system,
+    line,
+    num_strings,
+    min_neighbour_dist,
+    save_file=None,
+    init_result=None
+):
+
+    def filter_ctrl(ctrl_type):
+        return [ctrl for ctrl in controls if isinstance(ctrl, ctrl_type)]
+
+    line_ctrl = filter_ctrl(LineControl)
+    controls = filter_ctrl(SurfaceControl)    
+    stateful_ctrl = filter_ctrl(StatefulControl)
+    iteration_ctrl = filter_ctrl(IterationControl)
+    data_ctrl = filter_ctrl(DataControl)
+    convergence_ctrl = filter_ctrl(ConvergenceControl)
+
+    # initialize stateful controls from old result
+    if init_result is not None:
+        for s_ctrl in stateful_ctrl:
+            try:
+                s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__]
+            except KeyError:
+                pass
+
+    data = SurfaceData()
+    def add_line(t, init_line_result=None):
+        # find whether the line is allowed still
+        if data.nearest_neighbour_dist(t) < min_neighbour_dist:
+            return
+        line_result = _run_line_impl(
+            *copy.deepcopy(line_ctrl),
+            system=system,
+            line=lambda ky: surface(t, ky),
+            init_result=init_line_result
+        )
+        data.add_line(t, line_result)
+    
+    # initialize result from old result (re-running lines if necessary) 
+    if init_result is not None:
+        for line in init_result.lines
+            add_line(line.t, line.result)
+    # create lines required by num_strings
+    for t in np.linspace(0, 1, num_strings):
+        add_line(t)
+
+    # update data controls
+    for d_ctrl in data_ctrl:
+        d_ctrl.update(data)
+
+    def collect_convergence():
+        
+        
+    # main loop
+    while not all(
+        all(c_ctrl.converged) for c_ctrl in convergence_ctrl
+    ):

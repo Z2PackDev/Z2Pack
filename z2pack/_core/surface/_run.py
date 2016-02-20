@@ -132,8 +132,12 @@ def _run_surface_impl(
         result = Result(data, stateful_ctrl)
         if save_file is not None:
             serializer.dump(result, save_file)
+<<<<<<< HEAD
         return result
 
+=======
+    
+>>>>>>> fbcba1536d4ee5957949ff3e4203c65bfb223175
     # initialize result from old result (re-running lines if necessary) 
     if init_result is not None:
         for line in init_result.lines

@@ -12,6 +12,10 @@ import pytest
 import numpy as np
 import inspect
 
+def test_base(test_ctrl_base):
+    test_ctrl_base(WccConvergence)
+    assert issubclass(WccConvergence, z2pack._core._control_base.LineControl)
+
 # Monkeypatching s.t. the data.wcc is just a float, and _get_max_move is just min(wcc1, wcc2)
 
 class TrivialData:

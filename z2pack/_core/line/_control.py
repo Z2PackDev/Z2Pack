@@ -5,7 +5,12 @@
 # Date:    09.02.2016 13:38:55 CET
 # File:    line.py
 
-from .._control_base import ConvergenceControl, IterationControl, LineControl, StatefulControl
+from .._control_base import (
+    ConvergenceControl,
+    IterationControl,
+    LineControl,
+    StatefulControl
+)
 from .._utils import _get_max_move
 
 class StepCounter(
@@ -34,8 +39,8 @@ class StepCounter(
 
 class WccConvergence(
     ConvergenceControl,
+    StatefulControl,
     LineControl,
-    StatefulControl
 ):
     def __init__(self, *, pos_tol):
         """

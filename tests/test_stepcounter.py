@@ -6,8 +6,13 @@
 # File:    test_stepcounter.py
 
 from z2pack._core.line._control import StepCounter
+import z2pack
 
 import pytest
+
+def test_base(test_ctrl_base):
+    test_ctrl_base(StepCounter)
+    assert issubclass(StepCounter, z2pack._core._control_base.LineControl)
 
 @pytest.fixture(params=list(range(1, 20)))
 def N1(request):

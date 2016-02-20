@@ -11,9 +11,10 @@ max_move = z2pack._core._utils._get_max_move
 import copy
 import pytest
 import random
+random.seed(2512351)
 import numpy as np
 
-@pytest.fixture(params=range(2, 100, 3))
+@pytest.fixture(params=range(2, 300, 3))
 def N(request):
     return request.param
 

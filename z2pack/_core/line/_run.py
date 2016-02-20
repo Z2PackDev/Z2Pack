@@ -7,7 +7,13 @@
 
 from ._data import LineData
 from ._control import StepCounter, WccConvergence
-from .._control_base import StatefulControl, IterationControl, DataControl, ConvergenceControl, LineControl
+from .._control_base import (
+    StatefulControl,
+    IterationControl,
+    DataControl,
+    ConvergenceControl,
+    LineControl
+)
 from .._result import Result
 from ...ptools.serializer import serializer
 

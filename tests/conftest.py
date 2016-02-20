@@ -9,6 +9,8 @@ import os
 import pytest
 import pickle
 
+from ctrl_base_tester import test_ctrl_base
+
 @pytest.fixture
 def test_name(request):
     """Returns module_name.function_name for a given test"""

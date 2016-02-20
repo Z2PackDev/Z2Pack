@@ -7,11 +7,16 @@
 
 from __future__ import division, print_function
 
-from ._utils import _convcheck, _dist
 from ..line._run import _run_line_impl
 from ._data import SurfaceData
 from .._result import Result
-#~ from ..ptools import logger, string_tools
+from .._control_base import (
+    LineControl,
+    SurfaceControl,
+    DataControl,
+    StatefulControl,
+    ConvergenceControl
+)
 from ...ptools.serializer import serializer
 
 import sys
@@ -102,9 +107,8 @@ def _run_surface_impl(
         return [ctrl for ctrl in controls if isinstance(ctrl, ctrl_type)]
 
     line_ctrl = filter_ctrl(LineControl)
-    controls = filter_ctrl(SurfaceControl)    
+    controls = filter_ctrl(SurfaceControl)
     stateful_ctrl = filter_ctrl(StatefulControl)
-    iteration_ctrl = filter_ctrl(IterationControl)
     data_ctrl = filter_ctrl(DataControl)
     convergence_ctrl = filter_ctrl(ConvergenceControl)
 
@@ -116,32 +120,40 @@ def _run_surface_impl(
             except KeyError:
                 pass
 
-    data = SurfaceData()
-    def add_line(t, init_line_result=None):
-        # find whether the line is allowed still
-        if data.nearest_neighbour_dist(t) < min_neighbour_dist:
-            return
-        line_result = _run_line_impl(
+    def get_line(t, init_line_result=None):
+        return _run_line_impl(
             *copy.deepcopy(line_ctrl),
             system=system,
             line=lambda ky: surface(t, ky),
             init_result=init_line_result
         )
-        data.add_line(t, line_result)
+
+    # update existing data, without losing any old data
+    if init_result is not None:
+        for line in init_result.data.lines:
+            line.result = get_line(line.t, line.result)
+            # save to file
+            if save_file is not None:
+                serializer.dump(init_result, save_file)
+        data = init_result.data
+    else:
+        data = SurfaceData()
+
+    def add_line(t):
+        """
+        Adds a line to the Surface, if it is within min_neighbour_dist of
+        the given lines.
+        """
+        # find whether the line is allowed still
+        if data.nearest_neighbour_dist(t) < min_neighbour_dist:
+            return
+        data.add_line(t, get_line(t))
         # save to file
         result = Result(data, stateful_ctrl)
         if save_file is not None:
             serializer.dump(result, save_file)
-<<<<<<< HEAD
         return result
 
-=======
-    
->>>>>>> fbcba1536d4ee5957949ff3e4203c65bfb223175
-    # initialize result from old result (re-running lines if necessary) 
-    if init_result is not None:
-        for line in init_result.lines
-            add_line(line.t, line.result)
     # create lines required by num_strings
     for t in np.linspace(0, 1, num_strings):
         result = add_line(t)

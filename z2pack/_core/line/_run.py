@@ -115,10 +115,7 @@ def _run_line_impl(
         for d_ctrl in data_ctrl:
             d_ctrl.update(data)
 
-        ctrl_states = dict()
-        for s_ctrl in stateful_ctrl:
-            ctrl_states[s_ctrl.__class__] = s_ctrl.state
-        result = Result(data, ctrl_states)
+        result = Result(data, stateful_ctrl)
 
         # save to file
         if save_file is not None:

@@ -17,15 +17,12 @@ from .._control_base import (
     StatefulControl,
     ConvergenceControl
 )
+from ._control import MoveConvergence, GapConvergence
+from ..line._control import StepCounter, WccConvergence
 from ...ptools.serializer import serializer
 
-import sys
-import time
 import copy
-import pickle
-import itertools
 import numpy as np
-import scipy.linalg as la
 
 def run_surface(
     *,
@@ -84,14 +81,42 @@ def run_surface(
     :param verbose:             Toggles printed output.
     :type verbose:              bool
 
-    :param overwrite:           Toggles whether existing data should be
-        overwritten or used to re-start a run.
-    :type overwrite:            bool
-
     :returns:                   ``None``. Use :meth:`get_res` and
         :meth:`z2` to get the results.
     """
-    return _RunSurfaceImpl(**locals()).run()
+
+    # setting up controls
+    controls = []
+    controls.append(StepCounter(iterator=iterator))
+    if pos_tol is not None:
+        controls.append(WccConvergence(pos_tol=pos_tol))
+    if move_tol is not None:
+        controls.append(MoveConvergence(move_tol))
+    if gap_tol is not None:
+        controls.append(GapConvergence(gap_tol))
+
+    # setting up init_result
+    if init_result is not None:
+        if load:
+            raise ValueError('Inconsistent input parameters "init_result != None" and "load == True". Cannot decide whether to load result from file or use given result.')
+    elif load:
+        if save_file is None:
+            raise ValueError('Cannot load result from file: No filename given in the "save_file" parameter.')
+        try:
+            init_result = serializer.load(save_file)
+        except IOError as e:
+            if not load_quiet:
+                raise e
+                
+    return _run_surface_impl(
+        *controls,
+        system=system,
+        line=line,
+        num_strings=num_strings,
+        min_neighbour_dist=min_neighbour_dist,
+        save_file=save_file,
+        init_result=init_result
+    )
 
 def _run_surface_impl(
     *controls,

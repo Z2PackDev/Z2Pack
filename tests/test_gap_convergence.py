@@ -56,8 +56,14 @@ def test_trivial_wcc(gap_tol, N, get_surface_data):
     mc.update(data)
     assert mc.converged == [True] * N
     
-def test_mixed(gap_tol, get_surface_data):
+def test_mixed_1(gap_tol, get_surface_data):
     mc = GapConvergence(gap_tol=gap_tol)
     data = get_surface_data([[0, 1], [0, 0.8]])
+    mc.update(data)
+    assert mc.converged == (gap_tol < 0.3)
+
+def test_mixed_2(gap_tol, get_surface_data):
+    mc = GapConvergence(gap_tol=gap_tol)
+    data = get_surface_data([[0, 0.8], [0, 1]])
     mc.update(data)
     assert mc.converged == (gap_tol < 0.3)

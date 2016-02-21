@@ -8,6 +8,8 @@
 from .._control_base import ConvergenceControl, IterationControl, SurfaceControl, StatefulControl
 from .._utils import _get_max_move
 
+import numpy as np
+
 class MoveConvergence(ConvergenceControl, SurfaceControl):
     def __init__(self, *, move_tol):
         self.move_tol = move_tol
@@ -43,4 +45,4 @@ class GapConvergence(ConvergenceControl, SurfaceControl):
             ]
         converged_left = get_convergence(wcc_list[1:], gap_list[:-1])
         converged_right = get_convergence(wcc_list[:-1], gap_list[1:])
-        self._converged = converged_left and converged_right
+        self._converged = list(np.array(converged_left) & np.array(converged_right))

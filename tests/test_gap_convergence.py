@@ -9,8 +9,7 @@ from z2pack._core.surface._control import GapConvergence
 from z2pack._core._control_base import SurfaceControl
 from z2pack._core._result import Result
 from z2pack._core.surface._data import SurfaceData
-
-#~ from monkeypatch_surface import *
+from z2pack._core.line._data import LineData
 
 import z2pack
 import pytest
@@ -20,14 +19,39 @@ def test_base(test_ctrl_base):
     test_ctrl_base(GapConvergence)
     assert issubclass(GapConvergence, SurfaceControl)
 
-@pytest.fixture(params=np.linspace(0.1, 0.5, 11))
+@pytest.fixture
+def patch_line_data(monkeypatch):
+    def init(self, wcc):
+        self._wcc = wcc
+
+    monkeypatch.setattr(LineData, '__init__', init)
+
+@pytest.fixture
+def get_surface_data(patch_line_data):
+    def inner(wcc_list):
+        t = np.linspace(0, 1, len(wcc_list))
+        data = SurfaceData()
+        for tval, wcc in zip(t, wcc_list):
+            data.add_line(tval, Result(LineData(wcc), []))
+        return data
+    return inner
+
+@pytest.fixture(params=np.linspace(0.1, 0.49, 11))
 def gap_tol(request):
     return request.param
 
+@pytest.fixture(params=range(1, 10))
+def N(request):
+    return request.param
 
-def test_single_update(move_tol, patch_max_move):
+def test_hit_gap(gap_tol, get_surface_data):
     mc = GapConvergence(gap_tol=gap_tol)
-    vals = [0.1, 0.2, 0.3, 0.4]
-    mc.update(TrivialSurfaceData(vals))
-    conv = [min(v1, v2) < move_tol for v1, v2 in zip(vals[:-1], vals[1:])]
-    assert mc.converged == conv
+    data = get_surface_data([[0, 1], [0.5, 0.5]])
+    mc.update(data)
+    assert mc.converged == [False]
+    
+def test_trivial_wcc(gap_tol, N, get_surface_data):
+    mc = GapConvergence(gap_tol=gap_tol)
+    data = get_surface_data([[0, 1]] * (N + 1))
+    mc.update(data)
+    assert mc.converged == [True] * N

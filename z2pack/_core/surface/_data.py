@@ -5,8 +5,7 @@
 # Date:    08.02.2016 16:04:23 CET
 # File:    _data.py
 
-import six
-from ptools.locker import Locker
+from ...ptools.locker import Locker
 from sortedcontainers import SortedList
 
 class SurfaceData(metaclass=Locker):

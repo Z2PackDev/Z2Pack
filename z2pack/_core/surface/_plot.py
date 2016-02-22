@@ -7,6 +7,8 @@
 
 from ...common.decorator_proxy import decorator
 
+__all__ = ['wcc_plot', 'chern_plot']
+
 @decorator.decorator
 def _plot(func, data, *, axis=None, **kwargs):
     # import is here s.t. the import of the package does not fail
@@ -73,8 +75,8 @@ def wcc_plot(
         for offset in [-1, 0, 1]:
             axis.plot(
                 surface_data.t,
-                [(line.result.data.gap_pos + shift) % 1 + offset
-                    for line in surface_data.lines
+                [(line.gap_pos + shift) % 1 + offset
+                    for line in surface_data.lines_data
                 ],
                 **gap_settings
             )
@@ -84,3 +86,24 @@ def wcc_plot(
             axis.scatter([line.t] * len(wcc),
                          [(x + shift) % 1 + offset for x in wcc],
                          **wcc_settings)
+
+@_plot
+def chern_plot(
+    surface_data,
+    *,
+    axis,
+    settings={'marker': 'o', 'markerfacecolor': 'r', 'color': 'r'}
+):
+    r"""
+    TODO
+    """
+    #~ res = self.chern()
+    #~ pol = res['pol']
+    t_list = surface_data.t
+    pol = [line.pol for line in surface_data.lines_data]
+    for offset in [-1, 0, 1]:
+        axis.plot(t_list, pol, **settings)
+        #~ for i in range(len(pol) - 1):
+            #~ axis.plot(self._t_points[i:i+2], [pol[i] + offset, pol[i] + steps[i] + offset], **settings)
+        #~ for i in range(len(pol) - 1):
+            #~ axis.plot(self._t_points[i:i+2], [pol[i + 1] - steps[i] + offset, pol[i + 1] + offset], **settings)

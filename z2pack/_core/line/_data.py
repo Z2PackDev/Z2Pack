@@ -51,6 +51,11 @@ class LineData:
         self._wcc = sorted([(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs])
 
     @property
+    @_property_helper(_calculated_attrs, '_wcc_sum')
+    def pol(self):
+        self._wcc_sum = sum(self.wcc) % 1
+
+    @property
     @_property_helper(_calculated_attrs, '_gap_pos')
     def gap_pos(self):
         self._calculate_gap()

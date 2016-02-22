@@ -6,4 +6,4 @@
 # File:    __init__.py
 
 from ._run import run_surface as run
-from ._plot import wcc_plot
+from ._plot import *

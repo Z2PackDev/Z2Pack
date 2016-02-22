@@ -8,6 +8,8 @@
 import numpy as np
 import scipy.linalg as la
 
+from .._utils import _gapfind
+
 class LineData:
     def __init__(self, overlaps):
         self.overlaps = overlaps
@@ -66,17 +68,4 @@ class LineData:
         self._calculate_gap()
 
     def _calculate_gap(self):
-        gap_size = 0
-        gap_idx = 0
-        N = len(self.wcc)
-        for i in range(0, N - 1):
-            temp = self.wcc[i + 1] - self.wcc[i]
-            if temp > gap_size:
-                gap_size = temp
-                gap_idx = i
-        temp = self.wcc[0] - self.wcc[-1] + 1
-        if temp > gap_size:
-            gap_size = temp
-            gap_idx = N - 1
-        self._gap_pos = (self.wcc[gap_idx] + gap_size / 2)
-        self._gap_size = gap_size
+        self._gap_pos, self._gap_size = _gapfind(self.wcc)

@@ -6,6 +6,7 @@
 # File:    _plot.py
 
 from ...common.decorator_proxy import decorator
+from .._utils import _pol_step
 
 __all__ = ['wcc_plot', 'chern_plot']
 
@@ -97,13 +98,11 @@ def chern_plot(
     r"""
     TODO
     """
-    #~ res = self.chern()
-    #~ pol = res['pol']
     t_list = surface_data.t
-    pol = [line.pol for line in surface_data.lines_data]
+    pol = surface_data.lines_pol
+    pol_step = _pol_step(pol)
     for offset in [-1, 0, 1]:
-        axis.plot(t_list, pol, **settings)
-        #~ for i in range(len(pol) - 1):
-            #~ axis.plot(self._t_points[i:i+2], [pol[i] + offset, pol[i] + steps[i] + offset], **settings)
-        #~ for i in range(len(pol) - 1):
-            #~ axis.plot(self._t_points[i:i+2], [pol[i + 1] - steps[i] + offset, pol[i + 1] + offset], **settings)
+        for i in range(len(pol) - 1):
+            axis.plot(t_list[i:i+2], [pol[i] + offset, pol[i] + pol_step[i] + offset], **settings)
+        for i in range(len(pol) - 1):
+            axis.plot(t_list[i:i+2], [pol[i + 1] - pol_step[i] + offset, pol[i + 1] + offset], **settings)

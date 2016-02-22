@@ -57,3 +57,11 @@ def _dist(x, y):
     x = x % 1
     y = y % 1
     return min(abs(1 + x - y) % 1, abs(1 - x + y) % 1)
+
+def _pol_step(pol_list):
+    offset = [-1, 0, 1]
+    pol_list = [p % 1 for p in pol_list]
+    res = []
+    for p1, p2 in zip(pol_list[:-1], pol_list[1:]):
+        res.append(min((p2 - p1 + o for o in offset), key=abs))
+    return res

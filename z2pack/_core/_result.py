@@ -14,3 +14,8 @@ class Result(metaclass=Locker):
         for s_ctrl in stateful_ctrl:
             ctrl_states[s_ctrl.__class__] = s_ctrl.state
         self.ctrl_states = ctrl_states
+
+    def __getattr__(self, key):
+        if key != 'data':
+            return getattr(self.data, key)
+        raise AttributeError

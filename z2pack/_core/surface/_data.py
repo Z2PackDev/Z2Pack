@@ -15,17 +15,22 @@ class SurfaceData(metaclass=Locker):
     def add_line(self, t, result):
         self.lines.add(SurfaceLine(t, result))
 
+    def __getattr__(self, key):
+        if key != 'lines':
+            return [getattr(line, key) for line in self.lines]
+        raise AttributeError
+    
     @property
     def t(self):
         return tuple(line.t for line in self.lines)
 
-    @property
-    def lines_data(self):
-        return [line.result.data for line in self.lines]
+    #~ @property
+    #~ def lines_data(self):
+        #~ return [line.result.data for line in self.lines]
 
-    @property
-    def lines_pol(self):
-        return [line.pol for line in self.lines_data]
+    #~ @property
+    #~ def lines_pol(self):
+        #~ return [line.pol for line in self.lines_data]
 
     def nearest_neighbour_dist(self, t):
         if len(self.t) == 0:

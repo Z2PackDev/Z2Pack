@@ -49,6 +49,7 @@ z2pack/ptools/*.py
 !z2pack/ptools/parse_dict.py  
 !z2pack/ptools/string_tools.py  
 !z2pack/ptools/logger.py
+!z2pack/ptools/locker.py
 
 # debug folder
 debug

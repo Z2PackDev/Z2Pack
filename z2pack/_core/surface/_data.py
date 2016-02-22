@@ -20,6 +20,8 @@ class SurfaceData(metaclass=Locker):
         return tuple(line.t for line in self.lines)
 
     def nearest_neighbour_dist(self, t):
+        if len(self.t) == 0:
+            return 1
         return min(abs(t - tval) for tval in self.t)
 
 class SurfaceLine(metaclass=Locker):

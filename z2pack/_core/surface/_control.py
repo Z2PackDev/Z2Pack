@@ -36,13 +36,14 @@ class GapConvergence(ConvergenceControl, SurfaceControl):
         return self._converged
 
     def update(self, data):
-        wcc_list = [line.result.data.wcc for line in data.lines]
-        gap_list = [line.result.data.gap_pos for line in data.lines]
-        def get_convergence(wccs, gaps):
-            return [
-            all(abs(wcc_val - gap) > self.gap_tol for wcc_val in wcc)
-            for wcc, gap in zip(wccs, gaps)
-            ]
-        converged_left = get_convergence(wcc_list[1:], gap_list[:-1])
-        converged_right = get_convergence(wcc_list[:-1], gap_list[1:])
-        self._converged = list(np.array(converged_left) & np.array(converged_right))
+        if len(data.lines) > 1:
+            wcc_list = [line.result.data.wcc for line in data.lines]
+            gap_list = [line.result.data.gap_pos for line in data.lines]
+            def get_convergence(wccs, gaps):
+                return [
+                all(abs(wcc_val - gap) > self.gap_tol for wcc_val in wcc)
+                for wcc, gap in zip(wccs, gaps)
+                ]
+            converged_left = get_convergence(wcc_list[1:], gap_list[:-1])
+            converged_right = get_convergence(wcc_list[:-1], gap_list[1:])
+            self._converged = list(np.array(converged_left) & np.array(converged_right))

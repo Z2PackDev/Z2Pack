@@ -16,8 +16,11 @@ def _plot(func, data, *, axis=None, **kwargs):
 
     # create axis if it does not exist
     if axis is None:
+        return_fig = True
         fig = plt.figure()
         axis = fig.add_subplot(111)
+    else:
+        return_fig = False
 
     axis.set_xlim(0, 1)
     axis.set_ylim(0, 1)
@@ -28,9 +31,10 @@ def _plot(func, data, *, axis=None, **kwargs):
     except AttributeError:
         pass
         
-    func(data, axis, **kwargs)
+    func(data, axis=axis, **kwargs)
 
-    return fig
+    if return_fig:
+        return fig
 
 @_plot
 def wcc_plot(
@@ -68,15 +72,15 @@ def wcc_plot(
     if gaps:
         for offset in [-1, 0, 1]:
             axis.plot(
-                data.t,
+                surface_data.t,
                 [(line.result.data.gap_pos + shift) % 1 + offset
-                    for line in data.lines
+                    for line in surface_data.lines
                 ],
                 **gap_settings
             )
-    for line in data.lines:
+    for line in surface_data.lines:
         for offset in [-1, 0, 1]:
             wcc = line.result.data.wcc
-            axis.scatter([kpt] * len(wcc),
+            axis.scatter([line.t] * len(wcc),
                          [(x + shift) % 1 + offset for x in wcc],
                          **wcc_settings)

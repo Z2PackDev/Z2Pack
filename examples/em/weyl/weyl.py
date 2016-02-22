@@ -33,11 +33,11 @@ def hamilton1(k):
 # creating the two systems
 system0 = z2pack.em.System(hamilton0, occ=1)
 system1 = z2pack.em.System(hamilton1) # occ=1 is default (#orbitals / 2)
+
 # the surface is a sphere around the Weyl point
-surface0 = system0.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.01), pickle_file=None)
-surface1 = system1.surface(z2pack.shapes.Sphere([0., 0., 0.], 0.01), pickle_file=None)
-surface0.wcc_calc(verbose=False)
-surface1.wcc_calc(verbose=False)
+surface = z2pack.shapes.Sphere([0., 0., 0.], 0.01)
+res0 = z2pack.surface.run(system=system0, surface=surface, move_tol=1e-2)
+res1 = z2pack.surface.run(system=system1, surface=surface, gap_tol=0.4)
 
 # plotting
 fig, ax = plt.subplots(1, 2)
@@ -55,7 +55,7 @@ ax[0].set_title(r'$\vec{k}.\vec{\sigma}$', fontsize=fs)
 ax[1].set_title(r'$(k_x, -k_y, k_z).\vec{\sigma}$', fontsize=fs)
 
 # plotting the evolution of polarization
-surface0.chern_plot(axis=ax[0], show=False)
-surface1.chern_plot(axis=ax[1], show=False)
+z2pack.surface.wcc_plot(res0, axis=ax[0])
+z2pack.surface.wcc_plot(res1, axis=ax[1])
 
 plt.show()

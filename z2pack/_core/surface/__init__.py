@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 #
 # Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    19.02.2016 11:28:57 MST
+# Date:    21.02.2016 18:55:52 MST
 # File:    __init__.py
 
-from . import line
-from . import surface
+from ._run import run_surface as run
+from ._plot import wcc_plot

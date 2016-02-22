@@ -91,9 +91,9 @@ def run_surface(
     if pos_tol is not None:
         controls.append(WccConvergence(pos_tol=pos_tol))
     if move_tol is not None:
-        controls.append(MoveConvergence(move_tol))
+        controls.append(MoveConvergence(move_tol=move_tol))
     if gap_tol is not None:
-        controls.append(GapConvergence(gap_tol))
+        controls.append(GapConvergence(gap_tol=gap_tol))
 
     # setting up init_result
     if init_result is not None:
@@ -111,7 +111,7 @@ def run_surface(
     return _run_surface_impl(
         *controls,
         system=system,
-        line=line,
+        surface=surface,
         num_strings=num_strings,
         min_neighbour_dist=min_neighbour_dist,
         save_file=save_file,
@@ -121,7 +121,7 @@ def run_surface(
 def _run_surface_impl(
     *controls,
     system,
-    line,
+    surface,
     num_strings,
     min_neighbour_dist,
     save_file=None,
@@ -171,12 +171,18 @@ def _run_surface_impl(
         """
         # find whether the line is allowed still
         if data.nearest_neighbour_dist(t) < min_neighbour_dist:
-            return
+            return Result(data, stateful_ctrl)
         data.add_line(t, get_line(t))
+
+        # update data controls
+        for d_ctrl in data_ctrl:
+            d_ctrl.update(data)
+
         # save to file
         result = Result(data, stateful_ctrl)
         if save_file is not None:
             serializer.dump(result, save_file)
+
         return result
 
     # create lines required by num_strings

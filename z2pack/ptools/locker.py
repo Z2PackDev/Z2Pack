@@ -24,6 +24,22 @@ class LockerBase(type):
                     self.attr_mod_ctrl = cls.locker_type
             return inner
 
+        # getattr
+        @decorator.decorator
+        def decorate_get(fct, self, key, val):
+            """
+            decorator for __getattr__
+            """
+            return _decorator_set_impl(fct)(self, key, val)
+
+        def _decorate_get_impl(fct):
+            def inner(self, key):
+                if key == 'attr_mod_ctrl':
+                    raise AttributeError
+                else:
+                    fct(self, key, val)
+            return inner
+
         # setattr
         @decorator.decorator
         def decorate_set(fct, self, key, val):
@@ -34,11 +50,11 @@ class LockerBase(type):
 
         def _decorate_set_impl(fct):
             def inner(self, key, val):
-                if key != 'attr_mod_ctrl' and hasattr(self, 'attr_mod_ctrl'):
-                    assert(self.attr_mod_ctrl in ['none', 'new', 'all'])
+                if hasattr(self, 'attr_mod_ctrl'):
+                    assert(self.attr_mod_ctrl in ['none', 'new', 'all', 'const'])
                     if self.attr_mod_ctrl == 'new' and (not hasattr(self, key)):
                         raise AttributeError
-                    elif self.attr_mod_ctrl == 'all':
+                    elif (self.attr_mod_ctrl == 'all' and key != 'attr_mod_ctrl') or (self.attr_mod_ctrl == 'const'):
                         raise AttributeError("'{0}' object is locked for modification.".format(type(self).__name__))
 
                 fct(self, key, val)
@@ -55,7 +71,7 @@ class LockerBase(type):
         def _decorate_del_impl(fct):
             def inner(self, key):
                 if hasattr(self, 'attr_mod_ctrl'):
-                    assert(self.attr_mod_ctrl in ['none', 'new', 'all'])
+                    assert(self.attr_mod_ctrl in ['none', 'new', 'all', 'const'])
                     if self.attr_mod_ctrl != 'none':
                         raise AttributeError("'{0}' attributes cannot be deleted".format(type(self).__name__, key))
 
@@ -69,6 +85,13 @@ class LockerBase(type):
         
         if not any([isinstance(b, LockerBase) for b in bases]):
             try:
+                cls.__getattr__ = decorate_get(cls.__getattr__.im_func)
+            except AttributeError:
+                try:
+                    cls.__getattr__ = _decorate_get_impl(cls.__getattr__)
+                except AttributeError:
+                    pass
+            try:
                 cls.__setattr__ = decorate_set(cls.__setattr__.im_func)
             except AttributeError:
                 cls.__setattr__ = _decorate_set_impl(cls.__setattr__)
@@ -77,6 +100,7 @@ class LockerBase(type):
             except AttributeError:
                 cls.__delattr__ = _decorate_del_impl(cls.__delattr__)
 
+SuperConstLocker = type('SuperConstLocker', (LockerBase,), dict(locker_type='const'))
 ConstLocker = type('ConstLocker', (LockerBase,), dict(locker_type='all'))
 OpenLocker = type('OpenLocker', (LockerBase,), dict(locker_type='none'))
 Locker = type('Locker', (LockerBase,), dict(locker_type='new'))

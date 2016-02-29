@@ -34,6 +34,8 @@ class LockerBase(type):
 
         def _decorate_get_impl(fct):
             def inner(self, key):
+                # for the attr_mod_ctrl key, the getattre behaviour should not change
+                # when e.g. the user does some redirecting
                 if key == 'attr_mod_ctrl':
                     raise AttributeError
                 else:
@@ -89,6 +91,8 @@ class LockerBase(type):
             except AttributeError:
                 try:
                     cls.__getattr__ = _decorate_get_impl(cls.__getattr__)
+                # if __getattr__ does not exist, there is no need for this extra
+                # safety measure.
                 except AttributeError:
                     pass
             try:

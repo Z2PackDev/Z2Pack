@@ -18,7 +18,7 @@ available, however it does not support the full range of options
 available in Z2Pack.
 
 If you use Z2Pack or its online interface for your research, please
-consider citing it (not yet published).
+consider citing it (not yet published), and `the method it is based on developed by A. Soluyanov and D. Vanderbilt <http://journals.aps.org/prb/abstract/10.1103/PhysRevB.83.235401>`_.
 
 .. ~ TODO!
 
@@ -78,4 +78,3 @@ Indices and tables
 
 .. _dg: http://github.com/greschd
 .. _GitHub: http://github.com/Z2PackDev/Z2Pack
-

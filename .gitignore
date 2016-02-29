@@ -59,3 +59,7 @@ debug
 lsf.*
 test_log.txt
 decorator.py
+
+venv
+.cache
+.coverage

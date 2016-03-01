@@ -50,18 +50,17 @@ class LineData:
     @_property_helper(_calculated_attrs, '_lambda_')
     def lambda_(self):
         M_tot = np.eye(len(self.overlaps[0]))
-        #~ print(len(self.overlaps))
         for M in self.overlaps:
             M_tot = np.dot(M_tot, M)
         [V, E, W] = la.svd(M_tot)
-        #~ lambda_ = np.dot(V, W).conjugate().transpose()
         lambda_ = np.dot(V, W)
         self._lambda_ = lambda_
 
     @property
     @_property_helper(_calculated_attrs, '_wcc')
     def wcc(self):
-        eigs, _ = la.eig(self.lambda_)
+        eigs, eigvecs = la.eig(self.lambda_)
+        print(eigvecs)
         self._wcc = sorted([(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs])
 
     @property

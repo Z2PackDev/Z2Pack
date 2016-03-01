@@ -39,7 +39,7 @@ class LockerBase(type):
                 if key == 'attr_mod_ctrl':
                     raise AttributeError
                 else:
-                    fct(self, key, val)
+                    return fct(self, key)
             return inner
 
         # setattr

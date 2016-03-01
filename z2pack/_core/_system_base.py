@@ -15,7 +15,7 @@ class System(metaclass=abc.ABCMeta):
     __metaclass__ = abc.ABCMeta 
 
     @abc.abstractmethod
-    def get_m(self, kpt):
+    def get_eig(self, kpt):
         r"""
         Returns a list of overlap matrices :math:`M_{m,n}` corresponding to the given k-points.
         

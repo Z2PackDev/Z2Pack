@@ -11,8 +11,9 @@ import scipy.linalg as la
 from .._utils import _gapfind
 
 class LineData:
-    def __init__(self, overlaps):
-        self.overlaps = overlaps
+    def __init__(self, eigenstates):
+        self.eigenstates = eigenstates
+        #~ self.overlaps = overlaps
 
     # Helpers for the automatically calculated attributes / properties
     _calculated_attrs = []
@@ -29,13 +30,45 @@ class LineData:
         return dec
 
     def __setattr__(self, key, value):
-        if key == 'overlaps':
+        if key == 'eigenstates':
             for name in self.__class__._calculated_attrs:
                 try:
                     delattr(self, name)
                 except AttributeError:
                     pass
         super().__setattr__(key, value)
+
+    @property
+    @_property_helper(_calculated_attrs, '_overlaps')
+    def overlaps(self):
+        # create M - matrices
+        
+        M = []
+        N = len(self.eigenstates)
+        #~ print(self.eigenstates[0].shape)
+        eigsize, eignum = self.eigenstates[0].shape
+
+        for i in range(N - 1):
+            Mnew = [
+                [
+                    sum(
+                        np.conjugate(self.eigenstates[i][j, m]) * self.eigenstates[i + 1][j, n] 
+                        for j in range(eigsize)
+                    )
+                    for n in range(eignum)
+                ]
+                for m in range(eignum)
+            ]
+            M.append(Mnew)
+            #~ Mnew = [
+                #~ [
+                    #~ np.dot(np.conjugate(self.eigenstates[i][:, m]), self.eigenstates[i + 1][:, n])
+                    #~ for n in range(eignum)
+                #~ ]
+                #~ for m in range(eignum)
+            #~ ]
+            #~ M.append(Mnew)
+        self._overlaps = M
 
     #~ @property
     #~ @_property_helper(_calculated_attrs, '_lambda_')
@@ -59,8 +92,8 @@ class LineData:
     @property
     @_property_helper(_calculated_attrs, '_wcc')
     def wcc(self):
-        eigs, eigvecs = la.eig(self.lambda_)
-        print(eigvecs)
+        eigs, _ = la.eig(self.lambda_)
+        #~ print(eigvecs)
         self._wcc = sorted([(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs])
 
     @property

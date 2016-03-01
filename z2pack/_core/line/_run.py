@@ -108,7 +108,7 @@ def _run_line_impl(
                 # TODO: report
                 return result
 
-        data = LineData(system.get_m(
+        data = LineData(system.get_eig(
             list(line(k) for k in np.linspace(0., 1., run_options['num_steps']))
         ))
 

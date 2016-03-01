@@ -121,4 +121,5 @@ def _run_line_impl(
         if save_file is not None:
             serializer.dump(result, save_file)
 
+    print(len(result.overlaps))
     return result

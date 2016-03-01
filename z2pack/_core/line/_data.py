@@ -37,13 +37,25 @@ class LineData:
                     pass
         super().__setattr__(key, value)
 
+    #~ @property
+    #~ @_property_helper(_calculated_attrs, '_lambda_')
+    #~ def lambda_(self):
+        #~ lambda_ = np.eye(len(self.overlaps[0]))
+        #~ for M in self.overlaps:
+            #~ [V, E, W] = la.svd(M)
+            #~ lambda_ = np.dot(np.dot(V, W).conjugate().transpose(), lambda_)
+        #~ self._lambda_ = lambda_
+
     @property
     @_property_helper(_calculated_attrs, '_lambda_')
     def lambda_(self):
-        lambda_ = np.eye(len(self.overlaps[0]))
+        M_tot = np.eye(len(self.overlaps[0]))
+        #~ print(len(self.overlaps))
         for M in self.overlaps:
-            [V, E, W] = la.svd(M)
-            lambda_ = np.dot(np.dot(V, W).conjugate().transpose(), lambda_)
+            M_tot = np.dot(M_tot, M)
+        [V, E, W] = la.svd(M_tot)
+        #~ lambda_ = np.dot(V, W).conjugate().transpose()
+        lambda_ = np.dot(V, W)
         self._lambda_ = lambda_
 
     @property

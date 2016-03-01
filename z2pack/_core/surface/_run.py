@@ -218,4 +218,5 @@ def _run_surface_impl(
             break
         N = N_new
         conv = collect_convergence()
+    #~ print(N) # DEBUG
     return result

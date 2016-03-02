@@ -92,9 +92,21 @@ class LineData:
     @property
     @_property_helper(_calculated_attrs, '_wcc')
     def wcc(self):
-        eigs, _ = la.eig(self.lambda_)
+        self._calculate_wannier()
+        
+    @property
+    @_property_helper(_calculated_attrs, '_wannier_vec')
+    def wannier_vec(self):
+        self._calculate_wannier()
+
+    def _calculate_wannier(self):
+        eigs, eigvec = la.eig(self.lambda_)
         #~ print(eigvecs)
-        self._wcc = sorted([(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs])
+        wcc = np.array([(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs])
+        idx = np.argsort(wcc)
+
+        self._wcc = list(wcc[idx])
+        self._wannier_vec = list(eigvec.T[idx])
 
     @property
     @_property_helper(_calculated_attrs, '_wcc_sum')

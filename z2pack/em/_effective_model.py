@@ -78,7 +78,7 @@ class System(_Z2PackSystem):
                 diff = la.norm(ham - ham.conjugate().transpose(), ord=np.inf)
                 if  diff > self._hermitian_tol:
                     raise ValueError('The Hamiltonian you used is not hermitian, with the maximum difference between the Hamiltonian and its adjoint being {0}. Use the ``hamilton_tol`` input parameter (in the ``tb.Hamilton`` constructor; currently {1}) to set the sensitivity of this test or turn it off completely (``hamilton_tol=None``).'.format(diff, self._hermitian_tol))
-            eigval, eigvec = la.eig(ham)
+            eigval, eigvec = la.eigh(ham)
             eigval = np.real(eigval)
             idx = eigval.argsort()
             idx = idx[:self._occ]
@@ -86,7 +86,9 @@ class System(_Z2PackSystem):
             # take only the lower - energy eigenstates
             eigvec = eigvec[:, idx]
 
-            eigs.append(np.array(eigvec))
+            # cast to complex explicitly to avoid casting error when the phase
+            # is complex but the eigenvector itself is not.
+            eigs.append(np.array(eigvec, dtype=complex))
         eigs.append(eigs[0])
 
         # normalize phases to get u instead of phi

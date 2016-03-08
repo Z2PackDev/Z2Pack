@@ -9,7 +9,7 @@ from z2pack._core.surface._control import GapConvergence
 from z2pack._core._control_base import SurfaceControl
 from z2pack._core._result import Result
 from z2pack._core.surface._data import SurfaceData
-from z2pack._core.line._data import LineData
+from z2pack._core.line._data import OverlapLineData
 
 import z2pack
 import pytest
@@ -24,7 +24,7 @@ def patch_line_data(monkeypatch):
     def init(self, wcc):
         self._wcc = wcc
 
-    monkeypatch.setattr(LineData, '__init__', init)
+    monkeypatch.setattr(OverlapLineData, '__init__', init)
 
 @pytest.fixture
 def get_surface_data(patch_line_data):
@@ -32,7 +32,7 @@ def get_surface_data(patch_line_data):
         t = np.linspace(0, 1, len(wcc_list))
         data = SurfaceData()
         for tval, wcc in zip(t, wcc_list):
-            data.add_line(tval, Result(LineData(wcc), []))
+            data.add_line(tval, Result(OverlapLineData(wcc), []))
         return data
     return inner
 

@@ -5,7 +5,7 @@
 # Date:    12.02.2016 16:04:45 CET
 # File:    _run.py
 
-from ._data import LineData
+from ._data import EigenstateLineData, OverlapLineData
 from ._control import StepCounter, WccConvergence
 from .._control_base import (
     StatefulControl,
@@ -98,6 +98,15 @@ def _run_line_impl(
             except KeyError:
                 pass
 
+    # Detect which type of System is active
+    if hasattr(system, 'get_eig'):
+        DataType = EigenstateLineData
+        system_fct = system.get_eig
+    else:
+        DataType = OverlapLineData
+        system_fct = system.get_m
+        
+
     # main loop
     while not all(c_ctrl.converged for c_ctrl in convergence_ctrl):
         run_options = dict()
@@ -108,7 +117,7 @@ def _run_line_impl(
                 # TODO: report
                 return result
 
-        data = LineData(system.get_m(
+        data = DataType(system_fct(
             list(line(k) for k in np.linspace(0., 1., run_options['num_steps']))
         ))
 

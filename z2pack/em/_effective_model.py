@@ -10,7 +10,7 @@ from __future__ import division, print_function
 import numpy as np
 import scipy.linalg as la
 
-from .._core._system_base import System as _Z2PackSystem
+from .._core._system_base import EigenstateSystem as _Z2PackSystem
 
 class System(_Z2PackSystem):
     r"""
@@ -62,9 +62,9 @@ class System(_Z2PackSystem):
         else:
             self._occ = occ
 
-    def get_m(self, kpt):
+    def get_eig(self, kpt):
         """
-        returns:        M-matrices
+        returns:        eigenstates
         """
         # create k-points for string
         N = len(kpt) - 1
@@ -78,31 +78,23 @@ class System(_Z2PackSystem):
                 diff = la.norm(ham - ham.conjugate().transpose(), ord=np.inf)
                 if  diff > self._hermitian_tol:
                     raise ValueError('The Hamiltonian you used is not hermitian, with the maximum difference between the Hamiltonian and its adjoint being {0}. Use the ``hamilton_tol`` input parameter (in the ``tb.Hamilton`` constructor; currently {1}) to set the sensitivity of this test or turn it off completely (``hamilton_tol=None``).'.format(diff, self._hermitian_tol))
-            eigval, eigvec = la.eig(ham)
+            eigval, eigvec = la.eigh(ham)
             eigval = np.real(eigval)
             idx = eigval.argsort()
             idx = idx[:self._occ]
-            idx.sort()  # preserve the order of the wcc
-            eigvec = eigvec[:, idx]
+            idx.sort()  
             # take only the lower - energy eigenstates
-            eigs.append(np.array(eigvec))
+            eigvec = eigvec[:, idx]
 
-        # last eigenvector = first one
+            # cast to complex explicitly to avoid casting error when the phase
+            # is complex but the eigenvector itself is not.
+            eigs.append(np.array(eigvec, dtype=complex))
         eigs.append(eigs[0])
-        eigsize, eignum = eigs[0].shape
 
-        # create M - matrices
-        M = []
-        for i in range(0, N):
-            deltak = list(np.array(kpt[i + 1]) - np.array(kpt[i]))
-            Mnew = [
-                [
-                    sum(np.conjugate(eigs[i][j, m]) * eigs[i + 1][j, n] *
-                        np.exp(-2j * np.pi * np.dot(deltak, self._pos[j]))
-                        for j in range(eigsize))
-                    for n in range(eignum)
-                ]
-                for m in range(eignum)
-            ]
-            M.append(Mnew)
-        return M
+        # normalize phases to get u instead of phi
+        for i, k in enumerate(kpt):
+            for j in range(eigs[i].shape[0]):
+                eigs[i][j, :] *= np.exp(-2j * np.pi * np.dot(k, self._pos[j]))
+            eigs[i] = list(eigs[i].T)
+            
+        return eigs

@@ -95,5 +95,6 @@ class System(_Z2PackSystem):
         for i, k in enumerate(kpt):
             for j in range(eigs[i].shape[0]):
                 eigs[i][j, :] *= np.exp(-2j * np.pi * np.dot(k, self._pos[j]))
-
+            eigs[i] = list(eigs[i].T)
+            
         return eigs

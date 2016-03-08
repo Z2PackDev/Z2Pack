@@ -52,7 +52,11 @@ def wcc_plot_symmetry(
     wcc_settings={'s': 50., 'lw': 1., 'facecolor': 'none'},
     gaps=True,
     gap_settings={'marker': 'D', 'linestyle': 'none'},
-    color_fct=lambda x: colorsys.hsv_to_rgb(np.imag(np.log(x)) / (2 * np.pi) % 1, 1, 1)
+    color_fct=lambda x: colorsys.hsv_to_rgb(
+        np.imag(np.log(x)) / (2 * np.pi) % 1,
+        min(1, np.exp(-abs(x) + 1)),
+        min(1, abs(x))
+    )
 ):
     r"""
     TODO: FIX!!!
@@ -87,13 +91,12 @@ def wcc_plot_symmetry(
                 **gap_settings
             )
     for line in surface_data.lines:
-        T = np.array(line.eigenstates)[0]
-        S = np.array(line.eigenstates)[-1].T
+        S = np.array(line.eigenstates)[0]
         wcc = line.wcc
 
         colors = []
         for v in line.wannier_vec:
-            colors.append(color_fct(v @ T.T @ symmetry_operator @ S.T @ v.T))
+            colors.append(color_fct(v @ S @ symmetry_operator @ S.T @ v.T))
             #~ for v in line.wannier_vec
         #~ ]
         for offset in [-1, 0, 1]:

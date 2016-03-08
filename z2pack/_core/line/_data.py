@@ -83,12 +83,8 @@ class EigenstateLineData(OverlapLineData):
         # create M - matrices
         
         M = []
-        N = len(self.eigenstates)
-        #~ print(self.eigenstates[0].shape)
-        eignum = len(self.eigenstates[0])
-        eigsize = self.eigenstates[0][0].shape[0]
 
-        for i in range(N - 1):
+        for i in range(len(self.eigenstates) - 1):
             M.append(np.dot(
                 np.conjugate(self.eigenstates[i]),
                 np.array(self.eigenstates[i + 1]).T

@@ -166,7 +166,7 @@ def chern(
     TODO
     """
     t_list = surface_data.t
-    pol = surface_data.lines_pol
+    pol = surface_data.pol
     pol_step = _pol_step(pol)
     for offset in [-1, 0, 1]:
         for i in range(len(pol) - 1):

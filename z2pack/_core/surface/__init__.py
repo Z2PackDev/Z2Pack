@@ -6,4 +6,5 @@
 # File:    __init__.py
 
 from ._run import run_surface as run
-from ._plot import *
+from . import plot
+from . import invariants

@@ -43,7 +43,7 @@ def _plot(func, data, *, axis=None, **kwargs):
         return fig
 
 @_plot
-def wcc_plot_symmetry(
+def wcc_symmetry(
     surface_data,
     *,
     axis,
@@ -107,7 +107,7 @@ def wcc_plot_symmetry(
                          **wcc_settings)
 
 @_plot
-def wcc_plot(
+def wcc(
     surface_data,
     *,
     axis,
@@ -156,7 +156,7 @@ def wcc_plot(
                          **wcc_settings)
 
 @_plot
-def chern_plot(
+def chern(
     surface_data,
     *,
     axis,

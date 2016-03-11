@@ -8,7 +8,7 @@
 import numpy as np
 import colorsys
 
-from ...common.decorator_proxy import decorator
+import decorator
 from .._utils import _pol_step
 
 __all__ = ['wcc_plot', 'wcc_plot_symmetry', 'chern_plot']

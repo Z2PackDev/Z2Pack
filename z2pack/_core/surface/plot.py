@@ -95,7 +95,7 @@ def wcc_symmetry(
         wcc = line.wcc
 
         colors = []
-        for v in line.wannier_vec:
+        for v in line.wilson_eigenstates:
             colors.append(color_fct(v @ S @ symmetry_operator @ S.T @ v.T))
             #~ for v in line.wannier_vec
         #~ ]

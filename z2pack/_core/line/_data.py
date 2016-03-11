@@ -19,15 +19,23 @@ class OverlapLineData:
     def overlaps(self):
         return self._overlaps
 
+    # old way
+    #~ @property
+    #~ @_property_helper('_lambda_')
+    #~ def lambda_(self):
+        #~ lambda_ = np.eye(len(self.overlaps[0]))
+        #~ for M in self.overlaps:
+            #~ [V, E, W] = la.svd(M)
+            #~ lambda_ = np.dot(np.dot(V, W).conjugate().transpose(), lambda_)
+        #~ self._lambda_ = lambda_
+
+    # new way
     @property
-    @_property_helper('_lambda_')
-    def lambda_(self):
-        M_tot = np.eye(len(self.overlaps[0]))
+    @_property_helper('_wilson')
+    def wilson(self):
+        self._wilson = np.eye(len(self.overlaps[0]))
         for M in self.overlaps:
-            M_tot = np.dot(M_tot, M)
-        [V, E, W] = la.svd(M_tot)
-        lambda_ = np.dot(V, W)
-        self._lambda_ = lambda_
+            self._wilson = np.dot(self._wilson, M)
 
     @property
     @_property_helper('_wcc')
@@ -36,18 +44,18 @@ class OverlapLineData:
         return self._wcc
         
     @property
-    @_property_helper('_wannier_vec')
-    def wannier_vec(self):
+    @_property_helper('_wilson_eigenstates')
+    def wilson_eigenstates(self):
         self._calculate_wannier()
     
 
     def _calculate_wannier(self):
-        eigs, eigvec = la.eig(self.lambda_)
-        wcc = np.array([(1j * np.log(z) / (2 * np.pi)).real % 1 for z in eigs])
+        eigs, eigvec = la.eig(self.wilson)
+        wcc = np.array([np.angle(z) / (2 * np.pi) % 1 for z in eigs])
         idx = np.argsort(wcc)
 
         self._wcc = list(wcc[idx])
-        self._wannier_vec = list(eigvec.T[idx])
+        self._wilson_eigenstates = list(eigvec.T[idx])
 
     @property
     @_property_helper('_wcc_sum')

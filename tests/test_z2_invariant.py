@@ -39,7 +39,6 @@ def test_linear(L, x, patch_surface_data):
     assert z2pack.surface.invariant.z2(data) == 1
     
 def test_linear_2(M, L, patch_surface_data):
-    M *= 2
     wcc = list(zip(np.linspace(0, 0.6, L), np.linspace(1, 0.6, L)))
     rand = list(sorted([random.random() for _ in range(M)] * 2))
     wcc += [rand] * L

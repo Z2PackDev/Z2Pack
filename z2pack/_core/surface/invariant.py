@@ -3,7 +3,7 @@
 #
 # Author:  Dominik Gresch <greschd@gmx.ch>
 # Date:    10.03.2016 14:38:55 CET
-# File:    invariants.py
+# File:    invariant.py
 
 from .._utils import _pol_step, _sgng
 
@@ -24,7 +24,7 @@ def z2(surface_result):
     :type surface_result: SurfaceResult or SurfaceData
     """
     wcc = surface_result.wcc
-    gap = surface_result.gap
+    gap = surface_result.gap_pos
     inv = 1
     for i in range(0, len(wcc) - 1):
         for j in range(len(wcc[0])):

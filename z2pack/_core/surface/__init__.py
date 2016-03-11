@@ -7,4 +7,4 @@
 
 from ._run import run_surface as run
 from . import plot
-from . import invariants
+from . import invariant

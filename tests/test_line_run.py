@@ -36,3 +36,13 @@ def test_weyl(kz, compare_data):
     line = lambda t: [np.cos(t * 2 * np.pi), np.sin(t * 2 * np.pi), kz]
     result = z2pack.line.run(system=sys, line=line)
     compare_data(np.isclose, result.wcc)
+
+def test_no_postest(compare_equal):
+    sys = z2pack.em.System(lambda k: np.eye(4))
+    line = lambda k: [0, 0, 0]
+    result = z2pack.line.run(system=sys, line=line, pos_tol=None)
+    assert result.wcc == [0, 0]
+    assert result.gap_pos == 0.5
+    assert result.gap_size == 1
+    assert result.ctrl_states[z2pack._core.line._control.StepCounter] == 8
+    pytest.raises(result.ctrl_states[z2pack._core.line._control.WccConvergence], KeyError)

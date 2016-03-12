@@ -16,7 +16,11 @@ import z2pack
 def kz(request):
     return request.param
 
-def test_trivial_run(compare_equal):
+@pytest.fixture(params=[10**n for n in range(-4, -1)])
+def pos_tol(request):
+    return request.param
+
+def test_trivial_run():
     sys = z2pack.em.System(lambda k: np.eye(4))
     line = lambda k: [0, 0, 0]
     result = z2pack.line.run(system=sys, line=line)
@@ -37,7 +41,7 @@ def test_weyl(kz, compare_data):
     result = z2pack.line.run(system=sys, line=line)
     compare_data(np.isclose, result.wcc)
 
-def test_no_postest(compare_equal):
+def test_no_pos_tol():
     sys = z2pack.em.System(lambda k: np.eye(4))
     line = lambda k: [0, 0, 0]
     result = z2pack.line.run(system=sys, line=line, pos_tol=None)
@@ -45,4 +49,39 @@ def test_no_postest(compare_equal):
     assert result.gap_pos == 0.5
     assert result.gap_size == 1
     assert result.ctrl_states[z2pack._core.line._control.StepCounter] == 8
-    pytest.raises(result.ctrl_states[z2pack._core.line._control.WccConvergence], KeyError)
+    with pytest.raises(KeyError):
+        result.ctrl_states[z2pack._core.line._control.WccConvergence]
+
+def test_pos_tol(kz, pos_tol, compare_equal):
+    sys = z2pack.em.System(lambda k: np.array(
+        [
+            [k[2], k[0] -1j * k[1]],
+            [k[0] + 1j * k[1], -k[2]]
+        ]
+    ))
+    line = lambda t: [np.cos(t * 2 * np.pi), np.sin(t * 2 * np.pi), kz]
+    result = z2pack.line.run(system=sys, line=line, pos_tol=pos_tol)
+    compare_equal(result.ctrl_states[z2pack._core.line._control.StepCounter])
+
+def test_iterator():
+    sys = z2pack.em.System(lambda k: np.eye(4))
+    line = lambda k: [0, 0, 0]
+    result = z2pack.line.run(system=sys, line=line, iterator=[5, 7, 9])
+    assert result.ctrl_states[z2pack._core.line._control.StepCounter] == 7
+    
+def test_iterator_2():
+    sys = z2pack.em.System(lambda k: np.array(
+        [
+            [k[2], k[0] -1j * k[1]],
+            [k[0] + 1j * k[1], -k[2]]
+        ]
+    ))
+    line = lambda t: [np.cos(t * 2 * np.pi), np.sin(t * 2 * np.pi), 0.1]
+    result = z2pack.line.run(system=sys, line=line, iterator=[4, 12, 21], pos_tol=1e-12)
+    assert result.ctrl_states[z2pack._core.line._control.StepCounter] == 21
+    
+def test_iterator_3():
+    sys = z2pack.em.System(lambda k: np.eye(4))
+    line = lambda k: [0, 0, 0]
+    result = z2pack.line.run(system=sys, line=line, iterator=[4, 12, 21], pos_tol=None)
+    assert result.ctrl_states[z2pack._core.line._control.StepCounter] == 4

@@ -18,5 +18,3 @@ from . import shapes
 
 #~ from . import fp
 from . import em
-
-from .ptools.serializer import serializer

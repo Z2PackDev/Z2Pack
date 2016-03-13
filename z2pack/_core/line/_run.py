@@ -5,6 +5,10 @@
 # Date:    12.02.2016 16:04:45 CET
 # File:    _run.py
 
+import pickle
+
+import numpy as np
+
 from ._data import EigenstateLineData, OverlapLineData
 from ._control import StepCounter, WccConvergence
 from .._control_base import (
@@ -15,9 +19,6 @@ from .._control_base import (
     LineControl
 )
 from .._result import Result
-from ...ptools.serializer import serializer
-
-import numpy as np
 
 def run_line(
     *,
@@ -54,7 +55,7 @@ def run_line(
         if save_file is None:
             raise ValueError('Cannot load result from file: No filename given in the "save_file" parameter.')
         try:
-            init_result = serializer.load(save_file)
+            init_result = pickle.load(save_file)
         except IOError as e:
             if not load_quiet:
                 raise e
@@ -133,6 +134,6 @@ def _run_line_impl(
 
         # save to file
         if save_file is not None:
-            serializer.dump(result, save_file)
+            pickle.dump(result, save_file)
 
     return result

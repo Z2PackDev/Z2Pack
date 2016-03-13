@@ -5,7 +5,10 @@
 # Date:    08.09.2015 11:07:35 CEST
 # File:    _run_surface.py
 
-from __future__ import division, print_function
+import copy
+import pickle
+
+import numpy as np
 
 from ..line._run import _run_line_impl
 from ._data import SurfaceData
@@ -19,10 +22,6 @@ from .._control_base import (
 )
 from ._control import MoveConvergence, GapConvergence
 from ..line._control import StepCounter, WccConvergence
-from ...ptools.serializer import serializer
-
-import copy
-import numpy as np
 
 def run_surface(
     *,
@@ -103,7 +102,7 @@ def run_surface(
         if save_file is None:
             raise ValueError('Cannot load result from file: No filename given in the "save_file" parameter.')
         try:
-            init_result = serializer.load(save_file)
+            init_result = pickle.load(save_file)
         except IOError as e:
             if not load_quiet:
                 raise e
@@ -159,7 +158,7 @@ def _run_surface_impl(
             line.result = get_line(line.t, line.result)
             # save to file
             if save_file is not None:
-                serializer.dump(init_result, save_file)
+                pickle.dump(init_result, save_file)
         data = init_result.data
     else:
         data = SurfaceData()
@@ -181,7 +180,7 @@ def _run_surface_impl(
         # save to file
         result = Result(data, stateful_ctrl)
         if save_file is not None:
-            serializer.dump(result, save_file)
+            pickle.dump(result, save_file)
 
         return result
 

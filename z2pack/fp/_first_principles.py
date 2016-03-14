@@ -5,15 +5,15 @@
 # Date:    26.09.2014 22:44:18 CEST
 # File:    _first_principles.py
 
-from .. import System as _Z2PackSystem
-from . import _read_mmn as mmn
-
 import os
 import re
 import copy
 import shutil
 import platform
 import subprocess
+
+from .._core._system_base import OverlapSystem as _Z2PackSystem
+from . import _read_mmn as mmn
 
 
 class System(_Z2PackSystem):

@@ -16,5 +16,5 @@ from ._version import __version__
 from ._core import *
 from . import shapes
 
-#~ from . import fp
+from . import fp
 from . import em

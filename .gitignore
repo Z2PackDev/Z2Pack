@@ -45,6 +45,7 @@ z2pack/ptools/.gitignore
 
 # selectively choose ptools
 z2pack/ptools/*.py
+z2pack/ptools/decorator_proxy
 !z2pack/ptools/__init__.py  
 !z2pack/ptools/replace.py  
 !z2pack/ptools/csv_parser.py  

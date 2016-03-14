@@ -102,7 +102,8 @@ def run_surface(
         if save_file is None:
             raise ValueError('Cannot load result from file: No filename given in the "save_file" parameter.')
         try:
-            init_result = pickle.load(save_file)
+            with open(save_file, 'rb') as f:
+                init_result = pickle.load(f)
         except IOError as e:
             if not load_quiet:
                 raise e
@@ -158,7 +159,8 @@ def _run_surface_impl(
             line.result = get_line(line.t, line.result)
             # save to file
             if save_file is not None:
-                pickle.dump(init_result, save_file)
+                with open(save_file, 'wb') as f:
+                    pickle.dump(init_result, f)
         data = init_result.data
     else:
         data = SurfaceData()

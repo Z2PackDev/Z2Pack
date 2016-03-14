@@ -13,6 +13,8 @@ import numpy as np
 
 import z2pack
 
+from em_systems import *
+
 @pytest.fixture(params=range(5, 11, 2))
 def num_strings(request):
     return request.param
@@ -45,16 +47,10 @@ def test_simple(num_strings):
     assert result.gap_pos == [0.5] * num_strings
     assert result.ctrl_states == {}
 
-def test_weyl(compare_data, pos_tol, gap_tol, move_tol, num_strings):
-    system = z2pack.em.System(lambda k: np.array(
-        [
-            [k[2], k[0] -1j * k[1]],
-            [k[0] + 1j * k[1], -k[2]]
-        ]
-    ))
+def test_weyl(compare_data, pos_tol, gap_tol, move_tol, num_strings, weyl_system, weyl_surface):
     result = z2pack.surface.run(
-        system=system,
-        surface=z2pack.shapes.Sphere([0, 0, 0], 1.),
+        system=weyl_system,
+        surface=weyl_surface,
         num_strings=num_strings,
         move_tol=move_tol,
         gap_tol=gap_tol,
@@ -63,25 +59,17 @@ def test_weyl(compare_data, pos_tol, gap_tol, move_tol, num_strings):
     compare_data(lambda l1, l2: all(np.isclose(l1, l2).flatten()), result.wcc)
 
 # saving tests
-def test_simple_save(num_strings):
-    system = z2pack.em.System(lambda k: np.eye(4))
-    surface = lambda s, t: [0, 0, 0]
+def test_simple_save(num_strings, simple_system, simple_surface):
     with tempfile.NamedTemporaryFile() as fp:
-        result1 = z2pack.surface.run(system=system, surface=surface, num_strings=num_strings, save_file=fp.name)
+        result1 = z2pack.surface.run(system=simple_system, surface=simple_surface, num_strings=num_strings, save_file=fp.name)
         result2 = pickle.load(fp)
     assert_res_equal(result1, result2)
 
-def test_weyl_save(pos_tol, gap_tol, move_tol, num_strings):
-    system = z2pack.em.System(lambda k: np.array(
-        [
-            [k[2], k[0] -1j * k[1]],
-            [k[0] + 1j * k[1], -k[2]]
-        ]
-    ))
+def test_weyl_save(pos_tol, gap_tol, move_tol, num_strings, weyl_system, weyl_surface):
     with tempfile.NamedTemporaryFile() as fp:
         result1 = z2pack.surface.run(
-            system=system,
-            surface=z2pack.shapes.Sphere([0, 0, 0], 1.),
+            system=weyl_system,
+            surface=weyl_surface,
             num_strings=num_strings,
             move_tol=move_tol,
             gap_tol=gap_tol,
@@ -90,3 +78,32 @@ def test_weyl_save(pos_tol, gap_tol, move_tol, num_strings):
         )
         result2 = pickle.load(fp)
     assert_res_equal(result1, result2)
+
+# test restart
+def test_restart(simple_system, simple_surface):
+    result = z2pack.surface.run(system=simple_system, surface=simple_surface)
+    result2 = z2pack.surface.run(system=simple_system, surface=simple_surface, init_result=result)
+    assert_res_equal(result, result2)
+
+def test_invalid_restart(simple_system, simple_surface):
+    result = z2pack.surface.run(system=simple_system, surface=simple_surface)
+    with pytest.raises(ValueError):
+        result2 = z2pack.surface.run(system=simple_system, surface=simple_surface, init_result=result, load=True)
+
+def test_file_restart(simple_system, simple_surface):
+    with tempfile.NamedTemporaryFile() as fp:
+        result = z2pack.surface.run(system=simple_system, surface=simple_surface, save_file=fp.name)
+        result2 = z2pack.surface.run(system=simple_system, surface=simple_surface, save_file=fp.name, load=True)
+    assert_res_equal(result, result2)
+    
+def test_load_inexisting(simple_system, simple_surface):
+    with pytest.raises(IOError):
+        result = z2pack.surface.run(system=simple_system, surface=simple_surface, save_file='invalid_name', load_quiet=False, load=True)
+
+def test_load_inconsistent(simple_system, simple_surface):
+    with pytest.raises(ValueError):
+        result = z2pack.surface.run(system=simple_system, surface=simple_surface, init_result='bla', save_file='invalid_name', load=True)
+        
+def test_load_no_filename(simple_system, simple_surface):
+    with pytest.raises(ValueError):
+        result = z2pack.surface.run(system=simple_system, surface=simple_surface, load=True)

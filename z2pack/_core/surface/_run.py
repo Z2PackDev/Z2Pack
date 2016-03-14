@@ -180,7 +180,8 @@ def _run_surface_impl(
         # save to file
         result = Result(data, stateful_ctrl)
         if save_file is not None:
-            pickle.dump(result, save_file)
+            with open(save_file, 'wb') as f:
+                pickle.dump(result, f)
 
         return result
 

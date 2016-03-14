@@ -55,7 +55,8 @@ def run_line(
         if save_file is None:
             raise ValueError('Cannot load result from file: No filename given in the "save_file" parameter.')
         try:
-            init_result = pickle.load(save_file)
+            with open(save_file, 'rb') as f:
+                init_result = pickle.load(f)
         except IOError as e:
             if not load_quiet:
                 raise e
@@ -98,6 +99,7 @@ def _run_line_impl(
                 s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__]
             except KeyError:
                 pass
+        result = Result(init_result.data, stateful_ctrl)
 
     # Detect which type of System is active
     if hasattr(system, 'get_eig'):

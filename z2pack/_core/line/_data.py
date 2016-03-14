@@ -19,16 +19,6 @@ class OverlapLineData:
     def overlaps(self):
         return self._overlaps
 
-    # old way
-    #~ @property
-    #~ @_property_helper('_lambda_')
-    #~ def lambda_(self):
-        #~ lambda_ = np.eye(len(self.overlaps[0]))
-        #~ for M in self.overlaps:
-            #~ [V, E, W] = la.svd(M)
-            #~ lambda_ = np.dot(np.dot(V, W).conjugate().transpose(), lambda_)
-        #~ self._lambda_ = lambda_
-
     # new way
     @property
     @_property_helper('_wilson')

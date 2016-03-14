@@ -38,16 +38,26 @@ def _plot(func, data, *, axis=None, **kwargs):
     if return_fig:
         return fig
 
+def _plot_gaps(surface_result, *, axis, gaps, gap_settings):
+    if gaps:
+        for offset in [-1, 0, 1]:
+            axis.plot(
+                surface_result.t,
+                [gap_pos % 1 + offset
+                    for gap_pos in surface_result.gap_pos
+                ],
+                **gap_settings
+            )
+
 @_plot
 def wcc_symmetry(
     surface_result,
     *,
     axis,
     symmetry_operator,
-    shift=0,
     wcc_settings={'s': 50., 'lw': 1., 'facecolor': 'none'},
     gaps=True,
-    gap_settings={'marker': 'D', 'linestyle': 'none'},
+    gap_settings={'marker': 'D', 'color': 'b', 'linestyle': 'none'},
     color_fct=lambda x: colorsys.hsv_to_rgb(
         np.imag(np.log(x)) / (2 * np.pi) % 1,
         min(1, np.exp(-abs(x) + 1)),
@@ -77,13 +87,8 @@ def wcc_symmetry(
     :returns:       :class:`matplotlib figure` instance (only if
         ``ax == None``)
     """
-    if gaps:
-        for offset in [-1, 0, 1]:
-            axis.plot(
-                result.t,
-                [(gap_pos + shift) % 1 + offset for gap in surface_result.gap_pos],
-                **gap_settings
-            )
+    _plot_gaps(surface_result, axis=axis, gaps=gaps, gap_settings=gap_settings)
+
     for line in surface_result.lines:
         S = np.array(line.eigenstates)[0]
         wcc = line.wcc
@@ -91,12 +96,10 @@ def wcc_symmetry(
         colors = []
         for v in line.wilson_eigenstates:
             colors.append(color_fct(v @ S @ symmetry_operator @ S.T @ v.T))
-            #~ for v in line.wannier_vec
-        #~ ]
         for offset in [-1, 0, 1]:
 
             axis.scatter([line.t] * len(wcc),
-                         [(x + shift) % 1 + offset for x in wcc],
+                         [x % 1 + offset for x in wcc],
                          facecolors=colors,
                          **wcc_settings)
 
@@ -133,15 +136,8 @@ def wcc(
     :returns:       :class:`matplotlib figure` instance (only if
         ``ax == None``)
     """
-    if gaps:
-        for offset in [-1, 0, 1]:
-            axis.plot(
-                surface_result.t,
-                [(gap_pos + shift) % 1 + offset
-                    for gap_pos in surface_result.gap_pos
-                ],
-                **gap_settings
-            )
+    _plot_gaps(surface_result, axis=axis, gaps=gaps, gap_settings=gap_settings)
+
     for line in surface_result.lines:
         for offset in [-1, 0, 1]:
             wcc = line.wcc

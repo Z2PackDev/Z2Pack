@@ -107,14 +107,8 @@ def _run_line_impl(
         DataType = OverlapLineData
         system_fct = system.get_m
 
-    # handle case of no convergence controllers -> update once
-    if not convergence_ctrl:
-        single_update = True
-    else:
-        single_update = False
     # main loop
-    while not all(c_ctrl.converged for c_ctrl in convergence_ctrl) or single_update:
-        single_update = False
+    while not all(c_ctrl.converged for c_ctrl in convergence_ctrl):
         run_options = dict()
         for it_ctrl in iteration_ctrl:
             try:

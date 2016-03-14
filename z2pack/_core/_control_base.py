@@ -13,7 +13,7 @@ class AbstractControl(metaclass=abc.ABCMeta):
     def __init__(self, **kwargs):
         pass
 
-class StatefulControl(metaclass=abc.ABCMeta):
+class StatefulControl(AbstractControl):
     """
         ABC for control objects which have a state. The state must not depend on the given convergence parameters.
         Concepts:
@@ -54,7 +54,7 @@ class IterationControl(AbstractControl):
     def __next__(self):
         pass
 
-class ConvergenceControl(DataControl):
+class ConvergenceControl(AbstractControl):
     """ABC for convergence tester objects. Enforces the existence of an update method, and the ``converged`` property.
     For LineControl objects, the converged property must be valid (False) also before the first update() call.
     This is not required for SurfaceControl objects."""

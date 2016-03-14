@@ -5,12 +5,12 @@
 # Date:    19.02.2016 16:30:58 MST
 # File:    _control.py
 
-from .._control_base import ConvergenceControl, IterationControl, SurfaceControl, StatefulControl
+from .._control_base import DataControl, ConvergenceControl, IterationControl, SurfaceControl, StatefulControl
 from .._utils import _get_max_move
 
 import numpy as np
 
-class MoveConvergence(ConvergenceControl, SurfaceControl):
+class MoveConvergence(DataControl, ConvergenceControl, SurfaceControl):
     def __init__(self, *, move_tol):
         self.move_tol = move_tol
         self._converged = False
@@ -26,7 +26,7 @@ class MoveConvergence(ConvergenceControl, SurfaceControl):
             for l1, l2 in zip(wcc_list[:-1], wcc_list[1:])
         ]
 
-class GapConvergence(ConvergenceControl, SurfaceControl):
+class GapConvergence(DataControl, ConvergenceControl, SurfaceControl):
     def __init__(self, *, gap_tol):
         self.gap_tol = gap_tol
         self._converged = False

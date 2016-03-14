@@ -5,7 +5,10 @@
 # Date:    09.02.2016 13:38:55 CET
 # File:    line.py
 
+import itertools
+
 from .._control_base import (
+    DataControl,
     ConvergenceControl,
     IterationControl,
     LineControl,
@@ -16,10 +19,12 @@ from .._utils import _get_max_move
 class StepCounter(
     IterationControl,
     StatefulControl,
+    ConvergenceControl,
     LineControl
 ):
     def __init__(self, *, iterator):
-        self._iterator = iter(iterator)
+        self._iterator, tmp_iter = itertools.tee(iter(iterator))
+        self._min_state = next(tmp_iter)
         self._state = 0
 
     @property
@@ -37,7 +42,13 @@ class StepCounter(
         self._state = new_val
         return dict(num_steps=self._state)
 
+    @property
+    def converged(self):
+        """Converged if the minimum value of the iterator has been used."""
+        return self._state >= self._min_state
+
 class WccConvergence(
+    DataControl,
     ConvergenceControl,
     StatefulControl,
     LineControl,

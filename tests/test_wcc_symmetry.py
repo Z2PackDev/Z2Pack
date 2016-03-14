@@ -32,8 +32,20 @@ def test_weyl(assert_image_equal):
     z2pack.surface.plot.wcc_symmetry(result, axis=ax, symmetry_operator=np.diag([1, -1]))
     assert_image_equal('simple_wcc_symmetry')
 
-#~ def test_no_gap(assert_image_equal, patch_surface_data):
-    #~ res = SurfaceData([[0, 1], [0.2, 0.9], [0.5, 0.6], [0.5, 0.5]], t_list=[0, 0.1, 0.5, 1.])
-    #~ fig, ax = plt.subplots()
-    #~ z2pack.surface.plot.wcc_symmetry(res, axis=ax, gaps=False)
-    #~ assert_image_equal('wcc_symmetry_no_gap')
+def test_weyl_no_axis(assert_image_equal):
+    system = z2pack.em.System(lambda k: np.array(
+        [
+            [k[2], k[0] -1j * k[1]],
+            [k[0] + 1j * k[1], -k[2]]
+        ]
+    ))
+    result = z2pack.surface.run(
+        system=system,
+        surface=z2pack.shapes.Sphere([0, 0, 0], 1.),
+        num_strings=11,
+        move_tol=None,
+        gap_tol=None,
+        pos_tol=None
+    )
+    z2pack.surface.plot.wcc_symmetry(result, symmetry_operator=np.diag([1, -1]))
+    assert_image_equal('simple_wcc_symmetry')  # intentionally the same as before

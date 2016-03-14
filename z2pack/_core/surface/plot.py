@@ -53,7 +53,7 @@ def _plot_gaps(surface_result, *, axis, gaps, gap_settings):
 def wcc_symmetry(
     surface_result,
     *,
-    axis,
+    axis=None,
     symmetry_operator,
     wcc_settings={'s': 50., 'lw': 1., 'facecolor': 'none'},
     gaps=True,
@@ -107,7 +107,7 @@ def wcc_symmetry(
 def wcc(
     surface_result,
     *,
-    axis,
+    axis=None,
     shift=0,
     wcc_settings={'s': 50., 'lw': 1., 'facecolor': 'none'},
     gaps=True,
@@ -149,7 +149,7 @@ def wcc(
 def chern(
     surface_result,
     *,
-    axis,
+    axis=None,
     settings={'marker': 'o', 'markerfacecolor': 'r', 'color': 'r'}
 ):
     r"""

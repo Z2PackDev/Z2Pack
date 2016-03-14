@@ -63,3 +63,4 @@ decorator.py
 # pytest caches
 .cache
 .coverage
+.coverage*

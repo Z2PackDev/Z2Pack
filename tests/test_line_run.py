@@ -24,7 +24,7 @@ def pos_tol(request):
 
 def test_trivial_run():
     sys = z2pack.em.System(lambda k: np.eye(4))
-    line = lambda k: [0, 0, 0]
+    line = lambda t: [0, 0, 0]
     result = z2pack.line.run(system=sys, line=line)
     assert result.wcc == [0, 0]
     assert result.gap_pos == 0.5

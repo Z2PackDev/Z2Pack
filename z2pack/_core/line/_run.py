@@ -128,6 +128,7 @@ def _run_line_impl(
 
         # save to file
         if save_file is not None:
-            pickle.dump(result, save_file)
+            with open(save_file, 'wb') as f:
+                pickle.dump(result, f)
 
     return result

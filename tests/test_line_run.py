@@ -5,7 +5,9 @@
 # Date:    19.02.2016 14:40:53 MST
 # File:    test_line_run.py
 
+import pickle
 import inspect
+import tempfile
 
 import pytest
 import numpy as np
@@ -85,3 +87,17 @@ def test_iterator_3():
     line = lambda k: [0, 0, 0]
     result = z2pack.line.run(system=sys, line=line, iterator=[4, 12, 21], pos_tol=None)
     assert result.ctrl_states[z2pack._core.line._control.StepCounter] == 4
+
+# saving tests
+def test_simple_save():
+    sys = z2pack.em.System(lambda k: np.eye(4))
+    line = lambda k: [0, 0, 0]
+    with tempfile.NamedTemporaryFile() as fp:
+        result = z2pack.line.run(system=sys, line=line, save_file=fp.name)
+        result2 = pickle.load(fp)
+    assert result.wcc == result2.wcc
+    assert result.gap_pos == result2.gap_pos
+    assert result.gap_size == result2.gap_size
+    assert result.ctrl_states.keys() == result2.ctrl_states.keys()
+    for key in result.ctrl_states:
+        assert result.ctrl_states[key] == result2.ctrl_states[key]

@@ -12,7 +12,7 @@ import numpy as np
 from sortedcontainers import SortedList
 
 from z2pack._core.line._data import OverlapLineData as LineData
-from z2pack._core.surface._data import SurfaceData as SurfaceData
+from z2pack._core.surface._data import SurfaceData
 
 from z2pack._core._result import Result
 

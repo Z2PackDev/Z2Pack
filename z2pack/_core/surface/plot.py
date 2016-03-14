@@ -9,7 +9,9 @@ import numpy as np
 import colorsys
 
 import decorator
+
 from .._utils import _pol_step
+from .._result import Result
 
 __all__ = ['wcc_plot', 'wcc_plot_symmetry', 'chern_plot']
 
@@ -31,12 +33,6 @@ def _plot(func, data, *, axis=None, **kwargs):
     axis.set_xlim(0, 1)
     axis.set_ylim(0, 1)
 
-    # see if data is actually a Result object
-    try:
-        data = data.data
-    except AttributeError:
-        pass
-        
     func(data, axis=axis, **kwargs)
 
     if return_fig:
@@ -44,7 +40,7 @@ def _plot(func, data, *, axis=None, **kwargs):
 
 @_plot
 def wcc_symmetry(
-    surface_data,
+    surface_result,
     *,
     axis,
     symmetry_operator,
@@ -84,13 +80,11 @@ def wcc_symmetry(
     if gaps:
         for offset in [-1, 0, 1]:
             axis.plot(
-                surface_data.t,
-                [(line.gap_pos + shift) % 1 + offset
-                    for line in surface_data.lines_data
-                ],
+                result.t,
+                [(gap_pos + shift) % 1 + offset for gap in surface_result.gap_pos],
                 **gap_settings
             )
-    for line in surface_data.lines:
+    for line in surface_result.lines:
         S = np.array(line.eigenstates)[0]
         wcc = line.wcc
 
@@ -108,7 +102,7 @@ def wcc_symmetry(
 
 @_plot
 def wcc(
-    surface_data,
+    surface_result,
     *,
     axis,
     shift=0,
@@ -142,22 +136,22 @@ def wcc(
     if gaps:
         for offset in [-1, 0, 1]:
             axis.plot(
-                surface_data.t,
-                [(line.gap_pos + shift) % 1 + offset
-                    for line in surface_data.lines_data
+                surface_result.t,
+                [(gap_pos + shift) % 1 + offset
+                    for gap_pos in surface_result.gap_pos
                 ],
                 **gap_settings
             )
-    for line in surface_data.lines:
+    for line in surface_result.lines:
         for offset in [-1, 0, 1]:
-            wcc = line.result.data.wcc
+            wcc = line.wcc
             axis.scatter([line.t] * len(wcc),
                          [(x + shift) % 1 + offset for x in wcc],
                          **wcc_settings)
 
 @_plot
 def chern(
-    surface_data,
+    surface_result,
     *,
     axis,
     settings={'marker': 'o', 'markerfacecolor': 'r', 'color': 'r'}
@@ -165,8 +159,8 @@ def chern(
     r"""
     TODO
     """
-    t_list = surface_data.t
-    pol = surface_data.pol
+    t_list = surface_result.t
+    pol = surface_result.pol
     pol_step = _pol_step(pol)
     for offset in [-1, 0, 1]:
         for i in range(len(pol) - 1):

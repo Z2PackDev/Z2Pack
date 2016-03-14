@@ -27,13 +27,10 @@ def Hamilton(k, m, t1, t2, phi):
 
 def get_chern(m, t1, t2, phi):
     system = z2pack.em.System(lambda k: Hamilton(k, m, t1, t2, phi), occ=1)
-    surface = system.surface(lambda s, t: [t, s, 0.], pickle_file=None)
-    surface.wcc_calc(verbose=False)
-    return surface.chern()['chern']
+    
+    result = z2pack.surface.run(system=system, surface=lambda s, t: [t, s, 0.])
+    return z2pack.surface.invariant.chern(result)
 
 if __name__ == "__main__":
     print(get_chern(0.5, 1., 1. / 3., 0.5 * np.pi))
     print(get_chern(0.5, 1., 1. / 3., -0.5 * np.pi))
-
-    
-    

@@ -36,8 +36,8 @@ system1 = z2pack.em.System(hamilton1) # occ=1 is default (#orbitals / 2)
 
 # the surface is a sphere around the Weyl point
 surface = z2pack.shapes.Sphere([0., 0., 0.], 0.01)
-res0 = z2pack.surface.run(system=system0, surface=surface, move_tol=1e-2)
-res1 = z2pack.surface.run(system=system1, surface=surface, gap_tol=0.4)
+res0 = z2pack.surface.run(system=system0, surface=surface)
+res1 = z2pack.surface.run(system=system1, surface=surface)
 
 # plotting
 fig, ax = plt.subplots(1, 2)

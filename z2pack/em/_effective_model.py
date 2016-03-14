@@ -5,8 +5,6 @@
 # Date:    02.06.2015 23:27:55 CEST
 # File:    _effective_model.py
 
-from __future__ import division, print_function
-
 import numpy as np
 import scipy.linalg as la
 

@@ -5,8 +5,6 @@
 # Date:    02.06.2015 17:50:33 CEST
 # File:    _tb_model.py
 
-from __future__ import division
-
 import copy
 import itertools
 import numpy as np

@@ -5,8 +5,6 @@
 # Date:    02.06.2015 17:45:11 CEST
 # File:    _hamilton.py
 
-from __future__ import division, print_function
-
 import numpy as np
 
 from ._tb_model import Model

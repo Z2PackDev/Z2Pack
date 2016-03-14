@@ -41,7 +41,7 @@ def test_weyl(kz, compare_data):
     ))
     line = lambda t: [np.cos(t * 2 * np.pi), np.sin(t * 2 * np.pi), kz]
     result = z2pack.line.run(system=sys, line=line)
-    compare_data(np.isclose, result.wcc)
+    compare_data(lambda r1, r2: all(np.isclose(r1, r1).flatten()), result.wcc)
 
 def test_no_pos_tol():
     sys = z2pack.em.System(lambda k: np.eye(4))

@@ -9,8 +9,13 @@ from ...ptools.locker import Locker
 from sortedcontainers import SortedList
 
 class SurfaceData(metaclass=Locker):
+    # cannot be pickled if it is a local method in __init__
+    @staticmethod
+    def _sort_key(x):
+        return x.t
+
     def __init__(self):
-        self.lines = SortedList(key=lambda x: x.t)
+        self.lines = SortedList(key=self._sort_key)
 
     def add_line(self, t, result):
         self.lines.add(SurfaceLine(t, result))

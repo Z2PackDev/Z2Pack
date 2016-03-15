@@ -22,8 +22,8 @@ class System(_Z2PackSystem):
         Per default, all orbitals are put at the origin.
     :type pos: list
 
-    :param occ: Number of occupied bands. Default: 1/2 the size of the Hamiltonian.
-    :type occ: int
+    :param bands: Specifies either the number of occupied bands (if it is an integer) or which bands should be taken into consideration (if it is a list of indices). If no value is given, half the given bands are considered.
+    :type bands: int or list
 
     :param hermitian_tol:   Maximum absolute value in the difference between the Hamiltonian and its hermitian conjugate. Use ``hermitian_tol=None`` to deactivate the test entirely.
     :type hermitian_tol:    float
@@ -38,8 +38,9 @@ class System(_Z2PackSystem):
     def __init__(
         self,
         hamilton,
+        *,
         pos=None,
-        occ=None,
+        bands=None,
         hermitian_tol=1e-6,
         **kwargs
     ):
@@ -55,10 +56,12 @@ class System(_Z2PackSystem):
             if len(pos) != size:
                 raise ValueError('The number of positions ({0}) does not match the size of the Hamiltonian ({1}).'.format(len(pos), size))
             self._pos = [np.array(p) for p in pos]
-        if occ is None:
-            self._occ = int(size / 2)
+        if bands is None:
+            bands = size // 2
+        if isinstance(bands, int):
+            self._bands = list(range(bands))
         else:
-            self._occ = occ
+            self._bands = bands
 
     def get_eig(self, kpt):
         """
@@ -68,7 +71,7 @@ class System(_Z2PackSystem):
         N = len(kpt) - 1
         k_points = kpt[:-1]
 
-        # get eigenvectors corr. to occupied states
+        # get eigenvectors corr. to the chosen bands
         eigs = []
         for k in k_points:
             ham = self._hamilton(k)
@@ -79,7 +82,8 @@ class System(_Z2PackSystem):
             eigval, eigvec = la.eigh(ham)
             eigval = np.real(eigval)
             idx = eigval.argsort()
-            idx = idx[:self._occ]
+            
+            idx = idx[self._bands]
             idx.sort()  
             # take only the lower - energy eigenstates
             eigvec = eigvec[:, idx]

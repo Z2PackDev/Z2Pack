@@ -160,7 +160,7 @@ def _run_surface_impl(
             # save to file
             if save_file is not None:
                 with open(save_file, 'wb') as f:
-                    pickle.dump(init_result, f)
+                    pickle.dump(init_result, f, protocol=4)
         data = init_result.data
     else:
         data = SurfaceData()
@@ -183,7 +183,7 @@ def _run_surface_impl(
         result = Result(data, stateful_ctrl)
         if save_file is not None:
             with open(save_file, 'wb') as f:
-                pickle.dump(result, f)
+                pickle.dump(result, f, protocol=4)
 
         return result
 

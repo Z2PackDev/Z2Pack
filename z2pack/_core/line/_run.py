@@ -131,6 +131,6 @@ def _run_line_impl(
         # save to file
         if save_file is not None:
             with open(save_file, 'wb') as f:
-                pickle.dump(result, f)
+                pickle.dump(result, f, protocol=4)
 
     return result

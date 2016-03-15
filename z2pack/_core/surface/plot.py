@@ -95,7 +95,7 @@ def wcc_symmetry(
 
         colors = []
         for v in line.wilson_eigenstates:
-            colors.append(color_fct(v @ S @ symmetry_operator @ S.T @ v.T))
+            colors.append(color_fct(np.dot(np.dot(v, S), np.dot(symmetry_operator, np.dot(S.T, v.T)))))
         for offset in [-1, 0, 1]:
 
             axis.scatter([line.t] * len(wcc),

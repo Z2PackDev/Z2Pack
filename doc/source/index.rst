@@ -56,7 +56,7 @@ Documentation
 Getting in touch
 ================
 The development version of Z2Pack is hosted on `GitHub`_ .
-Post an issue there or contact `me`__ directly with questions / suggestions
+Post an `issue <https://github.com/Z2PackDev/Z2Pack/issues>`_ there or contact `me`__ directly with questions / suggestions
 / feedback about Z2Pack.
 
 __ dg_

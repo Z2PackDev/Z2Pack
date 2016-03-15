@@ -44,6 +44,8 @@ setup(
         'Natural Language :: English',
         'Operating System :: Unix',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Intended Audience :: Science/Research',
         'Topic :: Scientific/Engineering :: Physics',
         'Development Status :: 4 - Beta'

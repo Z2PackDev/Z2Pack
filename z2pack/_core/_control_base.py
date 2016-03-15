@@ -32,12 +32,13 @@ class StatefulControl(AbstractControl):
     def __init__(self, *, state=None, **kwargs):
         pass
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def state(self):
         pass
 
-    @abc.abstractproperty
     @state.setter
+    @abc.abstractmethod
     def state(self, value):
         pass
     
@@ -58,7 +59,8 @@ class ConvergenceControl(AbstractControl):
     """ABC for convergence tester objects. Enforces the existence of an update method, and the ``converged`` property.
     For LineControl objects, the converged property must be valid (False) also before the first update() call.
     This is not required for SurfaceControl objects."""
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def converged(self):
         pass
 

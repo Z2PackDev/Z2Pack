@@ -7,8 +7,9 @@
 
 .. title:: Overview
 
-Welcome!
-========
+.. warning :: This site contains the documentation for an upcoming release of Z2Pack. As such, it is still incomplete. Please refer to the documentation of the `current version <http://z2pack.ethz.ch/doc>`_ instead.
+
+
 Z2Pack is a tool for calculating the Z2 topological invariant. It can be
 used either in combination with a first-principles calculation or by
 defining a tight-binding model.
@@ -27,16 +28,6 @@ consider citing it (not yet published).
     
     Z2Pack online <http://z2pack.ethz.ch/online/>
 
-News
-====
-
-Z2Pack 1.1.0
-------------
-Z2Pack 1.1.0 is now available! Changes include:
-
-* functions for calculating Chern numbers
-* arbitrary surfaces are now possible with tight-binding models
-* tight-binding Hamiltonians can now be explicitly specified
 
 Tutorial & Examples
 ===================
@@ -78,4 +69,3 @@ Indices and tables
 
 .. _dg: http://github.com/greschd
 .. _GitHub: http://github.com/Z2PackDev/Z2Pack
-

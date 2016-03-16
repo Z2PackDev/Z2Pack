@@ -5,13 +5,16 @@
 # Date:    09.02.2016 10:08:45 CET
 # File:    bases.py
 
+"""Abstract base classesfor Control objects, which govern the iteration of Z2Pack runs."""
+
 import abc
+
 
 class AbstractControl(metaclass=abc.ABCMeta):
     """ABC for all control objects. Instances must also have a 'state' attribute to work correctly, which is not enforced by the ABC."""
     @abc.abstractmethod
-    def __init__(self, **kwargs):
-        pass
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 class StatefulControl(AbstractControl):
     """
@@ -30,18 +33,20 @@ class StatefulControl(AbstractControl):
     """
     @abc.abstractmethod
     def __init__(self, *, state=None, **kwargs):
-        pass
+        super().__init__(state, **kwargs)
 
     @property
     @abc.abstractmethod
     def state(self):
+        """Returns the state of the Control."""
         pass
 
     @state.setter
     @abc.abstractmethod
     def state(self, value):
+        """Sets the state of the Control."""
         pass
-    
+
 
 class DataControl(AbstractControl):
     """ABC for control objects which can be updated with data."""

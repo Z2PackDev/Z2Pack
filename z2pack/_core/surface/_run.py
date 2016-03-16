@@ -24,20 +24,20 @@ from ._control import MoveCheck, GapCheck
 from ..line._control import StepCounter, PosCheck
 
 def run_surface(
-    *,
-    system,
-    surface,
-    pos_tol=1e-2,
-    gap_tol=2e-2,
-    move_tol=0.3,
-    iterator=range(8, 27, 2),
-    min_neighbour_dist=0.01,
-    num_strings=11,
-    #~ verbose=True,
-    init_result=None,
-    save_file=None,
-    load=False,
-    load_quiet=True
+        *,
+        system,
+        surface,
+        pos_tol=1e-2,
+        gap_tol=2e-2,
+        move_tol=0.3,
+        iterator=range(8, 27, 2),
+        min_neighbour_dist=0.01,
+        num_strings=11,
+        #~ verbose=True,
+        init_result=None,
+        save_file=None,
+        load=False,
+        load_quiet=True
 ):
     r"""
     TODO: fix
@@ -107,7 +107,7 @@ def run_surface(
         except IOError as e:
             if not load_quiet:
                 raise e
-                
+
     return _run_surface_impl(
         *controls,
         system=system,
@@ -119,14 +119,24 @@ def run_surface(
     )
 
 def _run_surface_impl(
-    *controls,
-    system,
-    surface,
-    num_strings,
-    min_neighbour_dist,
-    save_file=None,
-    init_result=None
+        *controls,
+        system,
+        surface,
+        num_strings,
+        min_neighbour_dist,
+        save_file=None,
+        init_result=None
 ):
+    r"""Implementation of the surface's run.
+
+    :param controls: Control objects which govern the iteration.
+    :type controls: AbstractControl
+
+    :type system: OverlapSystem or EigenvalSystem
+
+
+    :param surface: Function which defines the surface on which the WCC are calculated.
+    """
 
     # CONTROL SETUP
 
@@ -151,7 +161,7 @@ def _run_surface_impl(
             line=lambda ky: surface(t, ky),
             init_result=init_line_result
         )
-    
+
     def add_line(t):
         """
         Adds a line to the Surface, if it is within min_neighbour_dist of
@@ -175,7 +185,7 @@ def _run_surface_impl(
 
         # save to file
         result = SurfaceResult(data, stateful_ctrl, convergence_ctrl)
-        
+
         if save_file is not None:
             with open(save_file, 'wb') as f:
                 pickle.dump(result, f, protocol=4)
@@ -218,7 +228,7 @@ def _run_surface_impl(
     for t in np.linspace(0, 1, num_strings):
         result = add_line(t)
 
-    # STEP 3 -- MAIN LOOP        
+    # STEP 3 -- MAIN LOOP
     N = len(data.lines)
     conv = collect_convergence()
     while not all(conv):

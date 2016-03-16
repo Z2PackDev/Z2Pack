@@ -5,6 +5,7 @@
 # Date:    22.06.2015 12:03:43 CEST
 # File:    _bases.py
 
+"""Base classes for systems which can be studied with Z2Pack."""
 
 import abc
 
@@ -32,7 +33,7 @@ class OverlapSystem(metaclass=abc.ABCMeta):
     def get_mmn(self, kpt):
         r"""
         Returns a list of overlap matrices :math:`M_{m,n}` corresponding to the given k-points.
-        
+
         :param kpt: The list of k-points for which the overlap matrices are to be computed.
         :type kpt:  list
         """

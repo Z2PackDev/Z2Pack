@@ -83,9 +83,18 @@ def test_weyl_save(pos_tol, gap_tol, move_tol, num_strings, weyl_system, weyl_su
 
 # test restart
 def test_restart(simple_system, simple_surface):
-    result = z2pack.surface.run(system=simple_system, surface=simple_surface)
-    result2 = z2pack.surface.run(system=simple_system, surface=simple_surface, init_result=result)
-    assert_res_equal(result, result2)
+    result1 = z2pack.surface.run(system=simple_system, surface=simple_surface)
+    result2 = z2pack.surface.run(system=simple_system, surface=simple_surface, init_result=result1)
+    assert_res_equal(result1, result2)
+
+# test restart with smaller precision
+def test_restart_2(weyl_system, weyl_surface):
+    result1 = z2pack.surface.run(system=weyl_system, surface=weyl_surface)
+    result2 = z2pack.surface.run(system=weyl_system, surface=weyl_surface, pos_tol=0.5, gap_tol=1e-1, move_tol=0.5, num_strings=6)
+    print([line.ctrl_states[z2pack._core.line._control.StepCounter] for line in result2.lines])
+    result2 = z2pack.surface.run(system=weyl_system, surface=weyl_surface, init_result=result2)
+    print([line.ctrl_states[z2pack._core.line._control.StepCounter] for line in result2.lines])
+    assert_res_equal(result1, result2)
 
 def test_invalid_restart(simple_system, simple_surface):
     result = z2pack.surface.run(system=simple_system, surface=simple_surface)

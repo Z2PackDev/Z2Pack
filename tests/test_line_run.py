@@ -90,6 +90,13 @@ def test_restart(simple_system, simple_line):
     result2 = z2pack.line.run(system=simple_system, line=simple_line, init_result=result)
     assert_res_equal(result, result2)
 
+# test restart with changed pos_tol
+def test_restart_2(weyl_system, weyl_line):
+    result1 = z2pack.line.run(system=weyl_system, line=weyl_line)
+    result2 = z2pack.line.run(system=weyl_system, line=weyl_line, pos_tol=0.2)
+    result2 = z2pack.line.run(system=weyl_system, line=weyl_line, init_result=result2)
+    assert_res_equal(result1, result2)
+
 def test_invalid_restart(simple_system, simple_line):
     result = z2pack.line.run(system=simple_system, line=simple_line)
     with pytest.raises(ValueError):

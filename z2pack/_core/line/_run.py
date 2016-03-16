@@ -88,6 +88,11 @@ def _run_line_impl(
     data_ctrl = filter_ctrl(DataControl)
     convergence_ctrl = filter_ctrl(ConvergenceControl)
 
+    def save():
+        if save_file is not None:
+            with open(save_file, 'wb') as f:
+                pickle.dump(result, f, protocol=4)
+
     # initialize stateful and data controls from old result
     if init_result is not None:
         for d_ctrl in data_ctrl:
@@ -99,7 +104,8 @@ def _run_line_impl(
                 s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__]
             except KeyError:
                 pass
-        result = Result(init_result.data, stateful_ctrl)
+        result = Result(init_result.data, stateful_ctrl, convergence_ctrl)
+        save()
 
     # Detect which type of System is active
     if hasattr(system, 'get_eig'):
@@ -126,11 +132,7 @@ def _run_line_impl(
         for d_ctrl in data_ctrl:
             d_ctrl.update(data)
 
-        result = Result(data, stateful_ctrl)
-
-        # save to file
-        if save_file is not None:
-            with open(save_file, 'wb') as f:
-                pickle.dump(result, f, protocol=4)
+        result = Result(data, stateful_ctrl, convergence_ctrl)
+        save()
 
     return result

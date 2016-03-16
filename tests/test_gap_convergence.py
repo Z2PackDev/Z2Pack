@@ -32,7 +32,7 @@ def get_surface_data(patch_line_data):
         t = np.linspace(0, 1, len(wcc_list))
         data = SurfaceData()
         for tval, wcc in zip(t, wcc_list):
-            data.add_line(tval, Result(OverlapLineData(wcc), []))
+            data.add_line(tval, Result(OverlapLineData(wcc), [], []))
         return data
     return inner
 

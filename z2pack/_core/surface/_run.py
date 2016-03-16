@@ -139,6 +139,8 @@ def _run_surface_impl(
 
     # initialize stateful controls from old result
     if init_result is not None:
+        # make sure old result doesn't change
+        init_result = copy.deepcopy(init_result)
         for s_ctrl in stateful_ctrl:
             try:
                 s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__]
@@ -172,7 +174,8 @@ def _run_surface_impl(
         """
         # find whether the line is allowed still
         if data.nearest_neighbour_dist(t) < min_neighbour_dist:
-            return Result(data, stateful_ctrl)
+            return Result(data, stateful_ctrl, convergence_ctrl)
+
         data.add_line(t, get_line(t))
 
         # update data controls
@@ -180,7 +183,7 @@ def _run_surface_impl(
             d_ctrl.update(data)
 
         # save to file
-        result = Result(data, stateful_ctrl)
+        result = Result(data, stateful_ctrl, convergence_ctrl)
         if save_file is not None:
             with open(save_file, 'wb') as f:
                 pickle.dump(result, f, protocol=4)

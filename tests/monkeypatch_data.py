@@ -34,5 +34,5 @@ def patch_surface_data(monkeypatch, patch_line_data):
             t_list = np.linspace(0, 1, len(wcc_list))
         self.lines = SortedList(key=lambda x: x.t)
         for t, wcc in zip(t_list, wcc_list):
-            self.add_line(t, Result(LineData(wcc), tuple()))
+            self.add_line(t, Result(LineData(wcc), tuple(), tuple()))
     monkeypatch.setattr(SurfaceData, '__init__', __init__)

@@ -18,7 +18,7 @@ from .._control_base import (
     ConvergenceControl,
     LineControl
 )
-from .._result import Result
+from .._result import LineResult
 
 def run_line(
     *,
@@ -104,7 +104,7 @@ def _run_line_impl(
                 s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__]
             except KeyError:
                 pass
-        result = Result(init_result.data, stateful_ctrl, convergence_ctrl)
+        result = LineResult(init_result.data, stateful_ctrl, convergence_ctrl)
         save()
 
     # Detect which type of System is active
@@ -132,7 +132,7 @@ def _run_line_impl(
         for d_ctrl in data_ctrl:
             d_ctrl.update(data)
 
-        result = Result(data, stateful_ctrl, convergence_ctrl)
+        result = LineResult(data, stateful_ctrl, convergence_ctrl)
         save()
 
     return result

@@ -19,10 +19,11 @@ def test_name(request):
 @pytest.fixture
 def compare_data(request, test_name, scope="session"):
     """Returns a function which either saves some data to a file or (if that file exists already) compares it to pre-existing data using a given comparison function."""
-    def inner(compare_fct, data):
-        val = request.config.cache.get(test_name, None)
+    def inner(compare_fct, data, tag=None):
+        full_name = test_name + (tag or '')
+        val = request.config.cache.get(full_name, None)
         if val is None:
-            request.config.cache.set(test_name, data)
+            request.config.cache.set(full_name, data)
             raise ValueError('Reference data does not exist.')
         else:
             assert compare_fct(val, data)
@@ -30,4 +31,4 @@ def compare_data(request, test_name, scope="session"):
 
 @pytest.fixture
 def compare_equal(compare_data):
-    return lambda data: compare_data(lambda x, y: x == y, data)
+    return lambda data, tag=None: compare_data(lambda x, y: x == y, data, tag)

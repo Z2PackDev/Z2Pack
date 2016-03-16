@@ -7,7 +7,7 @@
 
 from z2pack._core.surface._control import GapCheck
 from z2pack._core._control_base import SurfaceControl
-from z2pack._core._result import Result
+from z2pack._core._result import LineResult
 from z2pack._core.surface._data import SurfaceData
 from z2pack._core.line._data import OverlapLineData
 
@@ -32,7 +32,7 @@ def get_surface_data(patch_line_data):
         t = np.linspace(0, 1, len(wcc_list))
         data = SurfaceData()
         for tval, wcc in zip(t, wcc_list):
-            data.add_line(tval, Result(OverlapLineData(wcc), [], []))
+            data.add_line(tval, LineResult(OverlapLineData(wcc), [], []))
         return data
     return inner
 

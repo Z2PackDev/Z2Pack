@@ -14,7 +14,7 @@ from sortedcontainers import SortedList
 from z2pack._core.line._data import OverlapLineData as LineData
 from z2pack._core.surface._data import SurfaceData
 
-from z2pack._core._result import Result
+from z2pack._core._result import LineResult
 
 @pytest.fixture
 def patch_max_move(monkeypatch):
@@ -34,5 +34,5 @@ def patch_surface_data(monkeypatch, patch_line_data):
             t_list = np.linspace(0, 1, len(wcc_list))
         self.lines = SortedList(key=lambda x: x.t)
         for t, wcc in zip(t_list, wcc_list):
-            self.add_line(t, Result(LineData(wcc), tuple(), tuple()))
+            self.add_line(t, LineResult(LineData(wcc), tuple(), tuple()))
     monkeypatch.setattr(SurfaceData, '__init__', __init__)

@@ -12,7 +12,7 @@ import numpy as np
 
 from ..line._run import _run_line_impl
 from ._data import SurfaceData
-from .._result import Result
+from .._result import SurfaceResult
 from .._control_base import (
     LineControl,
     SurfaceControl,
@@ -174,7 +174,7 @@ def _run_surface_impl(
         """
         # find whether the line is allowed still
         if data.nearest_neighbour_dist(t) < min_neighbour_dist:
-            return Result(data, stateful_ctrl, convergence_ctrl)
+            return SurfaceResult(data, stateful_ctrl, convergence_ctrl)
 
         data.add_line(t, get_line(t))
 
@@ -183,7 +183,7 @@ def _run_surface_impl(
             d_ctrl.update(data)
 
         # save to file
-        result = Result(data, stateful_ctrl, convergence_ctrl)
+        result = SurfaceResult(data, stateful_ctrl, convergence_ctrl)
         if save_file is not None:
             with open(save_file, 'wb') as f:
                 pickle.dump(result, f, protocol=4)

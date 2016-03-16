@@ -15,10 +15,10 @@ class OverlapLineData:
     def __init__(self, overlaps):
         self._overlaps = overlaps
 
-    def __getattr__(self, key):
-        if key == 'eigenstates':
+    def __getattr__(self, name):
+        if name == 'eigenstates':
             raise AttributeError("This data does not have the 'eigenstates' attribute. This is because the system used does not provide eigenstates, but only overlap matrices. The functionality which resulted in this error can be used only for systems providing eigenstates.")
-        return super().__getattr__(key)
+        return super().__getattribute__(name)
 
     @property
     def overlaps(self):

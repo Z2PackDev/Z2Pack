@@ -128,6 +128,8 @@ def _run_surface_impl(
     init_result=None
 ):
 
+    # CONTROL SETUP
+
     def filter_ctrl(ctrl_type):
         return [ctrl for ctrl in controls if isinstance(ctrl, ctrl_type)]
 
@@ -137,36 +139,19 @@ def _run_surface_impl(
     data_ctrl = filter_ctrl(DataControl)
     convergence_ctrl = filter_ctrl(ConvergenceControl)
 
-    # initialize stateful controls from old result
-    if init_result is not None:
-        # make sure old result doesn't change
-        init_result = copy.deepcopy(init_result)
-        for s_ctrl in stateful_ctrl:
-            try:
-                s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__]
-            except KeyError:
-                pass
+    # HELPER FUNCTIONS
 
     def get_line(t, init_line_result=None):
+        """
+        Runs a line calculation and returns its result.
+        """
         return _run_line_impl(
             *copy.deepcopy(line_ctrl),
             system=system,
             line=lambda ky: surface(t, ky),
             init_result=init_line_result
         )
-
-    # update existing data, without losing any old data
-    if init_result is not None:
-        for line in init_result.data.lines:
-            line.result = get_line(line.t, line.result)
-            # save to file
-            if save_file is not None:
-                with open(save_file, 'wb') as f:
-                    pickle.dump(init_result, f, protocol=4)
-        data = init_result.data
-    else:
-        data = SurfaceData()
-
+    
     def add_line(t):
         """
         Adds a line to the Surface, if it is within min_neighbour_dist of
@@ -178,25 +163,23 @@ def _run_surface_impl(
 
         data.add_line(t, get_line(t))
 
+        return update_result()
+
+    def update_result():
+        """
+        Updates all data controls, then creates the result object, saves it to file if necessary and returns the result.
+        """
         # update data controls
         for d_ctrl in data_ctrl:
             d_ctrl.update(data)
 
         # save to file
         result = SurfaceResult(data, stateful_ctrl, convergence_ctrl)
+        
         if save_file is not None:
             with open(save_file, 'wb') as f:
                 pickle.dump(result, f, protocol=4)
-
         return result
-
-    # create lines required by num_strings
-    for t in np.linspace(0, 1, num_strings):
-        result = add_line(t)
-
-    # update data controls
-    for d_ctrl in data_ctrl:
-        d_ctrl.update(data)
 
     def collect_convergence():
         """
@@ -206,8 +189,36 @@ def _run_surface_impl(
         for c_ctrl in convergence_ctrl:
             res &= c_ctrl.converged
         return res
-        
-    # main loop
+
+    # STEP 1 -- MAKE USE OF INIT_RESULT
+    # initialize stateful controls from old result
+    if init_result is not None:
+        # make sure old result doesn't change
+        init_result = copy.deepcopy(init_result)
+
+        # get states from pre-existing Controls
+        for s_ctrl in stateful_ctrl:
+            try:
+                s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__]
+            except KeyError:
+                pass
+
+        data = init_result.data
+
+        # re-run lines with existing result as input
+        for line in data.lines:
+            line.result = get_line(line.t, line.result)
+            update_result()
+
+    else:
+        data = SurfaceData()
+
+    # STEP 2 -- PRODUCE REQUIRED STRINGS
+    # create lines required by num_strings
+    for t in np.linspace(0, 1, num_strings):
+        result = add_line(t)
+
+    # STEP 3 -- MAIN LOOP        
     N = len(data.lines)
     conv = collect_convergence()
     while not all(conv):
@@ -223,4 +234,5 @@ def _run_surface_impl(
             break
         N = N_new
         conv = collect_convergence()
+
     return result

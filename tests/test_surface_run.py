@@ -36,7 +36,8 @@ def assert_res_equal(result1, result2):
     assert all(np.isclose(result1.wilson, result2.wilson).flatten())
     assert result1.gap_size == result2.gap_size
     assert result1.gap_pos == result2.gap_pos
-    assert result1.ctrl_states == result2.ctrl_states   
+    assert result1.ctrl_states == result2.ctrl_states
+    assert result1.convergence_report == result2.convergence_report
 
 def test_simple(num_strings):
     system = z2pack.em.System(lambda k: np.eye(4))
@@ -47,7 +48,7 @@ def test_simple(num_strings):
     assert result.gap_pos == [0.5] * num_strings
     assert result.ctrl_states == {}
 
-def test_weyl(compare_data, pos_tol, gap_tol, move_tol, num_strings, weyl_system, weyl_surface):
+def test_weyl(compare_data, compare_equal, pos_tol, gap_tol, move_tol, num_strings, weyl_system, weyl_surface):
     result = z2pack.surface.run(
         system=weyl_system,
         surface=weyl_surface,
@@ -57,6 +58,7 @@ def test_weyl(compare_data, pos_tol, gap_tol, move_tol, num_strings, weyl_system
         pos_tol=pos_tol
     )
     compare_data(lambda l1, l2: all(np.isclose(l1, l2).flatten()), result.wcc)
+    compare_equal(result.convergence_report, tag='_report')
 
 # saving tests
 def test_simple_save(num_strings, simple_system, simple_surface):

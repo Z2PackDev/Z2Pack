@@ -13,7 +13,7 @@ import numpy as np
 class MoveCheck(DataControl, ConvergenceControl, SurfaceControl):
     def __init__(self, *, move_tol):
         self.move_tol = move_tol
-        self._converged = False
+        self._converged = None
 
     @property
     def converged(self):
@@ -29,7 +29,7 @@ class MoveCheck(DataControl, ConvergenceControl, SurfaceControl):
 class GapCheck(DataControl, ConvergenceControl, SurfaceControl):
     def __init__(self, *, gap_tol):
         self.gap_tol = gap_tol
-        self._converged = False
+        self._converged = None
 
     @property
     def converged(self):

@@ -55,8 +55,6 @@ ax[0].set_title(r'$\vec{k}.\vec{\sigma}$', fontsize=fs)
 ax[1].set_title(r'$(k_x, -k_y, k_z).\vec{\sigma}$', fontsize=fs)
 
 # plotting the evolution of polarization
-#~ z2pack.surface.wcc_plot(res0, axis=ax[0])
-#~ z2pack.surface.wcc_plot(res1, axis=ax[1])
 z2pack.surface.plot.chern(res0, axis=ax[0])
 z2pack.surface.plot.chern(res1, axis=ax[1])
 

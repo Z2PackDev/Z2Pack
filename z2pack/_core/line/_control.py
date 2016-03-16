@@ -47,7 +47,7 @@ class StepCounter(
         """Converged if the minimum value of the iterator has been used."""
         return self._state >= self._min_state
 
-class WccConvergence(
+class PosCheck(
     DataControl,
     ConvergenceControl,
     StatefulControl,

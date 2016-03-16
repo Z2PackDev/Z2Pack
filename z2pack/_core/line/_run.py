@@ -10,7 +10,7 @@ import pickle
 import numpy as np
 
 from ._data import EigenstateLineData, OverlapLineData
-from ._control import StepCounter, WccConvergence
+from ._control import StepCounter, PosCheck
 from .._control_base import (
     StatefulControl,
     IterationControl,
@@ -45,7 +45,7 @@ def run_line(
     controls = []
     controls.append(StepCounter(iterator=iterator))
     if pos_tol is not None:
-        controls.append(WccConvergence(pos_tol=pos_tol))
+        controls.append(PosCheck(pos_tol=pos_tol))
 
     # setting up init_result
     if init_result is not None:

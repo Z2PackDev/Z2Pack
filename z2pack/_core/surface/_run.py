@@ -20,8 +20,8 @@ from .._control_base import (
     StatefulControl,
     ConvergenceControl
 )
-from ._control import MoveConvergence, GapConvergence
-from ..line._control import StepCounter, WccConvergence
+from ._control import MoveCheck, GapCheck
+from ..line._control import StepCounter, PosCheck
 
 def run_surface(
     *,
@@ -88,11 +88,11 @@ def run_surface(
     controls = []
     controls.append(StepCounter(iterator=iterator))
     if pos_tol is not None:
-        controls.append(WccConvergence(pos_tol=pos_tol))
+        controls.append(PosCheck(pos_tol=pos_tol))
     if move_tol is not None:
-        controls.append(MoveConvergence(move_tol=move_tol))
+        controls.append(MoveCheck(move_tol=move_tol))
     if gap_tol is not None:
-        controls.append(GapConvergence(gap_tol=gap_tol))
+        controls.append(GapCheck(gap_tol=gap_tol))
 
     # setting up init_result
     if init_result is not None:

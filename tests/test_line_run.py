@@ -22,7 +22,7 @@ def test_trivial_run(simple_system, simple_line):
     assert result.gap_pos == 0.5
     assert result.gap_size == 1
     assert result.ctrl_states[z2pack._core.line._control.StepCounter] == 10
-    assert result.ctrl_states[z2pack._core.line._control.WccConvergence] == dict(max_move=0, last_wcc=[0, 0])
+    assert result.ctrl_states[z2pack._core.line._control.PosCheck] == dict(max_move=0, last_wcc=[0, 0])
     
 def test_weyl(weyl_system, weyl_line, compare_data):
     result = z2pack.line.run(system=weyl_system, line=weyl_line)
@@ -35,7 +35,7 @@ def test_no_pos_tol(simple_system, simple_line):
     assert result.gap_size == 1
     assert result.ctrl_states[z2pack._core.line._control.StepCounter] == 8
     with pytest.raises(KeyError):
-        result.ctrl_states[z2pack._core.line._control.WccConvergence]
+        result.ctrl_states[z2pack._core.line._control.PosCheck]
 
 def test_pos_tol(weyl_system, weyl_line, pos_tol, compare_equal):
     result = z2pack.line.run(system=weyl_system, line=weyl_line, pos_tol=pos_tol)

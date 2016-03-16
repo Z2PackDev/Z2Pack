@@ -24,7 +24,6 @@ class OverlapLineData:
     def overlaps(self):
         return self._overlaps
 
-    # new way
     @property
     @_property_helper('_wilson')
     def wilson(self):

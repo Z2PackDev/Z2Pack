@@ -10,7 +10,7 @@ from .._utils import _get_max_move
 
 import numpy as np
 
-class MoveConvergence(DataControl, ConvergenceControl, SurfaceControl):
+class MoveCheck(DataControl, ConvergenceControl, SurfaceControl):
     def __init__(self, *, move_tol):
         self.move_tol = move_tol
         self._converged = False
@@ -26,7 +26,7 @@ class MoveConvergence(DataControl, ConvergenceControl, SurfaceControl):
             for l1, l2 in zip(wcc_list[:-1], wcc_list[1:])
         ]
 
-class GapConvergence(DataControl, ConvergenceControl, SurfaceControl):
+class GapCheck(DataControl, ConvergenceControl, SurfaceControl):
     def __init__(self, *, gap_tol):
         self.gap_tol = gap_tol
         self._converged = False

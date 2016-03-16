@@ -41,7 +41,6 @@ class OverlapLineData:
     @_property_helper('_wilson_eigenstates')
     def wilson_eigenstates(self):
         self._calculate_wannier()
-    
 
     def _calculate_wannier(self):
         eigs, eigvec = la.eig(self.wilson)

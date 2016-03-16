@@ -39,14 +39,16 @@ def assert_res_equal(result1, result2):
     assert result1.ctrl_states == result2.ctrl_states
     assert result1.convergence_report == result2.convergence_report
 
-def test_simple(num_strings):
-    system = z2pack.em.System(lambda k: np.eye(4))
-    surface = lambda s, t: [0, 0, 0]
-    result = z2pack.surface.run(system=system, surface=surface, num_strings=num_strings)
+def test_simple(simple_system, simple_surface, num_strings):
+    result = z2pack.surface.run(system=simple_system, surface=simple_surface, num_strings=num_strings)
     assert result.wcc == [[0, 0]] * num_strings
     assert result.gap_size == [1] * num_strings
     assert result.gap_pos == [0.5] * num_strings
     assert result.ctrl_states == {}
+
+def test_neighbour_dist(weyl_system, weyl_surface):
+    result = z2pack.surface.run(system=weyl_system, surface=weyl_surface, num_strings=11, min_neighbour_dist=0.09, move_tol=0., gap_tol=1.)
+    assert len(result.wcc) == 11
 
 def test_weyl(compare_data, compare_equal, pos_tol, gap_tol, move_tol, num_strings, weyl_system, weyl_surface):
     result = z2pack.surface.run(

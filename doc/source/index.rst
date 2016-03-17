@@ -12,7 +12,7 @@
 
     .. rubric:: Please cite
 
-    * Dominik Gresch, Alexey A. Soluyanov, G. Autés, O. V. Yazyev, B. Andrei Bernevig, David Vanderbilt, and Matthias Troyer "Universal framework for identifying topological materials and its numerical implementation" [in preparation]
+    * Dominik Gresch, Alexey A. Soluyanov, G. Autès, O. V. Yazyev, B. Andrei Bernevig, David Vanderbilt, and Matthias Troyer "Universal framework for identifying topological materials and its numerical implementation" [in preparation]
     * Alexey A. Soluyanov and David Vanderbilt "Computing topological invariants without inversion symmetry" [`PhysRevB.83.235401 <http://dx.doi.org/10.1103/PhysRevB.83.235401>`_]
 
 

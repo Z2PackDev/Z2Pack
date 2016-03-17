@@ -23,30 +23,17 @@ consider citing it (not yet published).
 
 .. ~ TODO!
 
-.. toctree::
-    :hidden:
-    
-    Z2Pack online <http://z2pack.ethz.ch/online/>
 
 
-Tutorial & Examples
-===================
+
+Tutorial, Examples and Documentation
+====================================
 .. toctree::
     :maxdepth: 2
     
     tutorial.rst
     examples.rst
-
-Documentation
-=============
-.. toctree::
-    :maxdepth: 2
-
-    core.rst
-    helpers.rst
-    fp.rst
-    tb.rst
-    other_systems.rst
+    documentation.rst
 
 
 Getting in touch
@@ -58,3 +45,8 @@ Indices and tables
 
 * :ref:`genindex`
 * :ref:`modindex`
+
+.. toctree::
+    :hidden:
+
+    links.rst

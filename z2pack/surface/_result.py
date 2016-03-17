@@ -8,8 +8,13 @@
 from .._result import Result
 
 class SurfaceResult(Result):
+    """TODO"""
+    
     @property
     def convergence_report(self):
+        r"""
+        Returns a convergence report (as a string) for the result. This report shows whether the convergence options used for calculating this result were satisfied or not.
+        """
         def section_heading(name):
             return name + '\n' + '=' * len(name) + '\n\n'
         

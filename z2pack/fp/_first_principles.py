@@ -21,48 +21,37 @@ class System(OverlapSystem):
     A subclass of :class:`z2pack.System` designed to work with various first -
     principles codes.
 
-    :param input_files:             Path(s) of the input file(s)
-    :type input_files:              str or list
+    :param input_files: Path(s) of the input file(s)
+    :type input_files:  str or list
 
-    :param kpts_fct:            Fct that creates a ``str`` specifying
+    :param kpts_fct:    Function that creates a ``str`` specifying
         the k-points (in the language of the first-principles code used),
         given a ``starting_point``, ``last_point``, ``end point`` and number
         of k-points ``N``. Can also be a ``list`` of functions if k-points
         need to be written to more than one file.
 
-    :param kpts_path:           Name of the file where the k-points
-        ``str`` belongs. Will append to a file if it matches one of the
-        ``file_names``, and create a separate file else.
-        If ``kpts_fct`` is a ``list``, ``kpts_path`` should also be
-        a list, specifying the path for each of the functions.
-    :type kpts_path:            str or list of str
+    :param kpts_path:   Name of the file where the k-points ``str`` belongs. Will append to a file if it matches one of the ``file_names``, and create a separate file else. If ``kpts_fct`` is a ``list``, ``kpts_path`` should also be a list, specifying the path for each of the functions.
+    :type kpts_path:    str or list of str
 
-    :param command:                 Command to execute the first principles
-        code
-    :type command:                  str
+    :param command: Command to execute the first principles code
+    :type command:  str
 
-    :param build_folder:          Folder where the created input files go
-    :type build_folder:           str
+    :param build_folder:    Folder where the calculation is executed.
+    :type build_folder:     str
 
-    :param executable:              Sets the executable executing the command.
-        If nothing is specified, the ``subprocess`` default will be used.
-    :type executable:               str
+    :param executable:  Sets the executable executing the command. If nothing is specified, the ``subprocess`` default will be used.
+    :type executable:   str
 
-    :param file_names:              Name(s) the input file(s) should get
-        in the ``build_folder``. Default behaviour is taking the filenames
-        from the input files.
-    :type file_names:               str or list
+    :param file_names:  Name(s) the input file(s) should get in the ``build_folder``. Default behaviour is taking the filenames from the input files.
+    :type file_names:   str or list
 
-    :param mmn_path:                Path to the ``.mmn`` output file of
-        ``Wannier90``
-    :type mmn_path:                 str
+    :param mmn_path:    Path to the ``.mmn`` output file of ``Wannier90``
+    :type mmn_path:     str
 
-    :param clean_build:         Toggles deleting the content of
-        ``build_folder`` before starting a new calculation.
-    :type clean_build:          bool
+    :param clean_build: Toggles deleting the content of `build_folder`` before starting a new calculation.
+    :type clean_build:  bool
 
-    .. note:: ``input_files`` and ``build_folder`` can be absolute or relative
-        paths, the rest is relative ``to build_folder``
+    .. note:: ``input_files`` and ``build_folder`` can be absolute or relative paths, the rest is relative to ``build_folder``
     """
     def __init__(
         self,

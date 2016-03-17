@@ -1,8 +1,8 @@
 First - Principles Systems
 --------------------------
 .. automodule:: z2pack.fp
-    :members:
-    :imported-members:
+    :members: System
+    :imported-members: 
 
 Functions creating k - points input
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

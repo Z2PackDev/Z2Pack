@@ -70,19 +70,20 @@ def wcc_symmetry(
 
     Plots the WCCs and the largest gaps (y-axis) against the t-points
     (x-axis).
+
     :param ax:      Axis where the plot is drawn
     :type ax:       :mod:`matplotlib` ``axis``
-    :param wcc_settings:    Keyword arguments for the scatter plot of the wcc
-        positions.
+    
+    :param wcc_settings:    Keyword arguments for the scatter plot of the wcc positions.
     :type wcc_settings:     dict
-    :param gaps:    Controls whether the largest gaps are printed.
-        Default: ``True``
+
+    :param gaps:    Controls whether the largest gaps are printed. Default: ``True``
     :type gaps:     bool
-    :param gap_settings:    Keyword arguments for the plot of the gap
-        positions.
+    
+    :param gap_settings:    Keyword arguments for the plot of the gap positions.
     :type gap_settings:     dict
-    :returns:       :class:`matplotlib figure` instance (only if
-        ``ax == None``)
+
+    :returns:       :class:`matplotlib figure` instance (only if ``ax == None``)
     """
     _plot_gaps(surface_result, axis=axis, gaps=gaps, gap_settings=gap_settings)
 
@@ -118,23 +119,21 @@ def wcc(
         gap_settings={'marker': 'D', 'color': 'b', 'linestyle': 'none'}
 ):
     r"""
-    TODO: FIX!!!
-
-    Plots the WCCs and the largest gaps (y-axis) against the t-points
-    (x-axis).
+    Plots the WCCs and the largest gaps (y-axis) against the t-points (x-axis).
+    
     :param ax:      Axis where the plot is drawn
     :type ax:       :mod:`matplotlib` ``axis``
-    :param wcc_settings:    Keyword arguments for the scatter plot of the wcc
-        positions.
+
+    :param wcc_settings:    Keyword arguments for the scatter plot of the wcc positions.
     :type wcc_settings:     dict
-    :param gaps:    Controls whether the largest gaps are printed.
-        Default: ``True``
+    
+    :param gaps:    Controls whether the largest gaps are shown. Default: ``True``
     :type gaps:     bool
-    :param gap_settings:    Keyword arguments for the plot of the gap
-        positions.
+    
+    :param gap_settings:    Keyword arguments for the plot of the gap positions.
     :type gap_settings:     dict
-    :returns:       :class:`matplotlib figure` instance (only if
-        ``ax == None``)
+
+    :returns:       :class:`matplotlib figure` instance (only if ``ax == None``)
     """
     _plot_gaps(surface_result, axis=axis, gaps=gaps, gap_settings=gap_settings)
 
@@ -152,7 +151,18 @@ def chern(
         settings={'marker': 'o', 'markerfacecolor': 'r', 'color': 'r'}
 ):
     r"""
-    TODO
+    Plots the sum of WCCs (polarization) (y-axis) against the t-points (x-axis).
+
+    :param surface_result:  Result for which the plot is drawn.
+    :type surface_result: :class:`SurfaceResult` or :class:`SurfaceData`
+    
+    :param ax:      Axis where the plot is drawn
+    :type ax:       :mod:`matplotlib` ``axis``
+
+    :param settings:    Keyword arguments for the plotting function.
+    :type settings:     dict
+    
+    :returns:       :class:`matplotlib figure` instance (only if ``ax == None``)
     """
     t_list = surface_result.t
     pol = surface_result.pol

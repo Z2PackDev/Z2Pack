@@ -5,13 +5,13 @@
 # Date:    22.06.2015 12:03:43 CEST
 # File:    _bases.py
 
-"""Base classes for systems which can be studied with Z2Pack."""
+r"""Z2Pack can easily be extended to work with different models / systems. The base classes defined here provide the interface to Z2Pack. Of the two classes, :class:`EigenstateSystem` is the more general one and should be preferred if possible."""
 
 import abc
 
 class EigenstateSystem(metaclass=abc.ABCMeta):
     r"""
-    Abstract base class for Z2Pack System classes which can provide eigenstates (periodic part u).
+    Abstract base class for Z2Pack System classes which can provide eigenstates (periodic part :math:`|u_\mathbf{k}\rangle`).
     """
 
     @abc.abstractmethod

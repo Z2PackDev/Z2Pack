@@ -3,6 +3,6 @@
 Other Systems / Models
 ======================
 
-.. automodule:: z2pack._core._system_base
+.. automodule:: z2pack.system
     :members:
     :imported-members:

@@ -5,10 +5,15 @@
 # Date:    02.06.2015 23:27:55 CEST
 # File:    _effective_model.py
 
+"""
+The em (effective models) module
+.. codeauthor:: Dominik Gresch <greschd@gmx.ch>
+"""
+
 import numpy as np
 import scipy.linalg as la
 
-from ..system import EigenstateSystem
+from .system import EigenstateSystem
 
 class System(EigenstateSystem):
     r"""
@@ -32,19 +37,14 @@ class System(EigenstateSystem):
         :meth:`.surface`, which passes them to :meth:`wcc_calc<.Surface.wcc_calc>`, precedence:
         :meth:`wcc_calc<.Surface.wcc_calc>` > :meth:`.surface` > this (newer kwargs take precedence)
     """
-    # RM_V2
-    _new_style_system = True
-
     def __init__(
-        self,
-        hamilton,
-        *,
-        pos=None,
-        bands=None,
-        hermitian_tol=1e-6,
-        **kwargs
+            self,
+            hamilton,
+            *,
+            pos=None,
+            bands=None,
+            hermitian_tol=1e-6
     ):
-        self._defaults = kwargs
         self._hamilton = hamilton
         self._hermitian_tol = hermitian_tol
 
@@ -68,7 +68,6 @@ class System(EigenstateSystem):
         returns:        eigenstates
         """
         # create k-points for string
-        N = len(kpt) - 1
         k_points = kpt[:-1]
 
         # get eigenvectors corr. to the chosen bands
@@ -82,9 +81,9 @@ class System(EigenstateSystem):
             eigval, eigvec = la.eigh(ham)
             eigval = np.real(eigval)
             idx = eigval.argsort()
-            
+
             idx = idx[self._bands]
-            idx.sort()  
+            idx.sort()
             # take only the lower - energy eigenstates
             eigvec = eigvec[:, idx]
 
@@ -98,5 +97,5 @@ class System(EigenstateSystem):
             for j in range(eigs[i].shape[0]):
                 eigs[i][j, :] *= np.exp(-2j * np.pi * np.dot(k, self._pos[j]))
             eigs[i] = list(eigs[i].T)
-            
+
         return eigs

@@ -11,8 +11,8 @@ import pickle
 import numpy as np
 
 from ..line._run import _run_line_impl
-from .data import SurfaceData
-from .._result import SurfaceResult
+from . import SurfaceData
+from . import SurfaceResult
 from .._control import (
     LineControl,
     SurfaceControl,

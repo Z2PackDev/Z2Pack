@@ -26,7 +26,7 @@ class MoveCheck(DataControl, ConvergenceControl, SurfaceControl):
         return self._converged
 
     def update(self, data):
-        wcc_list = [line.result.data.wcc for line in data.lines]
+        wcc_list = data.wcc
         self._converged = [
             _get_max_move(l1, l2) < self.move_tol
             for l1, l2 in zip(wcc_list[:-1], wcc_list[1:])
@@ -43,8 +43,8 @@ class GapCheck(DataControl, ConvergenceControl, SurfaceControl):
 
     def update(self, data):
         if len(data.lines) > 1:
-            wcc_list = [line.result.data.wcc for line in data.lines]
-            gap_list = [line.result.data.gap_pos for line in data.lines]
+            wcc_list = data.wcc
+            gap_list = data.gap_pos
             def get_convergence(wccs, gaps):
                 return [
                 all(abs(wcc_val - gap) > self.gap_tol for wcc_val in wcc)

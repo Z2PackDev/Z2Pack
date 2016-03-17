@@ -9,7 +9,7 @@ import pickle
 
 import numpy as np
 
-from .data import EigenstateLineData, OverlapLineData
+from . import EigenstateLineData, OverlapLineData
 from ._control import StepCounter, PosCheck
 from .._control import (
     StatefulControl,
@@ -18,7 +18,7 @@ from .._control import (
     ConvergenceControl,
     LineControl
 )
-from .._result import LineResult
+from . import LineResult
 
 def run_line(
     *,

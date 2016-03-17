@@ -3,7 +3,7 @@
 #
 # Author:  Dominik Gresch <greschd@gmx.ch>
 # Date:    20.02.2016 10:10:52 MST
-# File:    monkeypatch_surface.py
+# File:    monkeypatch_data.py
 
 import pytest
 import z2pack
@@ -11,10 +11,10 @@ import z2pack
 import numpy as np
 from sortedcontainers import SortedList
 
-from z2pack.line.data import OverlapLineData as LineData
-from z2pack.surface.data import SurfaceData
+from z2pack.line import OverlapLineData as LineData
+from z2pack.surface import SurfaceData
 
-from z2pack._result import LineResult
+from z2pack.line import LineResult
 
 @pytest.fixture
 def patch_max_move(monkeypatch):

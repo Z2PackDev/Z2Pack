@@ -5,6 +5,10 @@
 # Date:    21.02.2016 18:55:52 MST
 # File:    __init__.py
 
+from ._data import SurfaceData
+from ._result import SurfaceResult
+
 from ._run import run_surface as run
+
 from . import plot
 from . import invariant

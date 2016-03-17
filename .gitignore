@@ -61,6 +61,6 @@ lsf.*
 test_log.txt
 decorator.py
 
-venv
+venv*
 .cache
 .coverage

@@ -7,7 +7,7 @@
 
 import pytest
 import z2pack
-from z2pack._core._control_base import (
+from z2pack._control import (
     AbstractControl,
     IterationControl,
     DataControl,

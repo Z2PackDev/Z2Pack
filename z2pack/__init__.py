@@ -13,7 +13,8 @@ The core module contains the routines that are shared between different  special
 
 from ._version import __version__
 
-from ._core import *
+from . import line
+from . import surface
 from . import shapes
 
 from . import fp

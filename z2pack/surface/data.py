@@ -5,11 +5,11 @@
 # Date:    08.02.2016 16:04:23 CET
 # File:    _data.py
 
-from ...ptools.locker import Locker
+from ..ptools.locker import Locker
 from sortedcontainers import SortedList
 
 class SurfaceData(metaclass=Locker):
-    # cannot be pickled if it is a local method in __init__
+    # cannot be pickled if it is a local method (lambda) in __init__
     @staticmethod
     def _sort_key(x):
         return x.t

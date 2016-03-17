@@ -46,26 +46,15 @@ Documentation
     helpers.rst
     fp.rst
     tb.rst
-
-.. ~ .. toctree::
-.. ~     :hidden:
-.. ~ 
-.. ~     genindex </genindex.html>
+    other_systems.rst
 
 
 Getting in touch
 ================
-The development version of Z2Pack is hosted on `GitHub`_ .
-Post an `issue <https://github.com/Z2PackDev/Z2Pack/issues>`_ there or contact `me`__ directly with questions / suggestions
-/ feedback about Z2Pack.
-
-__ dg_
+The development version of Z2Pack is hosted on `GitHub <http://github.com/Z2PackDev/Z2Pack>`_ . Post an `issue <https://github.com/Z2PackDev/Z2Pack/issues>`_ there or contact `me <http://github.com/greschd>`_ directly with questions / suggestions / feedback about Z2Pack.
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
 * :ref:`modindex`
-
-.. _dg: http://github.com/greschd
-.. _GitHub: http://github.com/Z2PackDev/Z2Pack

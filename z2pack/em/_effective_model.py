@@ -8,9 +8,9 @@
 import numpy as np
 import scipy.linalg as la
 
-from .._core._system_base import EigenstateSystem as _Z2PackSystem
+from ..system import EigenstateSystem
 
-class System(_Z2PackSystem):
+class System(EigenstateSystem):
     r"""
     Subclass of :class:`z2pack.System` used for calculating systems with
     effective models

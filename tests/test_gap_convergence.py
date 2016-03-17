@@ -5,11 +5,11 @@
 # Date:    20.02.2016 10:10:06 MST
 # File:    test_move_convergence.py
 
-from z2pack._core.surface._control import GapCheck
-from z2pack._core._control_base import SurfaceControl
-from z2pack._core._result import LineResult
-from z2pack._core.surface._data import SurfaceData
-from z2pack._core.line._data import OverlapLineData
+from z2pack.surface._control import GapCheck
+from z2pack._control import SurfaceControl
+from z2pack._result import LineResult
+from z2pack.surface.data import SurfaceData
+from z2pack.line.data import OverlapLineData
 
 import z2pack
 import pytest

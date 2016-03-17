@@ -11,14 +11,14 @@ import z2pack
 import numpy as np
 from sortedcontainers import SortedList
 
-from z2pack._core.line._data import OverlapLineData as LineData
-from z2pack._core.surface._data import SurfaceData
+from z2pack.line.data import OverlapLineData as LineData
+from z2pack.surface.data import SurfaceData
 
-from z2pack._core._result import LineResult
+from z2pack._result import LineResult
 
 @pytest.fixture
 def patch_max_move(monkeypatch):
-    monkeypatch.setattr(z2pack._core.surface._control, '_get_max_move', min)
+    monkeypatch.setattr(z2pack.surface._control, '_get_max_move', min)
 
 @pytest.fixture
 def patch_line_data(monkeypatch):

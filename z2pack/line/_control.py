@@ -7,7 +7,7 @@
 
 import itertools
 
-from .._control_base import (
+from .._control import (
     DataControl,
     ConvergenceControl,
     IterationControl,

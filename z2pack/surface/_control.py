@@ -5,7 +5,13 @@
 # Date:    19.02.2016 16:30:58 MST
 # File:    _control.py
 
-from .._control_base import DataControl, ConvergenceControl, IterationControl, SurfaceControl, StatefulControl
+from .._control import (
+    DataControl,
+    ConvergenceControl,
+    IterationControl,
+    SurfaceControl,
+    StatefulControl
+)
 from .._utils import _get_max_move
 
 import numpy as np

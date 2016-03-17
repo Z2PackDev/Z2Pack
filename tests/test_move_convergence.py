@@ -5,8 +5,8 @@
 # Date:    20.02.2016 10:10:06 MST
 # File:    test_move_convergence.py
 
-from z2pack._core.surface._control import MoveCheck
-from z2pack._core._control_base import SurfaceControl
+from z2pack._control import SurfaceControl
+from z2pack.surface._control import MoveCheck
 
 from monkeypatch_data import *
 

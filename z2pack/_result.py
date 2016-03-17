@@ -6,7 +6,6 @@
 # File:    _result.py
 
 import abc
-from ..ptools.termcolor import color
 
 class Result(metaclass=abc.ABCMeta):
     def __init__(self, data, stateful_ctrl, convergence_ctrl):

@@ -6,7 +6,7 @@
 # File:    test_max_move.py
 
 import z2pack
-max_move = z2pack._core._utils._get_max_move
+max_move = z2pack._utils._get_max_move
 
 import copy
 import pytest

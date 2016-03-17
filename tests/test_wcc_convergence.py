@@ -11,18 +11,18 @@ import pytest
 import numpy as np
 
 import z2pack
-from z2pack._core.line._control import PosCheck
+from z2pack.line._control import PosCheck
 from monkeypatch_data import *
 
 def test_base(test_ctrl_base):
     test_ctrl_base(PosCheck)
-    assert issubclass(PosCheck, z2pack._core._control_base.LineControl)
+    assert issubclass(PosCheck, z2pack._control.LineControl)
 
 # Monkeypatching s.t. the data.wcc is just a float, and _get_max_move is just min(wcc1, wcc2)
 
 @pytest.fixture
 def patch_max_move(monkeypatch):
-    monkeypatch.setattr(z2pack._core.line._control, '_get_max_move', min)
+    monkeypatch.setattr(z2pack.line._control, '_get_max_move', min)
 
 @pytest.fixture(params=np.linspace(0.01, 0.99, 21))
 def pos_tol(request):

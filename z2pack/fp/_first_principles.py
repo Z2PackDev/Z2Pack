@@ -12,11 +12,11 @@ import shutil
 import platform
 import subprocess
 
-from .._core._system_base import OverlapSystem as _Z2PackSystem
+from ..system import OverlapSystem
 from . import _read_mmn as mmn
 
 
-class System(_Z2PackSystem):
+class System(OverlapSystem):
     r"""
     A subclass of :class:`z2pack.System` designed to work with various first -
     principles codes.

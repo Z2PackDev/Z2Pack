@@ -1,29 +1,19 @@
 .. image:: images/z2pack_logo.svg
     :width: 200px
-    :alt: Z2Pack logo
+    :alt: Z2Pack
 
 |
-|
 
-.. title:: Overview
+.. container:: section
 
-.. warning :: This site contains the documentation for an upcoming release of Z2Pack. As such, it is still incomplete. Please refer to the documentation of the `current version <http://z2pack.ethz.ch/doc>`_ instead.
+    is a tool for calculating topological invariants. The method is based on tracking the evolution of hybrid Wannier functions, which is equivalent to the computation of the Wilson loop. Originally developed for calculating :math:`\mathbb{Z}_2` invariants, it is now also capable of calculating Chern numbers. Moreover, through the use of individual Chern numbers it can be used to identify **any kind** of topological phase.
 
+    A key feature of Z2Pack is its **flexibility**: It can be used with various kinds of calculations and models. Currently, interfaces to **first-principles codes**, **tight-binding** models and :math:`\mathbf{k \cdot p}` models are implemented. However, it can in principle be extended to any kind of system.
 
-Z2Pack is a tool for calculating the Z2 topological invariant. It can be
-used either in combination with a first-principles calculation or by
-defining a tight-binding model.
+    .. rubric:: Please cite
 
-For the tight-binding functionality, an `online interface <http://z2pack.ethz.ch/online/>`_ is also
-available, however it does not support the full range of options
-available in Z2Pack.
-
-If you use Z2Pack or its online interface for your research, please
-consider citing it (not yet published).
-
-.. ~ TODO!
-
-
+    * Dominik Gresch, Alexey A. Soluyanov, G. Autés, O. V. Yazyev, B. Andrei Bernevig, David Vanderbilt, and Matthias Troyer "Universal framework for identifying topological materials and its numerical implementation" [in preparation]
+    * Alexey A. Soluyanov and David Vanderbilt "Computing topological invariants without inversion symmetry" [`PhysRevB.83.235401 <http://dx.doi.org/10.1103/PhysRevB.83.235401>`_]
 
 
 Tutorial, Examples and Documentation

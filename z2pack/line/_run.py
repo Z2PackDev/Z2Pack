@@ -9,8 +9,10 @@ import pickle
 
 import numpy as np
 
+from . import LineResult
 from . import EigenstateLineData, OverlapLineData
 from ._control import StepCounter, PosCheck
+
 from .._control import (
     StatefulControl,
     IterationControl,
@@ -18,7 +20,7 @@ from .._control import (
     ConvergenceControl,
     LineControl
 )
-from . import LineResult
+from .._helpers import _atomic_save
 
 def run_line(
     *,
@@ -90,8 +92,7 @@ def _run_line_impl(
 
     def save():
         if save_file is not None:
-            with open(save_file, 'wb') as f:
-                pickle.dump(result, f, protocol=4)
+            _atomic_save(result, save_file)
 
     # initialize stateful and data controls from old result
     if init_result is not None:

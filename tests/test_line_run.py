@@ -5,6 +5,7 @@
 # Date:    19.02.2016 14:40:53 MST
 # File:    test_line_run.py
 
+import os
 import pickle
 import inspect
 import tempfile
@@ -71,17 +72,21 @@ def assert_res_equal(result1, result2):
 
 # saving tests
 def test_simple_save(simple_system, simple_line):
-    # This works only on Unix
-    with tempfile.NamedTemporaryFile() as fp:
-        result = z2pack.line.run(system=simple_system, line=simple_line, save_file=fp.name)
-        result2 = pickle.load(fp)
+    # Context manager doesn't work because the file is moved in the atomic save
+    fp = tempfile.NamedTemporaryFile(delete=False)
+    result = z2pack.line.run(system=simple_system, line=simple_line, save_file=fp.name)
+    with open(fp.name, 'rb') as f:
+        result2 = pickle.load(f)
+    os.remove(fp.name)
     assert_res_equal(result, result2)
     
 def test_weyl_save(weyl_system, weyl_line):
-    # This works only on Unix
-    with tempfile.NamedTemporaryFile() as fp:
-        result = z2pack.line.run(system=weyl_system, line=weyl_line, save_file=fp.name)
-        result2 = pickle.load(fp)
+    # Context manager doesn't work because the file is moved in the atomic save
+    fp = tempfile.NamedTemporaryFile(delete=False)
+    result = z2pack.line.run(system=weyl_system, line=weyl_line, save_file=fp.name)
+    with open(fp.name, 'rb') as f:
+        result2 = pickle.load(f)
+    os.remove(fp.name)
     assert_res_equal(result, result2)
 
 # test restart

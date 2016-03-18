@@ -10,9 +10,10 @@ import pickle
 
 import numpy as np
 
-from ..line._run import _run_line_impl
 from . import SurfaceData
 from . import SurfaceResult
+from ._control import MoveCheck, GapCheck
+
 from .._control import (
     LineControl,
     SurfaceControl,
@@ -20,7 +21,9 @@ from .._control import (
     StatefulControl,
     ConvergenceControl
 )
-from ._control import MoveCheck, GapCheck
+from .._helpers import _atomic_save
+
+from ..line._run import _run_line_impl
 from ..line._control import StepCounter, PosCheck
 
 def run_surface(
@@ -187,8 +190,7 @@ def _run_surface_impl(
         result = SurfaceResult(data, stateful_ctrl, convergence_ctrl)
 
         if save_file is not None:
-            with open(save_file, 'wb') as f:
-                pickle.dump(result, f, protocol=4)
+            _atomic_save(result, save_file)
         return result
 
     def collect_convergence():

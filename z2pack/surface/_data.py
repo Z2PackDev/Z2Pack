@@ -42,4 +42,4 @@ class SurfaceLine(metaclass=Locker):
     def __getattr__(self, key):
         if key not in ['t', 'result']:
             return getattr(self.result, key)
-        return super().__getattr__(self, key)
+        return super().__getattribute__(key)

@@ -19,3 +19,7 @@ from . import shapes
 
 from . import fp
 from . import em
+
+import logging
+logging.getLogger(__name__).setLevel(logging.INFO)
+logging.getLogger(__name__).addHandler(logging.StreamHandler())

@@ -9,6 +9,7 @@ import pickle
 
 import numpy as np
 
+from . import logger
 from . import LineResult
 from . import EigenstateLineData, OverlapLineData
 from ._control import StepCounter, PosCheck
@@ -21,6 +22,10 @@ from .._control import (
     LineControl
 )
 from .._helpers import _atomic_save
+from .._logging_tools import TagAdapter
+
+# tag which triggers filtering when called from the surface's run.
+line_only_log = TagAdapter(logger, default_tags=('line_only',))
 
 def run_line(
     *,

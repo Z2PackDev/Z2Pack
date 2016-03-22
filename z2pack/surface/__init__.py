@@ -5,6 +5,9 @@
 # Date:    21.02.2016 18:55:52 MST
 # File:    __init__.py
 
+import logging
+logger = logging.getLogger(__name__)
+
 from ._data import SurfaceData
 from ._result import SurfaceResult
 

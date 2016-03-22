@@ -5,10 +5,12 @@
 # Date:    21.04.2015 09:13:01 CEST
 # File:    weyl.py
 
-import z2pack
+import logging
 
 import numpy as np
 import matplotlib.pyplot as plt
+
+import z2pack
 
 # defining pauli matrices
 pauli_x = np.array([[0, 1], [1, 0]], dtype=complex)
@@ -31,8 +33,8 @@ def hamilton1(k):
     return res
 
 # creating the two systems
-system0 = z2pack.em.System(hamilton0, occ=1)
-system1 = z2pack.em.System(hamilton1) # occ=1 is default (#orbitals / 2)
+system0 = z2pack.em.System(hamilton0, bands=1)
+system1 = z2pack.em.System(hamilton1) # bands=1 is default (#orbitals / 2)
 
 # the surface is a sphere around the Weyl point
 surface = z2pack.shapes.Sphere([0., 0., 0.], 0.01)

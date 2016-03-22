@@ -7,9 +7,11 @@
 
 import copy
 import pickle
+import logging
 
 import numpy as np
 
+from . import logger
 from . import SurfaceData
 from . import SurfaceResult
 from ._control import MoveCheck, GapCheck
@@ -22,6 +24,7 @@ from .._control import (
     ConvergenceControl
 )
 from .._helpers import _atomic_save
+from .._logging_tools import TagFilter, FilterManager
 
 from ..line._run import _run_line_impl
 from ..line._control import StepCounter, PosCheck
@@ -121,6 +124,8 @@ def run_surface(
         init_result=init_result
     )
 
+# filter out LogRecords tagged as 'line_only' in the line.
+@FilterManager(logging.getLogger('z2pack.line'), TagFilter(('line_only')))
 def _run_surface_impl(
         *controls,
         system,

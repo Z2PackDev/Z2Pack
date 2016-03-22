@@ -5,6 +5,9 @@
 # Date:    04.11.2015 15:47:16 CET
 # File:    __init__.py
 
+import logging
+logger = logging.getLogger(__name__)
+
 from ._data import OverlapLineData, EigenstateLineData
 from ._result import LineResult
 

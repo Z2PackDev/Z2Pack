@@ -52,3 +52,10 @@ def FilterManager(logger, filter):
     logger.addFilter(filter)
     yield
     logger.removeFilter(filter)
+
+class DefaultFormatter(logging.Formatter):
+    def __init__(self):
+        super().__init__(style='{')
+
+default_handler = logging.StreamHandler()
+default_handler.setFormatter(DefaultFormatter())

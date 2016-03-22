@@ -21,5 +21,7 @@ from . import fp
 from . import em
 
 import logging
+
+from ._logging_tools import default_handler
 logging.getLogger(__name__).setLevel(logging.INFO)
-logging.getLogger(__name__).addHandler(logging.StreamHandler())
+logging.getLogger(__name__).addHandler(default_handler)

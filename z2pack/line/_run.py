@@ -25,7 +25,7 @@ from .._helpers import _atomic_save
 from .._logging_tools import TagAdapter
 
 # tag which triggers filtering when called from the surface's run.
-line_only_log = TagAdapter(logger, default_tags=('line_only',))
+line_only_logger = TagAdapter(logger, default_tags=('line_only',))
 
 def run_line(
     *,
@@ -97,6 +97,7 @@ def _run_line_impl(
 
     def save():
         if save_file is not None:
+            logger.info('Saving line result to file {}'.format(save_file))
             _atomic_save(result, save_file)
 
     # initialize stateful and data controls from old result
@@ -121,14 +122,20 @@ def _run_line_impl(
         DataType = OverlapLineData
         system_fct = system.get_m
 
+    def collect_convergence():
+        res = [c_ctrl.converged for c_ctrl in convergence_ctrl]
+        logger.info('{} of {} line convergence criteria fulfilled.'.format(sum(res), len(res)))
+        return res
+
     # main loop
-    while not all(c_ctrl.converged for c_ctrl in convergence_ctrl):
+    while not all(collect_convergence()):
         run_options = dict()
         for it_ctrl in iteration_ctrl:
             try:
                 run_options.update(next(it_ctrl))
+                logger.info('Calculating line for N = {}.'.format(run_options['num_steps']))
             except StopIteration:
-                # TODO: report
+                logger.warn('Iterator stopped before the calculation could converge.')
                 return result
 
         data = DataType(system_fct(
@@ -141,4 +148,5 @@ def _run_line_impl(
         result = LineResult(data, stateful_ctrl, convergence_ctrl)
         save()
 
+    line_only_logger.info('Convergence report:\n{}'.format(result.convergence_report))
     return result

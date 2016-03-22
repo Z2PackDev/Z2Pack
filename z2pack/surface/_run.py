@@ -177,8 +177,10 @@ def _run_surface_impl(
         """
         # find whether the line is allowed still
         if data.nearest_neighbour_dist(t) < min_neighbour_dist:
+            logger.warn("'min_neighbour_dist' reached: cannot add line at t = {}".format(t))
             return SurfaceResult(data, stateful_ctrl, convergence_ctrl)
 
+        logger.info('Adding line at t = {}'.format(t))
         data.add_line(t, get_line(t))
 
         return update_result()
@@ -195,6 +197,7 @@ def _run_surface_impl(
         result = SurfaceResult(data, stateful_ctrl, convergence_ctrl)
 
         if save_file is not None:
+            logger.info('Saving surface result to file {}'.format(save_file))
             _atomic_save(result, save_file)
         return result
 
@@ -205,11 +208,13 @@ def _run_surface_impl(
         res = np.array([True] * (len(data.lines) - 1))
         for c_ctrl in convergence_ctrl:
             res &= c_ctrl.converged
+        logger.info('Convergence criteria fulfilled for {} of {} neighbouring lines.'.format(sum(res), len(res)))
         return res
 
     # STEP 1 -- MAKE USE OF INIT_RESULT
     # initialize stateful controls from old result
     if init_result is not None:
+        logger.info("Initializing result from 'init_result'.")
         # make sure old result doesn't change
         init_result = copy.deepcopy(init_result)
 
@@ -223,6 +228,7 @@ def _run_surface_impl(
         data = init_result.data
 
         # re-run lines with existing result as input
+        logger.info('Re-running existing lines.')
         for line in data.lines:
             line.result = get_line(line.t, line.result)
             update_result()
@@ -232,6 +238,7 @@ def _run_surface_impl(
 
     # STEP 2 -- PRODUCE REQUIRED STRINGS
     # create lines required by num_strings
+    logger.info("Adding lines required by 'num_strings'.")
     for t in np.linspace(0, 1, num_strings):
         result = add_line(t)
 
@@ -252,4 +259,5 @@ def _run_surface_impl(
         N = N_new
         conv = collect_convergence()
 
+    logger.info('==================\nCONVERGENCE REPORT\n==================\n\n{}'.format(result.convergence_report))
     return result

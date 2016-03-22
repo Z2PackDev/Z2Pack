@@ -5,8 +5,6 @@
 # Date:    21.04.2015 09:13:01 CEST
 # File:    weyl.py
 
-import logging
-
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -60,4 +58,4 @@ ax[1].set_title(r'$(k_x, -k_y, k_z).\vec{\sigma}$', fontsize=fs)
 z2pack.surface.plot.chern(res0, axis=ax[0])
 z2pack.surface.plot.chern(res1, axis=ax[1])
 
-plt.show()
+plt.savefig('plot.pdf', bbox_inches='tight')

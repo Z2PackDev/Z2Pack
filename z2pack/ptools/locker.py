@@ -55,7 +55,7 @@ class LockerBase(type):
                 if hasattr(self, 'attr_mod_ctrl'):
                     assert(self.attr_mod_ctrl in ['none', 'new', 'all', 'const'])
                     if self.attr_mod_ctrl == 'new' and (not hasattr(self, key)):
-                        raise AttributeError
+                        raise AttributeError("Creating new attributes is not allowed for '{0}' object.".format(type(self).__name__))
                     elif (self.attr_mod_ctrl == 'all' and key != 'attr_mod_ctrl') or (self.attr_mod_ctrl == 'const'):
                         raise AttributeError("'{0}' object is locked for modification.".format(type(self).__name__))
 

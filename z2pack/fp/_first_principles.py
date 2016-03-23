@@ -6,10 +6,7 @@
 # File:    _first_principles.py
 
 import os
-import re
-import copy
 import shutil
-import platform
 import subprocess
 import collections.abc
 
@@ -19,17 +16,12 @@ from . import _read_mmn as mmn
 
 class System(OverlapSystem):
     r"""
-    A subclass of :class:`z2pack.System` designed to work with various first -
-    principles codes.
+    A subclass of :class:`z2pack.System` designed to work with various first-principles codes.
 
     :param input_files: Path(s) of the input file(s)
     :type input_files:  str or list
 
-    :param kpts_fct:    Function that creates a ``str`` specifying
-        the k-points (in the language of the first-principles code used),
-        given a ``starting_point``, ``last_point``, ``end point`` and number
-        of k-points ``N``. Can also be a ``list`` of functions if k-points
-        need to be written to more than one file.
+    :param kpts_fct:    Function that creates a ``str`` specifying the k-points (in the language of the first-principles code used), given a ``starting_point``, ``last_point``, ``end point`` and number of k-points ``N``. Can also be a ``list`` of functions if k-points need to be written to more than one file.
 
     :param kpts_path:   Name of the file where the k-points ``str`` belongs. Will append to a file if it matches one of the ``file_names``, and create a separate file else. If ``kpts_fct`` is a ``list``, ``kpts_path`` should also be a list, specifying the path for each of the functions.
     :type kpts_path:    str or list of str
@@ -55,16 +47,16 @@ class System(OverlapSystem):
     .. note:: ``input_files`` and ``build_folder`` can be absolute or relative paths, the rest is relative to ``build_folder``
     """
     def __init__(
-        self,
-        input_files,
-        kpts_fct,
-        kpts_path,
-        command,
-        executable=None,
-        build_folder='build',
-        file_names='copy',
-        mmn_path='wannier90.mmn',
-        clean_build=True,
+            self,
+            input_files,
+            kpts_fct,
+            kpts_path,
+            command,
+            executable=None,
+            build_folder='build',
+            file_names='copy',
+            mmn_path='wannier90.mmn',
+            clean_build=True,
     ):
         # convert to lists (input_files)
         if not isinstance(input_files, str):
@@ -115,13 +107,13 @@ class System(OverlapSystem):
 
         # working folder given as string
         if isinstance(build_folder, str):
-            self._create_build_folder(build_folder)
+            self._create_build_folder()
         # working folder given as a function of counter
         else:
             self._counter = 0
             self._build_folder_fct = build_folder
 
-    def _create_build_folder(self, build_folder):
+    def _create_build_folder(self):
         # check all paths: absolute / relative?
         # absolute
         self._build_folder = os.path.abspath(self._build_folder)
@@ -157,7 +149,7 @@ class System(OverlapSystem):
             with open(f_path, 'a' if self._k_mode == 'append' else 'w') as f:
                 f.write(self._kpts_fct[i](*args))
 
-    def get_m(self, kpt):
+    def get_mmn(self, kpt):
         N = len(kpt) - 1
 
         # create input
@@ -195,8 +187,7 @@ def _copy(initial_paths, final_names):
                                 where to copy to
     folder:                     folder to copy into
     """
-    if isinstance(initial_paths, collections.abc.Iterable) and
-       not isinstance(initial_paths, str)):
+    if isinstance(initial_paths, collections.abc.Iterable) and not isinstance(initial_paths, str):
         for i, initial_path in enumerate(initial_paths):
             _copy(initial_path, final_names[i])
     else:

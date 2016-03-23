@@ -171,17 +171,20 @@ def _run_surface_impl(
             init_result=init_line_result
         )
 
-    def add_line(t):
+    def add_line(t, warn=True):
         """
         Adds a line to the Surface, if it is within min_neighbour_dist of
         the given lines.
         """
         # find whether the line is allowed still
         if data.nearest_neighbour_dist(t) < min_neighbour_dist:
-            logger.warn("'min_neighbour_dist' reached: cannot add line at t = {}".format(t))
+            if warn:
+                logger.warn("'min_neighbour_dist' reached: cannot add line at t = {}.".format(t))
+            else:
+                logger.info("Line at t = {} exists already.".format(t))
             return SurfaceResult(data, stateful_ctrl, convergence_ctrl)
 
-        logger.info('Adding line at t = {}'.format(t))
+        logger.info('Adding line at t = {}.'.format(t))
         data.add_line(t, get_line(t))
 
         return update_result()
@@ -241,7 +244,7 @@ def _run_surface_impl(
     # create lines required by num_strings
     logger.info("Adding lines required by 'num_strings'.")
     for t in np.linspace(0, 1, num_strings):
-        result = add_line(t)
+        result = add_line(t, warn=False)
 
     # STEP 3 -- MAIN LOOP
     N = len(data.lines)

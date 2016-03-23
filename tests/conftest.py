@@ -6,10 +6,15 @@
 # File:    conftest.py
 
 import os
+import json
 import pytest
 import pickle
+import logging
 
 from ctrl_base_tester import test_ctrl_base
+
+import z2pack
+logging.getLogger('z2pack').setLevel(logging.CRITICAL)
 
 @pytest.fixture
 def test_name(request):
@@ -26,7 +31,7 @@ def compare_data(request, test_name, scope="session"):
             request.config.cache.set(full_name, data)
             raise ValueError('Reference data does not exist.')
         else:
-            assert compare_fct(val, data)
+            assert compare_fct(val, json.loads(json.dumps(data))) # get rid of json-specific quirks
     return inner
 
 @pytest.fixture

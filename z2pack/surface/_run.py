@@ -40,7 +40,6 @@ def run_surface(
         iterator=range(8, 27, 2),
         min_neighbour_dist=0.01,
         num_strings=11,
-        #~ verbose=True,
         init_result=None,
         save_file=None,
         load=False,

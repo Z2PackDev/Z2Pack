@@ -16,6 +16,31 @@ from ctrl_base_tester import test_ctrl_base
 import z2pack
 logging.getLogger('z2pack').setLevel(logging.CRITICAL)
 
+def pytest_addoption(parser):
+    parser.addoption('-A', action='store_true', help='run ABINIT tests')
+    parser.addoption('-V', action='store_true', help='run VASP tests')
+    parser.addoption('-Q', action='store_true', help='run Quantum ESPRESSO tests')
+
+def pytest_configure(config):
+    # register additional marker
+    config.addinivalue_line("markers", "abinit: mark tests which run with ABINIT")
+    config.addinivalue_line("markers", "vasp: mark tests which run with VASP")
+    config.addinivalue_line("markers", "qe: mark tests which run with Quantum ESPRESSO")
+
+def pytest_runtest_setup(item):
+    abinit_marker = item.get_marker("abinit")
+    vasp_marker = item.get_marker("vasp")
+    qe_marker = item.get_marker("qe")
+    if abinit_marker is not None:
+        if not item.config.getoption("-A"):
+            pytest.skip("test runs only with ABINIT")
+    if vasp_marker is not None:
+        if not item.config.getoption("-V"):
+            pytest.skip("test runs only with VASP")
+    if qe_marker is not None:
+        if not item.config.getoption("-Q"):
+            pytest.skip("test runs only with Quantum ESPRESSO")
+
 @pytest.fixture
 def test_name(request):
     """Returns module_name.function_name for a given test"""

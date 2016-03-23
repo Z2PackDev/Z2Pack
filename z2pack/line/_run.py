@@ -25,7 +25,8 @@ from .._helpers import _atomic_save
 from .._logging_tools import TagAdapter
 
 # tag which triggers filtering when called from the surface's run.
-line_only_logger = TagAdapter(logger, default_tags=('line_only',))
+line_only_logger = TagAdapter(logger, default_tags=('line', 'line_only',))
+logger = TagAdapter(logger, default_tags=('line',))
 
 def run_line(
     *,
@@ -124,7 +125,7 @@ def _run_line_impl(
 
     def collect_convergence():
         res = [c_ctrl.converged for c_ctrl in convergence_ctrl]
-        logger.info('{} of {} line convergence criteria fulfilled.'.format(sum(res), len(res)))
+        line_only_logger.info('{} of {} line convergence criteria fulfilled.'.format(sum(res), len(res)))
         return res
 
     # main loop
@@ -133,7 +134,7 @@ def _run_line_impl(
         for it_ctrl in iteration_ctrl:
             try:
                 run_options.update(next(it_ctrl))
-                logger.info('Calculating line for N = {}.'.format(run_options['num_steps']))
+                logger.info('Calculating line for N = {}.'.format(run_options['num_steps']), tags=('offset',))
             except StopIteration:
                 logger.warn('Iterator stopped before the calculation could converge.')
                 return result
@@ -148,5 +149,5 @@ def _run_line_impl(
         result = LineResult(data, stateful_ctrl, convergence_ctrl)
         save()
 
-    line_only_logger.info('Convergence report:\n{}'.format(result.convergence_report))
+    line_only_logger.info(result.convergence_report, tags=('convergence_report', 'box'))
     return result

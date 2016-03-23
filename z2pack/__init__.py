@@ -20,8 +20,4 @@ from . import shapes
 from . import fp
 from . import em
 
-import logging
-
-from ._logging_tools import default_handler
-logging.getLogger(__name__).setLevel(logging.INFO)
-logging.getLogger(__name__).addHandler(default_handler)
+from . import _logging_format # sets default logging levels / format

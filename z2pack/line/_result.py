@@ -12,14 +12,5 @@ class LineResult(Result):
     @property
     def convergence_report(self):
         r"""
-        Returns a convergence report (as a string) for the result. This report shows whether the convergence options used for calculating this result were satisfied or not.
-        """
-        report = []
-        for key, value in sorted(self.ctrl_convergence.items(), key=lambda x: x[0].__name__):
-            report.append(
-                '{:<20}{}'.format(
-                    key.__name__ + ': ',
-                    ('Passed' if value else 'Failed')
-                )
-            )
-        return '\n'.join(report)
+        Returns a convergence report (as a dict) for the result. The keys of the dictionary indicate the type of convergence test, and the values are booleans which are ``True`` if the test converged."""
+        return {key.__name__: value for key, value in self.ctrl_convergence.items()}

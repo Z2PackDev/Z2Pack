@@ -24,7 +24,8 @@ from .._control import (
     ConvergenceControl
 )
 from .._helpers import _atomic_save
-from .._logging_tools import TagFilter, FilterManager
+from .._logging_tools import TagAdapter, TagFilter, FilterManager
+logger = TagAdapter(logger, default_tags=('surface',))
 
 from ..line._run import _run_line_impl
 from ..line._control import StepCounter, PosCheck
@@ -125,7 +126,7 @@ def run_surface(
     )
 
 # filter out LogRecords tagged as 'line_only' in the line.
-@FilterManager(logging.getLogger('z2pack.line'), TagFilter(('line_only')))
+@FilterManager(logging.getLogger('z2pack.line'), TagFilter(('line_only',)))
 def _run_surface_impl(
         *controls,
         system,
@@ -259,5 +260,5 @@ def _run_surface_impl(
         N = N_new
         conv = collect_convergence()
 
-    logger.info('==================\nCONVERGENCE REPORT\n==================\n\n{}'.format(result.convergence_report))
+    logger.info(result.convergence_report, tags=('box', 'convergence_report'))
     return result

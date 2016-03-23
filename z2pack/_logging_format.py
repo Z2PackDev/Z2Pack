@@ -9,6 +9,7 @@ import logging
 import datetime
 
 from .ptools.string_tools import cbox
+from ._version import __version__
 
 def _make_title(title, delimiter, overline=False):
     delimiter *= len(title)
@@ -78,7 +79,8 @@ class DefaultFormatter(logging.Formatter):
                     
                 if 'line' in record.tags:
                     msg = _make_title('LINE CALCULATION', '=', overline=True)
-                msg += '\n' + 'starting at {}'.format(self.formatTime(record)) + '\n\n'
+                msg += '\n' + 'starting at {}'.format(self.formatTime(record))
+                msg += '\nrunning Z2Pack version {}\n\n'.format(__version__)
 
                 dist = max(len(key) for key in kwargs.keys()) + 5
                 format_string = '{:<' + str(dist) + '}{}'

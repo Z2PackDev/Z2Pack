@@ -126,7 +126,7 @@ def _run_line_impl(
         system_fct = system.get_eig
     else:
         DataType = OverlapLineData
-        system_fct = system.get_m
+        system_fct = system.get_mmn
 
     def collect_convergence():
         res = [c_ctrl.converged for c_ctrl in convergence_ctrl]

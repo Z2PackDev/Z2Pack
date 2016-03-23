@@ -107,6 +107,7 @@ class System(OverlapSystem):
 
         # working folder given as string
         if isinstance(build_folder, str):
+            self._build_folder = build_folder
             self._create_build_folder()
         # working folder given as a function of counter
         else:

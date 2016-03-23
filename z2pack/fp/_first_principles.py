@@ -11,6 +11,7 @@ import copy
 import shutil
 import platform
 import subprocess
+import collections.abc
 
 from ..system import OverlapSystem
 from . import _read_mmn as mmn
@@ -65,69 +66,6 @@ class System(OverlapSystem):
         mmn_path='wannier90.mmn',
         clean_build=True,
     ):
-        self._system = _FirstPrinciplesSystem(input_files,
-                                              kpts_fct,
-                                              kpts_path,
-                                              build_folder,
-                                              command,
-                                              executable,
-                                              file_names,
-                                              mmn_path,
-                                              clean_build)
-        self._m_handle = self._system.run
-
-
-class _FirstPrinciplesSystem(object):
-    """
-    args:
-    ~~~~
-    input_files:            path(s) of the input file(s) (str or list)
-    kpts_fct:           fct that creates k_point string, given
-                            starting point, last_point, end point, N
-    kpts_path:          name of the file where k_points belong
-                            will append to a file if it matches one
-                            of file_names, create a separate file
-                            else
-    build_folder:         folder where the created input files go
-    command:                command to execute the first principles
-                            code
-
-    kwargs:
-    ~~~~~~
-    file_names:             name(s) the input file(s) should get
-                            put 'copy' -> same as input_files
-    mmn_path:               path of the .mmn file (default:
-                            wannier90.mmn)
-    clean_build:        toggles deleting content of
-                            build_folder before starting a new
-                            calculation
-
-    file paths:
-    ~~~~~~~~~~
-    input_files and build_folder can be absolute or relative
-    paths, the rest is relative to build_folder
-    """
-
-    def __init__(
-        self,
-        input_files,
-        kpts_fct,
-        kpts_path,
-        build_folder,
-        command,
-        executable=None,
-        file_names='copy',
-        mmn_path='wannier90.mmn',
-        clean_build=True
-    ):
-        # catch Windows
-        if re.match('Windows', platform.platform(), re.IGNORECASE):
-            self._sep = '\\'
-            self._is_windows = True
-        else:
-            self._sep = '/'
-            self._is_windows = False
-
         # convert to lists (input_files)
         if not isinstance(input_files, str):
             self._input_files = list(input_files)
@@ -136,17 +74,9 @@ class _FirstPrinciplesSystem(object):
 
         # copy to file_names and split off the name
         if file_names == 'copy':
-            self._file_names = copy.copy(self._input_files)
-            for i in range(len(self._input_files)):
-                self._file_names[i] = self._input_files[i].split(self._sep)[-1]
+            self._file_names = [os.path.basename(filename) for filename in self._input_files]
         else:
             self._file_names = file_names
-
-        # convert to list(file_names)
-        if not isinstance(self._file_names, str):
-            self._file_names = list(self._file_names)
-        else:
-            self._file_names = [self._file_names]
 
         # check whether to append k-points or write separate file
         if kpts_path in self._file_names:
@@ -155,23 +85,14 @@ class _FirstPrinciplesSystem(object):
             self._k_mode = 'separate'
 
         # kpts_fct
-        if not(hasattr(kpts_fct, '__getitem__') and hasattr(kpts_fct, '__iter__')):
+        if isinstance(kpts_fct, collections.abc.Callable):
             self._kpts_fct = [kpts_fct]
         else:
             self._kpts_fct = kpts_fct
 
-        self._calling_path = os.getcwd()
-
         # make input_files absolute (check if already absolute)
-        for i in range(len(self._input_files)):
-            if not(
-                self._input_files[i][0] == self._sep or
-                self._input_files[i][0] == "~"
-            ):  # relative
-                self._input_files[i] = (
-                    self._calling_path + self._sep + 
-                    self._input_files[i]
-                )
+        for i, filename in enumerate(self._input_files):
+            self._input_files[i] = os.path.abspath(filename)
 
         self._command = command
         self._executable = executable
@@ -203,26 +124,20 @@ class _FirstPrinciplesSystem(object):
     def _create_build_folder(self, build_folder):
         # check all paths: absolute / relative?
         # absolute
-        if build_folder[0] == self._sep or build_folder[0] == "~":
-            self._build_folder = build_folder
-        else:  # relative
-            self._build_folder = (self._calling_path +
-                                  self._sep + build_folder)
+        self._build_folder = os.path.abspath(self._build_folder)
         # make file_names absolute (assumed to be relative to build_folder)
         self._file_names_abs = []
-        for i in range(len(self._file_names)):
-            self._file_names_abs.append(self._build_folder + self._sep +
-                                        self._file_names[i])
+        for filename in self._file_names:
+            self._file_names_abs.append(self._build_folder + '/' + filename)
 
         self._kpts_path_abs = []
         for path in self._kpts_path:
-            self._kpts_path_abs.append(
-                self._build_folder + self._sep + path)
-        self._mmn_path_abs = self._build_folder + self._sep + self._mmn_path
+            self._kpts_path_abs.append(self._build_folder + '/' + path)
+        self._mmn_path_abs = self._build_folder + '/' + self._mmn_path
 
         # create working folder if it doesn't exist
         if not os.path.isdir(self._build_folder):
-            subprocess.call("mkdir " + self._build_folder, shell=True)
+            os.mkdir(self._build_folder)
 
     def _create_input(self, *args):
         try:
@@ -233,32 +148,16 @@ class _FirstPrinciplesSystem(object):
             pass
 
         if self._clean_build:
-            if not self._is_windows:
-                subprocess.call('rm -rf ' + self._build_folder + self._sep
-                                + "*", shell=True)
-            else:
-                try:
-                    subprocess.call('del ' + self._build_folder + self._sep
-                                    + '* /S /Q', shell=True)
-                except OSError:  # if there is no file to delete
-                    pass
-                try:
-                    subprocess.call('for /d %x in (' + self._build_folder
-                                    + self._sep + '*) do rd /S /Q "%x"')
-                except OSError:  # if there is no folder to delete
-                    pass
+            shutil.rmtree(self._build_folder)
+            os.mkdir(self._build_folder)
         _copy(self._input_files, self._file_names_abs)
 
 
         for i, f_path in enumerate(self._kpts_path_abs):
-            if self._k_mode == 'append':
-                f = open(f_path, "a")
-            else:
-                f = open(f_path, "a")
-            f.write(self._kpts_fct[i](*args))
-            f.close()
+            with open(f_path, 'a' if self._k_mode == 'append' else 'w') as f:
+                f.write(self._kpts_fct[i](*args))
 
-    def run(self, kpt):
+    def get_m(self, kpt):
         N = len(kpt) - 1
 
         # create input
@@ -296,8 +195,7 @@ def _copy(initial_paths, final_names):
                                 where to copy to
     folder:                     folder to copy into
     """
-    if(hasattr(initial_paths, '__iter__') and
-       hasattr(initial_paths, '__getitem__') and
+    if isinstance(initial_paths, collections.abc.Iterable) and
        not isinstance(initial_paths, str)):
         for i, initial_path in enumerate(initial_paths):
             _copy(initial_path, final_names[i])

@@ -25,8 +25,7 @@ def prototype(kpt):
 
 def abinit(kpt):
     """
-    Creates a k-point input for **ABINIT**. It uses ``kptopt -1`` and
-    specifies the k-points string using ``ndivk`` and ``kptbounds``.
+    Creates a k-point input for **ABINIT**. It uses ``kptopt -1`` and specifies the k-points string using ``ndivk`` and ``kptbounds``.
     """
     start_point = kpt[0]
     end_point = kpt[-1]
@@ -69,9 +68,7 @@ def qe(kpt):
 
 def wannier90(kpt):
     """
-    Creates a k-point input for **Wannier90**. It can be useful when the
-    first-principles code does not generate the k-points in
-    ``wannier90.win`` (e.g. with Quantum Espresso).
+    Creates a k-point input for **Wannier90**. It can be useful when the first-principles code does not generate the k-points in ``wannier90.win`` (e.g. with Quantum Espresso).
     """
     for point in kpt:
         if len(point) != 3:
@@ -106,11 +103,11 @@ def wannier90(kpt):
 
 def vasp(kpt):
     """
-    Creates a k-point input for  **VASP**. It uses the automatic
-    generation scheme with a Gamma centered grid. Note that VASP
-    does **not** support any kind of k-point line **unless** they are
-    exactly along one of the reciprocal lattice vectors.
+    Creates a k-point input for  **VASP**. It uses the automatic generation scheme with a Gamma centered grid. Note that VASP does **not** support any kind of k-point line **unless** they are exactly along one of the reciprocal lattice vectors, and the k-points are evenly spaced.
+
+    TODO: check -- what does VASP do about the order of the k-points?
     """
+    
     for point in kpt:
         if len(point) != 3:
             raise ValueError('dimension of point != 3')

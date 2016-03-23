@@ -6,6 +6,8 @@
 # File:    _logging_format.py
 
 import logging
+import datetime
+
 from .ptools.string_tools import cbox
 
 def _make_title(title, delimiter, overline=False):
@@ -70,19 +72,44 @@ class DefaultFormatter(logging.Formatter):
                         msg += '\n\n{}: {}'.format(key, 'PASSED' if val else 'FAILED')
 
             if 'setup' in record.tags:
+                kwargs = msg
                 if 'surface' in record.tags:
-                    pass
+                    msg = _make_title('SURFACE CALCULATION', '=', overline=True)
+                    
                 if 'line' in record.tags:
-                    pass
+                    msg = _make_title('LINE CALCULATION', '=', overline=True)
+                msg += '\n' + 'starting at {}'.format(self.formatTime(record)) + '\n\n'
+
+                dist = max(len(key) for key in kwargs.keys()) + 5
+                format_string = '{:<' + str(dist) + '}{}'
+                for key, value in kwargs.items():
+                    val_str = str(value)
+                    max_width = 70 - dist
+                    if len(val_str) > max_width:
+                        val_str = val_str[:max_width - 3] + '...'
+                    msg += format_string.format(key + ':', val_str)
+                    msg += '\n'
+                msg = msg[:-1]
+
+            if 'timing' in record.tags:
+                time = msg
+                msg = 'Calculation finished in {}'.format(datetime.time(0, 0, time.seconds).strftime("%Hh %Mm %Ss"))
 
             if 'box' in record.tags:
-                msg = '\n' + cbox(msg) + '\n'
+                msg = cbox(msg)
 
-            else:
-                msg = '{}: {}'.format(record.levelname, msg)
+            if 'skip' in record.tags:
+                msg = '\n' + msg + '\n'
+            if 'skip-before' in record.tags:
+                msg = '\n' + msg
+            if 'skip-after' in record.tags:
+                msg += '\n'
 
             if 'offset' in record.tags:
                 msg = _offset(msg, 6)
+
+        else:
+            msg = '{}: {}'.format(record.levelname, msg)
 
         return msg
 

@@ -8,6 +8,7 @@
 import copy
 import pickle
 import logging
+import datetime
 
 import numpy as np
 
@@ -89,6 +90,7 @@ def run_surface(
     :returns:                   ``None``. Use :meth:`get_res` and
         :meth:`z2` to get the results.
     """
+    logger.info(locals(), tags=('setup', 'box', 'skip'))
 
     # setting up controls
     controls = []
@@ -145,6 +147,7 @@ def _run_surface_impl(
 
     :param surface: Function which defines the surface on which the WCC are calculated.
     """
+    start_time = datetime.datetime.now()
 
     # CONTROL SETUP
 
@@ -262,5 +265,7 @@ def _run_surface_impl(
         N = N_new
         conv = collect_convergence()
 
-    logger.info(result.convergence_report, tags=('box', 'convergence_report'))
+    end_time = datetime.datetime.now()
+    logger.info(end_time - start_time, tags=('box', 'skip-before', 'timing'))
+    logger.info(result.convergence_report, tags=('box', 'convergence_report', 'skip'))
     return result

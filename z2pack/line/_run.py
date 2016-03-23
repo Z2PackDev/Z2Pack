@@ -6,6 +6,7 @@
 # File:    _run.py
 
 import pickle
+import datetime
 
 import numpy as np
 
@@ -49,6 +50,8 @@ def run_line(
         * setting up printing status
         * setting up file backend
     """
+    line_only_logger.info(locals(), tags=('setup', 'box', 'skip'))
+    
     # setting up controls
     controls = []
     controls.append(StepCounter(iterator=iterator))
@@ -84,6 +87,8 @@ def _run_line_impl(
         * Controls
         * file backend?
     """
+    start_time = datetime.datetime.now() # timing the run
+    
     for ctrl in controls:
         if not isinstance(ctrl, LineControl):
             raise ValueError('{} control object is not a LineControl instance.'.format(ctrl.__class__))
@@ -149,5 +154,7 @@ def _run_line_impl(
         result = LineResult(data, stateful_ctrl, convergence_ctrl)
         save()
 
+    end_time = datetime.datetime.now()
+    line_only_logger.info(end_time - start_time, tags=('box', 'skip-before', 'timing'))
     line_only_logger.info(result.convergence_report, tags=('convergence_report', 'box'))
     return result

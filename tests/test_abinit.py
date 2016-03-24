@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 #
 # Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    15.10.2014 14:49:25 CEST
-# File:    fp_phony.py
+# Date:    24.03.2016 16:00:14 CET
+# File:    test_abinit.py
 
 import tempfile
 

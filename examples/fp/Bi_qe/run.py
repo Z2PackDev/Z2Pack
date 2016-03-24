@@ -52,12 +52,14 @@ with open('input/bi.win', 'w') as f:
 # copied, but instead can be referenced in the .files file.
 # The k-points input is appended to the .in file
 input_files = ['input/' + name for name in ["bi.nscf.in", "bi.pw2wan.in", "bi.win" ]]
-system = z2pack.fp.System(input_files,
-                          [z2pack.fp.kpts.qe, z2pack.fp.kpts.wannier90],
-                          ["bi.nscf.in","bi.win"],
-                          z2cmd,
-                          executable='/bin/bash',
-                          mmn_path='bi.mmn')
+system = z2pack.fp.System(
+    input_files=input_files,
+    kpt_fct=[z2pack.fp.kpts.qe, z2pack.fp.kpts.wannier90],
+    kpt_path=["bi.nscf.in","bi.win"],
+    command=z2cmd,
+    executable='/bin/bash',
+    mmn_path='bi.mmn'
+)
 
 # Run the WCC calculations
 result_0 = z2pack.surface.run(

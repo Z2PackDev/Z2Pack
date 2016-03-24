@@ -18,13 +18,13 @@ if not os.path.exists('./results'):
 
 # creating the System object
 # the command (mpirun ...) will have to be replaced
-Bi = z2pack.fp.System(['input/Bi_nscf.files', 'input/Bi_nscf.in', 'input/wannier90.win' ],
-                      z2pack.fp.kpts.abinit,
-                      'Bi_nscf.in',
-                      'mpirun -np 4 ~/software/abinit-7.8.2/src/98_main/abinit < Bi_nscf.files >& log',
-                      executable='/bin/bash'
-                     )
-    
+Bi = z2pack.fp.System(
+    input_files=['input/Bi_nscf.files', 'input/Bi_nscf.in', 'input/wannier90.win' ],
+    kpt_fct=z2pack.fp.kpts.abinit,
+    kpt_path='Bi_nscf.in',
+    command='mpirun -np 4 ~/software/abinit-7.8.2/src/98_main/abinit < Bi_nscf.files >& log',
+    executable='/bin/bash'
+)
 
 # calculating the WCC
 result_0 = z2pack.surface.run(system=Bi, surface=lambda s, t: [0, s / 2, t], save_file = './results/Bi_0.p', load=True)

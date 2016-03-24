@@ -1,0 +1,21 @@
+acell 3*4.7458 Angstrom 
+angdeg 3*57.23338683919874
+ecut 80 
+enunit 2 
+natom 2
+nband 16
+nspinor 2 
+nsppol 1 
+ntypat 1 
+typat 1 1
+xred
+0.23389 0.23389 0.23389 
+-0.23389 -0.23389 -0.23389
+znucl 83.0 
+
+iscf -2
+tolwfr 1e-21
+!irdwfk 1
+irdden 1
+prtwant 2
+nstep 100

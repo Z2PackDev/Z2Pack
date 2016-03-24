@@ -21,10 +21,10 @@ class System(OverlapSystem):
     :param input_files: Path(s) of the input file(s)
     :type input_files:  str or list
 
-    :param kpts_fct:    Function that creates a ``str`` specifying the k-points (in the language of the first-principles code used), given a ``starting_point``, ``last_point``, ``end point`` and number of k-points ``N``. Can also be a ``list`` of functions if k-points need to be written to more than one file.
+    :param kpt_fct:    Function that creates a ``str`` specifying the k-points (in the language of the first-principles code used), given a ``starting_point``, ``last_point``, ``end point`` and number of k-points ``N``. Can also be a ``list`` of functions if k-points need to be written to more than one file.
 
-    :param kpts_path:   Name of the file where the k-points ``str`` belongs. Will append to a file if it matches one of the ``file_names``, and create a separate file else. If ``kpts_fct`` is a ``list``, ``kpts_path`` should also be a list, specifying the path for each of the functions.
-    :type kpts_path:    str or list of str
+    :param kpt_path:   Name of the file where the k-points ``str`` belongs. Will append to a file if it matches one of the ``file_names``, and create a separate file else. If ``kpt_fct`` is a ``list``, ``kpt_path`` should also be a list, specifying the path for each of the functions.
+    :type kpt_path:    str or list of str
 
     :param command: Command to execute the first principles code
     :type command:  str
@@ -48,15 +48,16 @@ class System(OverlapSystem):
     """
     def __init__(
             self,
+            *,
             input_files,
-            kpts_fct,
-            kpts_path,
+            kpt_fct,
+            kpt_path,
             command,
             executable=None,
             build_folder='build',
             file_names='copy',
             mmn_path='wannier90.mmn',
-            clean_build=True,
+            clean_build=True
     ):
         # convert to lists (input_files)
         if not isinstance(input_files, str):
@@ -70,11 +71,11 @@ class System(OverlapSystem):
         else:
             self._file_names = file_names
 
-        # kpts_fct
-        if isinstance(kpts_fct, collections.abc.Callable):
-            self._kpts_fct = [kpts_fct]
+        # kpt_fct
+        if isinstance(kpt_fct, collections.abc.Callable):
+            self._kpt_fct = [kpt_fct]
         else:
-            self._kpts_fct = kpts_fct
+            self._kpt_fct = kpt_fct
 
         # make input_files absolute (check if already absolute)
         for i, filename in enumerate(self._input_files):
@@ -82,19 +83,19 @@ class System(OverlapSystem):
 
         self._command = command
         self._executable = executable
-        if isinstance(kpts_path, str):
-            self._kpts_path = [kpts_path]
+        if isinstance(kpt_path, str):
+            self._kpt_path = [kpt_path]
         else:
-            self._kpts_path = kpts_path
+            self._kpt_path = kpt_path
 
         # check whether to append k-points or write separate file
-        self._k_mode = ['a' if path in self._file_names else 'w' for path in self._kpts_path]
+        self._k_mode = ['a' if path in self._file_names else 'w' for path in self._kpt_path]
 
         # check if the number of functions matches the number of paths
-        if len(self._kpts_path) != len(self._kpts_fct):
+        if len(self._kpt_path) != len(self._kpt_fct):
             raise ValueError(
-                'kpts_fct ({0}) and kpts_path({1}) must have the same length'.format(
-                    len(self._kpts_path), len(self._kpts_fct)
+                'kpt_fct ({0}) and kpt_path({1}) must have the same length'.format(
+                    len(self._kpt_path), len(self._kpt_fct)
                 )
             )
         self._mmn_path = mmn_path
@@ -120,9 +121,9 @@ class System(OverlapSystem):
         for filename in self._file_names:
             self._file_names_abs.append(self._build_folder + '/' + filename)
 
-        self._kpts_path_abs = []
-        for path in self._kpts_path:
-            self._kpts_path_abs.append(self._build_folder + '/' + path)
+        self._kpt_path_abs = []
+        for path in self._kpt_path:
+            self._kpt_path_abs.append(self._build_folder + '/' + path)
         self._mmn_path_abs = self._build_folder + '/' + self._mmn_path
 
         # create working folder if it doesn't exist
@@ -143,9 +144,9 @@ class System(OverlapSystem):
         _copy(self._input_files, self._file_names_abs)
 
 
-        for i, (k_mode, f_path) in enumerate(zip(self._k_mode, self._kpts_path_abs)):
+        for i, (k_mode, f_path) in enumerate(zip(self._k_mode, self._kpt_path_abs)):
             with open(f_path, k_mode) as f:
-                f.write(self._kpts_fct[i](*args))
+                f.write(self._kpt_fct[i](*args))
 
     def get_mmn(self, kpt):
         N = len(kpt) - 1

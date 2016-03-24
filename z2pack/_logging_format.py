@@ -95,7 +95,13 @@ class DefaultFormatter(logging.Formatter):
 
             if 'timing' in record.tags:
                 time = msg
-                msg = 'Calculation finished in {}'.format(datetime.time(0, 0, time.seconds).strftime("%Hh %Mm %Ss"))
+                seconds = time.seconds
+                minutes, seconds = seconds // 60, seconds % 60
+                hours, minutes = minutes // 60, minutes % 60
+                time_str = '{}h {}m {}s'.format(hours, minutes, seconds)
+                if time.days != 0:
+                    time_str = '{}d '.format(time.days) + time_str
+                msg = 'Calculation finished in {}'.format(time_str)
 
             if 'box' in record.tags:
                 msg = cbox(msg)

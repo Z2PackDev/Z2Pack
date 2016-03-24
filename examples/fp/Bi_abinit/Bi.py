@@ -23,14 +23,14 @@ if not os.path.exists('./results'):
 Bi = z2pack.fp.System(['input/Bi_nscf.files', 'input/Bi_nscf.in', 'input/wannier90.win' ],
                       z2pack.fp.kpts.abinit,
                       'Bi_nscf.in',
-                      'mpirun ~/software/abinit-7.8.2/src/98_main/abinit < Bi_nscf.files >& log',
+                      'mpirun -np 4 ~/software/abinit-7.8.2/src/98_main/abinit < Bi_nscf.files >& log',
                       executable='/bin/bash'
                      )
     
 
 # creating the Surface object
-result_0 = z2pack.surface.run(system=Bi, surface=lambda s, t: [0, s / 2, t], save_file = './results/Bi_0.txt', load=True)
-result_0 = z2pack.surface.run(system=Bi, surface=lambda s, t: [0.5, s / 2, t], save_file = './results/Bi_1.txt', load=True)
+result_0 = z2pack.surface.run(system=Bi, surface=lambda s, t: [0, s / 2, t], save_file = './results/Bi_0.p', load=True)
+result_0 = z2pack.surface.run(system=Bi, surface=lambda s, t: [0.5, s / 2, t], save_file = './results/Bi_1.p', load=True)
 
 # WCC calculation
 print(z2pack.surface.invariant.wcc(result_0))

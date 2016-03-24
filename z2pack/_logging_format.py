@@ -103,8 +103,13 @@ class DefaultFormatter(logging.Formatter):
                     time_str = '{}d '.format(time.days) + time_str
                 msg = 'Calculation finished in {}'.format(time_str)
 
+            if 'offset' in record.tags:
+                msg = _offset(msg, 6)
+
             if 'box' in record.tags:
                 msg = cbox(msg)
+            else:
+                msg = '{}: {}'.format(record.levelname, msg)
 
             if 'skip' in record.tags:
                 msg = '\n' + msg + '\n'
@@ -113,11 +118,7 @@ class DefaultFormatter(logging.Formatter):
             if 'skip-after' in record.tags:
                 msg += '\n'
 
-            if 'offset' in record.tags:
-                msg = _offset(msg, 6)
 
-        else:
-            msg = '{}: {}'.format(record.levelname, msg)
 
         return msg
 

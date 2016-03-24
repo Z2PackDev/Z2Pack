@@ -181,12 +181,12 @@ def _run_surface_impl(
         # find whether the line is allowed still
         if data.nearest_neighbour_dist(t) < min_neighbour_dist:
             if warn:
-                logger.warn("'min_neighbour_dist' reached: cannot add line at t = {}.".format(t))
+                logger.warn("'min_neighbour_dist' reached: cannot add line at t = {}".format(t))
             else:
                 logger.info("Line at t = {} exists already.".format(t))
             return SurfaceResult(data, stateful_ctrl, convergence_ctrl)
 
-        logger.info('Adding line at t = {}.'.format(t))
+        logger.info('Adding line at t = {}'.format(t))
         data.add_line(t, get_line(t))
 
         return update_result()

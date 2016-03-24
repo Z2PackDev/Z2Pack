@@ -139,7 +139,7 @@ def _run_line_impl(
         for it_ctrl in iteration_ctrl:
             try:
                 run_options.update(next(it_ctrl))
-                logger.info('Calculating line for N = {}.'.format(run_options['num_steps']), tags=('offset',))
+                logger.info('Calculating line for N = {}'.format(run_options['num_steps']), tags=('offset',))
             except StopIteration:
                 logger.warn('Iterator stopped before the calculation could converge.')
                 return result

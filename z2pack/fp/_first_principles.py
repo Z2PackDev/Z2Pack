@@ -70,12 +70,6 @@ class System(OverlapSystem):
         else:
             self._file_names = file_names
 
-        # check whether to append k-points or write separate file
-        if kpts_path in self._file_names:
-            self._k_mode = 'append'
-        else:
-            self._k_mode = 'separate'
-
         # kpts_fct
         if isinstance(kpts_fct, collections.abc.Callable):
             self._kpts_fct = [kpts_fct]
@@ -92,6 +86,9 @@ class System(OverlapSystem):
             self._kpts_path = [kpts_path]
         else:
             self._kpts_path = kpts_path
+
+        # check whether to append k-points or write separate file
+        self._k_mode = ['a' if path in self._file_names else 'w' for path in self._kpts_path]
 
         # check if the number of functions matches the number of paths
         if len(self._kpts_path) != len(self._kpts_fct):
@@ -146,8 +143,8 @@ class System(OverlapSystem):
         _copy(self._input_files, self._file_names_abs)
 
 
-        for i, f_path in enumerate(self._kpts_path_abs):
-            with open(f_path, 'a' if self._k_mode == 'append' else 'w') as f:
+        for i, (k_mode, f_path) in enumerate(zip(self._k_mode, self._kpts_path_abs)):
+            with open(f_path, k_mode) as f:
                 f.write(self._kpts_fct[i](*args))
 
     def get_mmn(self, kpt):

@@ -59,26 +59,25 @@ system = z2pack.fp.System(input_files,
                           executable='/bin/bash',
                           mmn_path='bi.mmn')
 
-# Creating two surfaces, both with the pumping parameter t changing
-# ky from 0 to 0.5, and strings along kz.
-# The first plane is at kx = 0, the second one at kx = 0.5
-# Notice the different values of pickle_file to avoid overwriting the data.
-surface_0 = system.surface(lambda t: [0, t / 2, 0], [0, 0, 1],
-                           pickle_file='./results/res_0.txt')
-surface_1 = system.surface(lambda t: [0.5, t / 2, 0], [0, 0, 1],
-                           pickle_file='./results/res_1.txt')
-
-# WCC calculation - standard settings
-surface_0.load(quiet=True)
-surface_0.wcc_calc()    
-surface_1.load(quiet=True)
-surface_1.wcc_calc()
+# Run the WCC calculations
+result_0 = z2pack.surface.run(
+    system=system,
+    surface=lambda s, t: [0, s / 2, t], 
+    save_file='./results/res_0.p',
+    load=True
+)
+result_1 = z2pack.surface.run(
+    system=system,
+    surface=lambda s, t: [0.5, s / 2, t],
+    save_file='./results/res_1.p',
+    load=True
+)
 
 # Combining the two plots
 fig, ax = plt.subplots(1, 2, sharey=True, figsize=(9,5))
-surface_0.wcc_plot(show=False, axis=ax[0])
-surface_1.wcc_plot(show=False, axis=ax[1])
+z2pack.surface.plot.wcc(result_0, ax=ax[0])
+z2pack.surface.plot.wcc(result_1, ax=ax[1])
 plt.savefig('plots/plot.pdf', bbox_inches='tight')
 
-print('Z2 topological invariant at kx = 0: {0}'.format(surface_0.z2()))
-print('Z2 topological invariant at kx = 0.5: {0}'.format(surface_1.z2()))
+print('Z2 topological invariant at kx = 0: {0}'.format(z2pack.surface.invariant.z2(result_0)))
+print('Z2 topological invariant at kx = 0.5: {0}'.format(z2pack.surface.invariant.z2(result_1)))

@@ -38,7 +38,6 @@ system1 = z2pack.em.System(hamilton1) # bands=1 is default (#orbitals / 2)
 surface = z2pack.shapes.Sphere([0., 0., 0.], 0.01)
 res0 = z2pack.surface.run(system=system0, surface=surface)
 res1 = z2pack.surface.run(system=system1, surface=surface)
-res2 = z2pack.line.run(system=system1, line=lambda s: surface(s, 0.02))
 
 # plotting
 fig, ax = plt.subplots(1, 2)

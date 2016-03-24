@@ -1,61 +1,46 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Author:  Dominik Gresch <greschd@ethz.ch>
-# Date:    27.09.2014 15:39:41 CEST
+# Author:  Dominik Gresch <greschd@gmx.ch>
+# Date:    24.03.2016 10:02:18 CET
 # File:    Bi_plot.py
 
-import sys
-sys.path.append("../../../")
-import z2pack
+import os
+import pickle
+
 import matplotlib.pyplot as plt
 
-import os
+import z2pack
 
-"""
-Bismuth example
-"""
+with open('results/Bi_0.p', 'rb') as f:
+    result_0 = pickle.load(f)
+with open('results/Bi_1.p', 'rb') as f:
+    result_1 = pickle.load(f)
 
-if not os.path.exists('./results'):
-    os.makedirs('./results')
+# plotting
+fig, ax = plt.subplots(1, 2)
 
-def k_points(start_point, last_point, end_point, N):
-    string = "\nkptopt -1\nndivk " + str(N - 1) + '\nkptbounds '
-    for coord in start_point:
-        string += str(coord).replace('e','d') + ' '
-    string += '\n'
-    for coord in last_point:
-        string += str(coord).replace('e','d') + ' '
-    string += '\n'
-    return string
-    
-    
-# creating the z2pack.abinit object
-Bi = z2pack.fp.System(    ["Bi_nscf.files", "Bi_nscf.in", "wannier90.win" ],
-                                k_points,
-                                "Bi_nscf.in",
-                                "build",
-                                "mpirun -np 7 abinit < Bi_nscf.files >& log"
-                    )
-    
+# plot styling
+fs = 15
+for axis in ax:
+    axis.set_xlabel(r'$k_y$', fontsize=fs)
+    axis.set_xticks([0, 1])
+    axis.set_xticklabels([r'$0$', r'$\pi$'])
+ax[0].set_ylabel(r'$\bar{x}$', rotation='horizontal', fontsize=fs)
+ax[0].set_title(
+    r'$k_x=0, \Delta={}$'.format(z2pack.surface.invariant.z2(result_0)),
+    fontsize=fs
+)
+ax[1].set_title(
+    r'$k_x=0, \Delta={}$'.format(z2pack.surface.invariant.z2(result_1)),
+    fontsize=fs
+)
 
-# creating the z2pack.surface object
-surface_0 = Bi.surface(lambda t: [0, t / 2, 0], [0, 0, 1], pickle_file = './results/res_0.txt')
-surface_1 = Bi.surface(lambda t: [0.5, t / 2, 0], [0, 0, 1], pickle_file = './results/res_1.txt')
+# plotting the WCC evolution
+z2pack.surface.plot.wcc(result_0, axis=ax[0])
+z2pack.surface.plot.wcc(result_1, axis=ax[1])
 
-# WCC calculation
-"""
-no need to re-do the calculation
-"""
+if not os.path.isdir('plots'):
+    os.mkdir('plots')
 
-surface_0.load()
-surface_1.load()
-fig, ax = plt.subplots(1, 2, sharey=True, figsize = (9,5))
-surface_0.plot(show=False, axis=ax[0])
-surface_1.plot(show=False, axis=ax[1])
-plt.savefig('./results/Bi.pdf', bbox_inches = 'tight')
-
-print('Z2 topological invariant: {0}'.format(surface_0.invariant()))
-print('Z2 topological invariant: {0}'.format(surface_1.invariant()))
-    
-
+plt.savefig('plots/plot.pdf', bbox_inches='tight')

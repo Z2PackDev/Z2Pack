@@ -6,20 +6,23 @@
 # File:    run.py
 
 import os
-import z2pack
+
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
+import z2pack
 
 # Creating the System. Note that the SCF charge file does not need to be
 # copied, but instead can be referenced in the .files file.
 # The k-points input is appended to the .in file
 # The command (mpirun ...) will have to be replaced to match your system.
-system = z2pack.fp.System(["input/CHGCAR", "input/INCAR", "input/POSCAR", "input/POTCAR", "input/wannier90.win" ],
-                          z2pack.fp.kpts.vasp,
-                          "KPOINTS",
-                          "mpirun $VASP >& log" 
-                    )
+system = z2pack.fp.System(
+    input_files=["input/CHGCAR", "input/INCAR", "input/POSCAR", "input/POTCAR", "input/wannier90.win" ],
+    kpt_fct=z2pack.fp.kpts.vasp,
+    kpt_path="KPOINTS",
+    command="mpirun $VASP >& log" 
+)
 
 if not os.path.exists('./results'):
     os.mkdir('./results')
@@ -27,26 +30,26 @@ if not os.path.exists('./plots'):
     os.mkdir('./plots')
     
 
-# Creating two surfaces, both with the pumping parameter t changing
-# ky from 0 to 0.5, and strings along kz.
-# The first plane is at kx = 0, the second one at kx = 0.5
-# Notice the different values of pickle_file to avoid overwriting the data.
-surface_0 = system.surface(lambda t: [0, t / 2, 0], [0, 0, 1],
-                           pickle_file = './results/res_0.txt')
-surface_1 = system.surface(lambda t: [0.5, t / 2, 0], [0, 0, 1],
-                           pickle_file = './results/res_1.txt')
+# Running the WCC calculation - standard settings
+result_0 = z2pack.surface.run(
+    system=system,
+    surface=lambda s, t: [0, s / 2, t],
+    save_file = './results/res_0.p',
+    load=True
+)
+result_1 = z2pack.surface.run(
+    system=system,
+    surface=lambda s, t: [0.5, s / 2, t],
+    save_file = './results/res_1.p',
+    load=True
+)
 
-# WCC calculation - standard settings
-surface_0.load(quiet=True)
-surface_0.wcc_calc()    
-surface_1.load(quiet=True)
-surface_1.wcc_calc()
-
-# Combining the two plots
+# Plotting WCC evolution
 fig, ax = plt.subplots(1, 2, sharey=True, figsize = (9,5))
-surface_0.wcc_plot(show=False, axis=ax[0])
-surface_1.wcc_plot(show=False, axis=ax[1])
+
+z2pack.surface.plot.wcc(result_0, axis=ax[0])
+z2pack.surface.plot.wcc(result_1, axis=ax[1])
 plt.savefig('plots/plot.pdf', bbox_inches = 'tight')
 
-print('Z2 topological invariant at kx = 0: {0}'.format(surface_0.z2()))
-print('Z2 topological invariant at kx = 0.5: {0}'.format(surface_1.z2()))
+print('Z2 topological invariant at kx = 0: {0}'.format(z2pack.surface.invariant.z2(result_0)))
+print('Z2 topological invariant at kx = 0.5: {0}'.format(z2pack.surface.invariant.z2(result_1)))

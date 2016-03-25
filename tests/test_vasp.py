@@ -15,7 +15,7 @@ import z2pack
 @pytest.fixture
 def vasp_system():
     def inner(build_dir):
-        input_files = ['samples/vasp' + name for name in ['CHGCAR', 'INCAR', 'POSCAR', 'POTCAR', 'wannier90.win']]
+        input_files = ['samples/vasp/' + name for name in ['CHGCAR', 'INCAR', 'POSCAR', 'POTCAR', 'wannier90.win']]
         return z2pack.fp.System(
             input_files=input_files,
             kpt_fct=z2pack.fp.kpts.vasp,

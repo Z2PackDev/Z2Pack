@@ -31,6 +31,7 @@ examples/fp/Bi2Se3_qe/input/bi2se3.win
 POTCAR 
 # to work with old git on Brutus
 tests/samples/vasp/POTCAR
+examples/fp/Bi_vasp/input/POTCAR
 
 # Installation/setup related
 dist

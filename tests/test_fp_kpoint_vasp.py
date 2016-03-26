@@ -31,6 +31,19 @@ valid_lines.extend([
     for s2 in np.linspace(0, 1, 5)
 ])
 
+invalid_lines = [
+    lambda t: [0, 0, t**2],
+    lambda t: [0, 0, 2 * t],
+    lambda t: [0, 0, 0.9 * t],
+    lambda t: [0, t, t],
+    lambda t: [0, 1 - t, 0]
+]
+
 @pytest.mark.parametrize('line', valid_lines)
-def test_valid_surface(kpt, compare_equal):
+def test_valid_lines(kpt, compare_equal):
     compare_equal(z2pack.fp.kpoint.vasp(kpt))
+
+@pytest.mark.parametrize('line', invalid_lines)
+def test_invalid_lines(kpt):
+    with pytest.raises(ValueError):
+        z2pack.fp.kpoint.vasp(kpt)

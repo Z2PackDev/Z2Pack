@@ -54,7 +54,7 @@ with open('input/bi.win', 'w') as f:
 input_files = ['input/' + name for name in ["bi.nscf.in", "bi.pw2wan.in", "bi.win" ]]
 system = z2pack.fp.System(
     input_files=input_files,
-    kpt_fct=[z2pack.fp.kpts.qe, z2pack.fp.kpts.wannier90],
+    kpt_fct=[z2pack.fp.kpoint.qe, z2pack.fp.kpoint.wannier90],
     kpt_path=["bi.nscf.in","bi.win"],
     command=z2cmd,
     executable='/bin/bash',

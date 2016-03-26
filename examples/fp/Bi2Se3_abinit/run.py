@@ -25,7 +25,7 @@ if __name__ == "__main__":
         ['input/' + name for name in [
             'Bi2Se3_nscf.files', 'Bi2Se3_nscf.in', 'wannier90.win'
         ]],
-        z2pack.fp.kpts.abinit,
+        z2pack.fp.kpoint.abinit,
         'Bi2Se3_nscf.in',
         'abinit < Bi2Se3_nscf.files >& log',
         executable='/bin/bash'

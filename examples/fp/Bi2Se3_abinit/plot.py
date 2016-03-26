@@ -22,7 +22,7 @@ if not os.path.exists('./results'):
 
 # creating the z2pack.abinit object
 Bi2Se3 = z2pack.fp.System(["Bi2Se3_nscf.files", "Bi2Se3_nscf.in", "wannier90.win" ],
-                        z2pack.fp.kpts.abinit,
+                        z2pack.fp.kpoint.abinit,
                         "Bi2Se3_nscf.in",
                         "build",
                         "mpirun -np 7 abinit < Bi2Se3_nscf.files >& log")
@@ -46,6 +46,3 @@ ax[1].set_title(r'$k_1 = 0.5,$ $\Delta = {}$'.format(surface_1.invariant()))
 ax[1].set_ylabel(r'$x_3$')
 ax[1].set_xlabel(r'$k_2$')
 plt.savefig('./results/Bi2Se3.pdf', bbox_inches = 'tight')
-
-
-

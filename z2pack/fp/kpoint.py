@@ -11,6 +11,7 @@ first-principles codes.
 All functions have the same calling structure as :func:`prototype`.
 """
 
+import numpy as np
 
 def prototype(kpt):
     r"""
@@ -18,7 +19,7 @@ def prototype(kpt):
 
     :param kpt:     The list of k-points in the string INCLUDING the
         final point which should not be in the calculation
-    :type kpt:      list
+    :type kpt:      list of numpy arrays
     """
     raise NotImplementedError('This is only the prototype for kpts')
 
@@ -111,23 +112,38 @@ def vasp(kpt):
     for point in kpt:
         if len(point) != 3:
             raise ValueError('dimension of point != 3')
-    start_point = kpt[0]
-    end_point = kpt[-1]
-    last_point = kpt[-2]
+
+    # VALIDITY CHECKS
+    # check if the points are equally-spaced
+    deltas = [(k2 - k1) % 1 for k2, k1 in zip(kpt[1:], kpt[:-1])]
+    for d in deltas[1:]:
+        if not all(np.isclose(d, deltas[0]).flatten()):
+            raise ValueError('The k-points must be equally spaced for VASP runs.')
+
+    delta = deltas[0]
     N = len(kpt) - 1
-    string = 'Automatic mesh\n0              ! number of k-points = 0 ->automatic generation scheme\nGamma          ! generate a Gamma centered grid\n'
-    num_dirs = 0
-    for i in range(3):
-        if max([abs(pt[i] - start_point[i]) for pt in kpt]) > 0.01:
-            string += str(N)
-            num_dirs += 1
+    # check if it's positive x, y or z direction
+    nonzero = []
+    mesh = []
+    for i, d in enumerate(delta):
+        if np.isclose(d, 0):
+            mesh.append('1')
+        elif np.isclose(d, 1 / N):
+            nonzero.append(i)
+            mesh.append(str(N))
         else:
-            string += '1'
-        string += ' '
-    if num_dirs != 1:
-        raise ValueError('VASP only supports k-point strings along the ' +
-                         'axes of the reciprocal lattice.')
-    string += '        ! subdivisions\n'
+            raise ValueError('The k-points must be aligned in (positive) kx-, ky- or kz-direction for VASP runs.')
+    mesh = ' '.join(mesh)
+
+    if len(nonzero) != 1:
+        raise ValueError('The k-points can change only in kx-, ky- or kz direction for VASP runs. The given k-points change in {} directions.'.format(len(nonzero)))
+
+    start_point = kpt[0]
+    if not np.isclose(start_point[nonzero[0]], 0):
+        raise ValueError('The k-points must start at k{0} = 0 for VASP runs, since they change in k{0}-direction.'.format(['x', 'y', 'z'][nonzero[0]]))
+
+    string = 'Automatic mesh\n0              ! number of k-points = 0 ->automatic generation scheme\nGamma          ! generate a Gamma centered grid\n'
+    string += mesh + '        ! subdivisions\n'
     for coord in start_point:
         string += str(coord).replace('e', 'd') + ' '
     string += '         ! shift\n'

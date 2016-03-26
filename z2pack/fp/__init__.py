@@ -16,5 +16,4 @@ codes interfacing to Wannier90.
 """
 
 from ._first_principles import *
-from . import kpts
-
+from . import kpoint

@@ -18,7 +18,7 @@ def vasp_system():
         input_files = ['samples/vasp/' + name for name in ['CHGCAR', 'INCAR', 'POSCAR', 'POTCAR', 'wannier90.win']]
         return z2pack.fp.System(
             input_files=input_files,
-            kpt_fct=z2pack.fp.kpts.vasp,
+            kpt_fct=z2pack.fp.kpoint.vasp,
             kpt_path='KPOINTS',
             command='mpirun $VASP >& log',
             build_folder=build_dir

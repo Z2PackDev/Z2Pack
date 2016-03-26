@@ -19,7 +19,7 @@ import z2pack
 # The command (mpirun ...) will have to be replaced to match your system.
 system = z2pack.fp.System(
     input_files=["input/CHGCAR", "input/INCAR", "input/POSCAR", "input/POTCAR", "input/wannier90.win" ],
-    kpt_fct=z2pack.fp.kpts.vasp,
+    kpt_fct=z2pack.fp.kpoint.vasp,
     kpt_path="KPOINTS",
     command="mpirun $VASP >& log" 
 )

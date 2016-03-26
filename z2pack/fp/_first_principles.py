@@ -130,7 +130,7 @@ class System(OverlapSystem):
         if not os.path.isdir(self._build_folder):
             os.mkdir(self._build_folder)
 
-    def _create_input(self, *args):
+    def _create_input(self, kpt):
         try:
             self._counter += 1
             self._create_build_folder(
@@ -146,7 +146,7 @@ class System(OverlapSystem):
 
         for i, (k_mode, f_path) in enumerate(zip(self._k_mode, self._kpt_path_abs)):
             with open(f_path, k_mode) as f:
-                f.write(self._kpt_fct[i](*args))
+                f.write(self._kpt_fct[i](kpt))
 
     def get_mmn(self, kpt):
         N = len(kpt) - 1

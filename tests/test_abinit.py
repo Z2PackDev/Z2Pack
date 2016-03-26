@@ -20,7 +20,7 @@ def abinit_system():
         ]]
         return z2pack.fp.System(
             input_files=input_files,
-            kpt_fct=z2pack.fp.kpts.abinit,
+            kpt_fct=z2pack.fp.kpoint.abinit,
             kpt_path="Bi_nscf.in",
             command="mpirun -np 4 abinit < Bi_nscf.files >& log",
             executable='/bin/bash',

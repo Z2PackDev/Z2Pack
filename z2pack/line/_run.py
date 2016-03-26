@@ -145,7 +145,7 @@ def _run_line_impl(
                 return result
 
         data = DataType(system_fct(
-            list(line(k) for k in np.linspace(0., 1., run_options['num_steps']))
+            list(np.array(line(k)) for k in np.linspace(0., 1., run_options['num_steps']))
         ))
 
         for d_ctrl in data_ctrl:

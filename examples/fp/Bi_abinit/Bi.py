@@ -20,7 +20,7 @@ if not os.path.exists('./results'):
 # the command (mpirun ...) will have to be replaced
 Bi = z2pack.fp.System(
     input_files=['input/Bi_nscf.files', 'input/Bi_nscf.in', 'input/wannier90.win' ],
-    kpt_fct=z2pack.fp.kpts.abinit,
+    kpt_fct=z2pack.fp.kpoint.abinit,
     kpt_path='Bi_nscf.in',
     command='mpirun -np 4 ~/software/abinit-7.8.2/src/98_main/abinit < Bi_nscf.files >& log',
     executable='/bin/bash'

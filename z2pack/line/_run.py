@@ -7,6 +7,7 @@
 
 import pickle
 import datetime
+import contextlib
 
 import numpy as np
 
@@ -113,10 +114,8 @@ def _run_line_impl(
             if d_ctrl not in stateful_ctrl:
                 d_ctrl.update(init_result.data)
         for s_ctrl in stateful_ctrl:
-            try:
+            with contextlib.suppress(KeyError):
                 s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__]
-            except KeyError:
-                pass
         result = LineResult(init_result.data, stateful_ctrl, convergence_ctrl)
         save()
 

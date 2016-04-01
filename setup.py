@@ -36,7 +36,7 @@ setup(
     author='Dominik Gresch',
     author_email='greschd@gmx.ch',
     description='Automating the computation of topological numbers of band-structures',
-    install_requires=['numpy', 'scipy', 'decorator', 'sortedcontainers'],
+    install_requires=['numpy', 'scipy', 'decorator', 'sortedcontainers', 'fsc.locker'],
     extras_require={'plot':  ['matplotlib']},
     long_description=readme,
     classifiers=[

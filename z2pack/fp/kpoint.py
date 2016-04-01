@@ -28,6 +28,7 @@ def abinit(kpt):
     """
     Creates a k-point input for **ABINIT**. It uses ``kptopt -1`` and specifies the k-points string using ``ndivk`` and ``kptbounds``.
     """
+    _check_equal_spacing(kpt, 'ABINIT')
     start_point = kpt[0]
     end_point = kpt[-1]
     last_point = kpt[-2]
@@ -73,7 +74,7 @@ def wannier90(kpt):
     """
     for point in kpt:
         if len(point) != 3:
-            raise ValueError('dimension of point != 3')
+            raise ValueError('dimension of point k = {} != 3'.format(point))
 
     N = len(kpt) - 1
     string = "mp_grid: " + str(int(N)) + " 1 1 \nbegin kpoints"
@@ -84,29 +85,9 @@ def wannier90(kpt):
     string += '\nend kpoints\n'
     return string
 
-# FOR A FUTURE VERSION WHEN VASP MIGHT SUPPORT EXPLICIT K-POINTS
-#~
-#~ def vasp(kpt):
-    #~ """
-    #~ Creates a k-point input for  **VASP**, using explicit points
-    #~ """
-            #~
-    #~ for point in kpt:
-        #~ if len(point) != 3:
-            #~ raise ValueError('dimension of point != 3')
-            #~
-    #~ N = len(kpt) - 1
-    #~ string = 'Explicit k-points\n' + str(N) + '\nReciprocal\n'
-    #~ for k in kpt[:-1]:
-        #~ string += '{0} {1} {2} 1.'.format(*list(k))
-        #~ string += '\n'
-    #~ return string
-
 def vasp(kpt):
     """
     Creates a k-point input for  **VASP**. It uses the automatic generation scheme with a Gamma centered grid. Note that VASP does **not** support any kind of k-point line **unless** they are exactly along one of the reciprocal lattice vectors, and the k-points are evenly spaced.
-
-    TODO: check -- what does VASP do about the order of the k-points?
     """
     
     for point in kpt:
@@ -115,12 +96,8 @@ def vasp(kpt):
 
     # VALIDITY CHECKS
     # check if the points are equally-spaced
-    deltas = [(k2 - k1) % 1 for k2, k1 in zip(kpt[1:], kpt[:-1])]
-    for d in deltas[1:]:
-        if not all(np.isclose(d, deltas[0]).flatten()):
-            raise ValueError('The k-points must be equally spaced for VASP runs.')
+    delta = _check_equal_spacing(kpt, 'VASP')
 
-    delta = deltas[0]
     N = len(kpt) - 1
     # check if it's positive x, y or z direction
     nonzero = []
@@ -148,3 +125,12 @@ def vasp(kpt):
         string += str(coord).replace('e', 'd') + ' '
     string += '         ! shift\n'
     return string
+
+def _check_equal_spacing(kpt, run_type):
+    """Checks if the k-points are equally spaced, and throws an error if not. run_type is added in the error message."""
+    deltas = [(k2 - k1) % 1 for k2, k1 in zip(kpt[1:], kpt[:-1])]
+    for d in deltas[1:]:
+        if not all(np.isclose(d, deltas[0]).flatten()):
+            raise ValueError('The k-points must be equally spaced for {} runs.'.format(run_type))
+
+    return deltas[0]

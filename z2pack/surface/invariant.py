@@ -26,11 +26,7 @@ def z2(surface_result):
     wcc = surface_result.wcc
     gap = surface_result.gap_pos
     inv = 1
-    for i in range(0, len(wcc) - 1):
-        for j in range(len(wcc[0])):
-            inv *= _sgng(
-                gap[i],
-                gap[i + 1],
-                wcc[i + 1][j]
-            )
+    for g1, g2, w2 in zip(gap, gap[1:], wcc[1:]):
+        for w in w2:
+            inv *= _sgng(g1, g2, w)
     return 1 if inv == -1 else 0

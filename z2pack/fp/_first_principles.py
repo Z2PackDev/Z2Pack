@@ -8,6 +8,7 @@
 import os
 import shutil
 import subprocess
+import contextlib
 import collections.abc
 
 from ..system import OverlapSystem
@@ -131,12 +132,10 @@ class System(OverlapSystem):
             os.mkdir(self._build_folder)
 
     def _create_input(self, kpt):
-        try:
+        with contextlib.suppress(AttributeError, NameError):
             self._counter += 1
             self._create_build_folder(
                 self._build_folder_fct(self._counter))
-        except (AttributeError, NameError):
-            pass
 
         if self._clean_build:
             shutil.rmtree(self._build_folder)

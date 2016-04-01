@@ -9,6 +9,7 @@ import copy
 import pickle
 import logging
 import datetime
+import contextlib
 
 import numpy as np
 
@@ -226,10 +227,8 @@ def _run_surface_impl(
 
         # get states from pre-existing Controls
         for s_ctrl in stateful_ctrl:
-            try:
+            with contextlib.suppress(KeyError):
                 s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__]
-            except KeyError:
-                pass
 
         data = init_result.data
 

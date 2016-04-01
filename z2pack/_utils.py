@@ -38,11 +38,12 @@ def _gapfind(wcc):
     gapsize = 0
     gappos = 0
     N = len(wcc)
-    for i in range(0, N - 1):
-        temp = wcc[i + 1] - wcc[i]
+    for i, (w1, w2) in enumerate(zip(wcc, wcc[1:])):
+        temp = w2 - w1
         if temp > gapsize:
             gapsize = temp
             gappos = i
+    # this needs to be explicit, otherwise gapsize == 1 is not possible
     temp = wcc[0] - wcc[-1] + 1
     if temp > gapsize:
         gapsize = temp

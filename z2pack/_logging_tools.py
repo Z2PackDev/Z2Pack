@@ -23,16 +23,9 @@ class TagAdapter(logging.LoggerAdapter):
     def process(self, msg, kwargs=None):
         tags = copy.deepcopy(self.extra['tags'])
         # check for "manual" tags
-        try:
-            tags.update(kwargs['tags'])
-            del kwargs['tags'] # don't pass on tags kwargs
-        except KeyError:
-            pass
-        # "extra" kwarg must exist
-        if not 'extra' in kwargs.keys():
-            kwargs['extra'] = dict()
-        # add tags
-        kwargs['extra']['tags'] = tags
+        tags.update(kwargs.pop('tags', [])) # don't pass on tags kwargs
+        # "extra" kwarg must exist, add tags
+        kwargs.setdefault('extra', dict())['tags'] = tags
         return msg, kwargs
 
 class TagFilter:

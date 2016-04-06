@@ -5,10 +5,10 @@
 # Date:    08.02.2016 16:04:23 CET
 # File:    _data.py
 
-from fsc.locker import Locker
+from fsc.locker import ConstLocker
 from sortedcontainers import SortedList
 
-class SurfaceData(metaclass=Locker):
+class SurfaceData(metaclass=ConstLocker):
     # cannot be pickled if it is a local method (lambda) in __init__
     @staticmethod
     def _sort_key(x):
@@ -34,7 +34,9 @@ class SurfaceData(metaclass=Locker):
             return 1
         return min(abs(t - tval) for tval in self.t)
 
-class SurfaceLine(metaclass=Locker):
+class SurfaceLine:
+    __slots__ = ['t', 'result']
+
     def __init__(self, t, result):
         self.t = t
         self.result = result

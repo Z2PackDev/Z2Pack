@@ -5,8 +5,10 @@
 # Date:    23.03.2016 10:05:18 CET
 # File:    _logging_format.py
 
+import sys
 import logging
 import datetime
+
 import blessings
 
 from .ptools.string_tools import cbox
@@ -131,7 +133,7 @@ class DefaultFormatter(logging.Formatter):
 
     
 
-default_handler = logging.StreamHandler()
+default_handler = logging.StreamHandler(sys.stdout)
 default_handler.setFormatter(DefaultFormatter())
 logging.getLogger('z2pack').setLevel(logging.INFO)
 logging.getLogger('z2pack').addHandler(default_handler)

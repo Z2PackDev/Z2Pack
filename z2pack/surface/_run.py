@@ -180,11 +180,12 @@ def _run_surface_impl(
         the given lines.
         """
         # find whether the line is allowed still
-        if data.nearest_neighbour_dist(t) < min_neighbour_dist:
-            if warn:
-                logger.warn("'min_neighbour_dist' reached: cannot add line at t = {}".format(t))
-            else:
+        dist = data.nearest_neighbour_dist(t)
+        if dist < min_neighbour_dist:
+            if dist == 0:
                 logger.info("Line at t = {} exists already.".format(t))
+            else:
+                logger.warn("'min_neighbour_dist' reached: cannot add line at t = {}".format(t))
             return SurfaceResult(data, stateful_ctrl, convergence_ctrl)
 
         logger.info('Adding line at t = {}'.format(t))

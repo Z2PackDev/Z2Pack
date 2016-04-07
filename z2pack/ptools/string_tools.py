@@ -6,6 +6,7 @@
 
 """ Collection of functions for formatting strings nicely """
 
+import re
 import warnings
 
 def cbox(   string,
@@ -50,20 +51,28 @@ def cbox(   string,
 
     # checking total size
     for line in lines:
-        if(len(line) > total_size - padding):
+        if(len(without_ansi(line)) > total_size - padding):
             warnings.warn("strings too long, might look ugly",
             UserWarning)
 
     # creating the string
     endline = '+' + total_size * '-' + '+'
     cbox_str = endline + '\n'
-    if(alignment == "left"):
+    if alignment == "left":
         for line in lines:
             line_temp = '|' + padding * ' ' + line
-            cbox_str += line_temp.ljust(total_size + 1) + '|\n'
+            line_temp += ' ' * max(0, (total_size + 1 - len(without_ansi(line_temp)))) + '|\n'
+            cbox_str += line_temp
         if not no_endline:
             cbox_str += endline
         return cbox_str
+
+def without_ansi(string):
+    ansi_escape = re.compile(r'\x1b[^m]*m', re.IGNORECASE)
+    string = ansi_escape.sub('', string)
+    pattern = re.compile(r'\x1b\([A-Z]', re.IGNORECASE)
+    return pattern.sub('', string)
+
 
 def _cbox_padding(string, centering_line, total_size):
     lines = string.split('\n')
@@ -71,9 +80,9 @@ def _cbox_padding(string, centering_line, total_size):
         warnings.warn("centering_line: invalid argument, using 'longest'",
         UserWarning)
     if(centering_line == "first"):
-        text_width = len(lines[0])
+        text_width = len(without_ansi(lines[0]))
     else: # longest
-        text_width = max([len(line) for line in lines])
+        text_width = max([len(without_ansi(line)) for line in lines])
     return int((total_size - text_width) / 2)
 
 def fl_to_s(input_list, precision=6, strip_zeros=True):

@@ -7,12 +7,16 @@
 
 import logging
 import datetime
+import blessings
 
 from .ptools.string_tools import cbox
 from ._version import __version__
 
-def _make_title(title, delimiter, overline=False):
+def _make_title(title, delimiter, overline=False, modifier=None):
     delimiter *= len(title)
+    if modifier is not None:
+        delimiter = modifier(delimiter)
+        title = modifier(title)
     if overline:
         res = [delimiter]
     else:
@@ -26,6 +30,7 @@ def _offset(string, num_offset=4):
     
 class DefaultFormatter(logging.Formatter):
     def __init__(self):
+        self.term = blessings.Terminal()
         super().__init__(style='{')
 
     def format(self, record):
@@ -34,7 +39,7 @@ class DefaultFormatter(logging.Formatter):
             # Creating the Convergence Report string from its dictionary.
             if 'convergence_report' in record.tags:
                 report = msg
-                msg = _make_title('CONVERGENCE REPORT', '=', overline=True)
+                msg = _make_title('CONVERGENCE REPORT', '=', overline=True, modifier=self.term.bold)
                 
                 if 'surface' in record.tags:
                     def make_report_entry(key, val):
@@ -50,11 +55,11 @@ class DefaultFormatter(logging.Formatter):
                         total = sum([passed, failed, missing])
                         report = ''
                         if passed:
-                            report += '\n' + 'PASSED: {} of {}'.format(passed, total)
+                            report += '\n' + self.term.bold_green('PASSED: {0} of {1}'.format(passed, total))
                         if failed:
-                            report += '\n' + 'FAILED: {} of {}'.format(failed, total)
+                            report += '\n' + self.term.bold_red('FAILED: {0} of {1}'.format(failed, total))
                         if missing:
-                            report += '\n' + 'MISSING: {} of {}'.format(missing, total)
+                            report += '\n' + self.term.bold_yellow('MISSING: {0} of {1}'.format(missing, total))
                         return _offset(title + report)
                     # line convergence objects
                     line_msg = _make_title('Line Convergence', '=')
@@ -75,10 +80,10 @@ class DefaultFormatter(logging.Formatter):
             if 'setup' in record.tags:
                 kwargs = msg
                 if 'surface' in record.tags:
-                    msg = _make_title('SURFACE CALCULATION', '=', overline=True)
+                    msg = _make_title('SURFACE CALCULATION', '=', overline=True, modifier=self.term.bold)
                     
                 if 'line' in record.tags:
-                    msg = _make_title('LINE CALCULATION', '=', overline=True)
+                    msg = _make_title('LINE CALCULATION', '=', overline=True, modifier=self.term.bold)
                 msg += '\n' + 'starting at {}'.format(self.formatTime(record))
                 msg += '\nrunning Z2Pack version {}\n\n'.format(__version__)
 
@@ -110,6 +115,8 @@ class DefaultFormatter(logging.Formatter):
                 msg = cbox(msg)
             else:
                 msg = '{}: {}'.format(record.levelname, msg)
+                if record.levelno > 25:
+                    msg = self.term.bold_red(msg)
 
             if 'skip' in record.tags:
                 msg = '\n' + msg + '\n'

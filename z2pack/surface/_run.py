@@ -13,7 +13,7 @@ import contextlib
 
 import numpy as np
 
-from . import logger
+from . import _logger
 from . import SurfaceData
 from . import SurfaceResult
 from ._control import MoveCheck, GapCheck
@@ -27,7 +27,7 @@ from .._control import (
 )
 from .._helpers import _atomic_save
 from .._logging_tools import TagAdapter, TagFilter, FilterManager
-logger = TagAdapter(logger, default_tags=('surface',))
+_logger = TagAdapter(_logger, default_tags=('surface',))
 
 from ..line._run import _run_line_impl
 from ..line._control import StepCounter, PosCheck
@@ -91,7 +91,7 @@ def run_surface(
     :returns:                   ``None``. Use :meth:`get_res` and
         :meth:`z2` to get the results.
     """
-    logger.info(locals(), tags=('setup', 'box', 'skip'))
+    _logger.info(locals(), tags=('setup', 'box', 'skip'))
 
     # setting up controls
     controls = []
@@ -183,12 +183,12 @@ def _run_surface_impl(
         dist = data.nearest_neighbour_dist(t)
         if dist < min_neighbour_dist:
             if dist == 0:
-                logger.info("Line at t = {} exists already.".format(t))
+                _logger.info("Line at t = {} exists already.".format(t))
             else:
-                logger.warn("'min_neighbour_dist' reached: cannot add line at t = {}".format(t))
+                _logger.warn("'min_neighbour_dist' reached: cannot add line at t = {}".format(t))
             return SurfaceResult(data, stateful_ctrl, convergence_ctrl)
 
-        logger.info('Adding line at t = {}'.format(t))
+        _logger.info('Adding line at t = {}'.format(t))
         data.add_line(t, get_line(t))
 
         return update_result()
@@ -205,7 +205,7 @@ def _run_surface_impl(
         result = SurfaceResult(data, stateful_ctrl, convergence_ctrl)
 
         if save_file is not None:
-            logger.info('Saving surface result to file {}'.format(save_file))
+            _logger.info('Saving surface result to file {}'.format(save_file))
             _atomic_save(result, save_file)
         return result
 
@@ -216,13 +216,13 @@ def _run_surface_impl(
         res = np.array([True] * (len(data.lines) - 1))
         for c_ctrl in convergence_ctrl:
             res &= c_ctrl.converged
-        logger.info('Convergence criteria fulfilled for {} of {} neighbouring lines.'.format(sum(res), len(res)))
+        _logger.info('Convergence criteria fulfilled for {} of {} neighbouring lines.'.format(sum(res), len(res)))
         return res
 
     # STEP 1 -- MAKE USE OF INIT_RESULT
     # initialize stateful controls from old result
     if init_result is not None:
-        logger.info("Initializing result from 'init_result'.")
+        _logger.info("Initializing result from 'init_result'.")
         # make sure old result doesn't change
         init_result = copy.deepcopy(init_result)
 
@@ -234,7 +234,7 @@ def _run_surface_impl(
         data = init_result.data
 
         # re-run lines with existing result as input
-        logger.info('Re-running existing lines.')
+        _logger.info('Re-running existing lines.')
         for line in data.lines:
             line.result = get_line(line.t, line.result)
             update_result()
@@ -244,7 +244,7 @@ def _run_surface_impl(
 
     # STEP 2 -- PRODUCE REQUIRED STRINGS
     # create lines required by num_strings
-    logger.info("Adding lines required by 'num_strings'.")
+    _logger.info("Adding lines required by 'num_strings'.")
     for t in np.linspace(0, 1, num_strings):
         result = add_line(t, warn=False)
 
@@ -266,6 +266,6 @@ def _run_surface_impl(
         conv = collect_convergence()
 
     end_time = datetime.datetime.now()
-    logger.info(end_time - start_time, tags=('box', 'skip-before', 'timing'))
-    logger.info(result.convergence_report, tags=('box', 'convergence_report', 'skip'))
+    _logger.info(end_time - start_time, tags=('box', 'skip-before', 'timing'))
+    _logger.info(result.convergence_report, tags=('box', 'convergence_report', 'skip'))
     return result

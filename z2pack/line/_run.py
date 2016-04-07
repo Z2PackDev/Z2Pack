@@ -11,7 +11,7 @@ import contextlib
 
 import numpy as np
 
-from . import logger
+from . import _logger
 from . import LineResult
 from . import EigenstateLineData, OverlapLineData
 from ._control import StepCounter, PosCheck
@@ -26,9 +26,11 @@ from .._control import (
 from .._helpers import _atomic_save
 from .._logging_tools import TagAdapter
 
+__all__ = ['run_line']
+
 # tag which triggers filtering when called from the surface's run.
-line_only_logger = TagAdapter(logger, default_tags=('line', 'line_only',))
-logger = TagAdapter(logger, default_tags=('line',))
+line_only__logger = TagAdapter(_logger, default_tags=('line', 'line_only',))
+_logger = TagAdapter(_logger, default_tags=('line',))
 
 def run_line(
     *,
@@ -51,7 +53,7 @@ def run_line(
         * setting up printing status
         * setting up file backend
     """
-    line_only_logger.info(locals(), tags=('setup', 'box', 'skip'))
+    line_only__logger.info(locals(), tags=('setup', 'box', 'skip'))
     
     # setting up controls
     controls = []
@@ -104,7 +106,7 @@ def _run_line_impl(
 
     def save():
         if save_file is not None:
-            logger.info('Saving line result to file {}'.format(save_file))
+            _logger.info('Saving line result to file {}'.format(save_file))
             _atomic_save(result, save_file)
 
     # initialize stateful and data controls from old result
@@ -129,7 +131,7 @@ def _run_line_impl(
 
     def collect_convergence():
         res = [c_ctrl.converged for c_ctrl in convergence_ctrl]
-        line_only_logger.info('{} of {} line convergence criteria fulfilled.'.format(sum(res), len(res)))
+        line_only__logger.info('{} of {} line convergence criteria fulfilled.'.format(sum(res), len(res)))
         return res
 
     # main loop
@@ -138,9 +140,9 @@ def _run_line_impl(
         for it_ctrl in iteration_ctrl:
             try:
                 run_options.update(next(it_ctrl))
-                logger.info('Calculating line for N = {}'.format(run_options['num_steps']), tags=('offset',))
+                _logger.info('Calculating line for N = {}'.format(run_options['num_steps']), tags=('offset',))
             except StopIteration:
-                logger.warn('Iterator stopped before the calculation could converge.')
+                _logger.warn('Iterator stopped before the calculation could converge.')
                 return result
 
         data = DataType(system_fct(
@@ -154,6 +156,6 @@ def _run_line_impl(
         save()
 
     end_time = datetime.datetime.now()
-    line_only_logger.info(end_time - start_time, tags=('box', 'skip-before', 'timing'))
-    line_only_logger.info(result.convergence_report, tags=('convergence_report', 'box'))
+    line_only__logger.info(end_time - start_time, tags=('box', 'skip-before', 'timing'))
+    line_only__logger.info(result.convergence_report, tags=('convergence_report', 'box'))
     return result

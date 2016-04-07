@@ -11,7 +11,7 @@ import datetime
 
 import blessings
 
-from .ptools.string_tools import cbox
+from ._ptools.string_tools import cbox
 from ._version import __version__
 
 def _make_title(title, delimiter, overline=False, modifier=None):

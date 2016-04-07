@@ -14,6 +14,7 @@ import collections.abc
 from ..system import OverlapSystem
 from . import _read_mmn as mmn
 
+__all__ = ['System']
 
 class System(OverlapSystem):
     r"""

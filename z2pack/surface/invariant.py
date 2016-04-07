@@ -7,6 +7,8 @@
 
 from .._utils import _pol_step, _sgng
 
+__all__ = ['chern', 'z2']
+
 def chern(surface_result):
     r"""
     Computes the Chern number corresponding to some surface.

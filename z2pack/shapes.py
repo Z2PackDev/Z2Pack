@@ -12,6 +12,8 @@ of :meth:`.surface()`, defining the shape of the surface.
 
 import numpy as np
 
+__all__ = ['SimpleEllipsoid', 'Sphere']
+
 class SimpleEllipsoid(object):
     r"""
     An ellipsoid whose symmetry axes correspond to :math:`k_x, k_y, k_z`.
@@ -55,4 +57,3 @@ class Sphere(SimpleEllipsoid):
     """
     def __init__(self, center, radius):
         super(Sphere, self).__init__(center, radius, radius, radius)
-

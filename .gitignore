@@ -40,14 +40,14 @@ MANIFEST
 *.tar.gz
 files*.txt
 
-# ignoring the ptools git
-z2pack/ptools/.git
-z2pack/ptools/.gitignore
+# ignoring the _ptools git
+z2pack/_ptools/.git
+z2pack/_ptools/.gitignore
 
-# selectively choose ptools
-z2pack/ptools/*
-!z2pack/ptools/__init__.py  
-!z2pack/ptools/string_tools.py  
+# selectively choose _ptools
+z2pack/_ptools/*
+!z2pack/_ptools/__init__.py  
+!z2pack/_ptools/string_tools.py  
 
 # debug folder
 debug

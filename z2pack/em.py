@@ -15,6 +15,8 @@ import scipy.linalg as la
 
 from .system import EigenstateSystem
 
+__all__ = ['System']
+
 class System(EigenstateSystem):
     r"""
     Subclass of :class:`z2pack.System` used for calculating systems with

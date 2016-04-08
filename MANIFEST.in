@@ -13,13 +13,11 @@ prune clear.sh
 prune doc
 
 # selectively include ptools
-prune z2pack/ptools
+prune z2pack/_ptools
 prune futures
-include z2pack/ptools/__init__.py
-include z2pack/ptools/parse_dict.py
-include z2pack/ptools/string_tools.py
-include z2pack/ptools/logger.py
-include z2pack/ptools/csv_parser.py
+include z2pack/_ptools/__init__.py
+include z2pack/_ptools/string_tools.py
+include z2pack/_ptools/export_decorator.py
 
 # installation related
 exclude MANIFEST.in

@@ -36,7 +36,7 @@ setup(
     author='Dominik Gresch',
     author_email='greschd@gmx.ch',
     description='Automating the computation of topological numbers of band-structures',
-    install_requires=['numpy', 'scipy', 'decorator', 'blessings', 'sortedcontainers', 'fsc.locker'],
+    install_requires=['numpy', 'scipy', 'decorator', 'blessings', 'sortedcontainers', 'fsc.locker', 'fsc.export'],
     extras_require={'plot':  ['matplotlib']},
     long_description=readme,
     classifiers=[
@@ -53,7 +53,7 @@ setup(
     license='GPL',
     packages=[
         'z2pack',
-        'z2pack.ptools',
+        'z2pack._ptools',
         'z2pack.fp'
     ]
 )

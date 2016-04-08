@@ -7,10 +7,10 @@
 
 import numpy as np
 import scipy.linalg as la
+from fsc.export import export
 
 from .._utils import _gapfind
 from .._helpers import _property_helper
-from .._ptools.export_decorator import export
 
 @export
 class OverlapLineData:

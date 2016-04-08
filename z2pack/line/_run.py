@@ -5,11 +5,12 @@
 # Date:    12.02.2016 16:04:45 CET
 # File:    _run.py
 
+import time
 import pickle
-import datetime
 import contextlib
 
 import numpy as np
+from fsc.export import export
 
 from . import _logger
 from . import LineResult
@@ -25,7 +26,6 @@ from .._control import (
 )
 from .._helpers import _atomic_save
 from .._logging_tools import TagAdapter
-from .._ptools.export_decorator import export
 
 # tag which triggers filtering when called from the surface's run.
 line_only__logger = TagAdapter(_logger, default_tags=('line', 'line_only',))
@@ -90,7 +90,7 @@ def _run_line_impl(
         * Controls
         * file backend?
     """
-    start_time = datetime.datetime.now() # timing the run
+    start_time = time.time() # timing the run
     
     for ctrl in controls:
         if not isinstance(ctrl, LineControl):
@@ -155,7 +155,7 @@ def _run_line_impl(
         result = LineResult(data, stateful_ctrl, convergence_ctrl)
         save()
 
-    end_time = datetime.datetime.now()
+    end_time = time.time()
     line_only__logger.info(end_time - start_time, tags=('box', 'skip-before', 'timing'))
     line_only__logger.info(result.convergence_report, tags=('convergence_report', 'box'))
     return result

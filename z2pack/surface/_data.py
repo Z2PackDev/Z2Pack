@@ -5,10 +5,9 @@
 # Date:    08.02.2016 16:04:23 CET
 # File:    _data.py
 
+from fsc.export import export
 from fsc.locker import ConstLocker
 from sortedcontainers import SortedList
-
-from .._ptools.export_decorator import export
 
 @export
 class SurfaceData(metaclass=ConstLocker):

@@ -5,8 +5,9 @@
 # Date:    10.03.2016 14:38:55 CET
 # File:    invariant.py
 
+from fsc.export import export
+
 from .._utils import _pol_step, _sgng
-from .._ptools.export_decorator import export
 
 @export
 def chern(surface_result):

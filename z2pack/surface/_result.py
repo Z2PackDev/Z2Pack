@@ -5,8 +5,9 @@
 # Date:    08.02.2016 15:02:23 CET
 # File:    _result.py
 
+from fsc.export import export
+
 from .._result import Result
-from .._ptools.export_decorator import export
 
 @export
 class SurfaceResult(Result):

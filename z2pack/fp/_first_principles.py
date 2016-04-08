@@ -11,9 +11,10 @@ import subprocess
 import contextlib
 import collections.abc
 
+from fsc.export import export
+
 from ..system import OverlapSystem
 from . import _read_mmn as mmn
-from .._ptools.export_decorator import export
 
 @export
 class System(OverlapSystem):

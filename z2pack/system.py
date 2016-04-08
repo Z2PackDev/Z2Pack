@@ -9,7 +9,7 @@ r"""Z2Pack can easily be extended to work with different models / systems. The b
 
 import abc
 
-from ._ptools.export_decorator import export
+from fsc.export import export
 
 @export
 class EigenstateSystem(metaclass=abc.ABCMeta):

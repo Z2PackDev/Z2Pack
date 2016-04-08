@@ -12,9 +12,9 @@ The em (effective models) module
 
 import numpy as np
 import scipy.linalg as la
+from fsc.export import export
 
 from .system import EigenstateSystem
-from ._ptools.export_decorator import export
 
 @export
 class System(EigenstateSystem):

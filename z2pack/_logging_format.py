@@ -6,8 +6,8 @@
 # File:    _logging_format.py
 
 import sys
+import time
 import logging
-import datetime
 
 import blessings
 
@@ -101,13 +101,13 @@ class DefaultFormatter(logging.Formatter):
                 msg = msg[:-1]
 
             if 'timing' in record.tags:
-                time = msg
-                seconds = time.seconds
+                seconds = int(msg + 0.5) # round to the nearest second
                 minutes, seconds = seconds // 60, seconds % 60
                 hours, minutes = minutes // 60, minutes % 60
+                days, hours = hours // 24, hours % 24 
                 time_str = '{}h {}m {}s'.format(hours, minutes, seconds)
-                if time.days != 0:
-                    time_str = '{}d '.format(time.days) + time_str
+                if days != 0:
+                    time_str = '{}d '.format(days) + time_str
                 msg = 'Calculation finished in {}'.format(time_str)
 
             if 'offset' in record.tags:

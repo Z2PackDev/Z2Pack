@@ -6,12 +6,13 @@
 # File:    _run_surface.py
 
 import copy
+import time
 import pickle
 import logging
-import datetime
 import contextlib
 
 import numpy as np
+from fsc.export import export
 
 from . import _logger
 from . import SurfaceData
@@ -31,7 +32,6 @@ _logger = TagAdapter(_logger, default_tags=('surface',))
 
 from ..line._run import _run_line_impl
 from ..line._control import StepCounter, PosCheck
-from .._ptools.export_decorator import export
 
 @export
 def run_surface(
@@ -150,7 +150,7 @@ def _run_surface_impl(
 
     :param surface: Function which defines the surface on which the WCC are calculated.
     """
-    start_time = datetime.datetime.now()
+    start_time = time.time()
 
     # CONTROL SETUP
 
@@ -267,7 +267,7 @@ def _run_surface_impl(
         N = N_new
         conv = collect_convergence()
 
-    end_time = datetime.datetime.now()
+    end_time = time.time()
     _logger.info(end_time - start_time, tags=('box', 'skip-before', 'timing'))
     _logger.info(result.convergence_report, tags=('box', 'convergence_report', 'skip'))
     return result

@@ -11,9 +11,9 @@ import numpy as np
 import colorsys
 
 import decorator
+from fsc.export import export
 
 from .._utils import _pol_step
-from .._ptools.export_decorator import export
 
 @decorator.decorator
 def _plot(func, data, *, axis=None, **kwargs):

@@ -11,8 +11,7 @@ of :meth:`.surface()`, defining the shape of the surface.
 """
 
 import numpy as np
-
-from ._ptools.export_decorator import export
+from fsc.export import export
 
 @export
 class SimpleEllipsoid(object):

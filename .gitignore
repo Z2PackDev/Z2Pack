@@ -48,6 +48,7 @@ z2pack/_ptools/.gitignore
 z2pack/_ptools/*
 !z2pack/_ptools/__init__.py  
 !z2pack/_ptools/string_tools.py  
+!z2pack/_ptools/export_decorator.py
 
 # debug folder
 debug

@@ -10,7 +10,9 @@ import scipy.linalg as la
 
 from .._utils import _gapfind
 from .._helpers import _property_helper
+from .._ptools.export_decorator import export
 
+@export
 class OverlapLineData:
     def __init__(self, overlaps):
         self._overlaps = overlaps
@@ -68,6 +70,7 @@ class OverlapLineData:
     def _calculate_gap(self):
         self._gap_pos, self._gap_size = _gapfind(self.wcc)
 
+@export
 class EigenstateLineData(OverlapLineData):
     def __init__(self, eigenstates):
         self._eigenstates = eigenstates

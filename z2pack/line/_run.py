@@ -25,13 +25,13 @@ from .._control import (
 )
 from .._helpers import _atomic_save
 from .._logging_tools import TagAdapter
-
-__all__ = ['run_line']
+from .._ptools.export_decorator import export
 
 # tag which triggers filtering when called from the surface's run.
 line_only__logger = TagAdapter(_logger, default_tags=('line', 'line_only',))
 _logger = TagAdapter(_logger, default_tags=('line',))
 
+@export
 def run_line(
     *,
     system,

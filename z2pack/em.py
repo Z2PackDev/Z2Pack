@@ -14,9 +14,9 @@ import numpy as np
 import scipy.linalg as la
 
 from .system import EigenstateSystem
+from ._ptools.export_decorator import export
 
-__all__ = ['System']
-
+@export
 class System(EigenstateSystem):
     r"""
     Subclass of :class:`z2pack.System` used for calculating systems with

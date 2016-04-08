@@ -6,9 +6,9 @@
 # File:    invariant.py
 
 from .._utils import _pol_step, _sgng
+from .._ptools.export_decorator import export
 
-__all__ = ['chern', 'z2']
-
+@export
 def chern(surface_result):
     r"""
     Computes the Chern number corresponding to some surface.
@@ -18,6 +18,7 @@ def chern(surface_result):
     """
     return sum(_pol_step(surface_result.pol))
 
+@export
 def z2(surface_result):
     r"""
     Computes the Z2 invariant corresponding to some surface.

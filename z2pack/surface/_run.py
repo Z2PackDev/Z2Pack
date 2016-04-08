@@ -31,7 +31,9 @@ _logger = TagAdapter(_logger, default_tags=('surface',))
 
 from ..line._run import _run_line_impl
 from ..line._control import StepCounter, PosCheck
+from .._ptools.export_decorator import export
 
+@export
 def run_surface(
         *,
         system,

@@ -13,9 +13,9 @@ import collections.abc
 
 from ..system import OverlapSystem
 from . import _read_mmn as mmn
+from .._ptools.export_decorator import export
 
-__all__ = ['System']
-
+@export
 class System(OverlapSystem):
     r"""
     A subclass of :class:`z2pack.System` designed to work with various first-principles codes.

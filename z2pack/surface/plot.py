@@ -13,8 +13,7 @@ import colorsys
 import decorator
 
 from .._utils import _pol_step
-
-__all__ = ['wcc', 'wcc_symmetry', 'chern']
+from .._ptools.export_decorator import export
 
 @decorator.decorator
 def _plot(func, data, *, axis=None, **kwargs):
@@ -50,6 +49,7 @@ def _plot_gaps(surface_result, *, axis, gaps, gap_settings):
                 **gap_settings
             )
 
+@export
 @_plot
 def wcc_symmetry(
         surface_result,
@@ -109,6 +109,7 @@ def wcc_symmetry(
                          facecolors=colors,
                          **wcc_settings)
 
+@export
 @_plot
 def wcc(
         surface_result,
@@ -143,6 +144,7 @@ def wcc(
                          [x % 1 + offset for x in line.wcc],
                          **wcc_settings)
 
+@export
 @_plot
 def chern(
         surface_result,

@@ -8,6 +8,9 @@
 from fsc.locker import ConstLocker
 from sortedcontainers import SortedList
 
+from .._ptools.export_decorator import export
+
+@export
 class SurfaceData(metaclass=ConstLocker):
     # cannot be pickled if it is a local method (lambda) in __init__
     @staticmethod
@@ -34,6 +37,7 @@ class SurfaceData(metaclass=ConstLocker):
             return 1
         return min(abs(t - tval) for tval in self.t)
 
+@export
 class SurfaceLine:
     __slots__ = ['t', 'result']
 

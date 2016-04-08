@@ -6,7 +6,9 @@
 # File:    _result.py
 
 from .._result import Result
+from .._ptools.export_decorator import export
 
+@export
 class LineResult(Result):
     """TODO"""
     @property

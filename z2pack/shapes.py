@@ -12,8 +12,9 @@ of :meth:`.surface()`, defining the shape of the surface.
 
 import numpy as np
 
-__all__ = ['SimpleEllipsoid', 'Sphere']
+from ._ptools.export_decorator import export
 
+@export
 class SimpleEllipsoid(object):
     r"""
     An ellipsoid whose symmetry axes correspond to :math:`k_x, k_y, k_z`.
@@ -47,6 +48,7 @@ class SimpleEllipsoid(object):
         z -= self.az * np.cos(np.pi * t)
         return [x, y, z]
 
+@export
 class Sphere(SimpleEllipsoid):
     r"""
     :param center:  Center of the sphere

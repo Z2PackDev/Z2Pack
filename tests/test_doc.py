@@ -14,8 +14,8 @@ import fsc.export
 # This should never appear in any serious code ;)
 # To out-manoeuver pickle's caching, and force re-loading z2pack
 def test_all_doc():
-    old_name = old_name
-    new_name = new_name
+    old_name = 'z2pack'
+    new_name = 'hoopy_z2pack'
     for key in list(sys.modules.keys()):
         # move previous z2pack to hoopy_z2pack
         if key.startswith(old_name):

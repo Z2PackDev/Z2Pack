@@ -12,6 +12,7 @@ from sortedcontainers import SortedList
 @export
 class SurfaceData(metaclass=ConstLocker):
     # cannot be pickled if it is a local method (lambda) in __init__
+    # when python3.4 support is dropped, operator.attrgetter can be used
     @staticmethod
     def _sort_key(x):
         return x.t

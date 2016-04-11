@@ -8,81 +8,89 @@
 import numpy as np
 import scipy.linalg as la
 from fsc.export import export
+from fsc.locker import ConstLocker, change_lock
 
 from .._utils import _gapfind
 from .._helpers import _property_helper
 
+class _LazyProperty:
+    """Descriptor that replaces itself with the return value of the method when accessed. The class is unlocked before setting the attribute, s.t. it can be used with a Locker type class."""
+    def __init__(self, method):
+        self.method = method
+
+    def __get__(self, instance, owner):
+        if not instance:
+            return None
+
+        value = self.method(instance)
+
+        with change_lock(instance, 'none'):
+            setattr(instance, self.method.__name__, value)
+        return value
+
 @export
-class OverlapLineData:
+class OverlapLineData(metaclass=ConstLocker):
+    """Data for a line constructed from overlap matrices."""
     def __init__(self, overlaps):
-        self._overlaps = overlaps
+        self.overlaps = overlaps
 
     def __getattr__(self, name):
         if name == 'eigenstates':
             raise AttributeError("This data does not have the 'eigenstates' attribute. This is because the system used does not provide eigenstates, but only overlap matrices. The functionality which resulted in this error can be used only for systems providing eigenstates.")
         return super().__getattribute__(name)
 
-    @property
-    def overlaps(self):
-        return self._overlaps
-
-    @property
-    @_property_helper('_wilson')
+    @_LazyProperty
     def wilson(self):
-        self._wilson = np.eye(len(self.overlaps[0]))
+        wil = np.eye(len(self.overlaps[0]))
         for M in self.overlaps:
-            self._wilson = np.dot(self._wilson, M)
+            wil = np.dot(wil, M)
+        return wil
 
-    @property
-    @_property_helper('_wcc')
+    @_LazyProperty
     def wcc(self):
         self._calculate_wannier()
-        return self._wcc
+        print(self.wcc)
+        return self.wcc
         
-    @property
-    @_property_helper('_wilson_eigenstates')
+    @_LazyProperty
     def wilson_eigenstates(self):
         self._calculate_wannier()
+        print(self.wcc)
+        return self.wilson_eigenstates
 
     def _calculate_wannier(self):
         eigs, eigvec = la.eig(self.wilson)
         wcc = np.array([np.angle(z) / (2 * np.pi) % 1 for z in eigs])
         idx = np.argsort(wcc)
+        with change_lock(self, 'none'):
+            self.wcc = list(wcc[idx])
+            self.wilson_eigenstates = list(eigvec.T[idx])
 
-        self._wcc = list(wcc[idx])
-        self._wilson_eigenstates = list(eigvec.T[idx])
-
-    @property
-    @_property_helper('_wcc_sum')
+    @_LazyProperty
     def pol(self):
-        self._wcc_sum = sum(self.wcc) % 1
+        return sum(self.wcc) % 1
 
-    @property
-    @_property_helper('_gap_pos')
+    @_LazyProperty
     def gap_pos(self):
         self._calculate_gap()
-
-    @property
-    @_property_helper('_gap_size')
+        return self.gap_pos
+        
+    @_LazyProperty
     def gap_size(self):
         self._calculate_gap()
+        return self.gap_size
 
     def _calculate_gap(self):
-        self._gap_pos, self._gap_size = _gapfind(self.wcc)
+        with change_lock(self, 'none'):
+            self.gap_pos, self.gap_size = _gapfind(self.wcc)
 
 @export
 class EigenstateLineData(OverlapLineData):
+    """Data for a line constructed from periodic eigenstates :math:`|u_{n, \vec{k}}\rangle`."""
     def __init__(self, eigenstates):
-        self._eigenstates = eigenstates
+        self.eigenstates = eigenstates
 
-    # Avoid direct access (setting) the eigenstates. Alternatively, one
-    # could change __setattr__ to achieve the same.
-    @property
-    def eigenstates(self):
-        return self._eigenstates
-    
-    @property
-    @_property_helper('_overlaps')
+    @_LazyProperty
     def overlaps(self):
         # create M - matrices
         
@@ -93,4 +101,4 @@ class EigenstateLineData(OverlapLineData):
                 np.conjugate(self.eigenstates[i]),
                 np.array(self.eigenstates[i + 1]).T
             ))
-        self._overlaps = M
+        return M

@@ -24,7 +24,7 @@ def patch_max_move(monkeypatch):
 def patch_line_data(monkeypatch):
     def __init__(self, val):
         self.wcc = val
-    monkeypatch.delattr(LineData, 'wcc')
+        self.attr_mod_ctrl = 'none'
     monkeypatch.setattr(LineData, '__init__', __init__)
     
 @pytest.fixture

@@ -7,6 +7,8 @@
 
 import itertools
 
+from fsc.export import export
+
 from .._control import (
     DataControl,
     ConvergenceControl,
@@ -16,6 +18,7 @@ from .._control import (
 )
 from .._utils import _get_max_move
 
+@export
 class StepCounter(
     IterationControl,
     StatefulControl,
@@ -47,6 +50,7 @@ class StepCounter(
         """Converged if the minimum value of the iterator has been used."""
         return self._state >= self._min_state
 
+@export
 class PosCheck(
     DataControl,
     ConvergenceControl,

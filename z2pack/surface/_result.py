@@ -11,7 +11,6 @@ from .._result import Result
 
 @export
 class SurfaceResult(Result):
-    """TODO"""
     
     @property
     def convergence_report(self):

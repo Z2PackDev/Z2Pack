@@ -49,13 +49,11 @@ class OverlapLineData(metaclass=ConstLocker):
     @_LazyProperty
     def wcc(self):
         self._calculate_wannier()
-        print(self.wcc)
         return self.wcc
         
     @_LazyProperty
     def wilson_eigenstates(self):
         self._calculate_wannier()
-        print(self.wcc)
         return self.wilson_eigenstates
 
     def _calculate_wannier(self):

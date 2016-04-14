@@ -11,7 +11,7 @@ from .._result import Result
 
 @export
 class LineResult(Result):
-    """TODO"""
+
     @property
     def convergence_report(self):
         r"""

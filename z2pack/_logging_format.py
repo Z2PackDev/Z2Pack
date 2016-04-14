@@ -10,6 +10,7 @@ import time
 import logging
 
 import blessings
+from fsc.formatting import shorten
 
 from ._ptools.string_tools import cbox
 from ._version import __version__
@@ -91,11 +92,11 @@ class DefaultFormatter(logging.Formatter):
 
                 dist = max(len(key) for key in kwargs.keys()) + 5
                 format_string = '{:<' + str(dist) + '}{}'
-                for key, value in kwargs.items():
+                for key, value in sorted(kwargs.items()):
                     val_str = str(value)
                     max_width = 70 - dist
                     if len(val_str) > max_width:
-                        val_str = val_str[:max_width - 3] + '...'
+                        val_str = shorten(val_str, max_width)
                     msg += format_string.format(key + ':', val_str)
                     msg += '\n'
                 msg = msg[:-1]

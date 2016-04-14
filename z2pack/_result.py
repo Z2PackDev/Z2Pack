@@ -7,6 +7,9 @@
 
 import abc
 
+from fsc.export import export
+
+@export
 class Result(metaclass=abc.ABCMeta):
     def __init__(self, data, stateful_ctrl, convergence_ctrl):
         self.data = data

@@ -5,6 +5,10 @@
 # Date:    19.02.2016 16:30:58 MST
 # File:    _control.py
 
+import numpy as np
+
+from fsc.export import export
+
 from .._control import (
     DataControl,
     ConvergenceControl,
@@ -14,8 +18,7 @@ from .._control import (
 )
 from .._utils import _get_max_move
 
-import numpy as np
-
+@export
 class MoveCheck(DataControl, ConvergenceControl, SurfaceControl):
     def __init__(self, *, move_tol):
         self.move_tol = move_tol
@@ -32,6 +35,7 @@ class MoveCheck(DataControl, ConvergenceControl, SurfaceControl):
             for l1, l2 in zip(wcc_list[:-1], wcc_list[1:])
         ]
 
+@export
 class GapCheck(DataControl, ConvergenceControl, SurfaceControl):
     def __init__(self, *, gap_tol):
         self.gap_tol = gap_tol

@@ -27,5 +27,5 @@ Bi = z2pack.fp.System(
 )
 
 # calculating the WCC
-result_0 = z2pack.surface.run(system=Bi, surface=lambda s, t: [0, s / 2, t], save_file = './results/Bi_0.p', load=True)
-result_1 = z2pack.surface.run(system=Bi, surface=lambda s, t: [0.5, s / 2, t], save_file = './results/Bi_1.p', load=True)
+result_0 = z2pack.surface.run(system=Bi, surface=lambda s, t: [0, s / 2, t], save_file = './results/Bi_0.json', load=True)
+result_1 = z2pack.surface.run(system=Bi, surface=lambda s, t: [0.5, s / 2, t], save_file = './results/Bi_1.json', load=True)

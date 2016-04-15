@@ -36,7 +36,7 @@ system1 = z2pack.em.System(hamilton1) # bands=1 is default (#orbitals / 2)
 
 # the surface is a sphere around the Weyl point
 surface = z2pack.shapes.Sphere([0., 0., 0.], 0.01)
-res0 = z2pack.surface.run(system=system0, surface=surface, iterator=list(range(8, 47, 2)), save_file='test.mp')
+res0 = z2pack.surface.run(system=system0, surface=surface, iterator=list(range(8, 47, 2)), save_file='test.json')
 res1 = z2pack.surface.run(system=system1, surface=surface)
 
 # plotting

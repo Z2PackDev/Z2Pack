@@ -6,16 +6,13 @@
 # File:    Bi_plot.py
 
 import os
-import pickle
 
 import matplotlib.pyplot as plt
 
 import z2pack
 
-with open('results/Bi_0.p', 'rb') as f:
-    result_0 = pickle.load(f)
-with open('results/Bi_1.p', 'rb') as f:
-    result_1 = pickle.load(f)
+result_0 = z2pack.load_result('results/Bi_0.json')
+result_1 = z2pack.load_result('results/Bi_1.json')
 
 # plotting
 fig, ax = plt.subplots(1, 2)

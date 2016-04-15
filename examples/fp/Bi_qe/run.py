@@ -65,13 +65,13 @@ system = z2pack.fp.System(
 result_0 = z2pack.surface.run(
     system=system,
     surface=lambda s, t: [0, s / 2, t], 
-    save_file='./results/res_0.p',
+    save_file='./results/res_0.json',
     load=True
 )
 result_1 = z2pack.surface.run(
     system=system,
     surface=lambda s, t: [0.5, s / 2, t],
-    save_file='./results/res_1.p',
+    save_file='./results/res_1.json',
     load=True
 )
 

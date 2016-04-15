@@ -37,7 +37,6 @@ class SurfaceData(metaclass=ConstLocker):
             return 1
         return min(abs(t - tval) for tval in self.t)
 
-@export
 class SurfaceLine:
     __slots__ = ['t', 'result']
 

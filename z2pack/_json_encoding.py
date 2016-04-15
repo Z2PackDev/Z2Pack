@@ -31,13 +31,18 @@ class OverlapLineDataEncoder(json.JSONEncoder):
             )
         return super().default(obj)
 
+#~ class LineDataEncoder(EigenstateLineDataEncoder, OverlapLineDataEncoder):
+    #~ def default(self, obj):
+        #~ return super().default(obj)
+
+
 @export
-class LineResultEncoder(OverlapLineDataEncoder, EigenstateLineDataEncoder):
+class LineResultEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, LineResult):
             return dict(
                 __line_result__=True,
-                data=obj.data,
+                data=EigenstateLineDataEncoder.default(self, obj.data),
                 ctrl_convergence=obj.ctrl_convergence,
                 ctrl_states=obj.ctrl_states
             )
@@ -45,32 +50,32 @@ class LineResultEncoder(OverlapLineDataEncoder, EigenstateLineDataEncoder):
 
 print(LineResultEncoder.__mro__)
 
-class SurfaceLineEncoder(LineResultEncoder):
+class SurfaceLineEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, SurfaceLine):
             return dict(
                 __surface_line__=True,
                 t=obj.t,
-                result=obj.result
+                result=LineResultEncoder.default(self, obj.result)
             )
         return super().default(obj)
 
-class SurfaceDataEncoder(SurfaceLineEncoder):
+class SurfaceDataEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, SurfaceData):
             return dict(
                 __surface_data__=True,
-                lines=list(obj.lines)
+                lines=[SurfaceLineEncoder.default(self, line) for line in obj.lines]
             )
         return super().default(obj)
 
 @export
-class SurfaceResultEncoder(SurfaceDataEncoder):
+class SurfaceResultEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, SurfaceResult):
             return dict(
                 __surface_result__=True,
-                data=super().encode(obj.data),
+                data=SurfaceDataEncoder.default(self, obj.data),
                 #~ ctrl_convergence=obj.ctrl_convergence,
                 #~ ctrl_states=obj.ctrl_states
             )

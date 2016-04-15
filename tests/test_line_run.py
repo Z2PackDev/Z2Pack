@@ -6,7 +6,7 @@
 # File:    test_line_run.py
 
 import os
-import pickle
+import json
 import inspect
 import tempfile
 
@@ -14,6 +14,8 @@ import pytest
 import numpy as np
 
 import z2pack
+
+from z2pack._json_encoding import decode
 
 from em_systems import *
 
@@ -79,8 +81,7 @@ def test_simple_save(simple_system, simple_line):
     # Context manager doesn't work because the file is moved in the atomic save
     fp = tempfile.NamedTemporaryFile(delete=False)
     result = z2pack.line.run(system=simple_system, line=simple_line, save_file=fp.name)
-    with open(fp.name, 'rb') as f:
-        result2 = pickle.load(f)
+    result2 = z2pack.load_result(fp.name)
     os.remove(fp.name)
     assert_res_equal(result, result2)
     
@@ -88,8 +89,7 @@ def test_weyl_save(weyl_system, weyl_line):
     # Context manager doesn't work because the file is moved in the atomic save
     fp = tempfile.NamedTemporaryFile(delete=False)
     result = z2pack.line.run(system=weyl_system, line=weyl_line, save_file=fp.name)
-    with open(fp.name, 'rb') as f:
-        result2 = pickle.load(f)
+    result2 = z2pack.load_result(fp.name)
     os.remove(fp.name)
     assert_res_equal(result, result2)
 

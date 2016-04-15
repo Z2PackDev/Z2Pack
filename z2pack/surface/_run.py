@@ -7,7 +7,7 @@
 
 import copy
 import time
-import pickle
+import json
 import logging
 import contextlib
 
@@ -26,11 +26,11 @@ from .._control import (
     StatefulControl,
     ConvergenceControl
 )
-from .._helpers import _atomic_save
+from .. import _helpers
 from .._logging_tools import TagAdapter, TagFilter, FilterManager
 _logger = TagAdapter(_logger, default_tags=('surface',))
 
-from ..line._run import _run_line_impl
+from ..line import _run as _line_run
 from ..line._control import StepCounter, PosCheck
 
 @export
@@ -113,8 +113,7 @@ def run_surface(
         if save_file is None:
             raise ValueError('Cannot load result from file: No filename given in the "save_file" parameter.')
         try:
-            with open(save_file, 'rb') as f:
-                init_result = pickle.load(f)
+            init_result = _helpers.load_result(save_file)
         except IOError as e:
             if not load_quiet:
                 raise e
@@ -169,7 +168,7 @@ def _run_surface_impl(
         """
         Runs a line calculation and returns its result.
         """
-        return _run_line_impl(
+        return _line_run._run_line_impl(
             *copy.deepcopy(line_ctrl),
             system=system,
             line=lambda ky: surface(t, ky),
@@ -208,7 +207,7 @@ def _run_surface_impl(
 
         if save_file is not None:
             _logger.info('Saving surface result to file {}'.format(save_file))
-            _atomic_save(result, save_file)
+            _helpers._atomic_save(result, save_file)
         return result
 
     def collect_convergence():

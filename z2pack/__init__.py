@@ -21,3 +21,5 @@ from . import fp
 from . import em
 
 from . import _logging_format # sets default logging levels / format
+
+from ._helpers import load_result

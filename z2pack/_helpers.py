@@ -8,14 +8,24 @@
 """Coding tools, not related to the 'physical/computation logic' of Z2Pack."""
 
 import os
-import pickle
+import json
 import tempfile
+
+from fsc.export import export
+
+from . import _json_encoding
 
 def _atomic_save(data, file_path):
     """Pickles data in an atomic way by first creating a temporary file and then moving to the file_path."""
     with tempfile.NamedTemporaryFile(
         dir=os.path.dirname(os.path.abspath(file_path)),
-        delete=False
+        delete=False,
+        mode='w'
     ) as f:
-        pickle.dump(data, f, protocol=4)
+        json.dump(data, f, default=_json_encoding.encode)
         os.replace(f.name, file_path)
+
+@export
+def load_result(path):
+    with open(path, 'r') as f:
+        return json.load(f, object_hook=_json_encoding.decode)

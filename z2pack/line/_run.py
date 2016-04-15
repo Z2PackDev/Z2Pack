@@ -6,7 +6,7 @@
 # File:    _run.py
 
 import time
-import pickle
+import json
 import contextlib
 
 import numpy as np
@@ -24,7 +24,8 @@ from .._control import (
     ConvergenceControl,
     LineControl
 )
-from .._helpers import _atomic_save
+from .. import _helpers
+from .. import _json_encoding
 from .._logging_tools import TagAdapter
 
 # tag which triggers filtering when called from the surface's run.
@@ -69,8 +70,7 @@ def run_line(
         if save_file is None:
             raise ValueError('Cannot load result from file: No filename given in the "save_file" parameter.')
         try:
-            with open(save_file, 'rb') as f:
-                init_result = pickle.load(f)
+            init_result = _helpers.load_result(save_file)
         except IOError as e:
             if not load_quiet:
                 raise e
@@ -107,7 +107,7 @@ def _run_line_impl(
     def save():
         if save_file is not None:
             _logger.info('Saving line result to file {}'.format(save_file))
-            _atomic_save(result, save_file)
+            _helpers._atomic_save(result, save_file)
 
     # initialize stateful and data controls from old result
     if init_result is not None:

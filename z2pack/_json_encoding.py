@@ -13,9 +13,9 @@ from collections.abc import Iterable
 import numpy as np
 from fsc.export import export
 
-from .surface._result import SurfaceResult
-from .surface._data import SurfaceData, SurfaceLine
 from .line import LineResult, OverlapLineData, EigenstateLineData
+from .surface._data import SurfaceData, SurfaceLine
+from .surface._result import SurfaceResult
 
 @export
 @singledispatch

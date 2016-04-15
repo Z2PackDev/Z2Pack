@@ -231,7 +231,7 @@ def _run_surface_impl(
         # get states from pre-existing Controls
         for s_ctrl in stateful_ctrl:
             with contextlib.suppress(KeyError):
-                s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__]
+                s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__.__name__]
 
         data = init_result.data
 

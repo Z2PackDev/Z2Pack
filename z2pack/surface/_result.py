@@ -28,7 +28,7 @@ class SurfaceResult(Result):
         line_c_ctrl = set()
         for line in self.lines:
             line_c_ctrl.update(line.ctrl_convergence.keys())
-        for c_ctrl in sorted(list(line_c_ctrl), key=lambda x: x.__name__):
+        for c_ctrl in sorted(list(line_c_ctrl)):
             ctrl_report = dict()
             passed_t = []
             failed_t = []
@@ -44,11 +44,11 @@ class SurfaceResult(Result):
             ctrl_report['PASSED'] = passed_t
             ctrl_report['FAILED'] = failed_t
             ctrl_report['MISSING'] = missing_t
-            line_report[c_ctrl.__name__] = ctrl_report
+            line_report[c_ctrl] = ctrl_report
         report['line'] = line_report
 
         surface_report = dict()
-        for c_ctrl, converged in sorted(self.ctrl_convergence.items(), key=lambda x: x[0].__name__):
+        for c_ctrl, converged in sorted(self.ctrl_convergence.items()):
             if converged is None:
                 ctrl_report = None
             else:
@@ -60,7 +60,7 @@ class SurfaceResult(Result):
                         ctrl_report['PASSED'].append(t_pair)
                     else:
                         ctrl_report['FAILED'].append(t_pair)
-            surface_report[c_ctrl.__name__] = ctrl_report
+            surface_report[c_ctrl] = ctrl_report
         report['surface'] = surface_report
 
         return report

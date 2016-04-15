@@ -11,7 +11,6 @@ from fsc.export import export
 from fsc.locker import ConstLocker, change_lock
 
 from .._utils import _gapfind
-from .._helpers import _property_helper
 
 class _LazyProperty:
     """Descriptor that replaces itself with the return value of the method when accessed. The class is unlocked before setting the attribute, s.t. it can be used with a Locker type class."""

@@ -16,12 +16,12 @@ class Result(metaclass=abc.ABCMeta):
         ctrl_states = dict()
         # save states
         for s_ctrl in stateful_ctrl:
-            ctrl_states[s_ctrl.__class__] = s_ctrl.state
+            ctrl_states[s_ctrl.__class__.__name__] = s_ctrl.state
         self.ctrl_states = ctrl_states
         ctrl_convergence = dict()
         # save convergence
         for c_ctrl in convergence_ctrl:
-            ctrl_convergence[c_ctrl.__class__] = c_ctrl.converged
+            ctrl_convergence[c_ctrl.__class__.__name__] = c_ctrl.converged
         self.ctrl_convergence = ctrl_convergence
 
     def __getattr__(self, name):

@@ -90,4 +90,60 @@ def _(obj):
     return dict(
         __surface_result__=True,
         data=encode(obj.data),
+        ctrl_convergence=obj.ctrl_convergence,
+        ctrl_states=obj.ctrl_states
     )
+
+#-----------------------------------------------------------------------#
+
+@export
+@singledispatch
+def decode(obj):
+    return obj
+
+@decode.register(str)
+def _(obj):
+    return obj
+
+@decode.register(Iterable)
+def _(obj):
+    return [decode(x) for x in obj]
+
+def decode_surface_result(obj):
+    # The states / convergence of the controls are set manually
+    res = SurfaceResult(obj['data'], [], [])
+    res.ctrl_convergence = decode(obj['ctrl_convergence'])
+    res.ctrl_states = decode(obj['ctrl_states'])
+    return res
+
+def decode_surface_data(obj):
+    return SurfaceData(decode(obj['lines']))
+
+def decode_surface_line(obj):
+    return SurfaceLine(obj['t'], decode(obj['result']))
+
+def decode_line_result(obj):
+    # The states / convergence of the controls are set manually
+    res = LineResult(obj['data'], [], [])
+    res.ctrl_convergence = decode(obj['ctrl_convergence'])
+    res.ctrl_states = decode(obj['ctrl_states'])
+    return res
+
+def decode_overlap_line_data(obj):
+    return EigenstateLineData(obj['overlaps'])
+
+def decode_eigenstate_line_data(obj):
+    return EigenstateLineData(obj['eigenstates'])
+
+def decode_complex(obj):
+    return complex(obj['real'], obj['imag'])
+
+
+@decode.register(dict)
+def _(obj):
+    special_markers = [key for key in obj.keys() if key.startswith('__')]
+    if len(special_markers) == 1:
+        name = special_markers[0].strip('__')
+        return globals()['decode_' + name](obj)
+    else:
+        return obj

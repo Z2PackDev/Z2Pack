@@ -6,77 +6,88 @@
 # File:    _json_encoding.py
 
 import json
+import numbers
+from functools import singledispatch
+from collections.abc import Iterable
 
+import numpy as np
 from fsc.export import export
 
 from .surface._result import SurfaceResult
 from .surface._data import SurfaceData, SurfaceLine
 from .line import LineResult, OverlapLineData, EigenstateLineData
 
-class EigenstateLineDataEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, EigenstateLineData):
-            return dict(
-                __eigenstate_line_data__=True,
-                eigenstates=obj.eigenstates
-            )
-        return super().default(obj)
-
-class OverlapLineDataEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, OverlapLineData):
-            return dict(
-                __overlap_line_data__=True,
-                overlaps=obj.overlaps
-            )
-        return super().default(obj)
-
-#~ class LineDataEncoder(EigenstateLineDataEncoder, OverlapLineDataEncoder):
-    #~ def default(self, obj):
-        #~ return super().default(obj)
-
-
 @export
-class LineResultEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, LineResult):
-            return dict(
-                __line_result__=True,
-                data=EigenstateLineDataEncoder.default(self, obj.data),
-                ctrl_convergence=obj.ctrl_convergence,
-                ctrl_states=obj.ctrl_states
-            )
-        return super().default(obj)
+@singledispatch
+def encode(obj):
+    raise TypeError('cannot JSONify {} object {}'.format(type(obj), obj))
 
-print(LineResultEncoder.__mro__)
+@encode.register(bool)
+@encode.register(np.bool_)
+def _(obj):
+    return bool(obj)
 
-class SurfaceLineEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, SurfaceLine):
-            return dict(
-                __surface_line__=True,
-                t=obj.t,
-                result=LineResultEncoder.default(self, obj.result)
-            )
-        return super().default(obj)
+@encode.register(numbers.Integral)
+def _(obj):
+    return int(obj)
 
-class SurfaceDataEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, SurfaceData):
-            return dict(
-                __surface_data__=True,
-                lines=[SurfaceLineEncoder.default(self, line) for line in obj.lines]
-            )
-        return super().default(obj)
+@encode.register(numbers.Real)
+def _(obj):
+    return float(obj)
+    
+@encode.register(numbers.Complex)
+def _(obj):
+    return dict(__complex__=True, real=encode(obj.real), imag=encode(obj.imag))
 
-@export
-class SurfaceResultEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, SurfaceResult):
-            return dict(
-                __surface_result__=True,
-                data=SurfaceDataEncoder.default(self, obj.data),
-                #~ ctrl_convergence=obj.ctrl_convergence,
-                #~ ctrl_states=obj.ctrl_states
-            )
-        return super().default(obj)
+@encode.register(str)
+def _(obj):
+    return obj
+
+@encode.register(Iterable)
+def _(obj):
+    return list(obj)
+
+@encode.register(EigenstateLineData)
+def _(obj):
+    return dict(
+        __eigenstate_line_data__=True,
+        eigenstates=encode(obj.eigenstates)
+    )
+
+@encode.register(OverlapLineData)
+def _(obj):
+    return dict(
+        __overlap_line_data__=True,
+        overlaps=encode(obj.overlaps)
+    )
+    
+@encode.register(LineResult)
+def _(obj):
+    return dict(
+        __line_result__=True,
+        data=encode(obj.data),
+        ctrl_convergence=obj.ctrl_convergence,
+        ctrl_states=obj.ctrl_states
+    )
+
+@encode.register(SurfaceLine)
+def _(obj):
+    return dict(
+        __surface_line__=True,
+        t=obj.t,
+        result=encode(obj.result)
+    )
+
+@encode.register(SurfaceData)
+def _(obj):
+    return dict(
+        __surface_data__=True,
+        lines=encode(obj.lines)
+    )
+
+@encode.register(SurfaceResult)
+def _(obj):
+    return dict(
+        __surface_result__=True,
+        data=encode(obj.data),
+    )

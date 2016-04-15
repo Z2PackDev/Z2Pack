@@ -15,13 +15,11 @@ import numpy as np
 
 import z2pack
 
-from z2pack._json_encoding import decode
-
 from em_systems import *
 
 def normalize_convergence_report(report):
-    # Booleans cannot be put into json
-    return {key: 1 if val else 0 for key, val in report.items()}
+    # np.bool_ cannot be put into json
+    return {key: bool(val) for key, val in report.items()}
 
 def test_trivial_run(simple_system, simple_line, compare_equal):
     result = z2pack.line.run(system=simple_system, line=simple_line)

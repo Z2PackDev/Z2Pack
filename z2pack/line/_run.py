@@ -25,7 +25,6 @@ from .._control import (
     LineControl
 )
 from .. import _helpers
-from .. import _json_encoding
 from .._logging_tools import TagAdapter
 
 # tag which triggers filtering when called from the surface's run.

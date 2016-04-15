@@ -11,14 +11,8 @@ from sortedcontainers import SortedList
 
 @export
 class SurfaceData(metaclass=ConstLocker):
-    # cannot be pickled if it is a local method (lambda) in __init__
-    # when python3.4 support is dropped, operator.attrgetter can be used
-    @staticmethod
-    def _sort_key(x):
-        return x.t
-
     def __init__(self, lines=()):
-        self.lines = SortedList(lines, key=self._sort_key)
+        self.lines = SortedList(lines, key=lambda x: x.t)
 
     def add_line(self, t, result):
         self.lines.add(SurfaceLine(t, result))

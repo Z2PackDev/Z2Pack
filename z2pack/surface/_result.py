@@ -18,11 +18,6 @@ class SurfaceResult(Result):
         Returns a convergence report (as a string) for the result. This report shows whether the convergence options used for calculating this result were satisfied or not.
         """
         report = dict()
-        #~ def section_heading(name):
-            #~ return name + '\n' + '=' * len(name) + '\n\n'
-        
-        #~ def ctrl_heading(ctrl):
-            #~ return ctrl.__name__ + '\n' + '-' * len(ctrl.__name__) + '\n\n'
         
         line_report = dict()
         line_c_ctrl = set()

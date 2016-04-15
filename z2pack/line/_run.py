@@ -24,7 +24,7 @@ from .._control import (
     ConvergenceControl,
     LineControl
 )
-from .. import _helpers
+
 from .._logging_tools import TagAdapter
 
 # tag which triggers filtering when called from the surface's run.
@@ -53,6 +53,10 @@ def run_line(
         * setting up printing status
         * setting up file backend
     """
+    # This is here to avoid circular import with the Surface (is solved in Python 3.5 and higher)
+    global _helpers
+    from .. import _helpers
+    
     line_only__logger.info(locals(), tags=('setup', 'box', 'skip'))
     
     # setting up controls

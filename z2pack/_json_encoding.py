@@ -13,6 +13,8 @@ from collections.abc import Iterable
 import numpy as np
 from fsc.export import export
 
+# This can create a circular import if it is imported by name (from ... import ...)
+# If this is ever an issue, consider splitting the encoding by surface / line
 from .line import LineResult, OverlapLineData, EigenstateLineData
 from .surface._data import SurfaceData, SurfaceLine
 from .surface._result import SurfaceResult

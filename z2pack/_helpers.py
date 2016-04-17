@@ -34,9 +34,9 @@ serializer = _Proxy(json)
 def _check_binary():
     return serializer.__name__ in ['pickle', 'msgpack']
 
-
 def save_result(result, file_path):
     """Pickles result in an atomic way by first creating a temporary file and then moving to the file_path."""
+    # This "hack" is to force deletion of the file when the os.replace fails, without failing with a FileNotFoundError when it doesn't.
     with contextlib.suppress(FileNotFoundError), tempfile.NamedTemporaryFile(
         dir=os.path.dirname(os.path.abspath(file_path)),
         delete=False,

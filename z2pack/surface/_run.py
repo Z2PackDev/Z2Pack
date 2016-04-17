@@ -207,7 +207,7 @@ def _run_surface_impl(
 
         if save_file is not None:
             _logger.info('Saving surface result to file {}'.format(save_file))
-            _helpers._atomic_save(result, save_file)
+            _helpers.save_result(result, save_file)
         return result
 
     def collect_convergence():

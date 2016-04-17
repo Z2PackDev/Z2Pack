@@ -110,7 +110,7 @@ def _run_line_impl(
     def save():
         if save_file is not None:
             _logger.info('Saving line result to file {}'.format(save_file))
-            _helpers._atomic_save(result, save_file)
+            _helpers.save_result(result, save_file)
 
     # initialize stateful and data controls from old result
     if init_result is not None:

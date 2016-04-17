@@ -7,6 +7,8 @@
 
 import os
 import json
+import pickle
+import msgpack
 import tempfile
 
 import pytest
@@ -31,6 +33,12 @@ def pos_tol(request):
 @pytest.fixture(params=[10**n for n in range(-4, -1)])
 def gap_tol(request):
     return request.param
+
+@pytest.fixture(params=[pickle, json, msgpack])
+def serializer(request):
+    z2pack.serializer.set(request.param)
+    return request.param.__name__
+
 
 def assert_res_equal(result1, result2):
     assert result1.wcc == result2.wcc
@@ -113,7 +121,7 @@ def test_invalid_restart(simple_system, simple_surface):
     with pytest.raises(ValueError):
         result2 = z2pack.surface.run(system=simple_system, surface=simple_surface, init_result=result, load=True)
 
-def test_file_restart(simple_system, simple_surface):
+def test_file_restart(simple_system, simple_surface, serializer):
     with tempfile.NamedTemporaryFile() as fp:
         result = z2pack.surface.run(system=simple_system, surface=simple_surface, save_file=fp.name)
         result2 = z2pack.surface.run(system=simple_system, surface=simple_surface, save_file=fp.name, load=True)
@@ -127,6 +135,6 @@ def test_load_inconsistent(simple_system, simple_surface):
     with pytest.raises(ValueError):
         result = z2pack.surface.run(system=simple_system, surface=simple_surface, init_result='bla', save_file='invalid_name', load=True)
         
-def test_load_no_filename(simple_system, simple_surface):
+def test_load_no_filename(simple_system, simple_surface, serializer):
     with pytest.raises(ValueError):
         result = z2pack.surface.run(system=simple_system, surface=simple_surface, load=True)

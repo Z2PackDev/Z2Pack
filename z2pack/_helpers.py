@@ -8,27 +8,52 @@
 """Coding tools, not related to the 'physical/computation logic' of Z2Pack."""
 
 import os
-#~ import msgpack
-import pickle
+import json
 import tempfile
+import contextlib
 
 from fsc.export import export
 
 from . import _encoding
 
-def _atomic_save(data, file_path):
-    """Pickles data in an atomic way by first creating a temporary file and then moving to the file_path."""
-    with tempfile.NamedTemporaryFile(
+__all__ = ['serializer']
+
+class _Proxy:
+    """A simple proxy type"""
+    def __init__(self, initval=None):
+        self.val = initval
+        
+    def set(self, val):
+        self.val = val
+
+    def __getattr__(self, key):
+        return getattr(self.val, key)
+
+serializer = _Proxy(json)
+
+def _check_binary():
+    return serializer.__name__ in ['pickle', 'msgpack']
+
+def save_result(result, file_path):
+    """Pickles result in an atomic way by first creating a temporary file and then moving to the file_path."""
+    with contextlib.suppress(FileNotFoundError), tempfile.NamedTemporaryFile(
         dir=os.path.dirname(os.path.abspath(file_path)),
         delete=False,
-        mode='wb'
+        mode='wb' if _check_binary() else 'w'
     ) as f:
-        #~ msgpack.dump(data, f, default=_encoding.encode)
-        pickle.dump(data, f)
-        os.replace(f.name, file_path)
+        try:
+            try:
+                serializer.dump(result, f, default=_encoding.encode)
+            except TypeError:
+                serializer.dump(result, f)
+            os.replace(f.name, file_path)
+        except FileNotFoundError as e:
+            raise IOError from e
 
 @export
 def load_result(path):
-    with open(path, 'rb') as f:
-        #~ return msgpack.load(f, object_hook=_encoding.decode)
-        return pickle.load(f)
+    with open(path, 'rb' if _check_binary() else 'r') as f:
+        try:
+            return serializer.load(f, object_hook=_encoding.decode)
+        except TypeError:
+            return serializer.load(f)

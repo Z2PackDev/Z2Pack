@@ -43,18 +43,23 @@ def save_result(result, file_path):
         mode='wb' if _check_binary() else 'w'
     ) as f:
         try:
+            # First try msgpack / json interface
             try:
                 serializer.dump(result, f, default=_encoding.encode)
+            # then try pickle interface
             except TypeError:
                 serializer.dump(result, f)
             os.replace(f.name, file_path)
+        # make sure a FileNotFoundError raised here still makes it to the outside.
         except FileNotFoundError as e:
             raise IOError from e
 
 @export
 def load_result(path):
     with open(path, 'rb' if _check_binary() else 'r') as f:
+        # First try msgpack / json interface
         try:
             return serializer.load(f, object_hook=_encoding.decode)
+        # then try pickle interface
         except TypeError:
             return serializer.load(f)

@@ -143,9 +143,9 @@ def decode_complex(obj):
 
 @decode.register(dict)
 def _(obj):
+    with contextlib.suppress(AttributeError):
+        obj = {k.decode('utf-8'): v for k, v in obj.items()}
     special_markers = [key for key in obj.keys() if key.startswith('__')]
-    print(special_markers)
-    print(obj)
     if len(special_markers) == 1:
         name = special_markers[0].strip('__')
         return globals()['decode_' + name](obj)

@@ -120,7 +120,7 @@ def _run_line_impl(
                 d_ctrl.update(init_result.data)
         for s_ctrl in stateful_ctrl:
             with contextlib.suppress(KeyError):
-                s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__]
+                s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__.__name__]
         result = LineResult(init_result.data, stateful_ctrl, convergence_ctrl)
         save()
 

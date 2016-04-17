@@ -8,7 +8,8 @@
 """Coding tools, not related to the 'physical/computation logic' of Z2Pack."""
 
 import os
-import json
+#~ import msgpack
+import pickle
 import tempfile
 
 from fsc.export import export
@@ -20,12 +21,14 @@ def _atomic_save(data, file_path):
     with tempfile.NamedTemporaryFile(
         dir=os.path.dirname(os.path.abspath(file_path)),
         delete=False,
-        mode='w'
+        mode='wb'
     ) as f:
-        json.dump(data, f, default=_encoding.encode)
+        #~ msgpack.dump(data, f, default=_encoding.encode)
+        pickle.dump(data, f)
         os.replace(f.name, file_path)
 
 @export
 def load_result(path):
-    with open(path, 'r') as f:
-        return json.load(f, object_hook=_encoding.decode)
+    with open(path, 'rb') as f:
+        #~ return msgpack.load(f, object_hook=_encoding.decode)
+        return pickle.load(f)

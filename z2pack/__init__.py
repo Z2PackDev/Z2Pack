@@ -19,6 +19,7 @@ from . import shapes
 
 from . import fp
 from . import em
+from . import tb
 
 from . import _logging_format # sets default logging levels / format
 

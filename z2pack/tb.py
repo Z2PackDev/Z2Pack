@@ -20,5 +20,5 @@ class System(_EmSystem):
         super(System, self).__init__(
             hamilton=tb_model.hamilton,
             pos=copy.deepcopy(tb_model.pos),
-            occ=tb_model.occ,
+            bands=tb_model.occ,
         )

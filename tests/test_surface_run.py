@@ -92,6 +92,15 @@ def test_restart(simple_system, simple_surface):
     result2 = z2pack.surface.run(system=simple_system, surface=simple_surface, init_result=result1)
     assert_res_equal(result1, result2)
 
+# test that restart doesn't recalculate
+def test_restart_nocalc(simple_system, simple_surface):
+    class Mock:
+        def get_eig(self, *args, **kwargs):
+            raise ValueError('This restart should not re-compute anything!')
+    result1 = z2pack.surface.run(system=simple_system, surface=simple_surface)
+    result2 = z2pack.surface.run(system=Mock(), surface=simple_surface, init_result=result1)
+    assert_res_equal(result1, result2)
+
 # test restart with smaller precision
 def test_restart_2(weyl_system, weyl_surface):
     result1 = z2pack.surface.run(system=weyl_system, surface=weyl_surface)

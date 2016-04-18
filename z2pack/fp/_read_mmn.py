@@ -57,6 +57,6 @@ def get_m(mmn_file):
     except IOError as err:
         msg = str(err)
         msg += '. Check that the path of the .mmn file is correct (mmn_path input variable). If that is the case, an error occured during the call to the first-principles code and Wannier90. Check the corresponding log/error files.'
-        raise IOError(msg) from err
+        raise type(err)((msg)) from err
 
     return M

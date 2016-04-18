@@ -90,13 +90,13 @@ class DefaultFormatter(logging.Formatter):
                 msg += '\n' + 'starting at {}'.format(self.formatTime(record))
                 msg += '\nrunning Z2Pack version {}\n\n'.format(__version__)
 
-                dist = max(len(key) for key in kwargs.keys()) + 5
+                dist = max(len(key) for key in kwargs.keys()) + 2
                 format_string = '{:<' + str(dist) + '}{}'
                 for key, value in sorted(kwargs.items()):
                     val_str = str(value)
                     max_width = 70 - dist
                     if len(val_str) > max_width:
-                        val_str = shorten(val_str, max_width)
+                        val_str = shorten(val_str, max_width, show_number=False)
                     msg += format_string.format(key + ':', val_str)
                     msg += '\n'
                 msg = msg[:-1]

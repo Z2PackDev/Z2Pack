@@ -93,9 +93,9 @@ class EigenstateLineData(OverlapLineData):
         
         M = []
 
-        for i in range(len(self.eigenstates) - 1):
+        for eig1, eig2 in zip(self.eigenstates, self.eigenstates[1:]):
             M.append(np.dot(
-                np.conjugate(self.eigenstates[i]),
-                np.array(self.eigenstates[i + 1]).T
+                np.conjugate(eig1),
+                np.array(eig2).T
             ))
         return M

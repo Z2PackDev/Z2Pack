@@ -170,7 +170,7 @@ def chern(
     pol = surface_result.pol
     pol_step = _pol_step(pol)
     for offset in [-1, 0, 1]:
-        for i in range(len(pol) - 1):
-            axis.plot(t_list[i:i+2], [pol[i] + offset, pol[i] + pol_step[i] + offset], **settings)
-        for i in range(len(pol) - 1):
-            axis.plot(t_list[i:i+2], [pol[i + 1] - pol_step[i] + offset, pol[i + 1] + offset], **settings)
+        for t, p, p_step in zip(zip(t_list, t_list[1:]), pol, pol_step):
+            axis.plot(t, [p + offset, p + p_step + offset], **settings)
+        for t, p, p_step in zip(zip(t_list, t_list[1:]), pol[1:], pol_step):
+            axis.plot(t, [p - p_step + offset, p + offset], **settings)

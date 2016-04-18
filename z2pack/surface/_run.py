@@ -254,10 +254,13 @@ def _run_surface_impl(
     conv = collect_convergence()
     while not all(conv):
         # add lines for all non-converged values
-        for i in range(len(conv)):
-            if not conv[i]:
-                new_t = (data.t[i] + data.t[i + 1]) / 2
-                result = add_line(new_t)
+        new_t = [
+            (t1 + t2) / 2
+            for (t1, t2), c in zip(zip(data.t, data.t[1:]), conv)
+            if not c
+        ]
+        for t in new_t:
+            result = add_line(t)
 
         # check if new lines appeared
         N_new = len(data.lines)

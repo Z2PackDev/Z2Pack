@@ -36,23 +36,17 @@ def _check_binary():
 
 def save_result(result, file_path):
     """Pickles result in an atomic way by first creating a temporary file and then moving to the file_path."""
-    # This "hack" is to force deletion of the file when the os.replace fails, without failing with a FileNotFoundError when it doesn't.
-    with contextlib.suppress(FileNotFoundError), tempfile.NamedTemporaryFile(
-        dir=os.path.dirname(os.path.abspath(file_path)),
+    with tempfile.NamedTemporaryFile(
         delete=False,
         mode='wb' if _check_binary() else 'w'
     ) as f:
+        # First try msgpack / json interface
         try:
-            # First try msgpack / json interface
-            try:
-                serializer.dump(result, f, default=_encoding.encode)
-            # then try pickle interface
-            except TypeError:
-                serializer.dump(result, f)
-            os.replace(f.name, file_path)
-        # make sure a FileNotFoundError raised here still makes it to the outside.
-        except FileNotFoundError as e:
-            raise IOError from e
+            serializer.dump(result, f, default=_encoding.encode)
+        # then try pickle interface
+        except TypeError:
+            serializer.dump(result, f)
+        os.replace(f.name, file_path)
 
 @export
 def load_result(path):

@@ -37,6 +37,7 @@ def _check_binary():
 def save_result(result, file_path):
     """Pickles result in an atomic way by first creating a temporary file and then moving to the file_path."""
     with tempfile.NamedTemporaryFile(
+        dir=os.path.dirname(os.path.abspath(file_path)),
         delete=False,
         mode='wb' if _check_binary() else 'w'
     ) as f:
@@ -46,7 +47,8 @@ def save_result(result, file_path):
         # then try pickle interface
         except TypeError:
             serializer.dump(result, f)
-        os.replace(f.name, file_path)
+        finally:
+            os.replace(f.name, file_path)
 
 @export
 def load_result(path):

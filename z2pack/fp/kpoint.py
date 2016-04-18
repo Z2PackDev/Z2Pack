@@ -11,6 +11,7 @@ first-principles codes.
 All functions have the same calling structure as :func:`prototype`.
 """
 
+import decorator
 import numpy as np
 
 def prototype(kpt):
@@ -23,7 +24,15 @@ def prototype(kpt):
     """
     raise NotImplementedError('This is only the prototype for kpts')
 
+@decorator.decorator
+def _check_dim(fct, kpt):
+    """Checks if all k-points are three-dimensional."""
+    for k in kpt:
+        if len(k) != 3:
+            raise ValueError('Dimension of point k = {} != 3'.format(k))
+    return fct(kpt)
 
+@_check_dim
 def abinit(kpt):
     """
     Creates a k-point input for **ABINIT**. It uses ``kptopt -1`` and specifies the k-points string using ``ndivk`` and ``kptbounds``.
@@ -33,9 +42,6 @@ def abinit(kpt):
     end_point = kpt[-1]
     last_point = kpt[-2]
     N = len(kpt) - 1
-    for point in kpt:
-        if len(point) != 3:
-            raise ValueError('dimension of point != 3')
 
     string = "\nkptopt -1\nndivk " + str(int(N - 1)) + '\nkptbounds '
     for coord in start_point:
@@ -46,7 +52,7 @@ def abinit(kpt):
     string += '\n'
     return string
 
-
+@_check_dim
 def qe(kpt):
     """
     Creates a k-point input for  **Quantum Espresso**.
@@ -55,9 +61,6 @@ def qe(kpt):
     end_point = kpt[-1]
     last_point = kpt[-2]
     N = len(kpt) - 1
-    for point in kpt:
-        if len(point) != 3:
-            raise ValueError('dimension of point != 3')
 
     string = "\nK_POINTS crystal_b\n 2 \n"
     for coord in start_point:
@@ -67,15 +70,27 @@ def qe(kpt):
         string += str(coord).replace('e', 'd') + ' '
     string += str(1)+'\n'
     return string
+    
+@_check_dim
+def qe_explicit(kpt):
+    """
+    Creates a k-point input for **Quantum Espresso**, by explicitly specifying the k-points.
+    """
+    N = len(kpt) - 1
 
+    string = "\nK_POINTS crystal\n {} \n".format(N)
+
+    kpt_str = ((str(coord).replace('e', 'd') for coord in k) for k in kpt)
+
+    for k in kpt_str:
+        string += '{} {} {} 1\n'.format(*k)
+    return string
+
+@_check_dim
 def wannier90(kpt):
     """
     Creates a k-point input for **Wannier90**. It can be useful when the first-principles code does not generate the k-points in ``wannier90.win`` (e.g. with Quantum Espresso).
     """
-    for point in kpt:
-        if len(point) != 3:
-            raise ValueError('dimension of point k = {} != 3'.format(point))
-
     N = len(kpt) - 1
     string = "mp_grid: " + str(int(N)) + " 1 1 \nbegin kpoints"
     for k in kpt[:-1]:
@@ -85,15 +100,11 @@ def wannier90(kpt):
     string += '\nend kpoints\n'
     return string
 
+@_check_dim
 def vasp(kpt):
     """
     Creates a k-point input for  **VASP**. It uses the automatic generation scheme with a Gamma centered grid. Note that VASP does **not** support any kind of k-point line **unless** they are exactly along one of the reciprocal lattice vectors, and the k-points are evenly spaced.
     """
-    
-    for point in kpt:
-        if len(point) != 3:
-            raise ValueError('dimension of point != 3')
-
     # VALIDITY CHECKS
     # check if the points are equally-spaced
     delta = _check_equal_spacing(kpt, 'VASP')
@@ -125,7 +136,7 @@ def vasp(kpt):
         string += str(coord).replace('e', 'd') + ' '
     string += '         ! shift\n'
     return string
-
+    
 def _check_equal_spacing(kpt, run_type):
     """Checks if the k-points are equally spaced, and throws an error if not. run_type is added in the error message."""
     deltas = [(k2 - k1) % 1 for k2, k1 in zip(kpt[1:], kpt[:-1])]

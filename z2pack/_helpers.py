@@ -8,7 +8,7 @@
 """Coding tools, not related to the 'physical/computation logic' of Z2Pack."""
 
 import os
-import json
+import msgpack
 import tempfile
 import contextlib
 
@@ -29,7 +29,7 @@ class _Proxy:
     def __getattr__(self, key):
         return getattr(self.val, key)
 
-serializer = _Proxy(json)
+serializer = _Proxy(msgpack)
 
 def _check_binary():
     return serializer.__name__ in ['pickle', 'msgpack']

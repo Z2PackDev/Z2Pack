@@ -53,7 +53,6 @@ setup(
     license='GPL',
     packages=[
         'z2pack',
-        'z2pack._ptools',
         'z2pack.fp'
     ]
 )

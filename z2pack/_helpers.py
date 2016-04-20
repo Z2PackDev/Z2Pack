@@ -34,6 +34,7 @@ serializer = _Proxy(msgpack)
 def _check_binary():
     return serializer.__name__ in ['pickle', 'msgpack']
 
+@export
 def save_result(result, file_path):
     """Pickles result in an atomic way by first creating a temporary file and then moving to the file_path."""
     with tempfile.NamedTemporaryFile(

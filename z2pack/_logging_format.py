@@ -10,9 +10,8 @@ import time
 import logging
 
 import blessings
-from fsc.formatting import shorten
+from fsc.formatting import shorten, to_box
 
-from ._ptools.string_tools import cbox
 from ._version import __version__
 
 def _make_title(title, delimiter, overline=False, modifier=None):
@@ -115,7 +114,7 @@ class DefaultFormatter(logging.Formatter):
                 msg = _offset(msg, 6)
 
             if 'box' in record.tags:
-                msg = cbox(msg)
+                msg = to_box(msg)
             else:
                 msg = '{}: {}'.format(record.levelname, msg)
                 if record.levelno > 25:

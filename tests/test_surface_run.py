@@ -138,3 +138,12 @@ def test_load_inconsistent(simple_system, simple_surface):
 def test_load_no_filename(simple_system, simple_surface, serializer):
     with pytest.raises(ValueError):
         result = z2pack.surface.run(system=simple_system, surface=simple_surface, load=True)
+
+def test_load_reference(simple_system, simple_surface, serializer):
+    path = 'reference_results/result.' + serializer
+    result = z2pack.surface.run(system=simple_system, surface=simple_surface)
+    if not os.path.isfile(path):
+        z2pack.save_result(result, path)
+        raise ValueError('File {} did not exist!'.format(path))
+    else:
+        assert_res_equal(result, z2pack.load_result(path))

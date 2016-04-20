@@ -16,7 +16,6 @@ prune doc
 prune z2pack/_ptools
 prune futures
 include z2pack/_ptools/__init__.py
-include z2pack/_ptools/string_tools.py
 include z2pack/_ptools/export_decorator.py
 
 # installation related

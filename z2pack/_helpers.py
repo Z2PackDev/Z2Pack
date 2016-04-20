@@ -46,7 +46,7 @@ def save_result(result, file_path):
             serializer.dump(result, f, default=_encoding.encode)
         # then try pickle interface
         except TypeError:
-            serializer.dump(result, f)
+            serializer.dump(result, f, protocol=4)
         finally:
             os.replace(f.name, file_path)
 

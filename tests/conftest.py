@@ -10,6 +10,7 @@ import json
 import pytest
 import pickle
 import logging
+import operator
 
 from ctrl_base_tester import test_ctrl_base
 
@@ -61,4 +62,4 @@ def compare_data(request, test_name, scope="session"):
 
 @pytest.fixture
 def compare_equal(compare_data):
-    return lambda data, tag=None: compare_data(lambda x, y: x == y, data, tag)
+    return lambda data, tag=None: compare_data(operator.eq, data, tag)

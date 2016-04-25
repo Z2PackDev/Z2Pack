@@ -27,7 +27,7 @@ The Wannier charge centers are computed from overlap matrices that are obtained 
 
 with open('./z2pack/_version.py', 'r') as f:
     match_expr = "__version__[^'" + '"]+([' + "'" + r'"])([^\1]+)\1'
-    version = re.search(match_expr, f.read()).group(2)
+    version = re.search(match_expr, f.read()).group(2).strip()
 
 setup(
     name='z2pack',

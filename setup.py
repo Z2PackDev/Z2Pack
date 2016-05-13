@@ -53,6 +53,8 @@ setup(
     license='GPL',
     packages=[
         'z2pack',
-        'z2pack.fp'
+        'z2pack.fp',
+        'z2pack.surface',
+        'z2pack.line'
     ]
 )

@@ -59,20 +59,21 @@ class System(OverlapSystem):
             executable=None,
             build_folder='build',
             file_names='copy',
-            mmn_path='wannier90.mmn',
-            clean_build=True
+            mmn_path='wannier90.mmn'
     ):
         # convert to lists (input_files)
         if not isinstance(input_files, str):
             self._input_files = list(input_files)
         else:
             self._input_files = [input_files]
+        self._build_folder = os.path.abspath(build_folder)
 
         # copy to file_names and split off the name
         if file_names == 'copy':
             self._file_names = [os.path.basename(filename) for filename in self._input_files]
         else:
             self._file_names = file_names
+        self._file_names = self._to_abspath(self._file_names)
 
         # kpt_fct
         if isinstance(kpt_fct, collections.abc.Callable):
@@ -90,6 +91,7 @@ class System(OverlapSystem):
             self._kpt_path = [kpt_path]
         else:
             self._kpt_path = kpt_path
+        self._kpt_path = self._to_abspath(self._kpt_path)
 
         # check whether to append k-points or write separate file
         self._k_mode = ['a' if path in self._file_names else 'w' for path in self._kpt_path]
@@ -101,51 +103,28 @@ class System(OverlapSystem):
                     len(self._kpt_path), len(self._kpt_fct)
                 )
             )
-        self._mmn_path = mmn_path
-        self._clean_build = clean_build
+        self._mmn_path = self._to_abspath(mmn_path)
 
         self._calling_path = os.getcwd()
 
-        # working folder given as string
-        if isinstance(build_folder, str):
-            self._build_folder = build_folder
-            self._create_build_folder()
-        # working folder given as a function of counter
-        else:
-            self._counter = 0
-            self._build_folder_fct = build_folder
 
-    def _create_build_folder(self):
-        # check all paths: absolute / relative?
-        # absolute
-        self._build_folder = os.path.abspath(self._build_folder)
-        # make file_names absolute (assumed to be relative to build_folder)
-        self._file_names_abs = []
-        for filename in self._file_names:
-            self._file_names_abs.append(self._build_folder + '/' + filename)
-
-        self._kpt_path_abs = []
-        for path in self._kpt_path:
-            self._kpt_path_abs.append(self._build_folder + '/' + path)
-        self._mmn_path_abs = self._build_folder + '/' + self._mmn_path
-
-        # create working folder if it doesn't exist
-        if not os.path.isdir(self._build_folder):
-            os.mkdir(self._build_folder)
+            
+    def _to_abspath(self, path):
+        """
+        Returns a list of absolute paths from a list of paths relative to the build folder, or a single absolute path from a single relative path.
+        """
+        if isinstance(path, str):
+            return os.path.join(self._build_folder, path)
+        return [self._to_abspath(p) for p in path]
+    
 
     def _create_input(self, kpt):
-        with contextlib.suppress(AttributeError, NameError):
-            self._counter += 1
-            self._create_build_folder(
-                self._build_folder_fct(self._counter))
-
-        if self._clean_build:
+        with contextlib.suppress(FileNotFoundError):
             shutil.rmtree(self._build_folder)
-            os.mkdir(self._build_folder)
-        _copy(self._input_files, self._file_names_abs)
+        os.mkdir(self._build_folder)
+        _copy(self._input_files, self._file_names)
 
-
-        for i, (k_mode, f_path) in enumerate(zip(self._k_mode, self._kpt_path_abs)):
+        for i, (k_mode, f_path) in enumerate(zip(self._k_mode, self._kpt_path)):
             with open(f_path, k_mode) as f:
                 f.write(self._kpt_fct[i](kpt))
 
@@ -169,7 +148,7 @@ class System(OverlapSystem):
                 shell=True)
 
         # read mmn file
-        M = mmn.get_m(self._mmn_path_abs)
+        M = mmn.get_m(self._mmn_path)
         if len(M) == 0:
             raise ValueError('No overlap matrices were found. Maybe switch from shell_list to search_shells in wannier90.win or add more k-points to the string.')
         if len(M) != N:

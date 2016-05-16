@@ -61,12 +61,31 @@ def test_bismuth(qe_system, compare_wcc, surface_fct):
         system=system,
         surface=surface_fct,
         num_strings=4,
+        save_file=os.path.join(build_dir, 'result'),
         pos_tol=None,
         gap_tol=None,
         move_tol=None
     )
     compare_wcc(result.wcc)
+    res2 = z2pack.load_result(os.path.join(build_dir, 'result'))
+    assert np.isclose(result.wcc, res2.wcc).all()
     shutil.rmtree(build_dir)
+    
+#~ def test_reload(qe_system, compare_wcc):
+    #~ surface_fct = lambda s, t: [0, s, t]
+    #~ # don't want to remove it if the test failed
+    #~ build_dir = tempfile.mkdtemp()
+    #~ system = qe_system(build_dir)
+    #~ result = z2pack.surface.run(
+        #~ system=system,
+        #~ surface=surface_fct,
+        #~ num_strings=2,
+        #~ pos_tol=None,
+        #~ gap_tol=None,
+        #~ move_tol=None
+    #~ )
+    #~ shutil.rmtree(build_dir)
+
 
 def test_restart_broken(qe_system):
     surface_fct = lambda s, t: [0, s, t]

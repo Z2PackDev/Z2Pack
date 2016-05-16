@@ -132,7 +132,7 @@ def decode_line_result(obj):
     return res
 
 def decode_overlap_line_data(obj):
-    return EigenstateLineData(obj['overlaps'])
+    return OverlapLineData(obj['overlaps'])
 
 def decode_eigenstate_line_data(obj):
     return EigenstateLineData(obj['eigenstates'])

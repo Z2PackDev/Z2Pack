@@ -44,9 +44,6 @@ class System(OverlapSystem):
     :param mmn_path:    Path to the ``.mmn`` output file of ``Wannier90``
     :type mmn_path:     str
 
-    :param clean_build: Toggles deleting the content of `build_folder`` before starting a new calculation.
-    :type clean_build:  bool
-
     .. note:: ``input_files`` and ``build_folder`` can be absolute or relative paths, the rest is relative to ``build_folder``
     """
     def __init__(

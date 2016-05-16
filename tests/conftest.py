@@ -11,6 +11,7 @@ import pytest
 import pickle
 import logging
 import operator
+from collections.abc import Iterable
 
 from ctrl_base_tester import test_ctrl_base
 
@@ -67,8 +68,12 @@ def compare_equal(compare_data):
 
 @pytest.fixture
 def compare_wcc(compare_data):
-    return lambda data, tag=None: compare_data(
-        lambda x, y: _get_max_move(x, y) < 1e-8, 
-        data, 
-        tag
-    )
+    """Checks whether two lists of WCC (or nested lists of WCC) are almost equal, up to a periodic shift."""
+    def check_wcc(wcc0, wcc1):
+        if isinstance(wcc0[0], Iterable):
+            if len(wcc0) != len(wcc1):
+                return False
+            return all(check_wcc(x, y) for x, y in zip(wcc0, wcc1))
+        return _get_max_move(wcc0, wcc1) < 1e-8
+    
+    return lambda data, tag=None: compare_data(check_wcc, data, tag)

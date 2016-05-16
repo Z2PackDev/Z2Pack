@@ -51,7 +51,7 @@ surface_fcts = [
 
 @pytest.mark.qe
 @pytest.mark.parametrize('surface_fct', surface_fcts)
-def test_bismuth(qe_system, compare_data, surface_fct):
+def test_bismuth(qe_system, compare_wcc, surface_fct):
     # don't want to remove it if the test failed
     build_dir = tempfile.mkdtemp()
     system = qe_system(build_dir)

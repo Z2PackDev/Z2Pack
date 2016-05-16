@@ -33,7 +33,7 @@ surface_fcts = [
 
 @pytest.mark.vasp
 @pytest.mark.parametrize('surface_fct', surface_fcts)
-def test_bismuth(vasp_system, compare_data, surface_fct):
+def test_bismuth(vasp_system, compare_wcc, surface_fct):
     # don't want to remove it if the test failed
     build_dir = tempfile.mkdtemp()
     system = vasp_system(build_dir)

@@ -5,8 +5,10 @@
 # Date:    24.03.2016 15:26:43 CET
 # File:    test_espresso.py
 
+import os
 import shutil
 import tempfile
+import subprocess
 
 import pytest
 import numpy as np
@@ -64,4 +66,33 @@ def test_bismuth(qe_system, compare_wcc, surface_fct):
         move_tol=None
     )
     compare_wcc(result.wcc)
+    shutil.rmtree(build_dir)
+
+def test_restart_broken(qe_system):
+    surface_fct = lambda s, t: [0, s, t]
+    build_dir = tempfile.mkdtemp()
+    system = qe_system(build_dir)
+    result = z2pack.surface.run(
+        system=system,
+        surface=surface_fct,
+        num_strings=3,
+        save_file=os.path.join(build_dir, 'result'),
+        load=True,
+        pos_tol=None,
+        gap_tol=None,
+        move_tol=None
+    )
+    # breaking the system
+    system._executable = 'echo foo'
+    with pytest.raises(FileNotFoundError):
+        result = z2pack.surface.run(
+            system=system,
+            surface=surface_fct,
+            num_strings=5,
+            save_file=os.path.join(build_dir, 'result'),
+            load=True,
+            pos_tol=None,
+            gap_tol=None,
+            move_tol=None
+        )
     shutil.rmtree(build_dir)

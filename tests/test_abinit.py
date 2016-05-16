@@ -5,6 +5,7 @@
 # Date:    24.03.2016 16:00:14 CET
 # File:    test_abinit.py
 
+import shutil
 import tempfile
 
 import pytest
@@ -24,7 +25,7 @@ def abinit_system():
             kpt_path="Bi_nscf.in",
             command="mpirun -np 4 abinit < Bi_nscf.files >& log",
             executable='/bin/bash',
-            build_folder=build_dir
+            build_folder=build_dir + '/build'
         )
     return inner
 
@@ -36,14 +37,16 @@ surface_fcts = [
 @pytest.mark.abinit
 @pytest.mark.parametrize('surface_fct', surface_fcts)
 def test_bismuth(abinit_system, compare_data, surface_fct):
-    with tempfile.TemporaryDirectory() as build_dir:
-        system = abinit_system(build_dir)
-        result = z2pack.surface.run(
-            system=system,
-            surface=surface_fct,
-            num_strings=4,
-            pos_tol=None,
-            gap_tol=None,
-            move_tol=None
-        )
+    # don't want to remove it if the test failed
+    build_dir = tempfile.mkdtemp()
+    system = abinit_system(build_dir)
+    result = z2pack.surface.run(
+        system=system,
+        surface=surface_fct,
+        num_strings=4,
+        pos_tol=None,
+        gap_tol=None,
+        move_tol=None
+    )
     compare_data(lambda l1, l2: all(np.isclose(l1, l2).flatten()), result.wcc)
+    shutil.rmtree(build_dir)

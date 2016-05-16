@@ -5,6 +5,7 @@
 # Date:    24.03.2016 16:00:48 CET
 # File:    vasp.py
 
+import shutil
 import tempfile
 
 import pytest
@@ -33,14 +34,16 @@ surface_fcts = [
 @pytest.mark.vasp
 @pytest.mark.parametrize('surface_fct', surface_fcts)
 def test_bismuth(vasp_system, compare_data, surface_fct):
-    with tempfile.TemporaryDirectory() as build_dir:
-        system = vasp_system(build_dir)
-        result = z2pack.surface.run(
-            system=system,
-            surface=surface_fct,
-            num_strings=4,
-            pos_tol=None,
-            gap_tol=None,
-            move_tol=None
-        )
-    compare_data(lambda l1, l2: all(np.isclose(l1, l2).flatten()), result.wcc)
+    # don't want to remove it if the test failed
+    build_dir = tempfile.mkdtemp()
+    system = vasp_system(build_dir)
+    result = z2pack.surface.run(
+        system=system,
+        surface=surface_fct,
+        num_strings=4,
+        pos_tol=None,
+        gap_tol=None,
+        move_tol=None
+    )
+    compare_wcc(result.wcc)
+    shutil.rmtree(build_dir)

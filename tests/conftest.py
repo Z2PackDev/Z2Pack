@@ -16,6 +16,7 @@ from ctrl_base_tester import test_ctrl_base
 
 import z2pack
 logging.getLogger('z2pack').setLevel(logging.CRITICAL)
+from z2pack._utils import _get_max_move
 
 def pytest_addoption(parser):
     parser.addoption('-A', action='store_true', help='run ABINIT tests')
@@ -63,3 +64,11 @@ def compare_data(request, test_name, scope="session"):
 @pytest.fixture
 def compare_equal(compare_data):
     return lambda data, tag=None: compare_data(operator.eq, data, tag)
+
+@pytest.fixture
+def compare_wcc(compare_data):
+    return lambda data, tag=None: compare_data(
+        lambda x, y: _get_max_move(x, y) < 1e-8, 
+        data, 
+        tag
+    )

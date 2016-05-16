@@ -63,5 +63,5 @@ def test_bismuth(qe_system, compare_data, surface_fct):
         gap_tol=None,
         move_tol=None
     )
-    compare_data(lambda l1, l2: all(np.isclose(l1, l2).flatten()), result.wcc)
+    compare_wcc(result.wcc)
     shutil.rmtree(build_dir)

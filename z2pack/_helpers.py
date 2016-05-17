@@ -36,7 +36,7 @@ def _check_binary():
 
 @export
 def save_result(result, file_path):
-    """Pickles result in an atomic way by first creating a temporary file and then moving to the file_path."""
+    """Saves result in an atomic way by first creating a temporary file and then moving to the file_path."""
     with tempfile.NamedTemporaryFile(
         dir=os.path.dirname(os.path.abspath(file_path)),
         delete=False,

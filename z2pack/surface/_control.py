@@ -29,10 +29,9 @@ class MoveCheck(DataControl, ConvergenceControl, SurfaceControl):
         return self._converged
 
     def update(self, data):
-        wcc_list = data.lines
         self._converged = [
             _get_max_move(l1.wcc, l2.wcc) < self.move_tol * min(l1.gap_size, l2.gap_size)
-            for l1, l2 in zip(wcc_list[:-1], wcc_list[1:])
+            for l1, l2 in zip(data.lines[:-1], data.lines[1:])
         ]
 
 @export
@@ -46,16 +45,8 @@ class GapCheck(DataControl, ConvergenceControl, SurfaceControl):
         return self._converged
 
     def update(self, data):
-        if len(data.lines) > 1:
-            wcc_list = data.wcc
-            gap_list = data.gap_pos
-            gap_size_list = data.gap_size
-            def get_convergence(wccs, gaps, gap_sizes):
-                return [
-                all(abs(wcc_val - gap) > self.gap_tol * gap_size for wcc_val in wcc)
-                for wcc, gap, gap_size in zip(wccs, gaps, gap_sizes)
-                ]
-            gap_size_list = [min(x1, x2) for x1, x2 in zip(gap_size_list, gap_size_list[1:])]
-            converged_left = get_convergence(wcc_list[1:], gap_list[:-1], gap_size_list)
-            converged_right = get_convergence(wcc_list[:-1], gap_list[1:], gap_size_list)
-            self._converged = list(np.array(converged_left) & np.array(converged_right))
+        self._converged = [
+            all(abs(w2 - l1.gap_pos) > self.gap_tol * l1.gap_size for w2 in l2.wcc) and
+            all(abs(w1 - l2.gap_pos) > self.gap_tol * l2.gap_size for w1 in l1.wcc)
+            for l1, l2 in zip(data.lines, data.lines[1:])
+        ]

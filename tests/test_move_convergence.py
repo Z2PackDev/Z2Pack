@@ -25,7 +25,6 @@ def move_tol(request):
 def test_single_update(move_tol, patch_max_move, patch_surface_data):
     mc = MoveCheck(move_tol=move_tol)
     vals = [0.1, 0.2, 0.3, 0.4]
-    #~ mc.update(TrivialSurfaceData(vals))
     mc.update(SurfaceData([[v] for v in vals]))
     conv = [min(v1, v2) < move_tol for v1, v2 in zip(vals[:-1], vals[1:])]
     assert mc.converged == conv

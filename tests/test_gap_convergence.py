@@ -42,10 +42,16 @@ def test_mixed_1(gap_tol, patch_surface_data):
     mc = GapCheck(gap_tol=gap_tol)
     data = SurfaceData([[0, 1], [0, 0.8]])
     mc.update(data)
-    assert mc.converged == [gap_tol * 0.8 < 0.3]
+    assert mc.converged == [gap_tol < 0.3]
 
 def test_mixed_2(gap_tol, patch_surface_data):
     mc = GapCheck(gap_tol=gap_tol)
     data = SurfaceData([[0, 0.8], [0, 1]])
     mc.update(data)
-    assert mc.converged == [gap_tol * 0.8 < 0.3]
+    assert mc.converged == [gap_tol < 0.3]
+    
+def test_mixed_3(gap_tol, patch_surface_data):
+    mc = GapCheck(gap_tol=gap_tol)
+    data = SurfaceData([[0, 0.8], [0, 0.2]])
+    mc.update(data)
+    assert mc.converged == [gap_tol * 0.8 < 0.2]

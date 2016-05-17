@@ -47,19 +47,3 @@ class AsyncHandler:
         if self.handler is not None:
             self.write_obj = Sentinel(self.write_obj)
             self.thread.join()
-
-def async_handler(handler):
-    def outer(func):
-        def inner(*args, **kwargs):
-            with AsyncHandler(handler):
-                return func(*args, **kwargs)
-        return inner
-    return outer
-    
-
-
-#~ with AsyncHandler(print) as f:
-    #~ time.sleep(0.5)
-    #~ for x in range(100001):
-        #~ time.sleep(0.00001)
-        #~ f.send(x)

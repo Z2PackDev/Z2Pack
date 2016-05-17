@@ -179,7 +179,9 @@ def _run_surface_impl(
 
     # setting up async handler
     if save_file is not None:
-        handler = lambda res: _helpers.save_result(res, save_file)
+        def handler(res):
+            _logger.info('Saving surface result to file {}'.format(save_file))
+            _helpers.save_result(res, save_file)
     else:
         handler = None
     with AsyncHandler(handler) as save_thread:
@@ -212,13 +214,8 @@ def _run_surface_impl(
                 d_ctrl.update(data)
 
             result = SurfaceResult(data, stateful_ctrl, convergence_ctrl)
+            save_thread.send(copy.deepcopy(result))
 
-            # save to file
-            if save_file is not None:
-                _logger.info('Saving surface result to file {}'.format(save_file))
-                save_thread.send(copy.deepcopy(result))
-                #~ _helpers.save_result(result, save_file)
-                #~ _helpers.save_result(result, save_file)
             return result
 
         def collect_convergence():

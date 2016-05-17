@@ -31,7 +31,7 @@ class MoveCheck(DataControl, ConvergenceControl, SurfaceControl):
     def update(self, data):
         wcc_list = data.wcc
         self._converged = [
-            _get_max_move(l1, l2) < self.move_tol
+            _get_max_move(l1, l2) < self.move_tol * min(l1.gap_size, l2.gap_size)
             for l1, l2 in zip(wcc_list[:-1], wcc_list[1:])
         ]
 

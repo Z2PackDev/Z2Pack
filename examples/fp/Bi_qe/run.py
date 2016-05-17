@@ -5,13 +5,14 @@
 # Date:    26.04.2015 20:26:10 CEST
 # File:    run.py
 
-import z2pack
-
 import os
 import shutil
 import subprocess
+
 import matplotlib.pyplot as plt
 import xml.etree.ElementTree as ET
+
+import z2pack
 
 # Edit the paths to your Quantum Espresso and Wannier90 here
 qedir = '/home/greschd/software/espresso-5.1.2/bin/'

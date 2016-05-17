@@ -39,7 +39,7 @@ def run_surface(
         system,
         surface,
         pos_tol=1e-2,
-        gap_tol=2e-2,
+        gap_tol=0.3,
         move_tol=0.3,
         iterator=range(8, 27, 2),
         min_neighbour_dist=0.01,

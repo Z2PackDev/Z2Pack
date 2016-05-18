@@ -180,7 +180,7 @@ def _run_surface_impl(
     # setting up async handler
     if save_file is not None:
         def handler(res):
-            _logger.info('Saving surface result to file {}'.format(save_file))
+            _logger.info('Saving surface result to file {} (ASYNC)'.format(save_file))
             _helpers.save_result(res, save_file)
     else:
         handler = None

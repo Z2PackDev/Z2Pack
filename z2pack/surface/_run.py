@@ -245,6 +245,7 @@ def _run_surface_impl(
             # re-run lines with existing result as input
             _logger.info('Re-running existing lines.')
             for line in data.lines:
+                _logger.info('Re-running line for t = {}'.format(line.t))
                 line.result = get_line(line.t, line.result)
                 update_result()
 
@@ -277,7 +278,7 @@ def _run_surface_impl(
             N = N_new
             conv = collect_convergence()
 
-        end_time = time.time()
-        _logger.info(end_time - start_time, tags=('box', 'skip-before', 'timing'))
-        _logger.info(result.convergence_report, tags=('box', 'convergence_report', 'skip'))
-        return result
+    end_time = time.time()
+    _logger.info(end_time - start_time, tags=('box', 'skip-before', 'timing'))
+    _logger.info(result.convergence_report, tags=('box', 'convergence_report', 'skip'))
+    return result

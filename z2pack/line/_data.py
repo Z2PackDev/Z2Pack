@@ -31,15 +31,15 @@ class _LazyProperty:
 class OverlapLineData(metaclass=ConstLocker):
     """Data for a line constructed from overlap matrices."""
     def __init__(self, overlaps):
-        self.overlaps = overlaps
+        self.wilson = self._wilson(overlaps)
 
     def __getattr__(self, name):
         if name == 'eigenstates':
             raise AttributeError("This data does not have the 'eigenstates' attribute. This is because the system used does not provide eigenstates, but only overlap matrices. The functionality which resulted in this error can be used only for systems providing eigenstates.")
         return super().__getattribute__(name)
 
-    @_LazyProperty
-    def wilson(self):
+    @staticmethod
+    def _wilson(overlaps):
         wil = np.eye(len(self.overlaps[0]))
         for M in self.overlaps:
             wil = np.dot(wil, M)
@@ -88,7 +88,7 @@ class EigenstateLineData(OverlapLineData):
         self.eigenstates = eigenstates
 
     @_LazyProperty
-    def overlaps(self):
+    def wilson(self):
         # create M - matrices
         
         M = []
@@ -98,4 +98,5 @@ class EigenstateLineData(OverlapLineData):
                 np.conjugate(eig1),
                 np.array(eig2).T
             ))
-        return M
+        return self._wilson(M)
+        #~ return M

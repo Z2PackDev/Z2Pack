@@ -73,8 +73,6 @@ class WccLineData(metaclass=ConstLocker):
             raise AttributeError("This data does not have the 'eigenstates' attribute. This is because the system used does not provide eigenstates, but only overlap matrices. The functionality which resulted in this error can be used only for systems providing eigenstates.")
         return super().__getattribute__(name)
 
-
-
 @export
 class EigenstateLineData(WccLineData):
     """Data for a line constructed from periodic eigenstates :math:`|u_{n, \vec{k}}\rangle`."""

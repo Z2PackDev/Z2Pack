@@ -22,6 +22,9 @@ from .surface._result import SurfaceResult
 @export
 @singledispatch
 def encode(obj):
+    """
+    Encodes Z2Pack types into JSON / msgpack - compatible types.
+    """
     raise TypeError('cannot JSONify {} object {}'.format(type(obj), obj))
 
 @encode.register(bool)
@@ -101,6 +104,9 @@ def _(obj):
 @export
 @singledispatch
 def decode(obj):
+    """
+    Decodes JSON / msgpack objects into the corresponding Z2Pack types.
+    """
     return obj
 
 @decode.register(str)
@@ -134,6 +140,7 @@ def decode_line_result(obj):
 def decode_wcc_line_data(obj):
     return WccLineData(obj['wcc'])
         
+# this is only necessary for the result produced with some development versions
 def decode_overlap_line_data(obj):
     try:
         return WccLineData.from_overlaps(obj['overlaps'])

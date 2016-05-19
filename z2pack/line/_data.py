@@ -5,6 +5,8 @@
 # Date:    08.02.2016 18:20:18 CET
 # File:    _data.py
 
+import functools
+
 import numpy as np
 import scipy.linalg as la
 from fsc.export import export
@@ -33,17 +35,14 @@ class OverlapLineData(metaclass=ConstLocker):
     def __init__(self, overlaps):
         self.wilson = self._wilson(overlaps)
 
+    @staticmethod
+    def _wilson(overlaps):
+        return functools.reduce(np.dot, overlaps)
+
     def __getattr__(self, name):
         if name == 'eigenstates':
             raise AttributeError("This data does not have the 'eigenstates' attribute. This is because the system used does not provide eigenstates, but only overlap matrices. The functionality which resulted in this error can be used only for systems providing eigenstates.")
         return super().__getattribute__(name)
-
-    @staticmethod
-    def _wilson(overlaps):
-        wil = np.eye(len(self.overlaps[0]))
-        for M in self.overlaps:
-            wil = np.dot(wil, M)
-        return wil
 
     @_LazyProperty
     def wcc(self):
@@ -89,14 +88,12 @@ class EigenstateLineData(OverlapLineData):
 
     @_LazyProperty
     def wilson(self):
-        # create M - matrices
-        
-        M = []
+        # create overlaps
+        overlaps = []
 
         for eig1, eig2 in zip(self.eigenstates, self.eigenstates[1:]):
-            M.append(np.dot(
+            overlaps.append(np.dot(
                 np.conjugate(eig1),
                 np.array(eig2).T
             ))
-        return self._wilson(M)
-        #~ return M
+        return self._wilson(overlaps)

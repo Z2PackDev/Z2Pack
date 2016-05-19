@@ -60,7 +60,7 @@ def _(obj):
 def _(obj):
     return dict(
         __overlap_line_data__=True,
-        overlaps=encode(obj.overlaps)
+        wilson=encode(obj.wilson)
     )
     
 @encode.register(LineResult)
@@ -132,7 +132,9 @@ def decode_line_result(obj):
     return res
 
 def decode_overlap_line_data(obj):
-    return OverlapLineData(obj['overlaps'])
+    # Here the wilson loop is passed instead of the overlaps, but this
+    # does not change anything since the overlaps are anyway just multiplied together
+    return OverlapLineData([obj['wilson']])
 
 def decode_eigenstate_line_data(obj):
     return EigenstateLineData(obj['eigenstates'])

@@ -15,7 +15,7 @@ class OverlapMockSystem(z2pack.system.OverlapSystem):
         self.eigenstate_system = eigenstate_system
 
     def get_mmn(self, kpt):
-        return z2pack.line.EigenstateLineData(self.eigenstate_system.get_eig(kpt)).overlaps
+        return [z2pack.line.EigenstateLineData(self.eigenstate_system.get_eig(kpt)).wilson]
 
 @pytest.fixture(params=np.linspace(-1, 1, 11))
 def kz(request):

@@ -15,7 +15,7 @@ from fsc.export import export
 from . import _logger
 from . import LineResult
 from . import EigenstateLineData, WccLineData
-from ._control import StepCounter, PosCheck
+from ._control import StepCounter, PosCheck, ForceFirstUpdate
 
 from .._control import (
     StatefulControl,
@@ -62,7 +62,9 @@ def run_line(
     # setting up controls
     controls = []
     controls.append(StepCounter(iterator=iterator))
-    if pos_tol is not None:
+    if pos_tol is None:
+        controls.append(ForceFirstUpdate())
+    else:
         controls.append(PosCheck(pos_tol=pos_tol))
 
     # setting up init_result

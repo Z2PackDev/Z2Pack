@@ -22,12 +22,10 @@ from .._utils import _get_max_move
 class StepCounter(
     IterationControl,
     StatefulControl,
-    ConvergenceControl,
     LineControl
 ):
     def __init__(self, *, iterator):
-        self._iterator, tmp_iter = itertools.tee(iter(iterator))
-        self._min_state = next(tmp_iter)
+        self._iterator = iter(iterator)
         self._state = 0
 
     @property
@@ -45,10 +43,21 @@ class StepCounter(
         self._state = new_val
         return dict(num_steps=self._state)
 
+@export
+class ForceFirstUpdate(
+    DataControl, 
+    ConvergenceControl,
+    LineControl
+):
+    def __init__(self):
+        self._converged = False
+    
     @property
     def converged(self):
-        """Converged if the minimum value of the iterator has been used."""
-        return self._state >= self._min_state
+        return self._converged
+    
+    def update(self, data):
+        self._converged = True
 
 @export
 class PosCheck(

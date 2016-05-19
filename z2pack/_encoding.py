@@ -15,7 +15,7 @@ from fsc.export import export
 
 # This can create a circular import if it is imported by name (from ... import ...)
 # If this is ever an issue, consider splitting the encoding by surface / line
-from .line import LineResult, OverlapLineData, EigenstateLineData
+from .line import LineResult, WccLineData, EigenstateLineData
 from .surface._data import SurfaceData, SurfaceLine
 from .surface._result import SurfaceResult
 
@@ -56,11 +56,11 @@ def _(obj):
         eigenstates=encode(obj.eigenstates)
     )
 
-@encode.register(OverlapLineData)
+@encode.register(WccLineData)
 def _(obj):
     return dict(
-        __overlap_line_data__=True,
-        wilson=encode(obj.wilson)
+        __wcc_line_data__=True,
+        wcc=encode(obj.wcc)
     )
     
 @encode.register(LineResult)
@@ -131,13 +131,16 @@ def decode_line_result(obj):
     res.ctrl_states = decode(obj['ctrl_states'])
     return res
 
+def decode_wcc_line_data(obj):
+    return WccLineData(obj['wcc'])
+        
 def decode_overlap_line_data(obj):
     try:
-        return OverlapLineData(obj['overlaps'])
+        return WccLineData.from_overlaps(obj['overlaps'])
     except KeyError:
         # Here the wilson loop is passed instead of the overlaps, but this
         # does not change anything since the overlaps are anyway just multiplied together
-        return OverlapLineData([obj['wilson']])
+        return WccLineData.from_overlaps([obj['wilson']])
 
 def decode_eigenstate_line_data(obj):
     return EigenstateLineData(obj['eigenstates'])

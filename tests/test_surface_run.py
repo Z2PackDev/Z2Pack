@@ -42,7 +42,8 @@ def serializer(request):
 
 def assert_res_equal(result1, result2):
     assert result1.wcc == result2.wcc
-    assert all(np.isclose(result1.wilson, result2.wilson).flatten())
+    if hasattr(result1, 'wilson') or hasattr(result2, 'wilson'):
+        assert all(np.isclose(result1.wilson, result2.wilson).flatten())
     assert result1.gap_size == result2.gap_size
     assert result1.gap_pos == result2.gap_pos
     assert result1.ctrl_states == result2.ctrl_states
@@ -139,8 +140,9 @@ def test_load_no_filename(simple_system, simple_surface, serializer):
     with pytest.raises(ValueError):
         result = z2pack.surface.run(system=simple_system, surface=simple_surface, load=True)
 
-def test_load_reference(simple_system, simple_surface, serializer):
-    path = 'reference_results/result.' + serializer
+def test_load_reference(simple_system, test_name, simple_surface, serializer):
+    tag = test_name.split('/')[1]
+    path = 'reference_results/result_{}.'.format(tag) + serializer
     result = z2pack.surface.run(system=simple_system, surface=simple_surface)
     if not os.path.isfile(path):
         z2pack.save_result(result, path)

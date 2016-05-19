@@ -28,19 +28,19 @@ def patch_max_move(monkeypatch):
 def pos_tol(request):
     return request.param
 
-def test_one_step(pos_tol, patch_max_move, patch_line_data):
+def test_one_step(pos_tol, patch_max_move):
     wc = PosCheck(pos_tol=pos_tol)
     wc.update(LineData(0.1))
     assert not wc.converged
 
-def test_one_step_init(pos_tol, patch_max_move, patch_line_data):
+def test_one_step_init(pos_tol, patch_max_move):
     wc = PosCheck(pos_tol=pos_tol)
     wc.state = dict(max_move=pos_tol * 1.1, last_wcc=0.9 * pos_tol)
     assert not wc.converged
     wc.update(LineData(1))
     assert wc.converged
 
-def test_two_step(pos_tol, patch_max_move, patch_line_data):
+def test_two_step(pos_tol, patch_max_move):
     wc = PosCheck(pos_tol=pos_tol)
     mv1 = pos_tol * 1.1
     mv2 = pos_tol * 0.9

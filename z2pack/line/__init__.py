@@ -8,7 +8,7 @@
 import logging as _logging
 _logger = _logging.getLogger(__name__)
 
-from ._data import OverlapLineData, EigenstateLineData
+from ._data import WccLineData, EigenstateLineData
 from ._result import LineResult
 
 from ._run import run_line as run

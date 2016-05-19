@@ -30,37 +30,25 @@ class _LazyProperty:
         return value
 
 @export
-class OverlapLineData(metaclass=ConstLocker):
-    """Data for a line constructed from overlap matrices."""
-    def __init__(self, overlaps):
-        self.wilson = self._wilson(overlaps)
+class WccLineData(metaclass=ConstLocker):
+    """Data for a line constructed directly from the WCC, or from the overlap matrices via the ``from_overlaps`` method."""
+    def __init__(self, wcc):
+        self.wcc = wcc
+        
+    @classmethod
+    def from_overlaps(cls, overlaps):
+        return cls(cls._calculate_wannier(cls._wilson(overlaps))[0])
+        
+    @staticmethod
+    def _calculate_wannier(wilson):
+        eigs, eigvec = la.eig(wilson)
+        wcc = np.array([np.angle(z) / (2 * np.pi) % 1 for z in eigs])
+        idx = np.argsort(wcc)
+        return list(wcc[idx]), list(eigvec.T[idx])
 
     @staticmethod
     def _wilson(overlaps):
         return functools.reduce(np.dot, overlaps)
-
-    def __getattr__(self, name):
-        if name == 'eigenstates':
-            raise AttributeError("This data does not have the 'eigenstates' attribute. This is because the system used does not provide eigenstates, but only overlap matrices. The functionality which resulted in this error can be used only for systems providing eigenstates.")
-        return super().__getattribute__(name)
-
-    @_LazyProperty
-    def wcc(self):
-        self._calculate_wannier()
-        return self.wcc
-        
-    @_LazyProperty
-    def wilson_eigenstates(self):
-        self._calculate_wannier()
-        return self.wilson_eigenstates
-
-    def _calculate_wannier(self):
-        eigs, eigvec = la.eig(self.wilson)
-        wcc = np.array([np.angle(z) / (2 * np.pi) % 1 for z in eigs])
-        idx = np.argsort(wcc)
-        with change_lock(self, 'none'):
-            self.wcc = list(wcc[idx])
-            self.wilson_eigenstates = list(eigvec.T[idx])
 
     @_LazyProperty
     def pol(self):
@@ -80,8 +68,15 @@ class OverlapLineData(metaclass=ConstLocker):
         with change_lock(self, 'none'):
             self.gap_pos, self.gap_size = _gapfind(self.wcc)
 
+    def __getattr__(self, name):
+        if name == 'eigenstates':
+            raise AttributeError("This data does not have the 'eigenstates' attribute. This is because the system used does not provide eigenstates, but only overlap matrices. The functionality which resulted in this error can be used only for systems providing eigenstates.")
+        return super().__getattribute__(name)
+
+
+
 @export
-class EigenstateLineData(OverlapLineData):
+class EigenstateLineData(WccLineData):
     """Data for a line constructed from periodic eigenstates :math:`|u_{n, \vec{k}}\rangle`."""
     def __init__(self, eigenstates):
         self.eigenstates = eigenstates
@@ -97,3 +92,19 @@ class EigenstateLineData(OverlapLineData):
                 np.array(eig2).T
             ))
         return self._wilson(overlaps)
+
+    @_LazyProperty
+    def wcc(self):
+        self._calculate_wannier()
+        return self.wcc
+        
+    @_LazyProperty
+    def wilson_eigenstates(self):
+        self._calculate_wannier()
+        return self.wilson_eigenstates
+        
+    def _calculate_wannier(self):
+        wcc, wilson_eigenstates = super()._calculate_wannier(self.wilson)
+        with change_lock(self, 'none'):
+            self.wcc = wcc
+            self.wilson_eigenstates = wilson_eigenstates

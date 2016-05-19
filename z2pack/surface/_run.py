@@ -32,7 +32,7 @@ from .._logging_tools import TagAdapter, TagFilter, FilterManager
 _logger = TagAdapter(_logger, default_tags=('surface',))
 
 from ..line import _run as _line_run
-from ..line._control import StepCounter, PosCheck
+from ..line._control import StepCounter, PosCheck, ForceFirstUpdate
 
 @export
 def run_surface(
@@ -99,7 +99,9 @@ def run_surface(
     # setting up controls
     controls = []
     controls.append(StepCounter(iterator=iterator))
-    if pos_tol is not None:
+    if pos_tol is None:
+        controls.append(ForceFirstUpdate())
+    else:
         controls.append(PosCheck(pos_tol=pos_tol))
     if move_tol is not None:
         controls.append(MoveCheck(move_tol=move_tol))

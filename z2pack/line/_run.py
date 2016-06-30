@@ -54,7 +54,7 @@ def run_line(
         * setting up file backend
     """
     # This is here to avoid circular import with the Surface (is solved in Python 3.5 and higher)
-    global _helpers
+    #~ global _helpers
     from .. import _helpers
     
     line_only__logger.info(locals(), tags=('setup', 'box', 'skip'))
@@ -95,6 +95,10 @@ def _run_line_impl(
         * Controls
         * file backend?
     """
+    # This is here to avoid circular import with the Surface (is solved in Python 3.5 and higher)
+    #~ global _helpers
+    from .. import _helpers
+    
     start_time = time.time() # timing the run
     
     for ctrl in controls:

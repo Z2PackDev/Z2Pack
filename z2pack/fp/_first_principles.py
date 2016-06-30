@@ -43,6 +43,9 @@ class System(OverlapSystem):
 
     :param mmn_path:    Path to the ``.mmn`` output file of ``Wannier90``
     :type mmn_path:     str
+    
+    :param num_wcc:     Number of WCC which should be produced by the system. This parameter can be used to check the consistency of the calculation. By default, no so check is done.
+    :type num_wcc:      int
 
     .. note:: ``input_files`` and ``build_folder`` can be absolute or relative paths, the rest is relative to ``build_folder``
     """
@@ -56,7 +59,8 @@ class System(OverlapSystem):
             executable=None,
             build_folder='build',
             file_names='copy',
-            mmn_path='wannier90.mmn'
+            mmn_path='wannier90.mmn',
+            num_wcc=None
     ):
         # convert to lists (input_files)
         if not isinstance(input_files, str):
@@ -101,11 +105,10 @@ class System(OverlapSystem):
                 )
             )
         self._mmn_path = self._to_abspath(mmn_path)
-
         self._calling_path = os.getcwd()
 
+        self._num_wcc = num_wcc
 
-            
     def _to_abspath(self, path):
         """
         Returns a list of absolute paths from a list of paths relative to the build folder, or a single absolute path from a single relative path.
@@ -113,7 +116,6 @@ class System(OverlapSystem):
         if isinstance(path, str):
             return os.path.join(self._build_folder, path)
         return [self._to_abspath(p) for p in path]
-    
 
     def _create_input(self, kpt):
         with contextlib.suppress(FileNotFoundError):
@@ -150,6 +152,12 @@ class System(OverlapSystem):
             raise ValueError('No overlap matrices were found. Maybe switch from shell_list to search_shells in wannier90.win or add more k-points to the string.')
         if len(M) != N:
             raise ValueError('The number of overlap matrices found is {0}, but should be {1}. Maybe check search_shells in wannier90.win'.format(len(M), N))
+        if self._num_wcc is not None:
+            shape = (self._num_wcc, self._num_wcc)
+            for i, overlaps in enumerate(M):
+                if overlaps.shape != shape:
+                    raise ValueError('The shape of overlap matrix #{} is {}, but should be {}.'.format(i, overlaps.shape, shape))
+            
         return M
 
 def _copy(initial_paths, final_names):

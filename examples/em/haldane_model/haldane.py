@@ -5,8 +5,12 @@
 # Date:    19.05.2015 00:12:05 CEST
 # File:    haldane.py
 
+import logging
+
 import z2pack
 import numpy as np
+
+logging.getLogger('z2pack').setLevel(logging.WARNING)
 
 # defining pauli matrices
 identity = np.identity(2, dtype=complex)
@@ -26,7 +30,7 @@ def Hamilton(k, m, t1, t2, phi):
     return H
 
 def get_chern(m, t1, t2, phi):
-    system = z2pack.em.System(lambda k: Hamilton(k, m, t1, t2, phi), occ=1)
+    system = z2pack.em.System(lambda k: Hamilton(k, m, t1, t2, phi), bands=1)
     
     result = z2pack.surface.run(system=system, surface=lambda s, t: [t, s, 0.])
     return z2pack.surface.invariant.chern(result)

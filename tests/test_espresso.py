@@ -15,8 +15,8 @@ import numpy as np
 
 import z2pack
 
-@pytest.fixture
-def qe_system():
+@pytest.fixture(params=[z2pack.fp.kpoint.qe, z2pack.fp.kpoint.qe_explicit])
+def qe_system(request):
     def inner(build_dir, num_wcc=None):
         shutil.copytree('samples/espresso/scf', build_dir + '/scf')
         input_files = ['samples/espresso/input/' + name for name in [
@@ -37,7 +37,7 @@ def qe_system():
 
         return z2pack.fp.System(
             input_files=input_files,
-            kpt_fct=[z2pack.fp.kpoint.qe, z2pack.fp.kpoint.wannier90],
+            kpt_fct=[request.param, z2pack.fp.kpoint.wannier90],
             kpt_path=['bi.nscf.in','bi.win'],
             command=z2cmd,
             executable='/bin/bash',

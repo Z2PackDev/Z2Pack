@@ -134,17 +134,12 @@ class System(OverlapSystem):
         self._create_input(kpt)
 
         # execute command
-        if self._executable is not None:
-            subprocess.call(
-                self._command,
-                cwd=self._build_folder,
-                shell=True,
-                executable=self._executable)
-        else:
-            subprocess.call(
-                self._command,
-                cwd=self._build_folder,
-                shell=True)
+        subprocess.call(
+            self._command,
+            cwd=self._build_folder,
+            shell=True,
+            executable=self._executable
+        )
 
         # read mmn file
         M = mmn.get_m(self._mmn_path)

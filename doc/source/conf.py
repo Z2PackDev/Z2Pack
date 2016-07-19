@@ -12,8 +12,9 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys
 import os
+import sys
+import time
 import sphinx_rtd_theme
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -50,7 +51,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Z2Pack'
-copyright = u'2015, Dominik Gresch'
+copyright = u'2015-{}, Dominik Gresch'.format(time.localtime().tm_year)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

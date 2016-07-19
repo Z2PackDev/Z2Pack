@@ -109,14 +109,6 @@ def decode(obj):
     """
     return obj
 
-@decode.register(str)
-def _(obj):
-    return obj
-
-@decode.register(Iterable)
-def _(obj):
-    return [decode(x) for x in obj]
-
 def decode_surface_result(obj):
     # The states / convergence of the controls are set manually
     res = SurfaceResult(obj['data'], [], [])
@@ -154,7 +146,6 @@ def decode_eigenstate_line_data(obj):
 
 def decode_complex(obj):
     return complex(obj['real'], obj['imag'])
-
 
 @decode.register(dict)
 def _(obj):

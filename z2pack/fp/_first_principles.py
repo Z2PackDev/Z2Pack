@@ -43,7 +43,7 @@ class System(OverlapSystem):
 
     :param mmn_path:    Path to the ``.mmn`` output file of ``Wannier90``
     :type mmn_path:     str
-    
+
     :param num_wcc:     Number of WCC which should be produced by the system. This parameter can be used to check the consistency of the calculation. By default, no so check is done.
     :type num_wcc:      int
 
@@ -152,7 +152,7 @@ class System(OverlapSystem):
             for i, overlaps in enumerate(M):
                 if overlaps.shape != shape:
                     raise ValueError('The shape of overlap matrix #{} is {}, but should be {}.'.format(i, overlaps.shape, shape))
-            
+
         return M
 
 def _copy(initial_paths, final_names):

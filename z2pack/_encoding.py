@@ -27,14 +27,9 @@ def encode(obj):
     """
     raise TypeError('cannot JSONify {} object {}'.format(type(obj), obj))
 
-@encode.register(bool)
 @encode.register(np.bool_)
 def _(obj):
     return bool(obj)
-
-@encode.register(numbers.Integral)
-def _(obj):
-    return int(obj)
 
 @encode.register(numbers.Real)
 def _(obj):
@@ -43,10 +38,6 @@ def _(obj):
 @encode.register(numbers.Complex)
 def _(obj):
     return dict(__complex__=True, real=encode(obj.real), imag=encode(obj.imag))
-
-@encode.register(str)
-def _(obj):
-    return obj
 
 @encode.register(Iterable)
 def _(obj):
@@ -131,15 +122,6 @@ def decode_line_result(obj):
 
 def decode_wcc_line_data(obj):
     return WccLineData(obj['wcc'])
-
-# this is only necessary for the result produced with some development versions
-def decode_overlap_line_data(obj):
-    try:
-        return WccLineData.from_overlaps(obj['overlaps'])
-    except KeyError:
-        # Here the wilson loop is passed instead of the overlaps, but this
-        # does not change anything since the overlaps are anyway just multiplied together
-        return WccLineData.from_overlaps([obj['wilson']])
 
 def decode_eigenstate_line_data(obj):
     return EigenstateLineData(obj['eigenstates'])

@@ -17,6 +17,7 @@ import numpy as np
 import z2pack
 
 from em_systems import *
+from tb_systems import *
 
 @pytest.fixture(params=range(5, 11, 2))
 def num_strings(request):
@@ -72,6 +73,18 @@ def test_weyl(compare_data, compare_equal, pos_tol, gap_tol, move_tol, num_strin
     compare_data(lambda l1, l2: all(np.isclose(l1, l2).flatten()), result.wcc)
     compare_equal(result.convergence_report, tag='_report')
 
+def test_tb(compare_data, compare_equal, pos_tol, gap_tol, move_tol, num_strings, tb_system, tb_surface):
+    result = z2pack.surface.run(
+        system=tb_system,
+        surface=tb_surface,
+        num_strings=num_strings,
+        move_tol=move_tol,
+        gap_tol=gap_tol,
+        pos_tol=pos_tol
+    )
+    compare_data(lambda l1, l2: all(np.isclose(l1, l2).flatten()), result.wcc)
+    compare_equal(result.convergence_report, tag='_report')
+
 # saving tests
 def test_simple_save(num_strings, simple_system, simple_surface):
     fp = tempfile.NamedTemporaryFile(delete=False)
@@ -85,6 +98,21 @@ def test_weyl_save(pos_tol, gap_tol, move_tol, num_strings, weyl_system, weyl_su
     result1 = z2pack.surface.run(
         system=weyl_system,
         surface=weyl_surface,
+        num_strings=num_strings,
+        move_tol=move_tol,
+        gap_tol=gap_tol,
+        pos_tol=pos_tol,
+        save_file=fp.name
+    )
+    result2 = z2pack.load_result(fp.name)
+    os.remove(fp.name)
+    assert_res_equal(result1, result2)
+
+def test_tb_save(pos_tol, gap_tol, move_tol, num_strings, tb_system, tb_surface):
+    fp = tempfile.NamedTemporaryFile(delete=False)
+    result1 = z2pack.surface.run(
+        system=tb_system,
+        surface=tb_surface,
         num_strings=num_strings,
         move_tol=move_tol,
         gap_tol=gap_tol,

@@ -35,4 +35,4 @@ class Result(metaclass=abc.ABCMeta):
         r"""
         Returns a convergence report (as a string) for the result. This report shows whether the convergence options used for calculating this result were satisfied or not.
         """
-        pass        
+        pass

@@ -8,9 +8,9 @@
 """Coding tools, not related to the 'physical/computation logic' of Z2Pack."""
 
 import os
-import msgpack
 import tempfile
-import contextlib
+
+import msgpack
 
 from fsc.export import export
 
@@ -22,7 +22,7 @@ class _Proxy:
     """A simple proxy type"""
     def __init__(self, initval=None):
         self.val = initval
-        
+
     def set(self, val):
         self.val = val
 
@@ -32,6 +32,7 @@ class _Proxy:
 serializer = _Proxy(msgpack)
 
 def _check_binary():
+    """Check if the serializer uses a binary format"""
     return serializer.__name__ in ['pickle', 'msgpack']
 
 @export

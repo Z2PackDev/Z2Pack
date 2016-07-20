@@ -39,7 +39,7 @@ def _(obj):
 @encode.register(numbers.Real)
 def _(obj):
     return float(obj)
-    
+
 @encode.register(numbers.Complex)
 def _(obj):
     return dict(__complex__=True, real=encode(obj.real), imag=encode(obj.imag))
@@ -65,7 +65,7 @@ def _(obj):
         __wcc_line_data__=True,
         wcc=encode(obj.wcc)
     )
-    
+
 @encode.register(LineResult)
 def _(obj):
     return dict(
@@ -131,7 +131,7 @@ def decode_line_result(obj):
 
 def decode_wcc_line_data(obj):
     return WccLineData(obj['wcc'])
-        
+
 # this is only necessary for the result produced with some development versions
 def decode_overlap_line_data(obj):
     try:

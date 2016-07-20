@@ -6,7 +6,6 @@
 # File:    _logging_format.py
 
 import sys
-import time
 import logging
 
 import blessings
@@ -15,6 +14,7 @@ from fsc.formatting import shorten, to_box
 from ._version import __version__
 
 def _make_title(title, delimiter, overline=False, modifier=None):
+    """Creates a title by addin the appropriate over-/underline"""
     delimiter *= len(title)
     if modifier is not None:
         delimiter = modifier(delimiter)
@@ -27,10 +27,12 @@ def _make_title(title, delimiter, overline=False, modifier=None):
     return '\n'.join(res)
 
 def _offset(string, num_offset=4):
+    """Add a given offset (whitespace) to each line in the string"""
     return '\n'.join(' ' * num_offset + s for s in string.split('\n'))
 
-    
+
 class DefaultFormatter(logging.Formatter):
+    """Formatter used for z2pack logs"""
     def __init__(self):
         self.term = blessings.Terminal()
         super().__init__(style='{')
@@ -42,7 +44,7 @@ class DefaultFormatter(logging.Formatter):
             if 'convergence_report' in record.tags:
                 report = msg
                 msg = _make_title('CONVERGENCE REPORT', '=', overline=True, modifier=self.term.bold)
-                
+
                 if 'surface' in record.tags:
                     def make_report_entry(key, val):
                         title = _make_title(key, '-')
@@ -50,23 +52,35 @@ class DefaultFormatter(logging.Formatter):
                             return _offset(title + '\nFAILED: Convergence check has not run!')
                         passed = len(val['PASSED'])
                         failed = len(val['FAILED'])
-                        try: 
+                        try:
                             missing = len(val['MISSING'])
                         except KeyError:
                             missing = 0
                         total = sum([passed, failed, missing])
                         report = ''
                         if passed:
-                            report += '\n' + self.term.bold_green('PASSED: {0} of {1}'.format(passed, total))
+                            report += '\n' + self.term.bold_green(
+                                'PASSED: {0} of {1}'.format(
+                                    passed, total
+                                )
+                            )
                         if failed:
-                            report += '\n' + self.term.bold_red('FAILED: {0} of {1}'.format(failed, total))
+                            report += '\n' + self.term.bold_red(
+                                'FAILED: {0} of {1}'.format(
+                                    failed, total
+                                )
+                            )
                         if missing:
-                            report += '\n' + self.term.bold_yellow('MISSING: {0} of {1}'.format(missing, total))
+                            report += '\n' + self.term.bold_yellow(
+                                'MISSING: {0} of {1}'.format(
+                                    missing, total
+                                )
+                            )
                         return _offset(title + report)
                     # line convergence objects
                     line_msg = _make_title('Line Convergence', '=')
 
-                        
+
                     for key, val in report['line'].items():
                         line_msg += '\n\n' + make_report_entry(key, val)
 
@@ -82,10 +96,20 @@ class DefaultFormatter(logging.Formatter):
             if 'setup' in record.tags:
                 kwargs = msg
                 if 'surface' in record.tags:
-                    msg = _make_title('SURFACE CALCULATION', '=', overline=True, modifier=self.term.bold)
-                    
+                    msg = _make_title(
+                        'SURFACE CALCULATION',
+                        '=',
+                        overline=True,
+                        modifier=self.term.bold
+                    )
+
                 if 'line' in record.tags:
-                    msg = _make_title('LINE CALCULATION', '=', overline=True, modifier=self.term.bold)
+                    msg = _make_title(
+                        'LINE CALCULATION',
+                        '=',
+                        overline=True,
+                        modifier=self.term.bold
+                    )
                 msg += '\n' + 'starting at {}'.format(self.formatTime(record))
                 msg += '\nrunning Z2Pack version {}\n\n'.format(__version__)
 
@@ -104,7 +128,7 @@ class DefaultFormatter(logging.Formatter):
                 seconds = int(msg + 0.5) # round to the nearest second
                 minutes, seconds = seconds // 60, seconds % 60
                 hours, minutes = minutes // 60, minutes % 60
-                days, hours = hours // 24, hours % 24 
+                days, hours = hours // 24, hours % 24
                 time_str = '{}h {}m {}s'.format(hours, minutes, seconds)
                 if days != 0:
                     time_str = '{}d '.format(days) + time_str
@@ -131,9 +155,9 @@ class DefaultFormatter(logging.Formatter):
 
         return msg
 
-    
 
-default_handler = logging.StreamHandler(sys.stdout)
-default_handler.setFormatter(DefaultFormatter())
+
+DEFAULT_HANDLER = logging.StreamHandler(sys.stdout)
+DEFAULT_HANDLER.setFormatter(DefaultFormatter())
 logging.getLogger('z2pack').setLevel(logging.INFO)
-logging.getLogger('z2pack').addHandler(default_handler)
+logging.getLogger('z2pack').addHandler(DEFAULT_HANDLER)

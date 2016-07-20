@@ -5,9 +5,9 @@
 # Date:    03.06.2015 11:02:53 CEST
 # File:    tb.py
 
+import copy
 
 from .em import System as _EmSystem
-import copy
 
 class System(_EmSystem):
     r"""
@@ -21,4 +21,5 @@ class System(_EmSystem):
             hamilton=tb_model.hamilton,
             pos=copy.deepcopy(tb_model.pos),
             bands=tb_model.occ,
+            **kwargs
         )

@@ -28,7 +28,7 @@ class Sphere:
 
     def __str__(self):
         return 'Sphere({}, {})'.format(self.center, self.radius)
-    
+
     def __call__(self, t, k):
         """
         t - theta (angle along z)

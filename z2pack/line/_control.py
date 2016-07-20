@@ -20,10 +20,11 @@ from .._utils import _get_max_move
 
 @export
 class StepCounter(
-    IterationControl,
-    StatefulControl,
-    LineControl
+        IterationControl,
+        StatefulControl,
+        LineControl
 ):
+    """Counts the number of k-points along the line."""
     def __init__(self, *, iterator):
         self._iterator = iter(iterator)
         self._state = 0
@@ -45,35 +46,35 @@ class StepCounter(
 
 @export
 class ForceFirstUpdate(
-    DataControl, 
-    ConvergenceControl,
-    LineControl
+        DataControl,
+        ConvergenceControl,
+        LineControl
 ):
+    """Makes sure at least one update is done, even when the pos_tol argument is not used."""
     def __init__(self):
         self._converged = False
-    
+
     @property
     def converged(self):
         return self._converged
-    
+
     def update(self, data):
         self._converged = True
 
 @export
 class PosCheck(
-    DataControl,
-    ConvergenceControl,
-    StatefulControl,
-    LineControl,
+        DataControl,
+        ConvergenceControl,
+        StatefulControl,
+        LineControl,
 ):
+    """
+    Check the change in position between two line calculations.
+    
+    :param pos_tol: Tolerance in the maximum movement of a single WCC position.
+    :type pos_tol: float
+    """
     def __init__(self, *, pos_tol):
-        """
-        :param state: Contains the maximum movement between the last two iterations, as well as the WCC of the last iteration.
-        :type state: dict
-
-        :param pos_tol: Tolerance in the maximum movement of a single WCC position.
-        :type pos_tol: float
-        """
         if not (pos_tol > 0 and pos_tol <= 1):
             raise ValueError('pos_tol must be in (0, 1]')
         self.pos_tol = pos_tol

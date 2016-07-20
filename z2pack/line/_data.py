@@ -34,11 +34,11 @@ class WccLineData(metaclass=ConstLocker):
     """Data for a line constructed directly from the WCC, or from the overlap matrices via the ``from_overlaps`` method."""
     def __init__(self, wcc):
         self.wcc = wcc
-        
+
     @classmethod
     def from_overlaps(cls, overlaps):
         return cls(cls._calculate_wannier(cls._wilson(overlaps))[0])
-        
+
     @staticmethod
     def _calculate_wannier(wilson):
         eigs, eigvec = la.eig(wilson)
@@ -58,7 +58,7 @@ class WccLineData(metaclass=ConstLocker):
     def gap_pos(self):
         self._calculate_gap()
         return self.gap_pos
-        
+
     @_LazyProperty
     def gap_size(self):
         self._calculate_gap()
@@ -95,12 +95,12 @@ class EigenstateLineData(WccLineData):
     def wcc(self):
         self._calculate_wannier()
         return self.wcc
-        
+
     @_LazyProperty
     def wilson_eigenstates(self):
         self._calculate_wannier()
         return self.wilson_eigenstates
-        
+
     def _calculate_wannier(self):
         wcc, wilson_eigenstates = super()._calculate_wannier(self.wilson)
         with change_lock(self, 'none'):

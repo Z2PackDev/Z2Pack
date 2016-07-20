@@ -58,7 +58,6 @@ def qe(kpt):
     Creates a k-point input for  **Quantum Espresso**.
     """
     start_point = kpt[0]
-    end_point = kpt[-1]
     last_point = kpt[-2]
     N = len(kpt) - 1
 
@@ -70,7 +69,7 @@ def qe(kpt):
         string += str(coord).replace('e', 'd') + ' '
     string += str(1)+'\n'
     return string
-    
+
 @_check_dim
 def qe_explicit(kpt):
     """
@@ -121,7 +120,7 @@ def vasp(kpt):
             mesh.append(str(N))
         else:
             raise ValueError('The k-points must be aligned in (positive) kx-, ky- or kz-direction for VASP runs.')
-    mesh = ' '.join(mesh)
+    mesh_str = ' '.join(mesh)
 
     if len(nonzero) != 1:
         raise ValueError('The k-points can change only in kx-, ky- or kz direction for VASP runs. The given k-points change in {} directions.'.format(len(nonzero)))
@@ -131,12 +130,12 @@ def vasp(kpt):
         raise ValueError('The k-points must start at k{0} = 0 for VASP runs, since they change in k{0}-direction.'.format(['x', 'y', 'z'][nonzero[0]]))
 
     string = 'Automatic mesh\n0              ! number of k-points = 0 ->automatic generation scheme\nGamma          ! generate a Gamma centered grid\n'
-    string += mesh + '        ! subdivisions\n'
+    string += mesh_str + '        ! subdivisions\n'
     for coord in start_point:
         string += str(coord).replace('e', 'd') + ' '
     string += '         ! shift\n'
     return string
-    
+
 def _check_equal_spacing(kpt, run_type):
     """Checks if the k-points are equally spaced, and throws an error if not. run_type is added in the error message."""
     deltas = [(k2 - k1) % 1 for k2, k1 in zip(kpt[1:], kpt[:-1])]

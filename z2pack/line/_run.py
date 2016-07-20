@@ -6,13 +6,12 @@
 # File:    _run.py
 
 import time
-import json
 import contextlib
 
 import numpy as np
 from fsc.export import export
 
-from . import _logger
+from . import _LOGGER
 from . import LineResult
 from . import EigenstateLineData, WccLineData
 from ._control import StepCounter, PosCheck, ForceFirstUpdate
@@ -28,20 +27,20 @@ from .._control import (
 from .._logging_tools import TagAdapter
 
 # tag which triggers filtering when called from the surface's run.
-line_only__logger = TagAdapter(_logger, default_tags=('line', 'line_only',))
-_logger = TagAdapter(_logger, default_tags=('line',))
+LINE_ONLY__LOGGER = TagAdapter(_LOGGER, default_tags=('line', 'line_only',))
+_LOGGER = TagAdapter(_LOGGER, default_tags=('line',))
 
 @export
 def run_line(
-    *,
-    system,
-    line,
-    iterator=range(8, 27, 2),
-    pos_tol=1e-2,
-    save_file=None,
-    init_result=None,
-    load=False,
-    load_quiet=True
+        *,
+        system,
+        line,
+        iterator=range(8, 27, 2),
+        pos_tol=1e-2,
+        save_file=None,
+        init_result=None,
+        load=False,
+        load_quiet=True
 ):
     """
     Wrapper for:
@@ -56,9 +55,9 @@ def run_line(
     # This is here to avoid circular import with the Surface (is solved in Python 3.5 and higher)
     #~ global _helpers
     from .. import _helpers
-    
-    line_only__logger.info(locals(), tags=('setup', 'box', 'skip'))
-    
+
+    LINE_ONLY__LOGGER.info(locals(), tags=('setup', 'box', 'skip'))
+
     # setting up controls
     controls = []
     controls.append(StepCounter(iterator=iterator))
@@ -81,14 +80,14 @@ def run_line(
                 raise e
 
     return _run_line_impl(*controls, system=system, line=line, save_file=save_file, init_result=init_result)
-    
+
 
 def _run_line_impl(
-    *controls,
-    system,
-    line,
-    save_file=None,
-    init_result=None
+        *controls,
+        system,
+        line,
+        save_file=None,
+        init_result=None
 ):
     """
     Input parameters:
@@ -98,16 +97,16 @@ def _run_line_impl(
     # This is here to avoid circular import with the Surface (is solved in Python 3.5 and higher)
     #~ global _helpers
     from .. import _helpers
-    
+
     start_time = time.time() # timing the run
-    
+
     for ctrl in controls:
         if not isinstance(ctrl, LineControl):
             raise ValueError('{} control object is not a LineControl instance.'.format(ctrl.__class__))
 
     def filter_ctrl(ctrl_type):
         return [ctrl for ctrl in controls if isinstance(ctrl, ctrl_type)]
-        
+
     stateful_ctrl = filter_ctrl(StatefulControl)
     iteration_ctrl = filter_ctrl(IterationControl)
     data_ctrl = filter_ctrl(DataControl)
@@ -115,7 +114,7 @@ def _run_line_impl(
 
     def save():
         if save_file is not None:
-            _logger.info('Saving line result to file {}'.format(save_file))
+            _LOGGER.info('Saving line result to file {}'.format(save_file))
             _helpers.save_result(result, save_file)
 
     # initialize stateful and data controls from old result
@@ -140,7 +139,7 @@ def _run_line_impl(
 
     def collect_convergence():
         res = [c_ctrl.converged for c_ctrl in convergence_ctrl]
-        line_only__logger.info('{} of {} line convergence criteria fulfilled.'.format(sum(res), len(res)))
+        LINE_ONLY__LOGGER.info('{} of {} line convergence criteria fulfilled.'.format(sum(res), len(res)))
         return res
 
     # main loop
@@ -149,9 +148,9 @@ def _run_line_impl(
         for it_ctrl in iteration_ctrl:
             try:
                 run_options.update(next(it_ctrl))
-                _logger.info('Calculating line for N = {}'.format(run_options['num_steps']), tags=('offset',))
+                _LOGGER.info('Calculating line for N = {}'.format(run_options['num_steps']), tags=('offset',))
             except StopIteration:
-                _logger.warn('Iterator stopped before the calculation could converge.')
+                _LOGGER.warn('Iterator stopped before the calculation could converge.')
                 return result
 
         data = DataType(system_fct(
@@ -165,6 +164,6 @@ def _run_line_impl(
         save()
 
     end_time = time.time()
-    line_only__logger.info(end_time - start_time, tags=('box', 'skip-before', 'timing'))
-    line_only__logger.info(result.convergence_report, tags=('convergence_report', 'box'))
+    LINE_ONLY__LOGGER.info(end_time - start_time, tags=('box', 'skip-before', 'timing'))
+    LINE_ONLY__LOGGER.info(result.convergence_report, tags=('convergence_report', 'box'))
     return result

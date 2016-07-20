@@ -186,6 +186,7 @@ def _run_surface_impl(
             _helpers.save_result(res, save_file)
     else:
         handler = None
+
     with AsyncHandler(handler) as save_thread:
         def add_line(t, warn=True):
             """

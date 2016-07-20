@@ -14,7 +14,6 @@ from .._control import (
     ConvergenceControl,
     IterationControl,
     SurfaceControl,
-    StatefulControl
 )
 from .._utils import _get_max_move
 

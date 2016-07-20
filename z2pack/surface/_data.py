@@ -27,7 +27,7 @@ class SurfaceData(metaclass=ConstLocker):
         if key != 'lines':
             return [getattr(line, key) for line in self.lines]
         raise AttributeError
-    
+
     @property
     def t(self):
         return tuple(line.t for line in self.lines)

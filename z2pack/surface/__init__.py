@@ -6,11 +6,10 @@
 # File:    __init__.py
 
 import logging as _logging
-_logger = _logging.getLogger(__name__)
+_LOGGER = _logging.getLogger(__name__)
 
 from ._data import SurfaceData
 from ._result import SurfaceResult
-
 from ._run import run_surface as run
 
 from . import plot

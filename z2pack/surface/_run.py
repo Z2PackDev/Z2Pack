@@ -7,14 +7,13 @@
 
 import copy
 import time
-import json
 import logging
 import contextlib
 
 import numpy as np
 from fsc.export import export
 
-from . import _logger
+from . import _LOGGER
 from . import SurfaceData
 from . import SurfaceResult
 from ._control import MoveCheck, GapCheck
@@ -29,7 +28,7 @@ from .._control import (
 from .. import _helpers
 from .._async_handler import AsyncHandler
 from .._logging_tools import TagAdapter, TagFilter, FilterManager
-_logger = TagAdapter(_logger, default_tags=('surface',))
+_LOGGER = TagAdapter(_LOGGER, default_tags=('surface',))
 
 from ..line import _run as _line_run
 from ..line._control import StepCounter, PosCheck, ForceFirstUpdate
@@ -94,7 +93,7 @@ def run_surface(
     :returns:                   ``None``. Use :meth:`get_res` and
         :meth:`z2` to get the results.
     """
-    _logger.info(locals(), tags=('setup', 'box', 'skip'))
+    _LOGGER.info(locals(), tags=('setup', 'box', 'skip'))
 
     # setting up controls
     controls = []
@@ -120,7 +119,7 @@ def run_surface(
         except IOError as e:
             if not load_quiet:
                 raise e
-                
+
 
     return _run_surface_impl(
         *controls,
@@ -182,13 +181,13 @@ def _run_surface_impl(
     # setting up async handler
     if save_file is not None:
         def handler(res):
-            _logger.info('Saving surface result to file {} (ASYNC)'.format(save_file))
+            _LOGGER.info('Saving surface result to file {} (ASYNC)'.format(save_file))
             _helpers.save_result(res, save_file)
     else:
         handler = None
 
     with AsyncHandler(handler) as save_thread:
-        def add_line(t, warn=True):
+        def add_line(t):
             """
             Adds a line to the Surface, if it is within min_neighbour_dist of
             the given lines.
@@ -197,12 +196,12 @@ def _run_surface_impl(
             dist = data.nearest_neighbour_dist(t)
             if dist < min_neighbour_dist:
                 if dist == 0:
-                    _logger.info("Line at t = {} exists already.".format(t))
+                    _LOGGER.info("Line at t = {} exists already.".format(t))
                 else:
-                    _logger.warn("'min_neighbour_dist' reached: cannot add line at t = {}".format(t))
+                    _LOGGER.warn("'min_neighbour_dist' reached: cannot add line at t = {}".format(t))
                 return SurfaceResult(data, stateful_ctrl, convergence_ctrl)
 
-            _logger.info('Adding line at t = {}'.format(t))
+            _LOGGER.info('Adding line at t = {}'.format(t))
             data.add_line(t, get_line(t))
 
             return update_result()
@@ -211,7 +210,7 @@ def _run_surface_impl(
             """
             Updates all data controls, then creates the result object, saves it to file if necessary and returns the result.
             """
-            
+
             # update data controls
             for d_ctrl in data_ctrl:
                 d_ctrl.update(data)
@@ -228,13 +227,13 @@ def _run_surface_impl(
             res = np.array([True] * (len(data.lines) - 1))
             for c_ctrl in convergence_ctrl:
                 res &= c_ctrl.converged
-            _logger.info('Convergence criteria fulfilled for {} of {} neighbouring lines.'.format(sum(res), len(res)))
+            _LOGGER.info('Convergence criteria fulfilled for {} of {} neighbouring lines.'.format(sum(res), len(res)))
             return res
 
         # STEP 1 -- MAKE USE OF INIT_RESULT
         # initialize stateful controls from old result
         if init_result is not None:
-            _logger.info("Initializing result from 'init_result'.")
+            _LOGGER.info("Initializing result from 'init_result'.")
             # make sure old result doesn't change
             init_result = copy.deepcopy(init_result)
 
@@ -246,9 +245,9 @@ def _run_surface_impl(
             data = init_result.data
 
             # re-run lines with existing result as input
-            _logger.info('Re-running existing lines.')
+            _LOGGER.info('Re-running existing lines.')
             for line in data.lines:
-                _logger.info('Re-running line for t = {}'.format(line.t))
+                _LOGGER.info('Re-running line for t = {}'.format(line.t))
                 line.result = get_line(line.t, line.result)
                 update_result()
 
@@ -257,9 +256,9 @@ def _run_surface_impl(
 
         # STEP 2 -- PRODUCE REQUIRED STRINGS
         # create lines required by num_strings
-        _logger.info("Adding lines required by 'num_strings'.")
+        _LOGGER.info("Adding lines required by 'num_strings'.")
         for t in np.linspace(0, 1, num_strings):
-            result = add_line(t, warn=False)
+            result = add_line(t)
 
         # STEP 3 -- MAIN LOOP
         N = len(data.lines)
@@ -282,6 +281,6 @@ def _run_surface_impl(
             conv = collect_convergence()
 
     end_time = time.time()
-    _logger.info(end_time - start_time, tags=('box', 'skip-before', 'timing'))
-    _logger.info(result.convergence_report, tags=('box', 'convergence_report', 'skip'))
+    _LOGGER.info(end_time - start_time, tags=('box', 'skip-before', 'timing'))
+    _LOGGER.info(result.convergence_report, tags=('box', 'convergence_report', 'skip'))
     return result

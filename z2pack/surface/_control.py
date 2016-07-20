@@ -5,14 +5,11 @@
 # Date:    19.02.2016 16:30:58 MST
 # File:    _control.py
 
-import numpy as np
-
 from fsc.export import export
 
 from .._control import (
     DataControl,
     ConvergenceControl,
-    IterationControl,
     SurfaceControl,
 )
 from .._utils import _get_max_move

@@ -11,14 +11,14 @@ from .._result import Result
 
 @export
 class SurfaceResult(Result):
-    
+
     @property
     def convergence_report(self):
         r"""
         Returns a convergence report (as a string) for the result. This report shows whether the convergence options used for calculating this result were satisfied or not.
         """
         report = dict()
-        
+
         line_report = dict()
         line_c_ctrl = set()
         for line in self.lines:

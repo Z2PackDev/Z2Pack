@@ -47,3 +47,19 @@ def test_bismuth(vasp_system, compare_wcc, surface_fct):
     )
     compare_wcc(result.wcc)
     shutil.rmtree(build_dir)
+    
+invalid_surface_fcts = [
+    lambda s, t: [0, s / 2, t + 0.1],
+    lambda s, t: [s, t]
+]
+
+@pytest.mark.parametrize('surface_fct', invalid_surface_fcts)
+def test_invalid_surface(vasp_system, surface_fct):
+    build_dir=tempfile.mkdtemp()
+    system = vasp_system(build_dir)
+    with pytest.raises(ValueError):
+        result = z2pack.surface.run(
+            system=system,
+            surface=surface_fct
+        )
+

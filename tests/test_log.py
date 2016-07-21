@@ -34,7 +34,6 @@ def CaptureLoggingOutput(compare_data):
     logger.addHandler(handler)
     yield
     handler.flush()
-    handler.close()
     logger.removeHandler(handler)
     out.seek(0)
     res = out.read()

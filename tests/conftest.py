@@ -56,10 +56,10 @@ def compare_data(request, test_name, scope="session"):
         full_name = test_name + (tag or '')
         val = request.config.cache.get(full_name, None)
         if val is None:
-            request.config.cache.set(full_name, data)
+            request.config.cache.set(full_name, json.loads(json.dumps(data, default=z2pack._encoding.encode)))
             raise ValueError('Reference data does not exist.')
         else:
-            assert compare_fct(val, json.loads(json.dumps(data))) # get rid of json-specific quirks
+            assert compare_fct(val, json.loads(json.dumps(data, default=z2pack._encoding.encode))) # get rid of json-specific quirks
     return inner
 
 @pytest.fixture

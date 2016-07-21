@@ -14,7 +14,7 @@ class AbstractControl(metaclass=abc.ABCMeta):
     """ABC for all control objects. Instances must also have a 'state' attribute to work correctly, which is not enforced by the ABC."""
     @abc.abstractmethod
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        pass
 
 class StatefulControl(AbstractControl):
     """
@@ -33,7 +33,7 @@ class StatefulControl(AbstractControl):
     """
     @abc.abstractmethod
     def __init__(self, *, state=None, **kwargs):
-        super().__init__(state, **kwargs)
+        pass
 
     @property
     @abc.abstractmethod

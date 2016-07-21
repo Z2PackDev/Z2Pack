@@ -45,6 +45,7 @@ class DefaultFormatter(logging.Formatter):
                 report = msg
                 msg = _make_title('CONVERGENCE REPORT', '=', overline=True, modifier=self.term.bold)
 
+                # For Surface calculations
                 if 'surface' in record.tags:
                     def make_report_entry(key, val):
                         title = _make_title(key, '-')
@@ -81,16 +82,17 @@ class DefaultFormatter(logging.Formatter):
                     line_msg = _make_title('Line Convergence', '=')
 
 
-                    for key, val in report['line'].items():
+                    for key, val in sorted(report['line'].items()):
                         line_msg += '\n\n' + make_report_entry(key, val)
 
                     surface_msg = _make_title('Surface Convergence', '=')
-                    for key, val in report['surface'].items():
+                    for key, val in sorted(report['surface'].items()):
                         surface_msg += '\n\n' + make_report_entry(key, val)
                     msg += '\n\n' + line_msg
                     msg += '\n\n' + surface_msg
+                # For Line calculations
                 elif 'line' in record.tags:
-                    for key, val in report.items():
+                    for key, val in sorted(report.items()):
                         msg += '\n\n{}: {}'.format(key, 'PASSED' if val else 'FAILED')
 
             if 'setup' in record.tags:

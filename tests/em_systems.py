@@ -42,12 +42,14 @@ def simple_surface():
 
 @pytest.fixture(params=[False, True])
 def weyl_system(request):
-    res = z2pack.em.System(lambda k: np.array(
-        [
-            [k[2], k[0] -1j * k[1]],
-            [k[0] + 1j * k[1], -k[2]]
-        ]
-    ))
+    res = z2pack.em.System(
+        lambda k: np.array(
+            [
+                [k[2], k[0] -1j * k[1]],
+                [k[0] + 1j * k[1], -k[2]]
+            ]
+        )
+    )
     if request.param:
         res = OverlapMockSystem(res)
     return res

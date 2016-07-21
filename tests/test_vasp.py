@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 #
 # Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    24.03.2016 16:00:48 CET
-# File:    vasp.py
+# Date:    21.07.2016 15:07:47 CEST
+# File:    test_vasp.py
+
 
 import shutil
 import tempfile

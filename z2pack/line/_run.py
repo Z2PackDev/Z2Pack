@@ -40,7 +40,8 @@ def run_line(
         save_file=None,
         init_result=None,
         load=False,
-        load_quiet=True
+        load_quiet=True,
+        serializer='auto'
 ):
     """
     Wrapper for:
@@ -74,7 +75,7 @@ def run_line(
         if save_file is None:
             raise ValueError('Cannot load result from file: No filename given in the "save_file" parameter.')
         try:
-            init_result = _helpers.load_result(save_file)
+            init_result = _helpers.load_result(save_file, serializer=serializer)
         except IOError as e:
             if not load_quiet:
                 raise e
@@ -87,7 +88,8 @@ def _run_line_impl(
         system,
         line,
         save_file=None,
-        init_result=None
+        init_result=None,
+        serializer='auto'
 ):
     """
     Input parameters:
@@ -115,7 +117,7 @@ def _run_line_impl(
     def save():
         if save_file is not None:
             _LOGGER.info('Saving line result to file {}'.format(save_file))
-            _helpers.save_result(result, save_file)
+            _helpers.save_result(result, save_file, serializer=serializer)
 
     # initialize stateful and data controls from old result
     if init_result is not None:

@@ -37,9 +37,7 @@ def gap_tol(request):
 
 @pytest.fixture(params=[pickle, json, msgpack])
 def serializer(request):
-    z2pack.serializer.set(request.param)
-    return request.param.__name__
-
+    return request.param
 
 def assert_res_equal(result1, result2):
     assert result1.wcc == result2.wcc
@@ -152,9 +150,11 @@ def test_invalid_restart(simple_system, simple_surface):
 
 def test_file_restart(simple_system, simple_surface, serializer):
     with tempfile.NamedTemporaryFile() as fp:
-        result = z2pack.surface.run(system=simple_system, surface=simple_surface, save_file=fp.name)
-        result2 = z2pack.surface.run(system=simple_system, surface=simple_surface, save_file=fp.name, load=True)
+        result = z2pack.surface.run(system=simple_system, surface=simple_surface, save_file=fp.name, serializer=serializer)
+        result2 = z2pack.surface.run(system=simple_system, surface=simple_surface, save_file=fp.name, load=True, serializer=serializer)
+        result3 = z2pack.surface.run(system=simple_system, surface=simple_surface, save_file=fp.name, load=True)
     assert_res_equal(result, result2)
+    assert_res_equal(result, result3)
     
 def test_load_inexisting(simple_system, simple_surface):
     with pytest.raises(IOError):
@@ -166,14 +166,15 @@ def test_load_inconsistent(simple_system, simple_surface):
         
 def test_load_no_filename(simple_system, simple_surface, serializer):
     with pytest.raises(ValueError):
-        result = z2pack.surface.run(system=simple_system, surface=simple_surface, load=True)
+        result = z2pack.surface.run(system=simple_system, surface=simple_surface, load=True, serializer=serializer)
 
 def test_load_reference(simple_system, test_name, simple_surface, serializer):
     tag = test_name.split('/')[1]
-    path = 'reference_results/result_{}.'.format(tag) + serializer
+    path = 'reference_results/result_{}.'.format(tag) + serializer.__name__
     result = z2pack.surface.run(system=simple_system, surface=simple_surface)
     if not os.path.isfile(path):
-        z2pack.save_result(result, path)
+        z2pack.save_result(result, path, serializer=serializer)
         raise ValueError('File {} did not exist!'.format(path))
     else:
+        assert_res_equal(result, z2pack.load_result(path, serializer=serializer))
         assert_res_equal(result, z2pack.load_result(path))

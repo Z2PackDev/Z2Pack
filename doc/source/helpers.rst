@@ -1,14 +1,14 @@
 .. _helpers:
 
-Helper Modules / Functions
-==========================
+Helper Modules
+==============
 
-Functions for saving / loading results
---------------------------------------
+Saving and loading objects
+--------------------------
 
-.. automethod:: z2pack.save
-
-.. method:: z2pack.load
+.. automodule:: z2pack.io
+    :members:
+    :imported-members:
 
 Shapes
 ------

@@ -53,11 +53,11 @@ def run_line(
         * setting up printing status
         * setting up file backend
     """
-    # This is here to avoid circular import with the Surface (is solved in Python 3.5 and higher)
-    #~ global _helpers
-    from .. import _helpers
 
     LINE_ONLY__LOGGER.info(locals(), tags=('setup', 'box', 'skip'))
+    # This is here to avoid circular import with the Surface (is solved in Python 3.5 and higher)
+    
+    from .. import io
 
     # setting up controls
     controls = []
@@ -75,7 +75,7 @@ def run_line(
         if save_file is None:
             raise ValueError('Cannot load result from file: No filename given in the "save_file" parameter.')
         try:
-            init_result = _helpers.load(save_file, serializer=serializer)
+            init_result = io.load(save_file, serializer=serializer)
         except IOError as e:
             if not load_quiet:
                 raise e
@@ -97,8 +97,7 @@ def _run_line_impl(
         * file backend?
     """
     # This is here to avoid circular import with the Surface (is solved in Python 3.5 and higher)
-    #~ global _helpers
-    from .. import _helpers
+    from .. import io
 
     start_time = time.time() # timing the run
 
@@ -117,7 +116,7 @@ def _run_line_impl(
     def save():
         if save_file is not None:
             _LOGGER.info('Saving line result to file {}'.format(save_file))
-            _helpers.save(result, save_file, serializer=serializer)
+            io.save(result, save_file, serializer=serializer)
 
     # initialize stateful and data controls from old result
     if init_result is not None:

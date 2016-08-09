@@ -23,7 +23,5 @@ from . import tb
 
 from . import _logging_format # sets default logging levels / format
 
-from ._helpers import *
 
-
-__all__ = ['__version__', 'line', 'surface', 'shapes', 'fp'] + _helpers.__all__
+__all__ = ['__version__', 'line', 'surface', 'shapes', 'fp']

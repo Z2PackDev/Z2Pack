@@ -3,9 +3,9 @@
 #
 # Author:  Dominik Gresch <greschd@gmx.ch>
 # Date:    08.03.2016 10:21:06 CET
-# File:    _helpers.py
+# File:    _save_load.py
 
-"""Coding tools, not related to the 'physical/computation logic' of Z2Pack."""
+"""Free functions for saving and loading Z2Pack objects."""
 
 import os
 import tempfile

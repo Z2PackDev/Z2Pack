@@ -87,7 +87,7 @@ def test_tb(compare_data, compare_equal, pos_tol, gap_tol, move_tol, num_strings
 def test_simple_save(num_strings, simple_system, simple_surface):
     fp = tempfile.NamedTemporaryFile(delete=False)
     result1 = z2pack.surface.run(system=simple_system, surface=simple_surface, num_strings=num_strings, save_file=fp.name)
-    result2 = z2pack.load(fp.name)
+    result2 = z2pack.io.load(fp.name)
     os.remove(fp.name)
     assert_res_equal(result1, result2)
 
@@ -102,7 +102,7 @@ def test_weyl_save(pos_tol, gap_tol, move_tol, num_strings, weyl_system, weyl_su
         pos_tol=pos_tol,
         save_file=fp.name
     )
-    result2 = z2pack.load(fp.name)
+    result2 = z2pack.io.load(fp.name)
     os.remove(fp.name)
     assert_res_equal(result1, result2)
 
@@ -117,7 +117,7 @@ def test_tb_save(pos_tol, gap_tol, move_tol, num_strings, tb_system, tb_surface)
         pos_tol=pos_tol,
         save_file=fp.name
     )
-    result2 = z2pack.load(fp.name)
+    result2 = z2pack.io.load(fp.name)
     os.remove(fp.name)
     assert_res_equal(result1, result2)
 
@@ -176,5 +176,5 @@ def test_load_reference(simple_system, test_name, simple_surface, serializer):
         z2pack.save(result, path, serializer=serializer)
         raise ValueError('File {} did not exist!'.format(path))
     else:
-        assert_res_equal(result, z2pack.load(path, serializer=serializer))
-        assert_res_equal(result, z2pack.load(path))
+        assert_res_equal(result, z2pack.io.load(path, serializer=serializer))
+        assert_res_equal(result, z2pack.io.load(path))

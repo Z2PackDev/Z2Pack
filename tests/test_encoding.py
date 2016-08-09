@@ -17,9 +17,9 @@ def test_consistency_excat(obj):
     res = json.loads(
         json.dumps(
             obj, 
-            default=z2pack._encoding.encode
+            default=z2pack.io._encoding.encode
         ), 
-        object_hook=z2pack._encoding.decode
+        object_hook=z2pack.io._encoding.decode
     )
     assert obj == res
     assert type(obj) == type(res)
@@ -29,9 +29,9 @@ def test_consistency_notype(obj):
     res = json.loads(
         json.dumps(
             obj, 
-            default=z2pack._encoding.encode
+            default=z2pack.io._encoding.encode
         ), 
-        object_hook=z2pack._encoding.decode
+        object_hook=z2pack.io._encoding.decode
     )
     assert obj == res
 
@@ -40,4 +40,4 @@ def test_invalid():
         def __init__(self, x):
             self.x = x
     with pytest.raises(TypeError):
-        json.dumps(Bla(2), default=z2pack._encoding.encode)
+        json.dumps(Bla(2), default=z2pack.io._encoding.encode)

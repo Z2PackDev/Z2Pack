@@ -79,7 +79,7 @@ def test_simple_save(simple_system, simple_line):
     # Context manager doesn't work because the file is moved in the atomic save
     fp = tempfile.NamedTemporaryFile(delete=False)
     result = z2pack.line.run(system=simple_system, line=simple_line, save_file=fp.name)
-    result2 = z2pack.load(fp.name)
+    result2 = z2pack.io.load(fp.name)
     os.remove(fp.name)
     assert_res_equal(result, result2)
     
@@ -87,7 +87,7 @@ def test_weyl_save(weyl_system, weyl_line):
     # Context manager doesn't work because the file is moved in the atomic save
     fp = tempfile.NamedTemporaryFile(delete=False)
     result = z2pack.line.run(system=weyl_system, line=weyl_line, save_file=fp.name)
-    result2 = z2pack.load(fp.name)
+    result2 = z2pack.io.load(fp.name)
     os.remove(fp.name)
     assert_res_equal(result, result2)
 

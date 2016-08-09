@@ -116,7 +116,7 @@ def run_surface(
         if save_file is None:
             raise ValueError('Cannot load result from file: No filename given in the "save_file" parameter.')
         try:
-            init_result = _helpers.load_result(save_file, serializer=serializer)
+            init_result = _helpers.load(save_file, serializer=serializer)
         except IOError as e:
             if not load_quiet:
                 raise e
@@ -185,7 +185,7 @@ def _run_surface_impl(
     if save_file is not None:
         def handler(res):
             _LOGGER.info('Saving surface result to file {} (ASYNC)'.format(save_file))
-            _helpers.save_result(res, save_file, serializer=serializer)
+            _helpers.save(res, save_file, serializer=serializer)
     else:
         handler = None
 

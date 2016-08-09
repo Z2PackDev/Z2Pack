@@ -51,7 +51,7 @@ EXT_MAPPING = {
 }
 
 def _get_serializer(file_path):
-    """Tries to determine the correct serializer from the file extension. If none can be determined, falls back to the default (JSON)"""
+    """Tries to determine the correct serializer from the file extension. If none can be determined, falls back to the default (msgpack)"""
     _, file_ext = os.path.splitext(file_path)
     try:
         return EXT_MAPPING[file_ext.lower()]
@@ -59,8 +59,17 @@ def _get_serializer(file_path):
         return next(iter(SERIALIZER_SPECS.keys()))
 
 @export
-def save_result(result, file_path, serializer='auto'):
-    """Saves result in an atomic way by first creating a temporary file and then moving to the file_path."""
+def save(obj, file_path, serializer='auto'):
+    """Saves an object to the file given in ``file_path``. The saving is made atomic by first creating a temporary file and then moving to the ``file_path``.
+    
+    :param obj:         Object to be saved.
+    
+    :param file_path:   Path to the file.
+    :type file_path:    str
+
+    :param serializer:  The serializer to be used. Valid options are ``msgpack`` ``json`` and ``pickle``. By default, the serializer is determined from the file extension. If this does not work, ``msgpack`` is used. 
+    :type serializer:   module
+    """
     if serializer == 'auto':
         serializer = _get_serializer(file_path)
     specs = SERIALIZER_SPECS[serializer]
@@ -69,11 +78,18 @@ def save_result(result, file_path, serializer='auto'):
         delete=False,
         mode='wb' if specs.binary else 'w'
     ) as f:
-        serializer.dump(result, f, **specs.encode_kwargs)
+        serializer.dump(obj, f, **specs.encode_kwargs)
         os.replace(f.name, file_path)
 
 @export
-def load_result(file_path, serializer='auto'):
+def load(file_path, serializer='auto'):
+    """Loads the object that was saved to ``file_path``. 
+    
+    :param file_path:   Path to the file.
+    :type file_path:    str
+    
+    :param serializer:  The serializer which should be used to load the result. By default, it tries to guess from the file extension, but all three serializers (JSON, msgpack, pickle) are tried if that does not succeed. If a specific serializer is given, the others are not tried.
+    """
     if serializer == 'auto':
         serializer = _get_serializer(file_path)
         serializer_list = [serializer] + [

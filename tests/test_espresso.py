@@ -69,7 +69,7 @@ def test_bismuth(qe_system, compare_wcc, surface_fct):
         move_tol=None
     )
     compare_wcc(result.wcc)
-    res2 = z2pack.load_result(os.path.join(build_dir, 'result'))
+    res2 = z2pack.load(os.path.join(build_dir, 'result'))
     assert np.isclose(result.wcc, res2.wcc).all()
     shutil.rmtree(build_dir)
 
@@ -108,7 +108,7 @@ def test_bismuth_correct_num_wcc(qe_system, compare_wcc, surface_fct):
         move_tol=None
     )
     compare_wcc(result.wcc)
-    res2 = z2pack.load_result(os.path.join(build_dir, 'result'))
+    res2 = z2pack.load(os.path.join(build_dir, 'result'))
     assert np.isclose(result.wcc, res2.wcc).all()
     shutil.rmtree(build_dir)
     

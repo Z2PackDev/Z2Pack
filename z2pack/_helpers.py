@@ -82,15 +82,15 @@ def load_result(file_path, serializer='auto'):
     else:
         serializer_list = [serializer]
     for s in serializer_list:
+        print(s)
         try:
             specs = SERIALIZER_SPECS[s]
             with open(file_path, 'rb' if specs.binary else 'r') as f:
-                return serializer.load(f, **specs.decode_kwargs)
+                return s.load(f, **specs.decode_kwargs)
         except OSError as e:
             raise e
         except Exception as e:
-            print(e)
-            #~ print(e.msg)
+            pass
     else:
         raise ValueError('File could not be deserialized with any of the used serializers ({}).'.format(', '.join([s.__name__ for s in serializer_list])))
             

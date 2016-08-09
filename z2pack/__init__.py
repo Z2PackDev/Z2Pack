@@ -6,7 +6,7 @@
 # File:    z2pack.py
 
 """
-The core module contains the routines that are shared between different  specialisations of Z2Pack (first-principles, tight-binding), and interfaces  to those.
+The core module contains the routines that are shared between different specialisations of Z2Pack (first-principles, tight-binding, effective models), and interfaces  to those.
 
 .. codeauthor:: Dominik Gresch <greschd@gmx.ch>
 """

@@ -11,6 +11,15 @@ from fsc.export import export
 
 @export
 class Result(metaclass=abc.ABCMeta):
+    """
+    Base class for Z2Pack results. Additionally to the data of the calculation, this object also saves the last state and convergence status of the calculation.
+    
+    :param data:    Data object of the calculation
+
+    :param stateful_ctrl:   List of StatefulControl objects of the calculation.
+
+    :param convergence_ctrl:    List of ConvergenceControl objects of the calculation.
+    """
     def __init__(self, data, stateful_ctrl, convergence_ctrl):
         self.data = data
         ctrl_states = dict()

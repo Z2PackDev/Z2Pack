@@ -98,7 +98,6 @@ def load(file_path, serializer='auto'):
     else:
         serializer_list = [serializer]
     for s in serializer_list:
-        print(s)
         try:
             specs = SERIALIZER_SPECS[s]
             with open(file_path, 'rb' if specs.binary else 'r') as f:

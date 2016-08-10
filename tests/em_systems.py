@@ -60,6 +60,6 @@ def weyl_line(kz):
 
 @pytest.fixture
 def weyl_surface():
-    return z2pack.shapes.Sphere([0, 0, 0], 1.)
+    return z2pack.shape.Sphere([0, 0, 0], 1.)
 
 

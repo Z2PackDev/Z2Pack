@@ -22,14 +22,14 @@ def test_weyl(assert_image_equal):
     ))
     result = z2pack.surface.run(
         system=system,
-        surface=z2pack.shapes.Sphere([0, 0, 0], 1.),
+        surface=z2pack.shape.Sphere([0, 0, 0], 1.),
         num_strings=11,
         move_tol=None,
         gap_tol=None,
         pos_tol=None
     )
     fig, ax = plt.subplots()
-    z2pack.surface.plot.wcc_symmetry(result, axis=ax, symmetry_operator=np.diag([1, -1]))
+    z2pack.plot.wcc_symmetry(result, axis=ax, symmetry_operator=np.diag([1, -1]))
     assert_image_equal('simple_wcc_symmetry')
 
 def test_weyl_no_axis(assert_image_equal):
@@ -41,11 +41,11 @@ def test_weyl_no_axis(assert_image_equal):
     ))
     result = z2pack.surface.run(
         system=system,
-        surface=z2pack.shapes.Sphere([0, 0, 0], 1.),
+        surface=z2pack.shape.Sphere([0, 0, 0], 1.),
         num_strings=11,
         move_tol=None,
         gap_tol=None,
         pos_tol=None
     )
-    z2pack.surface.plot.wcc_symmetry(result, symmetry_operator=np.diag([1, -1]))
+    z2pack.plot.wcc_symmetry(result, symmetry_operator=np.diag([1, -1]))
     assert_image_equal('simple_wcc_symmetry')  # intentionally the same as before

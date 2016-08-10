@@ -3,7 +3,7 @@
 #
 # Author:  Dominik Gresch <greschd@gmx.ch>
 # Date:    12.04.2015 19:58:32 CEST
-# File:    shapes.py
+# File:    shape.py
 
 """
 A collection of pre-defined shapes to use as the ``param_fct`` argument

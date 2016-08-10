@@ -7,7 +7,7 @@
 
 from fsc.export import export
 
-from .._utils import _pol_step, _sgng
+from ._utils import _pol_step, _sgng
 
 @export
 def chern(surface_result):

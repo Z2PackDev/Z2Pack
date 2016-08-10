@@ -15,7 +15,10 @@ from ._version import __version__
 
 from . import line
 from . import surface
-from . import shapes
+from . import shape
+
+from . import plot
+from . import invariant
 
 from . import fp
 from . import em
@@ -24,4 +27,4 @@ from . import tb
 from . import _logging_format # sets default logging levels / format
 
 
-__all__ = ['__version__', 'line', 'surface', 'shapes', 'fp']
+__all__ = ['__version__', 'line', 'surface', 'shape', 'fp', 'invariant', 'plot']

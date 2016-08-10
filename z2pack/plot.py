@@ -13,7 +13,7 @@ import decorator
 import numpy as np
 from fsc.export import export
 
-from .._utils import _pol_step
+from ._utils import _pol_step
 
 @decorator.decorator
 def _plot(func, data, *, axis=None, **kwargs):

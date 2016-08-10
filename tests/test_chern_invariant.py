@@ -36,13 +36,13 @@ def test_trivial(N, M, patch_surface_data):
     """Test straight WCC lines"""
     wcc = [np.linspace(0, 1, M) for j in range(N)]
     data = SurfaceData(wcc)
-    assert z2pack.surface.invariant.chern(data) == 0
+    assert z2pack.invariant.chern(data) == 0
 
 def test_linear(L, x, offset, patch_surface_data):
     """Test a linear offset"""
     wcc = np.array([np.linspace(x,  offset + x, L)]).T
     data = SurfaceData(wcc)
-    assert (abs(offset) / (L - 1) >= 0.5) or np.isclose(z2pack.surface.invariant.chern(data), offset)
+    assert (abs(offset) / (L - 1) >= 0.5) or np.isclose(z2pack.invariant.chern(data), offset)
 
 def test_linear_2(M, L, x, offset, patch_surface_data):
     """Test a linear offset, with some additional lines in between"""
@@ -50,4 +50,4 @@ def test_linear_2(M, L, x, offset, patch_surface_data):
     wcc += [[random.random()] * L] * M
     wcc = np.array(wcc).T
     data = SurfaceData(wcc)
-    assert (abs(offset) / (L - 1) >= 0.5) or np.isclose(z2pack.surface.invariant.chern(data), offset)
+    assert (abs(offset) / (L - 1) >= 0.5) or np.isclose(z2pack.invariant.chern(data), offset)

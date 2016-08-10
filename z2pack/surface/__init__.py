@@ -12,5 +12,3 @@ from ._data import SurfaceData
 from ._result import SurfaceResult
 from ._run import run_surface as run
 
-from . import plot
-from . import invariant

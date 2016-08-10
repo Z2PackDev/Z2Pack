@@ -54,7 +54,7 @@ result = z2pack.surface.run(
 )
 
 fig, ax = plt.subplots()
-z2pack.surface.plot.wcc(result, axis=ax)
+z2pack.plot.wcc(result, axis=ax)
 plt.savefig('plots/wcc.pdf', bbox_inches='tight')
 
-print("t1: {0}, t2: {1}, Z2 invariant: {2}".format(t1, t2, z2pack.surface.invariant.z2(result)))
+print("t1: {0}, t2: {1}, Z2 invariant: {2}".format(t1, t2, z2pack.invariant.z2(result)))

@@ -35,7 +35,7 @@ system0 = z2pack.em.System(hamilton0, bands=1)
 system1 = z2pack.em.System(hamilton1) # bands=1 is default (#orbitals / 2)
 
 # the surface is a sphere around the Weyl point
-surface = z2pack.shapes.Sphere([0., 0., 0.], 0.01)
+surface = z2pack.shape.Sphere([0., 0., 0.], 0.01)
 res0 = z2pack.surface.run(system=system0, surface=surface)
 res1 = z2pack.surface.run(system=system1, surface=surface)
 
@@ -55,7 +55,7 @@ ax[0].set_title(r'$\vec{k}.\vec{\sigma}$', fontsize=fs)
 ax[1].set_title(r'$(k_x, -k_y, k_z).\vec{\sigma}$', fontsize=fs)
 
 # plotting the evolution of polarization
-z2pack.surface.plot.chern(res0, axis=ax[0])
-z2pack.surface.plot.chern(res1, axis=ax[1])
+z2pack.plot.chern(res0, axis=ax[0])
+z2pack.plot.chern(res1, axis=ax[1])
 
 plt.savefig('plot.pdf', bbox_inches='tight')

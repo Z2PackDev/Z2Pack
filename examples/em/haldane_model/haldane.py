@@ -33,7 +33,7 @@ def get_chern(m, t1, t2, phi):
     system = z2pack.em.System(lambda k: Hamilton(k, m, t1, t2, phi), bands=1)
     
     result = z2pack.surface.run(system=system, surface=lambda s, t: [t, s, 0.])
-    return z2pack.surface.invariant.chern(result)
+    return z2pack.invariant.chern(result)
 
 if __name__ == "__main__":
     print(get_chern(0.5, 1., 1. / 3., 0.5 * np.pi))

@@ -54,7 +54,7 @@ def _get_serializer(file_path):
     """Tries to determine the correct serializer from the file extension. If none can be determined, falls back to the default (msgpack)"""
     _, file_ext = os.path.splitext(file_path)
     try:
-        return EXT_MAPPING[file_ext.lower()]
+        return EXT_MAPPING[file_ext.lower().lstrip('.')]
     except KeyError:
         return next(iter(SERIALIZER_SPECS.keys()))
 

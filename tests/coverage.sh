@@ -1,2 +1,2 @@
 #!/bin/bash
-py.test --cov=z2pack --cov-report=html -Q -A
+py.test -p no:cov-exclude --cov=z2pack --cov-report=html -Q -A

@@ -23,7 +23,7 @@ system = z2pack.fp.System(
     ]],
     kpt_fct=z2pack.fp.kpoint.abinit,
     kpt_path=SYSTEM_NAME + '_nscf.in',
-    command='mpirun -np 4 ~/software/abinit-7.10.5/src/98_main/abinit < {}_nscf.files >& log'.format(SYSTEM_NAME),
+    command='mpirun -np 7 ~/software/abinit-7.10.5/src/98_main/abinit < {}_nscf.files >& log'.format(SYSTEM_NAME),
     executable='/bin/bash'
 )
 

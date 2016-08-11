@@ -6,6 +6,7 @@ Reference
     :maxdepth: 3
 
     core.rst
-    fp.rst
+    em.rst
     tb.rst
+    fp.rst
     other_systems.rst

@@ -20,6 +20,16 @@ class Sphere:
 
     :param radius:  Radius of the sphere
     :type radius:   float
+    
+    
+    Example usage:
+    
+    .. code :: python
+    
+        z2pack.surface.run(
+            system=..., # Refer to the various ways of defining a system.
+            surface=z2pack.shape.Sphere(center=[0, 0, 0], radius=0.1)
+        )
     """
     def __init__(self, center, radius):
         self.center = center

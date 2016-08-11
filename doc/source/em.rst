@@ -1,4 +1,4 @@
-Effective (:math:`\mathbf{k} \cdot \mathbf{p}`) Models
+Effective (k•p) Models
 ------------------------------------------------------
 .. automodule:: z2pack.em
     :show-inheritance:

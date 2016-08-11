@@ -6,8 +6,7 @@
 # File:    _effective_model.py
 
 """
-The em (effective models) module
-.. codeauthor:: Dominik Gresch <greschd@gmx.ch>
+The em (effective models) module contains a class for creating Systems which are described by a matrix Hamiltonian.
 """
 
 import numpy as np
@@ -19,8 +18,7 @@ from .system import EigenstateSystem
 @export
 class System(EigenstateSystem):
     r"""
-    Subclass of :class:`z2pack.System` used for calculating systems with
-    effective models
+    This class is used when the system can be explicitly described as a matrix Hamiltonian :math:`\mathcal{H}(\mathbf{k})`.
 
     :param hamilton: A function taking the wavevector ``k`` (``list`` of length 3) as an input and returning the matrix Hamiltonian.
     :type hamilton: function
@@ -34,10 +32,6 @@ class System(EigenstateSystem):
 
     :param hermitian_tol:   Maximum absolute value in the difference between the Hamiltonian and its hermitian conjugate. Use ``hermitian_tol=None`` to deactivate the test entirely.
     :type hermitian_tol:    float
-
-    :param kwargs:      are passed to the :class:`.Surface` constructor via
-        :meth:`.surface`, which passes them to :meth:`wcc_calc<.Surface.wcc_calc>`, precedence:
-        :meth:`wcc_calc<.Surface.wcc_calc>` > :meth:`.surface` > this (newer kwargs take precedence)
     """
     def __init__(
             self,
@@ -66,9 +60,7 @@ class System(EigenstateSystem):
             self._bands = bands
 
     def get_eig(self, kpt):
-        """
-        returns:        eigenstates
-        """
+        __doc__ = super().__doc__
         # create k-points for string
         k_points = kpt[:-1]
 

@@ -11,8 +11,6 @@ codes interfacing to Wannier90.
 
 .. note:: A modified version of Wannier90 is needed for Z2Pack. Please
     consult the :ref:`Tutorial<Wannier90_setup>` for details.
-
-.. codeauthor:: Dominik Gresch <greschd@gmx.ch>
 """
 
 from ._first_principles import *

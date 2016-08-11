@@ -11,9 +11,12 @@ first-principles codes.
 All functions have the same calling structure as :func:`prototype`.
 """
 
+
 import decorator
 import numpy as np
+from fsc.export import export
 
+@export
 def prototype(kpt):
     r"""
     Specifies the interface
@@ -32,6 +35,7 @@ def _check_dim(fct, kpt):
             raise ValueError('Dimension of point k = {} != 3'.format(k))
     return fct(kpt)
 
+@export
 @_check_dim
 def abinit(kpt):
     """
@@ -52,6 +56,7 @@ def abinit(kpt):
     string += '\n'
     return string
 
+@export
 @_check_dim
 def qe(kpt):
     """
@@ -70,6 +75,7 @@ def qe(kpt):
     string += str(1)+'\n'
     return string
 
+@export
 @_check_dim
 def qe_explicit(kpt):
     """
@@ -85,6 +91,7 @@ def qe_explicit(kpt):
         string += '{} {} {} 1\n'.format(*k)
     return string
 
+@export
 @_check_dim
 def wannier90(kpt):
     """
@@ -99,6 +106,7 @@ def wannier90(kpt):
     string += '\nend kpoints\n'
     return string
 
+@export
 @_check_dim
 def vasp(kpt):
     """

@@ -1,4 +1,4 @@
-.. _documentation:
+.. _z2pack_reference:
 
 Reference
 =========

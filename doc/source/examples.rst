@@ -1,4 +1,4 @@
-.. _examples:
+.. _z2pack_examples:
 
 Examples
 ========

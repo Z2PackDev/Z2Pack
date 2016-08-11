@@ -1,4 +1,4 @@
-.. _links:
+.. _z2pack_links:
 
 Links
 =====

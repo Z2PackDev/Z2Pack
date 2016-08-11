@@ -13,5 +13,5 @@ Saving and loading objects
 Shapes
 ------
 
-.. automodule:: z2pack.shapes
+.. automodule:: z2pack.shape
     :members:

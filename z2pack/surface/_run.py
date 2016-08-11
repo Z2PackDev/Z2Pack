@@ -41,9 +41,9 @@ def run_surface(
         pos_tol=1e-2,
         gap_tol=0.3,
         move_tol=0.3,
-        iterator=range(8, 27, 2),
-        min_neighbour_dist=0.01,
         num_strings=11,
+        min_neighbour_dist=0.01,
+        iterator=range(8, 27, 2),
         init_result=None,
         save_file=None,
         load=False,
@@ -51,48 +51,37 @@ def run_surface(
         serializer='auto'
 ):
     r"""
-    TODO: fix
-    Calculates the Wannier charge centers in the given surface
+    Calculates the Wannier charge centers for a given system and surface.
 
     * automated convergence in string direction
     * automated check for distance between gap and wcc -> add string
     * automated convergence check w.r.t. movement of the WCC between
       different k-strings.
 
-    :param num_strings:         Initial number of strings ``Default: 11``
-    :type num_strings:          int
+    :param system:
+    :type system:
+    
+    :param surface:
 
-    :param pos_tol:     The maximum movement of a WCC for the iteration
-        w.r.t. the number of k-points in a single string to converge.
-        The iteration can be turned off by setting ``pos_tol=None``.
-    :type pos_tol:              float
+    :param pos_tol:     The maximum movement of a WCC for the iteration w.r.t. the number of k-points in a single string to converge. The iteration can be turned off by setting ``pos_tol=None``.
+    :type pos_tol:      float
 
-    :param gap_tol:     Smallest distance between a gap and its
-        neighbouring WCC for the gap check to be satisfied.
-        The check can be turned off by setting ``gap_tol=None``.
-    :type gap_tol:              float
+    :param gap_tol:     Smallest distance between a gap and its neighbouring WCC for the gap check to be satisfied. The check can be turned off by setting ``gap_tol=None``.
+    :type gap_tol:      float
 
-    :param move_tol:    Scaling factor for the maximum allowed
-        movement between neighbouring wcc. The factor is multiplied by
-        the size of the largest gap between two wcc (from the two
-        neighbouring strings, the smaller value is chosen). The check
-        can be turned off by setting ``move_tol=None``.
+    :param move_tol:    Scaling factor for the maximum allowed movement between neighbouring wcc. The factor is multiplied by the size of the largest gap between two wcc (from the two neighbouring strings, the smaller value is chosen). The check can be turned off by setting ``move_tol=None``.
     :type move_tol:    float
 
-    :param iterator:            Generator for the number of points in
-        a k-point string. The iterator should also take care of the maximum
-        number of iterations. It is needed even when ``pos_tol=None``, to
-        provide a starting value.
+    :param num_strings:     Initial number of strings.
+    :type num_strings:      int
 
-    :param min_neighbour_dist:  Minimum distance between two strings (no
-        new strings will be added, even if the gap check (gap check & move check) fails).
+    :param min_neighbour_dist:  Minimum distance between two strings (no new strings will be added, even if the gap check (gap check & move check) fails).
     :type min_neighbour_dist:   float
 
-    :param verbose:             Toggles printed output.
-    :type verbose:              bool
+    :param iterator:    Generator for the number of points in a k-point string. The iterator should also take care of the maximum number of iterations. It is needed even when ``pos_tol=None``, to provide a starting value.
 
-    :returns:                   ``None``. Use :meth:`get_res` and
-        :meth:`z2` to get the results.
+    :returns:   :class:`SurfaceResult` instance.
+    
     """
     _LOGGER.info(locals(), tags=('setup', 'box', 'skip'))
 
@@ -145,15 +134,12 @@ def _run_surface_impl(
         init_result=None,
         serializer='auto'
 ):
-    r"""Implementation of the surface's run.
+    r"""Implementation of the surface's run. 
 
     :param controls: Control objects which govern the iteration.
     :type controls: AbstractControl
 
-    :type system: OverlapSystem or EigenvalSystem
-
-
-    :param surface: Function which defines the surface on which the WCC are calculated.
+    The other parameters are the same as for :meth:`.run`.
     """
     start_time = time.time()
 

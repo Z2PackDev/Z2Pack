@@ -33,8 +33,15 @@ import z2pack
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.mathjax'
+    'sphinx.ext.mathjax',
+    'sphinx.ext.intersphinx'
 ]
+
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    'msgpack': ('http://pythonhosted.org/msgpack-python', None),
+    'tbmodels': ('http://z2pack.ethz.ch/tbmodels/', None)
+}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

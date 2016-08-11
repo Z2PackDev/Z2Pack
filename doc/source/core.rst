@@ -8,4 +8,6 @@ Core Module
 
     line.rst
     surface.rst
+    invariant.rst
+    plot.rst
     helpers.rst

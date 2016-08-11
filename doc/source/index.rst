@@ -16,14 +16,14 @@
     * Alexey A. Soluyanov and David Vanderbilt "Computing topological invariants without inversion symmetry" [`PhysRevB.83.235401 <http://dx.doi.org/10.1103/PhysRevB.83.235401>`_]
 
 
-Tutorial, Examples and Documentation
-====================================
+Tutorial, Examples and Reference
+================================
 .. toctree::
     :maxdepth: 2
     
     tutorial.rst
     examples.rst
-    documentation.rst
+    reference.rst
 
 
 Getting in touch

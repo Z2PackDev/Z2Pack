@@ -35,8 +35,8 @@ def run_line(
         *,
         system,
         line,
-        iterator=range(8, 27, 2),
         pos_tol=1e-2,
+        iterator=range(8, 27, 2),
         save_file=None,
         init_result=None,
         load=False,
@@ -44,14 +44,46 @@ def run_line(
         serializer='auto'
 ):
     """
-    Wrapper for:
-        * getting / disecting old result
-        * setting up Controls
-            - from old result -> to impl?
-            - from input parameters
-        * setting up result -> to impl?
-        * setting up printing status
-        * setting up file backend
+    Calculates the Wannier charge centers for a given system and line, automatically converging w.r.t. the number of k-points along the line.
+
+    :param system:      System for which the WCC should be calculated.
+    :type system:       :class:`z2pack.system.EigenstateSystem` or :class:`z2pack.system.OverlapSystem`.
+    
+    :param line:        Line along which the WCC should be calculated. The argument should be a callable which parametrizes the line :math:`\mathbf{k}(t)`, in reduced coordinates. It should take one argument (``float``) and return a list of ``float`` describing the point in k-space. Note that the line must be closed, that is :math:`\mathbf{k}(0) = \mathbf{k}(1) + \mathbf{G}`, where :math:`\mathbf{G}` is an inverse lattice vector.
+
+    :param pos_tol:     The maximum movement of a WCC for the iteration w.r.t. the number of k-points in a single string to converge. The iteration can be turned off by setting ``pos_tol=None``.
+    :type pos_tol:      float
+
+    :param iterator:    Generator for the number of points in a k-point string. The iterator should also take care of the maximum number of iterations. It is needed even when ``pos_tol=None``, to provide a starting value.
+    
+    :param save_file:   Path to a file where the result should be stored.
+    :type save_file:    str
+    
+    :param init_result: Initial result which is loaded at the start of the calculation.
+    :type init_result:  :class:`LineResult`
+    
+    :param load:        Determines whether the initial result is loaded from ``save_file``.
+    :type load:         bool
+    
+    :param load_quiet:  Determines whether errors / inexistent files are ignored when loading from ``save_file``
+    :type load_quiet:   bool
+    
+    :param serializer:  Serializer which is used to save the result to file. Valid options are :py:mod:`msgpack`, :py:mod:`json` and :py:mod:`pickle`. By default (``serializer='auto'``), the serializer is inferred from the file ending. If this fails, :py:mod:`msgpack` is used.
+    :type serializer:   module
+
+    :returns:   :class:`LineResult` instance.
+    
+    Example usage:
+    
+    .. code:: python
+    
+        system = ... # Refer to the various ways of creating a System instance.
+        result = z2pack.line.run(
+            system=system,
+            line=lambda t: [t, 0, 0] # Line along kx for ky, kz = 0.
+        )
+        print(result.wcc) # Prints the list of WCC.
+    
     """
 
     LINE_ONLY__LOGGER.info(locals(), tags=('setup', 'box', 'skip'))
@@ -92,9 +124,12 @@ def _run_line_impl(
         serializer='auto'
 ):
     """
-    Input parameters:
-        * Controls
-        * file backend?
+    Implementation of the line's run. 
+
+    :param controls: Control objects which govern the iteration.
+    :type controls: AbstractControl
+
+    The other parameters are the same as for :meth:`.run`.
     """
     # This is here to avoid circular import with the Surface (is solved in Python 3.5 and higher)
     from .. import io

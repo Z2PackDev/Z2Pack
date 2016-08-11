@@ -1,7 +1,7 @@
 .. _documentation:
 
-Documentation
-=============
+Reference
+=========
 .. toctree::
     :maxdepth: 3
 

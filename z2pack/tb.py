@@ -12,8 +12,10 @@ This module contains the class for creating systems based on `TBmodels <http://z
 import copy
 from collections import ChainMap
 
+from fsc.export import export
 from .em import System as _EmSystem
 
+@export
 class System(_EmSystem):
     r"""
     System class for tight-binding models.

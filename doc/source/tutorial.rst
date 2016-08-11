@@ -12,6 +12,6 @@ If you've used a previous version of Z2Pack, you should probably read the :ref:`
     tutorial_new.rst
     tutorial_installation.rst
     tutorial_system.rst
-    tutorial_core.rst
-    tutorial_fp.rst
-    tutorial_tb.rst
+    tutorial_surface.rst
+    tutorial_invariants.rst
+    tutorial_plot.rst

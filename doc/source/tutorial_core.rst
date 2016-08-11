@@ -1,71 +1,4 @@
-Core Module
-===========
 
-Tutorial on the core module :mod:`z2pack`.
-
-.. contents::
-
-Getting Z2Pack
---------------
-
-pip
-~~~
-Z2Pack can be installed directly from the Python package index:
-
-``sudo pip install z2pack``
-
-If you are using Z2Pack from a system where you do not have admin rights,
-you can still install it if ``virtualenv`` is installed on it:
-
-::
-
-    virtualenv --system-site-packages my_venv
-    source ./my_venv/bin/activate
-    pip install z2pack
-
-where ``my_venv`` can obviously be replaced by a different name.
-
-.. note:: You will have to call ``source ./my_venv/bin/activate`` each
-    time you want to use the virtual environment. 
-
-From source
-~~~~~~~~~~~
-
-The source code is also available on GitHub_ (development version) or PyPI_ (release version). If you download the source
-code, you can either reference it directly in your Python project by
-adding
-
-::
-
-    import sys
-    sys.path.append('path_to_package')
-    import z2pack
-
-.. note:: ``'path_to_package'`` should be the the top-level directory of
-    the git repository (``Z2Pack``), not the directory containing the Python
-    module (``Z2Pack/z2pack``).
-
-Alternatively, you can **install** it by typing (while in the source directory)
-
-``sudo python setup.py install --record files.txt``
-
-where the ``--record`` flag is used to enable **uninstalling** at a later
-time, using
-
-``cat files.txt | xargs rm -rf``
-
-Class :class:`System<z2pack.System>`
-------------------------------------
-The :class:`System<z2pack.System>` class is used to describe the system for which you
-want to calculate topological invariants. If you want to learn how to
-create an instance of :class:`System<z2pack.System>`, please refer to its subclasses
-:ref:`fp.System<fp_System>` or :ref:`tb.System<tb_System>` (for
-:ref:`first-principles<tutorial_fp>` or :ref:`tight-binding<tutorial_tb>` calculations).
-
-In both cases, the :class:`System<z2pack.System>` instance is used to create the
-different surfaces on which to compute the Z2 topological invariant.
-
-.. _creating-surface:
 
 Creating a :class:`.Surface`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -139,19 +72,8 @@ or, equivalently (Method 2)
     system = z2pack.System(...)
     system.surface(lambda t: [0, 0, t / 2.], [1, 0, 0])
 
-Keyword arguments
-+++++++++++++++++
 
-Keyword arguments given to :meth:`.surface` will be used as defaults for
-any :meth:`Surface.wcc_calc` call for that Surface.
 
-.. warning:: Different instances of :class:`.Surface` should have different
-    paths to the pickle file (keyword argument ``pickle_file``), otherwise they will overwrite each other's data.
-
-Class :class:`.Surface`
------------------------
-The methods of the :class:`.Surface` class is where most of the
-functionality of Z2Pack is implemented. They are used for calculations as well as saving, loading and plotting results. 
 
 Calculating the WCC positions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -251,8 +173,8 @@ Wannier charge centers, k-points, :math:`\Lambda` matrices etc.
 can be extracted by using the :meth:`.get_res()<.Surface.get_res>` method. Its return value is
 a ``dict`` containing the data.
 
-Saving and loading with ``pickle``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Saving and loading with
+~~~~~~~~~~~~~~~~~~~~~~~~
 If ``pickle_file`` is set (not ``None``) for :meth:`Surface.wcc_calc()` (or when creating the :class:`.Surface`), the most important results will automatically be
 saved into the path given by ``pickle_file``. They can later be extracted
 by calling :meth:`.load`

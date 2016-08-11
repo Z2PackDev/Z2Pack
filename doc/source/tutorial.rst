@@ -2,15 +2,16 @@
 
 Tutorial
 ========
-The following Tutorial gives an introduction to the Z2Pack **Python** package. The :ref:`Documentation<core>` of Z2Pack provides more detailed information about the classes, methods and available parameters.
+This tutorial will take you through all the basic steps of using Z2Pack. Since Z2Pack is a **Python library**, you might need some knowledge of Python along the way. If you've never used Python before, you might want to check out the excellent `Python Tutorial <https://docs.python.org/3/tutorial/index.html>`_ first.
 
-In the first section, the two classes :class:`System<z2pack.System>` and :class:`.Surface` will be introduced, and the different options for calculating, saving, plotting etc. are shown. The subsequent sections explain the two different specialisations, for first-principles calculations or for use with a
-tight-binding model. 
+If you've used a previous version of Z2Pack, you should probably read the :ref:`what's new <z2pack_tutorial_new>` section first. Otherwise you can skip ahead and start with the :ref:`installation instructions <z2pack_tutorial_installation>`. 
 
 .. toctree::
     :maxdepth: 3
     
     tutorial_new.rst
+    tutorial_installation.rst
+    tutorial_system.rst
     tutorial_core.rst
     tutorial_fp.rst
     tutorial_tb.rst

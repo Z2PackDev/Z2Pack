@@ -12,48 +12,7 @@ Tutorial on the :mod:`z2pack.fp` submodule.
 Setup and Compatibility
 -----------------------
 
-For the computation of overlap matrices, Z2Pack uses the Wannier90 software package. This means that Z2Pack can be used with any first - principles code that interfaces to Wannier90. If you are using Wannier90 **version 2.0.1** or higher, it is compatible with Z2Pack if ``skip_B1_tests = .TRUE.`` is set.
 
-For first-principles codes that are not yet compatible with Wannier90 2.0, a modified version of Wannier90 1.2 is available here:
-
-:download:`Wannier90 1.2, modified for ABINIT<downloads/wannier90-1.2.0.1.tar.gz>`
-:download:`Wannier90 1.2<downloads/wannier90-1.2.tar.gz>`
-
-.. ~ :download:`Wannier90 2.0<downloads/wannier90-2.0.0.tar.gz>`
-
-.. warning:: Compiling your first-principles code with this version of
-    Wannier90 will likely break Wannier90 for purposes other than Z2Pack.
-    It is recommended to create a separate instance of the first-principles
-    code for Z2Pack.
-
-ABINIT Setup
-~~~~~~~~~~~~
-The following is a guide on how to install ABINIT with the modified
-Wannier90 source by replacing the Wannier90 fallback in ABINIT. If your
-usual routine is to install ABINIT with Wannier90 as an external (pre-compiled)
-library, it may be easier to compile the modified Wannier90 source
-again and then linking to that.
-
-* Download the modified Wannier90 source and copy it to the ``tarballs``
-  directory of ABINIT (usually ``~/.abinit/tarballs``)
-* Now we need to change the checksum ABINIT expects from the Wannier90
-  source.
-    
-  * Get the md5sum for both the original (un-modified) Wannier90 source
-    and the modified source with the command ``md5sum filename``. 
-  * Go to your ABINIT source folder and open the file ``fallbacks/configure``.
-    Search and replace every instance of the old checksum with the new
-    one. You should find 2 checksums to replace.
-
-* Build ABINIT with Wannier90 enabled. If one of the previous steps
-  were not done correctly, the installation will likely get stuck trying to
-  download Wannier90.
-
-VASP Setup
-~~~~~~~~~~
-For VASP, the installation routine doesn't differ from installing VASP with
-a regular version of Wannier90. Compile the modified Wannier90 source and
-link to it when installing VASP.
 
 .. _fp_System:
 

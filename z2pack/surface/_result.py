@@ -11,12 +11,22 @@ from .._result import Result
 
 @export
 class SurfaceResult(Result):
+    """Container for the data, state and convergence status of a surface calculation. The attributes / properties of the data object (:class:`SurfaceData`) can be accessed directly from the :class:`SurfaceResult` object.
+    
+    Example:
+    
+    .. code:: python
+    
+        result = z2pack.surface.run(...)
+        print(result.t) # prints the positions of the lines
+        print(result.pol) # prints the sum of WCC for each line
+    """
 
     @property
     def convergence_report(self):
         r"""
-        Returns a convergence report (as a string) for the result. This report shows whether the convergence options used for calculating this result were satisfied or not.
-        """
+        Convergence report (as a dict) for the result. The keys of the dictionary indicate the type of convergence test. For each of the tests, a dictionary with keys 'PASSED', 'FAILED' and (optionally) 'MISSING' shows the number of tests of this kind which either passed, failed, or were not performed."""
+
         report = dict()
 
         line_report = dict()

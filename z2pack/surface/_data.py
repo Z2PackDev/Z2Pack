@@ -14,14 +14,12 @@ class SurfaceData(metaclass=ConstLocker):
     """
     Data container for a surface calculation. It contains the :class:`.LineResult` instances of all the lines on the surface which have been calculated.
     
-    * ``wcc`` : A list of Wannier charge centers.
-    * ``pol`` : The total polarization (sum of WCC) along the line.
-    * ``gap_pos`` : The position of the largest gap between any two WCC.
-    * ``gap_size``: The size of the largest gap between any two WCC.
+    The following properties / attributes can be accessed:
     
-    .. note::
-        
-        The WCC are given in reduced coordinates, which means the possible values range from 0 to 1. The same is true for all values derived from the WCC.
+    * ``t`` : A tuple containing all current line positions.
+    * ``lines`` : A sorted list of objects which have two attributes ``t`` (the position, which is the sorting key) and ``result`` (the line's result).
+    
+    The attributes of the underlying :class:`LineResult` instances can be directly accessed from the :class:`SurfaceData` object. This will create a list of attributes for all lines, in the order of their position.
     
     """
     # cannot be pickled if it is a local method (lambda) in __init__
@@ -34,6 +32,14 @@ class SurfaceData(metaclass=ConstLocker):
         self.lines = SortedList(lines, key=self._sort_key)
 
     def add_line(self, t, result):
+        """Adds a line result to the list of lines.
+        
+        :param t:   Position of the line (:math:`t_1`).
+        :type t:    float
+        
+        :param result:  Result of the line calculation.
+        :type result:   :class:`.LineResult`
+        """
         self.lines.add(SurfaceLine(t, result))
 
     def __getattr__(self, key):
@@ -46,6 +52,9 @@ class SurfaceData(metaclass=ConstLocker):
         return tuple(line.t for line in self.lines)
 
     def nearest_neighbour_dist(self, t):
+        """
+        Returns the distance between :math:`t` and the nearest existing line. 
+        """
         if len(self.t) == 0:
             return 1
         return min(abs(t - tval) for tval in self.t)

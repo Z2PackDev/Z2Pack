@@ -14,3 +14,4 @@ from ._data import SurfaceData
 from ._result import SurfaceResult
 from ._run import run_surface as run
 
+__all__ = ['run'] + _data.__all__ + _result.__all__

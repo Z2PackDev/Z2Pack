@@ -16,5 +16,5 @@ class LineResult(Result):
     @property
     def convergence_report(self):
         r"""
-        Returns a convergence report (as a dict) for the result. The keys of the dictionary indicate the type of convergence test, and the values are booleans which are ``True`` if the test converged."""
+        Convergence report (as a dict) for the result. The keys of the dictionary indicate the type of convergence test, and the values are booleans which are ``True`` if the test converged."""
         return self.ctrl_convergence

@@ -54,14 +54,14 @@ def run_surface(
     Calculates the Wannier charge centers for a given system and surface.
 
     * automated convergence in string direction
-    * automated check for distance between gap and wcc -> add string
+    * automated check for distance between gap and wcc → add string
     * automated convergence check w.r.t. movement of the WCC between
       different k-strings.
 
     :param system:      System for which the WCC should be calculated.
     :type system:       :class:`z2pack.system.EigenstateSystem` or :class:`z2pack.system.OverlapSystem`.
     
-    :param surface:     Surface on which the WCC / Wilson loops should be calculated. The argument should be a callable which parametrizes the surface :math:`\mathbf{k}(s, t)`, in reduced coordinates. It should take two arguments (``float``) and return a nested list of ``float`` describing the points in k-space. Note that the surface must be closed at least along the :math:`t` - direction, that is :math:`\mathbf{k}(s, 0) = \mathbf{k}(s, 1) + \mathbf{G}`, where :math:`\mathbf{G}` is an inverse lattice vector.
+    :param surface:     Surface on which the WCC / Wilson loops should be calculated. The argument should be a callable which parametrizes the surface :math:`\mathbf{k}(t_1, t_2)`, in reduced coordinates. It should take two arguments (``float``) and return a nested list of ``float`` describing the points in k-space. Note that the surface must be closed at least along the :math:`t_2` - direction, that is :math:`\mathbf{k}(t_1, 0) = \mathbf{k}(t_1, 1) + \mathbf{G}`, where :math:`\mathbf{G}` is an inverse lattice vector.
 
     :param pos_tol:     The maximum movement of a WCC for the iteration w.r.t. the number of k-points in a single string to converge. The iteration can be turned off by setting ``pos_tol=None``.
     :type pos_tol:      float
@@ -104,7 +104,7 @@ def run_surface(
         system = ... # Refer to the various ways of creating a System instance.
         result = z2pack.surface.run(
             system=system,
-            surface=lambda s, t: [s, t, 0] # kz=0 surface, with lines along ky.
+            surface=lambda t1, t2: [t1, t2, 0] # kz=0 surface, with lines along ky.
         )
         print(result.wcc) # Prints a nested list of WCC (a list of WCC for each line in the surface).
     

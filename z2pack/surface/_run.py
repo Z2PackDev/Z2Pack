@@ -58,29 +58,55 @@ def run_surface(
     * automated convergence check w.r.t. movement of the WCC between
       different k-strings.
 
-    :param system:
-    :type system:
+    :param system:      System for which the WCC should be calculated.
+    :type system:       :class:`z2pack.system.EigenstateSystem` or :class:`z2pack.system.OverlapSystem`.
     
-    :param surface:
+    :param surface:     Surface on which the WCC / Wilson loops should be calculated. The argument should be a callable which parametrizes the surface :math:`\mathbf{k}(s, t)`, in reduced coordinates. It should take two arguments (``float``) and return a nested list of ``float`` describing the points in k-space. Note that the surface must be closed at least along the :math:`t` - direction, that is :math:`\mathbf{k}(s, 0) = \mathbf{k}(s, 1) + \mathbf{G}`, where :math:`\mathbf{G}` is an inverse lattice vector.
 
     :param pos_tol:     The maximum movement of a WCC for the iteration w.r.t. the number of k-points in a single string to converge. The iteration can be turned off by setting ``pos_tol=None``.
     :type pos_tol:      float
 
-    :param gap_tol:     Smallest distance between a gap and its neighbouring WCC for the gap check to be satisfied. The check can be turned off by setting ``gap_tol=None``.
+    :param gap_tol:     Determines the smallest distance between a gap and its neighbouring WCC for the gap check to be satisfied. The distance must be larger than ``gap_tol`` times the size of the gap. This check is performed only for the largest gap in each string of WCC. The check can be turned off by setting ``gap_tol=None``.
     :type gap_tol:      float
 
-    :param move_tol:    Scaling factor for the maximum allowed movement between neighbouring wcc. The factor is multiplied by the size of the largest gap between two wcc (from the two neighbouring strings, the smaller value is chosen). The check can be turned off by setting ``move_tol=None``.
+    :param move_tol:    Determines the largest possible movement between WCC of neighbouring strings for the move check to be satisfied. The movement can be no larger than ``move_tol`` time the size of the largest gap between two WCC (from the two neighbouring strings, the smaller value is chosen). The check can be turned off by setting ``move_tol=None``.
     :type move_tol:    float
 
     :param num_strings:     Initial number of strings.
     :type num_strings:      int
 
-    :param min_neighbour_dist:  Minimum distance between two strings (no new strings will be added, even if the gap check (gap check & move check) fails).
+    :param min_neighbour_dist:  Minimum distance between two strings (no new strings will be added, even if the gap check or move check fails).
     :type min_neighbour_dist:   float
 
     :param iterator:    Generator for the number of points in a k-point string. The iterator should also take care of the maximum number of iterations. It is needed even when ``pos_tol=None``, to provide a starting value.
+    
+    :param save_file:   Path to a file where the result should be stored.
+    :type save_file:    str
+    
+    :param init_result: Initial result which is loaded at the start of the calculation.
+    :type init_result:  :class:`LineResult`
+    
+    :param load:        Determines whether the initial result is loaded from ``save_file``.
+    :type load:         bool
+    
+    :param load_quiet:  Determines whether errors / inexistent files are ignored when loading from ``save_file``
+    :type load_quiet:   bool
+    
+    :param serializer:  Serializer which is used to save the result to file. Valid options are :py:mod:`msgpack`, :py:mod:`json` and :py:mod:`pickle`. By default (``serializer='auto'``), the serializer is inferred from the file ending. If this fails, :py:mod:`msgpack` is used.
+    :type serializer:   module
 
     :returns:   :class:`SurfaceResult` instance.
+    
+    Example usage:
+    
+    .. code:: python
+    
+        system = ... # Refer to the various ways of creating a System instance.
+        result = z2pack.surface.run(
+            system=system,
+            surface=lambda s, t: [s, t, 0] # kz=0 surface, with lines along ky.
+        )
+        print(result.wcc) # Prints a nested list of WCC (a list of WCC for each line in the surface).
     
     """
     _LOGGER.info(locals(), tags=('setup', 'box', 'skip'))

@@ -6,39 +6,43 @@
 # File:    generic.py
 
 import z2pack
-
 import matplotlib.pyplot as plt
 
 # Creating the System. Note that the SCF charge file does not need to be
 # copied, but instead can be referenced in the .files file.
 # The k-points input is appended to the .in file
 # The command (mpirun ...) will have to be replaced to match your system.
-system = z2pack.fp.System(['system_nscf.files',
-                           'system_nscf.in',
-                           'wannier90.win'],
-                          z2pack.fp.kpts.abinit,
-                          'system_nscf.in',
-                          'mpirun $ABINIT < system_nscf.files >& log')
+SYSTEM_NAME = 'system'
+system = z2pack.fp.System(
+    input_files=[os.path.join('input', filename) for filename in [
+        SYSTEM_NAME + '_nscf.files',
+        SYSTEM_NAME + '_nscf.in',
+        'wannier90.win'
+    ]],
+    kpt_fct=z2pack.fp.kpoint.abinit,
+    kpt_path=SYSTEM_NAME + '_nscf.in',
+    command='mpirun -np 7 ~/software/abinit-7.10.5/src/98_main/abinit < {}_nscf.files >& log'.format(SYSTEM_NAME),
+    executable='/bin/bash'
+)
 
-
-# Creating two surfaces, both with the pumping parameter t changing
-# ky from 0 to 0.5, and strings along kz.
-# The first plane is at kx = 0, the second one at kx = 0.5
-# Notice the different values of pickle_file to avoid overwriting the data.
-surface_0 = system.surface(lambda t: [0, t / 2, 0], [0, 0, 1],
-                           pickle_file='./results/res_0.txt')
-surface_1 = system.surface(lambda t: [0.5, t / 2, 0], [0, 0, 1],
-                           pickle_file='./results/res_1.txt')
-
-# WCC calculation - standard settings
-surface_0.wcc_calc()
-surface_1.wcc_calc()
+# Surface calculation for surfaces at kx=0 and kx=0.5
+# Standard settings are used
+res_0 = z2pack.surface.run(
+    system=system, 
+    surface=lambda s, t: [0, s / 2, t],
+    save_file='res_0.msgpack'
+)
+res_1 = z2pack.surface.run(
+    system=system, 
+    surface=lambda s, t: [0.5, s / 2, t],
+    save_file='res_1.msgpack'
+)
 
 # Combining the two plots
 fig, ax = plt.subplots(1, 2, sharey=True, figsize=(9, 5))
-surface_0.wcc_plot(show=False, axis=ax[0])
-surface_1.wcc_plot(show=False, axis=ax[1])
+z2pack.plot.wcc(res_0, axis=ax[0])
+z2pack.plot.wcc(res_1, axis=ax[1])
 plt.savefig('plot.pdf', bbox_inches='tight')
 
-print('Z2 topological invariant at kx = 0: {0}'.format(surface_0.z2()))
-print('Z2 topological invariant at kx = 0.5: {0}'.format(surface_1.z2()))
+print('Z2 topological invariant at kx = 0: {0}'.format(z2pack.invariant.z2(res_0)))
+print('Z2 topological invariant at kx = 0.5: {0}'.format(z2pack.invariant.z2(res_1)))

@@ -40,7 +40,8 @@ extensions = [
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'msgpack': ('http://pythonhosted.org/msgpack-python', None),
-    'tbmodels': ('http://z2pack.ethz.ch/tbmodels/', None)
+    'tbmodels': ('http://z2pack.ethz.ch/tbmodels/', None),
+    'matplotlib': ('http://matplotlib.org', None)
 }
 
 # Add any paths that contain templates here, relative to this directory.

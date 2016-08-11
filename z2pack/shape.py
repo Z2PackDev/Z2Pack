@@ -6,8 +6,7 @@
 # File:    shape.py
 
 """
-A collection of pre-defined shapes to use as the ``param_fct`` argument
-of :meth:`.surface()`, defining the shape of the surface.
+This module contains pre-defined shapes to use as the ``surface`` argument of :func:`.surface.run` or ``line`` argument for :func:`.line.run`, defining the shape of the surface or line.
 """
 
 import numpy as np

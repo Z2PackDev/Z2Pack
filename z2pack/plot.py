@@ -5,7 +5,7 @@
 # Date:    20.02.2016 23:00:28 MST
 # File:    _plot.py
 
-"""Plotting utilities for surface results."""
+"""This submodule contains all functions for plotting Z2Pack results."""
 
 import colorsys
 
@@ -66,24 +66,32 @@ def wcc_symmetry(
         )
 ):
     r"""
-    TODO: FIX!!!
-
     Plots the WCCs and the largest gaps (y-axis) against the t-points
-    (x-axis).
+    (x-axis). The WCC are colored according to their symmetry expectation value for a given symmetry operator. 
+    
+    .. note :: This works only if all lines are created from eigenstates, i.e. they are :class:`.EigenstateLineData` instances (not :class:`.WccLineData`).
+    
+    :param surface_result:  Result for which the plot is drawn.
+    :type surface_result: :class:`SurfaceResult` or :class:`SurfaceData`
 
-    :param ax:      Axis where the plot is drawn
-    :type ax:       :mod:`matplotlib` ``axis``
+    :param axis:      Axis where the plot is drawn
+    :type axis:       :py:mod:`matplotlib` axes.
+    
+    :param symmetry_operator:   Symmetry operator according to which the WCC are colored.
+    :type symmetry_operator:    2D array
 
     :param wcc_settings:    Keyword arguments for the scatter plot of the wcc positions.
     :type wcc_settings:     dict
 
-    :param gaps:    Controls whether the largest gaps are printed. Default: ``True``
+    :param gaps:    Controls whether the largest gaps are printed.
     :type gaps:     bool
 
     :param gap_settings:    Keyword arguments for the plot of the gap positions.
     :type gap_settings:     dict
+    
+    :param color_fct:   Function converting the symmetry operator eigenvalues to color codes.
 
-    :returns:       :class:`matplotlib figure` instance (only if ``ax == None``)
+    :returns:       :py:class:`matplotlib.figure.Figure` instance (only for ``axis=None``).
     """
     _plot_gaps(surface_result, axis=axis, gaps=gaps, gap_settings=gap_settings)
 
@@ -121,9 +129,12 @@ def wcc(
 ):
     r"""
     Plots the WCCs and the largest gaps (y-axis) against the t-points (x-axis).
+    
+    :param surface_result:  Result for which the plot is drawn.
+    :type surface_result: :class:`SurfaceResult` or :class:`SurfaceData`
 
-    :param ax:      Axis where the plot is drawn
-    :type ax:       :mod:`matplotlib` ``axis``
+    :param axis:      Axis where the plot is drawn
+    :type axis:       :py:mod:`matplotlib` axes.
 
     :param wcc_settings:    Keyword arguments for the scatter plot of the wcc positions.
     :type wcc_settings:     dict
@@ -134,7 +145,7 @@ def wcc(
     :param gap_settings:    Keyword arguments for the plot of the gap positions.
     :type gap_settings:     dict
 
-    :returns:       :class:`matplotlib figure` instance (only if ``ax == None``)
+    :returns:       :py:class:`matplotlib.figure.Figure` instance (only for ``axis=None``).
     """
     _plot_gaps(surface_result, axis=axis, gaps=gaps, gap_settings=gap_settings)
 
@@ -158,13 +169,13 @@ def chern(
     :param surface_result:  Result for which the plot is drawn.
     :type surface_result: :class:`SurfaceResult` or :class:`SurfaceData`
 
-    :param ax:      Axis where the plot is drawn
-    :type ax:       :mod:`matplotlib` ``axis``
+    :param axis:      Axis where the plot is drawn
+    :type axis:       :mod:`matplotlib` ``axis``
 
     :param settings:    Keyword arguments for the plotting function.
     :type settings:     dict
 
-    :returns:       :class:`matplotlib figure` instance (only if ``ax == None``)
+    :returns:       :py:class:`matplotlib.figure.Figure` instance (only for ``axis=None``).
     """
     t_list = surface_result.t
     pol = surface_result.pol

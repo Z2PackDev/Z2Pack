@@ -11,6 +11,19 @@ from sortedcontainers import SortedList
 
 @export
 class SurfaceData(metaclass=ConstLocker):
+    """
+    Data container for a surface calculation. It contains the :class:`.LineResult` instances of all the lines on the surface which have been calculated.
+    
+    * ``wcc`` : A list of Wannier charge centers.
+    * ``pol`` : The total polarization (sum of WCC) along the line.
+    * ``gap_pos`` : The position of the largest gap between any two WCC.
+    * ``gap_size``: The size of the largest gap between any two WCC.
+    
+    .. note::
+        
+        The WCC are given in reduced coordinates, which means the possible values range from 0 to 1. The same is true for all values derived from the WCC.
+    
+    """
     # cannot be pickled if it is a local method (lambda) in __init__
     # when python3.4 support is dropped, operator.attrgetter can be used
     @staticmethod

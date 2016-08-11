@@ -5,6 +5,8 @@
 # Date:    21.02.2016 18:55:52 MST
 # File:    __init__.py
 
+"""This module contains the functions and data / result containers for calculating the Wilson loop / Wannier charge centers on a surface in :math:`\mathbf{k}`-space."""
+
 import logging as _logging
 _LOGGER = _logging.getLogger(__name__)
 

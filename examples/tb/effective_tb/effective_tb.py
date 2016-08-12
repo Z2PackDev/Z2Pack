@@ -16,7 +16,7 @@ logging.getLogger('z2pack').setLevel(logging.WARNING)
 
 t1, t2 = (0.2, 0.3)
 
-settings = {'num_strings': 11,
+settings = {'num_lines': 11,
             'pos_tol': 1e-2,
             'gap_tol': 2e-2,
             'move_tol': 0.3,

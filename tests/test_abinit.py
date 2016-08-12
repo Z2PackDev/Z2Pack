@@ -43,7 +43,7 @@ def test_bismuth(abinit_system, compare_wcc, surface_fct):
     result = z2pack.surface.run(
         system=system,
         surface=surface_fct,
-        num_strings=4,
+        num_lines=4,
         pos_tol=None,
         gap_tol=None,
         move_tol=None

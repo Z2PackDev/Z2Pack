@@ -23,7 +23,7 @@ def test_weyl(assert_image_equal):
     result = z2pack.surface.run(
         system=system,
         surface=z2pack.shape.Sphere([0, 0, 0], 1.),
-        num_strings=11,
+        num_lines=11,
         move_tol=None,
         gap_tol=None,
         pos_tol=None
@@ -42,7 +42,7 @@ def test_weyl_no_axis(assert_image_equal):
     result = z2pack.surface.run(
         system=system,
         surface=z2pack.shape.Sphere([0, 0, 0], 1.),
-        num_strings=11,
+        num_lines=11,
         move_tol=None,
         gap_tol=None,
         pos_tol=None

@@ -41,7 +41,7 @@ def run_surface(
         pos_tol=1e-2,
         gap_tol=0.3,
         move_tol=0.3,
-        num_strings=11,
+        num_lines=11,
         min_neighbour_dist=0.01,
         iterator=range(8, 27, 2),
         init_result=None,
@@ -72,8 +72,8 @@ def run_surface(
     :param move_tol:    Determines the largest possible movement between WCC of neighbouring strings for the move check to be satisfied. The movement can be no larger than ``move_tol`` time the size of the largest gap between two WCC (from the two neighbouring strings, the smaller value is chosen). The check can be turned off by setting ``move_tol=None``.
     :type move_tol:    float
 
-    :param num_strings:     Initial number of strings.
-    :type num_strings:      int
+    :param num_lines:     Initial number of strings.
+    :type num_lines:      int
 
     :param min_neighbour_dist:  Minimum distance between two strings (no new strings will be added, even if the gap check or move check fails).
     :type min_neighbour_dist:   float
@@ -141,7 +141,7 @@ def run_surface(
         *controls,
         system=system,
         surface=surface,
-        num_strings=num_strings,
+        num_lines=num_lines,
         min_neighbour_dist=min_neighbour_dist,
         save_file=save_file,
         init_result=init_result,
@@ -154,7 +154,7 @@ def _run_surface_impl(
         *controls,
         system,
         surface,
-        num_strings,
+        num_lines,
         min_neighbour_dist,
         save_file=None,
         init_result=None,
@@ -270,9 +270,9 @@ def _run_surface_impl(
             data = SurfaceData()
 
         # STEP 2 -- PRODUCE REQUIRED STRINGS
-        # create lines required by num_strings
-        _LOGGER.info("Adding lines required by 'num_strings'.")
-        for t in np.linspace(0, 1, num_strings):
+        # create lines required by num_lines
+        _LOGGER.info("Adding lines required by 'num_lines'.")
+        for t in np.linspace(0, 1, num_lines):
             result = add_line(t)
 
         # STEP 3 -- MAIN LOOP

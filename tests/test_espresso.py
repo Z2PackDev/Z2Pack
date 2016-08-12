@@ -62,7 +62,7 @@ def test_bismuth(qe_system, compare_wcc, surface_fct):
     result = z2pack.surface.run(
         system=system,
         surface=surface_fct,
-        num_strings=4,
+        num_lines=4,
         save_file=os.path.join(build_dir, 'result'),
         pos_tol=None,
         gap_tol=None,
@@ -84,7 +84,7 @@ def test_bismuth_wrong_num_wcc(qe_system, compare_wcc, surface_fct):
         result = z2pack.surface.run(
             system=system,
             surface=surface_fct,
-            num_strings=4,
+            num_lines=4,
             save_file=os.path.join(build_dir, 'result'),
             pos_tol=None,
             gap_tol=None,
@@ -101,7 +101,7 @@ def test_bismuth_correct_num_wcc(qe_system, compare_wcc, surface_fct):
     result = z2pack.surface.run(
         system=system,
         surface=surface_fct,
-        num_strings=4,
+        num_lines=4,
         save_file=os.path.join(build_dir, 'result'),
         pos_tol=None,
         gap_tol=None,
@@ -120,7 +120,7 @@ def test_restart_broken(qe_system):
     result = z2pack.surface.run(
         system=system,
         surface=surface_fct,
-        num_strings=3,
+        num_lines=3,
         save_file=os.path.join(build_dir, 'result'),
         load=True,
         pos_tol=None,
@@ -133,7 +133,7 @@ def test_restart_broken(qe_system):
         result = z2pack.surface.run(
             system=system,
             surface=surface_fct,
-            num_strings=5,
+            num_lines=5,
             save_file=os.path.join(build_dir, 'result'),
             load=True,
             pos_tol=None,

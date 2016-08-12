@@ -20,7 +20,7 @@ from hm_systems import *
 from tb_systems import *
 
 @pytest.fixture(params=range(5, 11, 2))
-def num_strings(request):
+def num_lines(request):
     return request.param
 
 @pytest.fixture(params=np.linspace(0.1, 0.4, 5))
@@ -48,22 +48,22 @@ def assert_res_equal(result1, result2):
     assert result1.ctrl_states == result2.ctrl_states
     assert result1.convergence_report == result2.convergence_report
 
-def test_simple(simple_system, simple_surface, num_strings):
-    result = z2pack.surface.run(system=simple_system, surface=simple_surface, num_strings=num_strings)
-    assert result.wcc == [[0, 0]] * num_strings
-    assert result.gap_size == [1] * num_strings
-    assert result.gap_pos == [0.5] * num_strings
+def test_simple(simple_system, simple_surface, num_lines):
+    result = z2pack.surface.run(system=simple_system, surface=simple_surface, num_lines=num_lines)
+    assert result.wcc == [[0, 0]] * num_lines
+    assert result.gap_size == [1] * num_lines
+    assert result.gap_pos == [0.5] * num_lines
     assert result.ctrl_states == {}
 
 def test_neighbour_dist(weyl_system, weyl_surface):
-    result = z2pack.surface.run(system=weyl_system, surface=weyl_surface, num_strings=11, min_neighbour_dist=0.09, move_tol=0., gap_tol=1.)
+    result = z2pack.surface.run(system=weyl_system, surface=weyl_surface, num_lines=11, min_neighbour_dist=0.09, move_tol=0., gap_tol=1.)
     assert len(result.wcc) == 11
 
-def test_weyl(compare_data, compare_equal, pos_tol, gap_tol, move_tol, num_strings, weyl_system, weyl_surface):
+def test_weyl(compare_data, compare_equal, pos_tol, gap_tol, move_tol, num_lines, weyl_system, weyl_surface):
     result = z2pack.surface.run(
         system=weyl_system,
         surface=weyl_surface,
-        num_strings=num_strings,
+        num_lines=num_lines,
         move_tol=move_tol,
         gap_tol=gap_tol,
         pos_tol=pos_tol
@@ -71,11 +71,11 @@ def test_weyl(compare_data, compare_equal, pos_tol, gap_tol, move_tol, num_strin
     compare_data(lambda l1, l2: all(np.isclose(l1, l2).flatten()), result.wcc)
     compare_equal(result.convergence_report, tag='_report')
 
-def test_tb(compare_data, compare_equal, pos_tol, gap_tol, move_tol, num_strings, tb_system, tb_surface):
+def test_tb(compare_data, compare_equal, pos_tol, gap_tol, move_tol, num_lines, tb_system, tb_surface):
     result = z2pack.surface.run(
         system=tb_system,
         surface=tb_surface,
-        num_strings=num_strings,
+        num_lines=num_lines,
         move_tol=move_tol,
         gap_tol=gap_tol,
         pos_tol=pos_tol
@@ -84,19 +84,19 @@ def test_tb(compare_data, compare_equal, pos_tol, gap_tol, move_tol, num_strings
     compare_equal(result.convergence_report, tag='_report')
 
 # saving tests
-def test_simple_save(num_strings, simple_system, simple_surface):
+def test_simple_save(num_lines, simple_system, simple_surface):
     fp = tempfile.NamedTemporaryFile(delete=False)
-    result1 = z2pack.surface.run(system=simple_system, surface=simple_surface, num_strings=num_strings, save_file=fp.name)
+    result1 = z2pack.surface.run(system=simple_system, surface=simple_surface, num_lines=num_lines, save_file=fp.name)
     result2 = z2pack.io.load(fp.name)
     os.remove(fp.name)
     assert_res_equal(result1, result2)
 
-def test_weyl_save(pos_tol, gap_tol, move_tol, num_strings, weyl_system, weyl_surface):
+def test_weyl_save(pos_tol, gap_tol, move_tol, num_lines, weyl_system, weyl_surface):
     fp = tempfile.NamedTemporaryFile(delete=False)
     result1 = z2pack.surface.run(
         system=weyl_system,
         surface=weyl_surface,
-        num_strings=num_strings,
+        num_lines=num_lines,
         move_tol=move_tol,
         gap_tol=gap_tol,
         pos_tol=pos_tol,
@@ -106,12 +106,12 @@ def test_weyl_save(pos_tol, gap_tol, move_tol, num_strings, weyl_system, weyl_su
     os.remove(fp.name)
     assert_res_equal(result1, result2)
 
-def test_tb_save(pos_tol, gap_tol, move_tol, num_strings, tb_system, tb_surface):
+def test_tb_save(pos_tol, gap_tol, move_tol, num_lines, tb_system, tb_surface):
     fp = tempfile.NamedTemporaryFile(delete=False)
     result1 = z2pack.surface.run(
         system=tb_system,
         surface=tb_surface,
-        num_strings=num_strings,
+        num_lines=num_lines,
         move_tol=move_tol,
         gap_tol=gap_tol,
         pos_tol=pos_tol,
@@ -139,7 +139,7 @@ def test_restart_nocalc(simple_system, simple_surface):
 # test restart with smaller precision
 def test_restart_2(weyl_system, weyl_surface):
     result1 = z2pack.surface.run(system=weyl_system, surface=weyl_surface)
-    result2 = z2pack.surface.run(system=weyl_system, surface=weyl_surface, pos_tol=0.5, gap_tol=1e-1, move_tol=0.5, num_strings=6)
+    result2 = z2pack.surface.run(system=weyl_system, surface=weyl_surface, pos_tol=0.5, gap_tol=1e-1, move_tol=0.5, num_lines=6)
     result2 = z2pack.surface.run(system=weyl_system, surface=weyl_surface, init_result=result2)
     assert_res_equal(result1, result2)
 

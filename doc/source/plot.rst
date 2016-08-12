@@ -1,4 +1,4 @@
-.. plot:
+.. _plot:
 
 Plotting
 ========

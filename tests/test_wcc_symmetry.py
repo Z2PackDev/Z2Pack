@@ -14,7 +14,7 @@ import z2pack
 from plottest_helpers import *
 
 def test_weyl(assert_image_equal):
-    system = z2pack.em.System(lambda k: np.array(
+    system = z2pack.hm.System(lambda k: np.array(
         [
             [k[2], k[0] -1j * k[1]],
             [k[0] + 1j * k[1], -k[2]]
@@ -33,7 +33,7 @@ def test_weyl(assert_image_equal):
     assert_image_equal('simple_wcc_symmetry')
 
 def test_weyl_no_axis(assert_image_equal):
-    system = z2pack.em.System(lambda k: np.array(
+    system = z2pack.hm.System(lambda k: np.array(
         [
             [k[2], k[0] -1j * k[1]],
             [k[0] + 1j * k[1], -k[2]]

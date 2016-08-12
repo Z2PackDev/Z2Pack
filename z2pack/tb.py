@@ -13,10 +13,10 @@ import copy
 from collections import ChainMap
 
 from fsc.export import export
-from .em import System as _EmSystem
+from .hm import System as _HmSystem
 
 @export
-class System(_EmSystem):
+class System(_HmSystem):
     r"""
     System class for tight-binding models.
 
@@ -28,7 +28,7 @@ class System(_EmSystem):
     The ``pos`` and ``bands`` keywords of :class:`.em.System` are determined from the ``tb_model`` unless otherwise specified.
     """
     def __init__(self, tb_model, **kwargs):
-        super(System, self).__init__(
+        super().__init__(
             hamilton=tb_model.hamilton,
             **ChainMap(kwargs, dict(
                 pos=copy.deepcopy(tb_model.pos),

@@ -20,9 +20,9 @@ from . import shape
 from . import plot
 from . import invariant
 
-from . import fp
-from . import em
+from . import hm
 from . import tb
+from . import fp
 
 from . import _logging_format # sets default logging levels / format
 

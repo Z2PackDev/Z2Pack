@@ -13,7 +13,7 @@ import z2pack
 import logging
 
 
-from em_systems import simple_system, simple_surface, simple_line
+from hm_systems import simple_system, simple_surface, simple_line
 
 IGNORE_LINES = ['Calculation finished', 'starting at', 'Z2Pack version', ' at 0x']
 

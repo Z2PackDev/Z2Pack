@@ -15,7 +15,7 @@ import numpy as np
 
 import z2pack
 
-from em_systems import *
+from hm_systems import *
 
 def normalize_convergence_report(report):
     # np.bool_ cannot be put into json

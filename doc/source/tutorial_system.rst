@@ -8,7 +8,7 @@ The first step in creating a calculation with Z2Pack is to define the system whi
 .. contents::
     :local:
 
-Effective k•p models - :mod:`z2pack.em`
+Effective k•p models - :mod:`z2pack.hm`
 ---------------------------------------
 
 The simplest way of creating a system is by having a k•p model. A Z2Pack system can be created by having a function which describes the matrix Hamiltonian :math:`\mathcal{H}(\mathbf{k})`. For example, an effective model for an isotropic Weyl point is given by
@@ -17,7 +17,7 @@ The simplest way of creating a system is by having a k•p model. A Z2Pack syste
 
     \mathcal{H}(\mathbf{k}) = \sum_{i\in \{x, y, z\}} k_i \cdot \sigma_i
 
-The class :class:`z2pack.em.System` is constructed by passing the function which describes this Hamiltonian as the first argument:
+The class :class:`z2pack.hm.System` is constructed by passing the function which describes this Hamiltonian as the first argument:
 
 .. code :: python
 
@@ -31,7 +31,7 @@ The class :class:`z2pack.em.System` is constructed by passing the function which
             [kx + 1j * ky, -kz]
         ])
     
-    system = z2pack.em.System(hamiltonian)
+    system = z2pack.hm.System(hamiltonian)
     
 By default, the lower-lying half of the states will be used for constructing the Wilson loop and Wannier charge centers. In this case, since the matrix has size 2, only the lowest band contributes. This behaviour can be changed by setting the ``bands`` keyword in the constructor. Either the number of "occupied" states can be given, or the relevant bands can be selected by index.
 
@@ -39,19 +39,19 @@ This means that
 
 .. code :: python
     
-    system = z2pack.em.System(hamiltonian, bands=2)
+    system = z2pack.hm.System(hamiltonian, bands=2)
     
 includes WCC from both bands, and
 
 .. code :: python
     
-    system = z2pack.em.System(hamiltonian, bands=[1])
+    system = z2pack.hm.System(hamiltonian, bands=[1])
 
 includes only the upper band (because the index starts at 0).
 
 .. note ::
     
-    Keyword arguments which were not discussed here are described in the :ref:`z2pack_reference`. Throughout this tutorial, only the basic keywords will be covered. Clicking on a method or class name like :class:`z2pack.em.System` will take you to the relevant section of the reference.
+    Keyword arguments which were not discussed here are described in the :ref:`z2pack_reference`. Throughout this tutorial, only the basic keywords will be covered. Clicking on a method or class name like :class:`z2pack.hm.System` will take you to the relevant section of the reference.
 
 Tight-binding models - :mod:`z2pack.tb`
 ---------------------------------------

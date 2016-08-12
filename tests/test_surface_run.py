@@ -16,7 +16,7 @@ import numpy as np
 
 import z2pack
 
-from em_systems import *
+from hm_systems import *
 from tb_systems import *
 
 @pytest.fixture(params=range(5, 11, 2))

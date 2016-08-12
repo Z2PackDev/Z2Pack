@@ -3,7 +3,7 @@
 #
 # Author:  Dominik Gresch <greschd@gmx.ch>
 # Date:    14.03.2016 17:14:23 CET
-# File:    em_systems.py
+# File:    hm_systems.py
 
 import pytest
 import numpy as np
@@ -27,7 +27,7 @@ def pos_tol(request):
 
 @pytest.fixture(params=[False, True])
 def simple_system(request):
-    res = z2pack.em.System(lambda k: np.eye(4))
+    res = z2pack.hm.System(lambda k: np.eye(4))
     if request.param:
         res = OverlapMockSystem(res)
     return res
@@ -42,7 +42,7 @@ def simple_surface():
 
 @pytest.fixture(params=[False, True])
 def weyl_system(request):
-    res = z2pack.em.System(
+    res = z2pack.hm.System(
         lambda k: np.array(
             [
                 [k[2], k[0] -1j * k[1]],

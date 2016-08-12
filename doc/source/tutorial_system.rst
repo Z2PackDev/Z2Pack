@@ -8,10 +8,10 @@ The first step in creating a calculation with Z2Pack is to define the system whi
 .. contents::
     :local:
 
-Effective k•p models - :mod:`z2pack.hm`
----------------------------------------
+Models with an explicit Hamiltonian matrix - :mod:`z2pack.hm`
+-------------------------------------------------------------
 
-The simplest way of creating a system is by having a k•p model. A Z2Pack system can be created by having a function which describes the matrix Hamiltonian :math:`\mathcal{H}(\mathbf{k})`. For example, an effective model for an isotropic Weyl point is given by
+The simplest way of creating a system is when it can be explicitly described by a Hamiltonian matrix :math:`\mathcal{H}(\mathbf{k})`. For example, an effective model for an isotropic Weyl point is given by
 
 .. math ::
 

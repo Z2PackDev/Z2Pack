@@ -31,8 +31,8 @@ def hamilton1(k):
     return res
 
 # creating the two systems
-system0 = z2pack.em.System(hamilton0, bands=1)
-system1 = z2pack.em.System(hamilton1) # bands=1 is default (#orbitals / 2)
+system0 = z2pack.hm.System(hamilton0, bands=1)
+system1 = z2pack.hm.System(hamilton1) # bands=1 is default (#orbitals / 2)
 
 # the surface is a sphere around the Weyl point
 surface = z2pack.shape.Sphere([0., 0., 0.], 0.01)

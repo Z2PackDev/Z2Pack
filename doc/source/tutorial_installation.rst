@@ -1,7 +1,10 @@
 .. _z2pack_tutorial_installation :
 
+Installation and Setup
+======================
+
 Installing Z2Pack
-=================
+-----------------
 
 The basic installation of Z2Pack should usually be quite straightforward. Just make sure you have a Python interpreter which is at least version 3.4, and install it by typing
 
@@ -21,8 +24,8 @@ in your console. You can check that this worked by firing up your Python interpr
     >>> z2pack.__version__
     '2.0.0'
     >>>
-    
-Unless you want some additional information, you can now skip ahead either to the part where I explain how to set up Z2Pack with :ref:`first-principles codes <setup_first_principles>`. If you don't need that, you can go straight to the section on :ref:`creating a System <z2pack_tutorial_system>`.
+
+Unless you want some additional information, you can now skip ahead to the parts where I explain how to set up Z2Pack with :ref:`tight-binding models <setup_tight_binding>` or :ref:`first-principles codes <setup_first_principles>`. If you don't need that, you can go straight to the section on :ref:`creating a System <z2pack_tutorial_system>`.
 
 .. note :: 
 
@@ -42,10 +45,34 @@ where ``path_to_z2pack`` should be the path to the top folder of the downloaded 
     sys.path.append('path_to_z2pack')
     import z2pack
 
+.. _setup_tight_binding :
+
+Installing the tight-binding backend
+------------------------------------
+
+For calculating tight-binding models, Z2Pack uses the `TBmodels <http://z2pack.ethz.ch/tbmodels>`_ package. It is installed in the same way as Z2Pack:
+
+.. code :: bash
+    
+    sudo pip3 install tbmodels
+
+Again, you can check that this worked by running the interpreter:
+    
+.. code :: python
+
+    greschd@laptopdg:~$ python3
+    Python 3.5.1+ (default, Mar 30 2016, 22:46:26) 
+    [GCC 5.3.1 20160330] on linux
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>> import tbmodels
+    >>> tbmodels.__version__
+    '1.0.0'
+    >>>
+
 .. _setup_first_principles :
 
 Setting up first-principles codes
-=================================
+---------------------------------
 
 Z2Pack uses the Wannier90 software to compute overlap matrices from first-principles. This means that Z2Pack can be used with any first - principles code that interfaces to Wannier90. If you are using Wannier90 **version 2.0.2** or higher (which, at the time of writing this, is yet to be released), it is compatible with Z2Pack if ``skip_B1_tests = .TRUE.`` is set.
 

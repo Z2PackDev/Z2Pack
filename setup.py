@@ -51,6 +51,7 @@ setup(
         'Development Status :: 4 - Beta'
     ],
     license='GPL',
+    keywords=['topology', 'topological', 'invariant', 'bandstructure', 'chern', 'z2', 'solid-state', 'tight-binding'],
     packages=[
         'z2pack',
         'z2pack.io',

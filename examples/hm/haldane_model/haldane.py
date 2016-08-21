@@ -21,7 +21,7 @@ pauli_z = np.array([[1, 0], [0, -1]], dtype=complex)
 
 def Hamilton(k, m, t1, t2, phi):
     k_a = 2 * np.pi / 3. * np.array([-k[0] - k[1], 2. * k[0] - k[1], - k[0] + 2. * k[1]])
-    k_b = 2 * np.pi * np.array([k[0], k[1], k[0] - k[1]])
+    k_b = 2 * np.pi * np.array([k[0], -k[0] + k[1], k[1]])
     H = 2 * t2 * np.cos(phi) * sum([np.cos(-val) for val in k_b]) * identity
     H += t1 * sum([np.cos(-val) for val in k_a]) * pauli_x
     H += t1 * sum([np.sin(-val) for val in k_a]) * pauli_y

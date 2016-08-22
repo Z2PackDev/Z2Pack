@@ -8,7 +8,10 @@
 import sys
 import logging
 
-import blessings
+try:
+    import blessings
+except ImportError:
+    from . import _blessings_fallback as blessings
 from fsc.formatting import shorten, to_box
 
 from ._version import __version__

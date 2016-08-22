@@ -10,6 +10,7 @@ import logging
 
 try:
     import blessings
+# for Windows
 except ImportError:
     from . import _blessings_fallback as blessings
 from fsc.formatting import shorten, to_box

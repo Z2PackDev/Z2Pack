@@ -79,7 +79,9 @@ def save(obj, file_path, serializer='auto'):
         mode='wb' if specs.binary else 'w'
     ) as f:
         serializer.dump(obj, f, **specs.encode_kwargs)
-        os.replace(f.name, file_path)
+        tmp_path = f.name
+    # closing necessary on Windows
+    os.replace(tmp_path, file_path)
 
 @export
 def load(file_path, serializer='auto'):

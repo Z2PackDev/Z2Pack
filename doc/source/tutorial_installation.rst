@@ -10,32 +10,38 @@ The basic installation of Z2Pack should usually be quite straightforward. Just m
 
 .. code :: bash
     
-    sudo pip3 install z2pack
+    python -m pip install --user z2pack
+    
+in your console. 
 
-in your console. You can check that this worked by firing up your Python interpreter and trying to import z2pack (all lowercase). The result should be something like this:
+.. note ::
+    
+    Depending on your system, the command to call the Python interpreter may be either ``python`` or ``python3``. In this tutorial, I will just refer to it as ``python``. There are also other ways to invoke ``pip``, but the above should work on all platforms.
+
+You can check that this worked by firing up your Python interpreter and trying to import z2pack (all lowercase). The result should be something like this:
 
 .. code :: python
 
-    greschd@laptopdg:~$ python3
+    greschd@laptopdg:~$ python
     Python 3.5.1+ (default, Mar 30 2016, 22:46:26) 
     [GCC 5.3.1 20160330] on linux
     Type "help", "copyright", "credits" or "license" for more information.
     >>> import z2pack
     >>> z2pack.__version__
-    '2.0.0'
+    '2.0.2'
     >>>
 
 Unless you want some additional information, you can now skip ahead to the parts where I explain how to set up Z2Pack with :ref:`tight-binding models <setup_tight_binding>` or :ref:`first-principles codes <setup_first_principles>`. If you don't need that, you can go straight to the section on :ref:`creating a System <z2pack_tutorial_system>`.
 
 .. note :: 
 
-    A cool way to install things in Python without "polluting" your system is to use `virtual environments <https://docs.python.org/3/library/venv.html>`_. To help you manage your virtual environments, the `virtualenvwrapper <https://pypi.python.org/pypi/virtualenvwrapper>`_ tool works great. Virtual environments can also be used to install packages even if you don't have administrator access on your system.
+    A cool way to install things in Python without "polluting" your system is to use `virtual environments <https://docs.python.org/3/library/venv.html>`_. To help you manage your virtual environments, the `virtualenvwrapper <https://pypi.python.org/pypi/virtualenvwrapper>`_ tool works great. Virtual environments can also be used to install packages even if you don't have administrator access on your system. When installing Z2Pack in a virtual environment, the ``--user`` argument must be omitted.
 
-If you want to install Z2Pack from source, you can download the code either from GitHub_ (development version) or PyPI_ (release version). You can then install it by again using ``pip3``
+If you want to install Z2Pack from source, you can download the code either from GitHub_ (development version) or PyPI_ (release version). You can then install it by again using ``pip``
 
 .. code :: bash
     
-    sudo pip3 install path_to_z2pack
+    python -m pip install --user path_to_z2pack
 
 where ``path_to_z2pack`` should be the path to the top folder of the downloaded files. If you prefer not to install anything, you could also just remember to always put the following at the top of your scripts:
 
@@ -54,13 +60,13 @@ For calculating tight-binding models, Z2Pack uses the `TBmodels <http://z2pack.e
 
 .. code :: bash
     
-    sudo pip3 install tbmodels
+    python -m pip install --user tbmodels
 
 Again, you can check that this worked by running the interpreter:
     
 .. code :: python
 
-    greschd@laptopdg:~$ python3
+    greschd@laptopdg:~$ python
     Python 3.5.1+ (default, Mar 30 2016, 22:46:26) 
     [GCC 5.3.1 20160330] on linux
     Type "help", "copyright", "credits" or "license" for more information.

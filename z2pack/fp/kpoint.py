@@ -102,10 +102,28 @@ def wannier90(kpt):
     for k in kpt[:-1]:
         string += '\n'
         for coord in k:
-            string += str(coord).replace('e', 'd') + ' '
+            string += str(coord % 1).replace('e', 'd') + ' '
     string += '\nend kpoints\n'
     return string
+    
+@export
+@_check_dim
+def wannier90_nnkpts(kpt):
+    N = len(kpt) - 1
+    bz_pos = [np.array(k // 1, dtype=int) for k in kpt]
+    bz_diff = [k2 - k1 for k1, k2 in zip(bz_pos, bz_pos[1:])]
+    string = 'begin nnkpts\n'
+    for i, k in enumerate(bz_diff):
+        j = (i + 1) % N
+        string += ' {0: } {1: }    {2[0]: } {2[1]: } {2[2]: }\n'.format(i + 1, j + 1, k)
+    string += 'end nnkpts\n'
+    return string
 
+@export
+@_check_dim
+def wannier90_full(kpt):
+    return wannier90(kpt) + '\n' + wannier90_nnkpts(kpt)
+    
 @export
 @_check_dim
 def vasp(kpt):

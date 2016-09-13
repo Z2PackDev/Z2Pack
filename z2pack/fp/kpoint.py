@@ -102,7 +102,7 @@ def wannier90(kpt):
     for k in kpt[:-1]:
         string += '\n'
         for coord in k:
-            string += str(coord % 1).replace('e', 'd') + ' '
+            string += str(coord).replace('e', 'd') + ' '
     string += '\nend kpoints\n'
     return string
     
@@ -110,12 +110,13 @@ def wannier90(kpt):
 @_check_dim
 def wannier90_nnkpts(kpt):
     N = len(kpt) - 1
-    bz_pos = [np.array(k // 1, dtype=int) for k in kpt]
-    bz_diff = [k2 - k1 for k1, k2 in zip(bz_pos, bz_pos[1:])]
+    bz_diff = [np.zeros(3, dtype=int) for _ in range(N - 1)]
+    # check whether the last k-point is in a different UC
+    bz_diff.append(np.array((kpt[-1] - kpt[0] + 0.5) // 1, dtype=int))
     string = 'begin nnkpts\n'
     for i, k in enumerate(bz_diff):
         j = (i + 1) % N
-        string += ' {0: } {1: }    {2[0]: } {2[1]: } {2[2]: }\n'.format(i + 1, j + 1, k)
+        string += ' {0:>3} {1:>3}    {2[0]: } {2[1]: } {2[2]: }\n'.format(i + 1, j + 1, k)
     string += 'end nnkpts\n'
     return string
 

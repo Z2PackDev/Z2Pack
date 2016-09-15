@@ -8,10 +8,11 @@
 import tempfile
 
 import os
-import pytest
 import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.testing.compare import compare_images
+import pytest
 
 @pytest.fixture()
 def disable_diff_save(monkeypatch):

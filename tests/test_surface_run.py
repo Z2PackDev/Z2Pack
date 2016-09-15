@@ -71,7 +71,7 @@ def test_weyl(compare_data, compare_equal, pos_tol, gap_tol, move_tol, num_lines
     compare_data(lambda l1, l2: all(np.isclose(l1, l2).flatten()), result.wcc)
     compare_equal(result.convergence_report, tag='_report')
 
-def test_tb(compare_data, compare_equal, pos_tol, gap_tol, move_tol, num_lines, tb_system, tb_surface):
+def test_tb(compare_wcc, compare_equal, pos_tol, gap_tol, move_tol, num_lines, tb_system, tb_surface):
     result = z2pack.surface.run(
         system=tb_system,
         surface=tb_surface,
@@ -80,7 +80,7 @@ def test_tb(compare_data, compare_equal, pos_tol, gap_tol, move_tol, num_lines, 
         gap_tol=gap_tol,
         pos_tol=pos_tol
     )
-    compare_data(lambda l1, l2: all(np.isclose(l1, l2).flatten()), result.wcc)
+    compare_wcc(result.wcc)
     compare_equal(result.convergence_report, tag='_report')
 
 # saving tests

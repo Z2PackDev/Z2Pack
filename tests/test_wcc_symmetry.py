@@ -5,11 +5,11 @@
 # Date:    14.03.2016 13:27:43 CET
 # File:    test_wcc_plot.py
 
-import pytest
-import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import pytest
+import numpy as np
 
 import z2pack
 

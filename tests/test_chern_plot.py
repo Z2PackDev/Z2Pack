@@ -5,10 +5,10 @@
 # Date:    14.03.2016 13:27:43 CET
 # File:    test_chern_plot.py
 
-import pytest
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import pytest
 
 import z2pack
 

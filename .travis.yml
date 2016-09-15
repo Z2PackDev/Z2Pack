@@ -10,7 +10,7 @@ before_install:
     - sudo apt-get install -qq liblapack.so 
 
 install:
-    - pip install matplotlib tbmodels
+    - pip install matplotlib==1.5.1 tbmodels
     - pip install .
 
 # run tests

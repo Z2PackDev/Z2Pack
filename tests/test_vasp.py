@@ -26,6 +26,19 @@ def vasp_system():
             build_folder=build_dir
         )
     return inner
+    
+@pytest.fixture
+def vasp_system_no_potcar():
+    def inner(build_dir):
+        input_files = ['samples/vasp/' + name for name in ['CHGCAR', 'INCAR', 'POSCAR', 'wannier90.win']]
+        return z2pack.fp.System(
+            input_files=input_files,
+            kpt_fct=z2pack.fp.kpoint.vasp,
+            kpt_path='KPOINTS',
+            command='mpirun $VASP >& log',
+            build_folder=build_dir
+        )
+    return inner
 
 surface_fcts = [
     lambda s, t: [0, s / 2, t],
@@ -55,9 +68,9 @@ invalid_surface_fcts = [
 ]
 
 @pytest.mark.parametrize('surface_fct', invalid_surface_fcts)
-def test_invalid_surface(vasp_system, surface_fct):
+def test_invalid_surface(vasp_system_no_potcar, surface_fct):
     build_dir=tempfile.mkdtemp()
-    system = vasp_system(build_dir)
+    system = vasp_system_no_potcar(build_dir)
     with pytest.raises(ValueError):
         result = z2pack.surface.run(
             system=system,

@@ -20,8 +20,8 @@ def disable_diff_save(monkeypatch):
         pass
     monkeypatch.setattr(matplotlib.testing.compare, 'save_diff_image', do_nothing)
     
-@pytest.fixture()
-def assert_image_equal(disable_diff_save):
+@pytest.fixture
+def assert_image_equal(disable_diff_save, pytestconfig):
     def inner(name, tol=1e-6):
         path = './reference_plots/' + name + '.png'
         if not os.path.exists(path):
@@ -30,5 +30,6 @@ def assert_image_equal(disable_diff_save):
         else:
             with tempfile.NamedTemporaryFile(suffix='.png') as fp:
                 plt.savefig(fp.name)
-                assert compare_images(path, fp.name, tol=tol, in_decorator=True) is None
+                if not pytestconfig.option.no_plot_compare:
+                    assert compare_images(path, fp.name, tol=tol, in_decorator=True) is None
     return inner

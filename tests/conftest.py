@@ -23,6 +23,7 @@ def pytest_addoption(parser):
     parser.addoption('-A', action='store_true', help='run ABINIT tests')
     parser.addoption('-V', action='store_true', help='run VASP tests')
     parser.addoption('-Q', action='store_true', help='run Quantum ESPRESSO tests')
+    parser.addoption('--no-plot-compare', action='store_true', help='disable comparing the generated plots')
 
 def pytest_configure(config):
     # register additional marker

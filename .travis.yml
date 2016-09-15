@@ -16,4 +16,4 @@ install:
 # run tests
 script: 
     - cd tests
-    - py.test
+    - py.test --no-plot-compare

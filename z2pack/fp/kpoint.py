@@ -109,6 +109,9 @@ def wannier90(kpt):
 @export
 @_check_dim
 def wannier90_nnkpts(kpt):
+    """
+    Creates the nnkpts input to explicitly specify the nearest neighbours in wannier90.win
+    """
     N = len(kpt) - 1
     bz_diff = [np.zeros(3, dtype=int) for _ in range(N - 1)]
     # check whether the last k-point is in a different UC
@@ -123,6 +126,9 @@ def wannier90_nnkpts(kpt):
 @export
 @_check_dim
 def wannier90_full(kpt):
+    """
+    Returns both k-point and nearest neighbour input for wannier90.win
+    """
     return wannier90(kpt) + '\n' + wannier90_nnkpts(kpt)
     
 @export

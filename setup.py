@@ -37,7 +37,7 @@ setup(
     author_email='greschd@gmx.ch',
     description='Automating the computation of topological numbers of band-structures',
     install_requires=['numpy', 'scipy', 'decorator', 'blessings', 'sortedcontainers', 'msgpack-python', 'fsc.locker', 'fsc.export', 'fsc.formatting'],
-    extras_require={'plot':  ['matplotlib']},
+    extras_require={'plot':  ['matplotlib'], 'tb': ['tbmodels']},
     long_description=readme,
     classifiers=[
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',

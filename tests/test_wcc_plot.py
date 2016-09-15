@@ -6,6 +6,8 @@
 # File:    test_wcc_plot.py
 
 import pytest
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 import z2pack

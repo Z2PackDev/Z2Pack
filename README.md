@@ -13,3 +13,5 @@ either directly (for tb) or via the Wannier90 code package (fp).
 
 - Documentation: <http://z2pack.ethz.ch/doc>
 - Online interface: <http://z2pack.ethz.ch/online>
+
+[![Build Status](https://travis-ci.org/Z2PackDev/Z2Pack.svg?branch=dev%2Fcurrent)](https://travis-ci.org/Z2PackDev/Z2Pack)

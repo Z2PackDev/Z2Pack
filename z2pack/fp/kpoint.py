@@ -34,9 +34,18 @@ def _check_dim(fct, kpt):
         if len(k) != 3:
             raise ValueError('Dimension of point k = {} != 3'.format(k))
     return fct(kpt)
+    
+@decorator.decorator
+def _check_closed(fct, kpt):
+    """Checks whether the k-point list forms a closed loop."""
+    delta = kpt[-1] - kpt[0]
+    if not np.isclose(np.array((delta + 0.5) // 1, dtype=int), delta).all():
+        raise ValueError('The k-point line does not form a closed loop.')
+    return fct(kpt)
 
 @export
 @_check_dim
+@_check_closed
 def abinit(kpt):
     """
     Creates a k-point input for **ABINIT**. It uses ``kptopt -1`` and specifies the k-points string using ``ndivk`` and ``kptbounds``.
@@ -58,6 +67,7 @@ def abinit(kpt):
 
 @export
 @_check_dim
+@_check_closed
 def qe(kpt):
     """
     Creates a k-point input for  **Quantum Espresso**.
@@ -77,6 +87,7 @@ def qe(kpt):
 
 @export
 @_check_dim
+@_check_closed
 def qe_explicit(kpt):
     """
     Creates a k-point input for **Quantum Espresso**, by explicitly specifying the k-points.
@@ -93,6 +104,7 @@ def qe_explicit(kpt):
 
 @export
 @_check_dim
+@_check_closed
 def wannier90(kpt):
     """
     Creates a k-point input for **Wannier90**. It can be useful when the first-principles code does not generate the k-points in ``wannier90.win`` (e.g. with Quantum Espresso).
@@ -108,6 +120,7 @@ def wannier90(kpt):
     
 @export
 @_check_dim
+@_check_closed
 def wannier90_nnkpts(kpt):
     """
     Creates the nnkpts input to explicitly specify the nearest neighbours in wannier90.win
@@ -125,6 +138,7 @@ def wannier90_nnkpts(kpt):
 
 @export
 @_check_dim
+@_check_closed
 def wannier90_full(kpt):
     """
     Returns both k-point and nearest neighbour input for wannier90.win
@@ -133,6 +147,7 @@ def wannier90_full(kpt):
     
 @export
 @_check_dim
+@_check_closed
 def vasp(kpt):
     """
     Creates a k-point input for  **VASP**. It uses the automatic generation scheme with a Gamma centered grid. Note that VASP does **not** support any kind of k-point line **unless** they are exactly along one of the reciprocal lattice vectors, and the k-points are evenly spaced.

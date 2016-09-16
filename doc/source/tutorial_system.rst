@@ -138,10 +138,14 @@ Combining these four steps, we get the following example (for VASP):
     
 First-principles codes
 ~~~~~~~~~~~~~~~~~~~~~~
-Depending on which first-principles code you use, there are a few things that you should look out for, and input parameters that must be set. In general, the easiest way to get started is by using one of the :ref:`examples <z2pack_examples>` provided.
+Depending on which first-principles code you use, there are a few things that you should look out for, and input parameters that must be set. In general, the easiest way to get started is by using one of the :ref:`examples <z2pack_examples>` provided. 
 
 Quantum Espresso
 ''''''''''''''''
+Of the first-principles codes which have been tested, Quantum Espresso currently has the best integration with Z2Pack. Starting with version **TODO** (with Wannier90 version 2.1 or higher) it supports calculating topological invariants on arbitrary surfaces.
+
+ABINIT
+''''''
 
 VASP
 ''''
@@ -153,9 +157,5 @@ Required input arguments:
     LWANNIER90 = .TRUE.
     LWRITE_MMN_AMN = .TRUE.
     ISYM = -1
-
-ABINIT
-''''''
-
 
 Now that you know how to construct the various systems, it's time to get to work: :ref:`Let's run some calculations! <z2pack_tutorial_surface>`

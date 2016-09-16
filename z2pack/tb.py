@@ -23,9 +23,9 @@ class System(_HmSystem):
     :param tb_model: The tight-binding model.
     :type tb_model: Instance of :class:`tbmodels.Model` or one of its subclasses.
     
-    :param kwargs:  Keyword arguments passed to :class:`.em.System`.
+    :param kwargs:  Keyword arguments passed to :class:`.hm.System`.
 
-    The ``pos`` and ``bands`` keywords of :class:`.em.System` are determined from the ``tb_model`` unless otherwise specified.
+    The ``pos`` and ``bands`` keywords of :class:`.hm.System` are determined from the ``tb_model`` unless otherwise specified.
     """
     def __init__(self, tb_model, **kwargs):
         super().__init__(

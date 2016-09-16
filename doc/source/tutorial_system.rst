@@ -135,6 +135,27 @@ Combining these four steps, we get the following example (for VASP):
         command="mpirun $VASP >& log",  # Step 3
         mmn_path='wannier90.mmn'        # Step 4 (this is the default setting)
     )
+    
+First-principles codes
+~~~~~~~~~~~~~~~~~~~~~~
+Depending on which first-principles code you use, there are a few things that you should look out for, and input parameters that must be set. In general, the easiest way to get started is by using one of the :ref:`examples <z2pack_examples>` provided.
+
+Quantum Espresso
+''''''''''''''''
+
+VASP
+''''
+
+Required input arguments:
+
+.. code ::
+
+    LWANNIER90 = .TRUE.
+    LWRITE_MMN_AMN = .TRUE.
+    ISYM = -1
+
+ABINIT
+''''''
 
 
 Now that you know how to construct the various systems, it's time to get to work: :ref:`Let's run some calculations! <z2pack_tutorial_surface>`

@@ -28,7 +28,7 @@ which parametrizes the surface. The surface must be periodic in the direction al
 
 .. math ::
     
-    f(t_1, 0) = f(t_2, 1) + \mathbf{G},
+    f(t_1, 0) = f(t_1, 1) + \mathbf{G},
     
 where :math:`\mathbf{G}` is a reciprocal lattice vector. In the example above, I chose the surface at :math:`k_z=0`. The Wannier charge centers are calculated on lines along the :math:`k_y` direction.
 

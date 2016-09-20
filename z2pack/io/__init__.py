@@ -7,4 +7,7 @@
 
 """This module contains functions for saving and loading Z2Pack objects."""
 
-from ._save_load import *
+from . import _encoding
+from fsc.io_helper import set_encoding as _set_encoding
+from fsc.io_helper import save, load
+_set_encoding(_encoding)

@@ -87,7 +87,7 @@ def test_tb(compare_wcc, compare_equal, pos_tol, gap_tol, move_tol, num_lines, t
 def test_simple_save(num_lines, simple_system, simple_surface):
     fp = tempfile.NamedTemporaryFile(delete=False)
     result1 = z2pack.surface.run(system=simple_system, surface=simple_surface, num_lines=num_lines, save_file=fp.name)
-    result2 = z2pack.io.load(fp.name)
+    result2 = z2pack.io.load(fp.name, serializer=json)
     os.remove(fp.name)
     assert_res_equal(result1, result2)
 
@@ -102,7 +102,7 @@ def test_weyl_save(pos_tol, gap_tol, move_tol, num_lines, weyl_system, weyl_surf
         pos_tol=pos_tol,
         save_file=fp.name
     )
-    result2 = z2pack.io.load(fp.name)
+    result2 = z2pack.io.load(fp.name, serializer=json)
     os.remove(fp.name)
     assert_res_equal(result1, result2)
 
@@ -117,7 +117,7 @@ def test_tb_save(pos_tol, gap_tol, move_tol, num_lines, tb_system, tb_surface):
         pos_tol=pos_tol,
         save_file=fp.name
     )
-    result2 = z2pack.io.load(fp.name)
+    result2 = z2pack.io.load(fp.name, serializer=json)
     os.remove(fp.name)
     assert_res_equal(result1, result2)
 
@@ -152,17 +152,19 @@ def test_file_restart(simple_system, simple_surface, serializer):
     with tempfile.NamedTemporaryFile() as fp:
         result = z2pack.surface.run(system=simple_system, surface=simple_surface, save_file=fp.name, serializer=serializer)
         result2 = z2pack.surface.run(system=simple_system, surface=simple_surface, save_file=fp.name, load=True, serializer=serializer)
-        result3 = z2pack.surface.run(system=simple_system, surface=simple_surface, save_file=fp.name, load=True)
     assert_res_equal(result, result2)
-    assert_res_equal(result, result3)
     
 def test_load_inexisting(simple_system, simple_surface):
     with pytest.raises(IOError):
+        result = z2pack.surface.run(system=simple_system, surface=simple_surface, save_file='invalid_name', load_quiet=False, load=True, serializer=json)
+    
+def test_load_no_serializer(simple_system, simple_surface):
+    with pytest.raises(ValueError):
         result = z2pack.surface.run(system=simple_system, surface=simple_surface, save_file='invalid_name', load_quiet=False, load=True)
 
 def test_load_inconsistent(simple_system, simple_surface):
     with pytest.raises(ValueError):
-        result = z2pack.surface.run(system=simple_system, surface=simple_surface, init_result='bla', save_file='invalid_name', load=True)
+        result = z2pack.surface.run(system=simple_system, surface=simple_surface, init_result='bla', save_file='invalid_name', load=True, serializer=json)
         
 def test_load_no_filename(simple_system, simple_surface, serializer):
     with pytest.raises(ValueError):

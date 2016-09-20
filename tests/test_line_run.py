@@ -79,7 +79,7 @@ def test_simple_save(simple_system, simple_line):
     # Context manager doesn't work because the file is moved in the atomic save
     fp = tempfile.NamedTemporaryFile(delete=False)
     result = z2pack.line.run(system=simple_system, line=simple_line, save_file=fp.name)
-    result2 = z2pack.io.load(fp.name)
+    result2 = z2pack.io.load(fp.name, serializer=json)
     os.remove(fp.name)
     assert_res_equal(result, result2)
     
@@ -87,7 +87,7 @@ def test_weyl_save(weyl_system, weyl_line):
     # Context manager doesn't work because the file is moved in the atomic save
     fp = tempfile.NamedTemporaryFile(delete=False)
     result = z2pack.line.run(system=weyl_system, line=weyl_line, save_file=fp.name)
-    result2 = z2pack.io.load(fp.name)
+    result2 = z2pack.io.load(fp.name, serializer=json)
     os.remove(fp.name)
     assert_res_equal(result, result2)
 
@@ -112,12 +112,12 @@ def test_invalid_restart(simple_system, simple_line):
 def test_file_restart(simple_system, simple_line):
     with tempfile.NamedTemporaryFile() as fp:
         result = z2pack.line.run(system=simple_system, line=simple_line, save_file=fp.name)
-        result2 = z2pack.line.run(system=simple_system, line=simple_line, save_file=fp.name, load=True)
+        result2 = z2pack.line.run(system=simple_system, line=simple_line, save_file=fp.name, load=True, serializer=json)
     assert_res_equal(result, result2)
     
 def test_load_inexisting(simple_system, simple_line):
     with pytest.raises(IOError):
-        result = z2pack.line.run(system=simple_system, line=simple_line, save_file='invalid_name', load_quiet=False, load=True)
+        result = z2pack.line.run(system=simple_system, line=simple_line, save_file='invalid_name', load_quiet=False, load=True, serializer=json)
 
 def test_load_inconsistent(simple_system, simple_line):
     with pytest.raises(ValueError):

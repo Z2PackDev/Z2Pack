@@ -51,5 +51,5 @@ z2pack.plot.wcc(result_0, axis=ax[0])
 z2pack.plot.wcc(result_1, axis=ax[1])
 plt.savefig('plots/plot.pdf', bbox_inches = 'tight')
 
-print('Z2 topological invariant at kx = 0: {0}'.format(z2pack.surface.invariant.z2(result_0)))
-print('Z2 topological invariant at kx = 0.5: {0}'.format(z2pack.surface.invariant.z2(result_1)))
+print('Z2 topological invariant at kx = 0: {0}'.format(z2pack.invariant.z2(result_0)))
+print('Z2 topological invariant at kx = 0.5: {0}'.format(z2pack.invariant.z2(result_1)))

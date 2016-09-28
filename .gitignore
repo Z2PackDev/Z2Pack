@@ -56,7 +56,8 @@ test_log.txt
 decorator.py
 
 # pytest caches
-.cache
+.cache/v/cache
+tests/.cache
 .coverage
 .coverage*
 htmlcov

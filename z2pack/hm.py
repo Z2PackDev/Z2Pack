@@ -23,9 +23,6 @@ class System(EigenstateSystem):
     :param hamilton: A function taking the wavevector ``k`` (``list`` of length 3) as an input and returning the matrix Hamiltonian.
     :type hamilton: function
 
-    :param dim:     Dimension of the system.
-    :type dim:      int
-
     :param pos: Positions of the orbitals w.r.t the reduced unit cell.
         Per default, all orbitals are put at the origin.
     :type pos: list
@@ -40,7 +37,6 @@ class System(EigenstateSystem):
             self,
             hamilton,
             *,
-            dim=3,
             pos=None,
             bands=None,
             hermitian_tol=1e-6
@@ -48,10 +44,10 @@ class System(EigenstateSystem):
         self._hamilton = hamilton
         self._hermitian_tol = hermitian_tol
 
-        size = len(self._hamilton([0] * dim)) # assuming to be square...
+        size = len(self._hamilton([0, 0, 0])) # assuming to be square...
         # add one atom for each orbital in the hamiltonian
         if pos is None:
-            self._pos = [np.zeros(dim) for _ in range(size)]
+            self._pos = [np.zeros(3) for _ in range(size)]
         else:
             if len(pos) != size:
                 raise ValueError('The number of positions ({0}) does not match the size of the Hamiltonian ({1}).'.format(len(pos), size))

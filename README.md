@@ -1,7 +1,7 @@
 Z2Pack
 automates the calculation of topological numbers of band-structures.
-If works with both first-principles calculations (z2pack.fp) and
-tight-binding models (z2pack.tb).
+If works with first-principles calculations (z2pack.fp),
+tight-binding models (z2pack.tb) and explicit Hamiltonian matrices (z2pack.hm).
 
 The topological numbers are computed from the evolution of Wannier charge
 centers (WCC), as described in 

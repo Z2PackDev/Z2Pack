@@ -37,7 +37,7 @@
 
 .. rubric:: Getting in touch
 
-The development version of Z2Pack is hosted on `GitHub <http://github.com/Z2PackDev/Z2Pack>`_ . If you have a suggestion or have found a bug in the code, please post an issue there. For general questions, you can write to the Z2Pack mailing list z2pack@lists.phys.ethz.ch . You can also `subscribe <https://lists.phys.ethz.ch/listinfo/z2pack>`_ to the mailing list if you would like to participate in discussions.
+The development version of Z2Pack is hosted on `GitHub <http://github.com/Z2PackDev/Z2Pack>`_ . If you have a suggestion or have found a bug in the code, please post an issue there. For general questions, you can write to the Z2Pack mailing list z2pack@lists.phys.ethz.ch . You can also `subscribe <https://lists.phys.ethz.ch/listinfo/z2pack>`_ to the mailing list if you would like to participate in discussions. Note that online subscription might be disabled, but you can always write an email to the list administrator (me) to subscribe.
 
 .. rubric:: Indices and tables
 

@@ -1,311 +1,234 @@
 Running the scf calculation
-Computing the Z2 invariant for strings along k1 and k2=0.0
+
 +----------------------------------------------------------------------+
-|                       starting wcc calculation                       |
+|===================                                                   |
+|SURFACE CALCULATION                                                   |
+|===================                                                   |
+|starting at 2016-10-10 16:10:56,599                                   |
+|running Z2Pack version 2.1.0a0                                        |
 |                                                                      |
-|                       gap_tol             0.02                       |
-|                       max_iter            10                         |
-|                       min_neighbour_dist  0.01                       |
-|                       no_iter             True                       |
-|                       no_neighbour_check  False                      |
-|                       num_strings         11                         |
-|                       use_pickle          True                       |
-|                       verbose             True                       |
-|                       wcc_tol             0.01                       |
+|gap_tol:            0.3                                               |
+|init_result:        None                                              |
+|iterator:           range(8, 27, 2)                                   |
+|load:               True                                              |
+|load_quiet:         True                                              |
+|min_neighbour_dist: 0.01                                              |
+|move_tol:           0.3                                               |
+|num_lines:          11                                                |
+|pos_tol:            0.01                                              |
+|save_file:          ./results/res_0.json                              |
+|serializer:         auto                                              |
+|surface:            <function <lambda> at 0x7ff17dbf1f28>             |
+|system:             <z2pack.fp._first_prin<...>ject at 0x7ff15f71df60>|
 +----------------------------------------------------------------------+
-calculating string at kx = 0.0000
-    N = 8 (0.753)
-        WCC positions: 
-        [2.70269339948e-07, 0.156962958225, 0.156967668488, 
-        0.499998355678, 0.499999708057, 0.499999980322, 
-        0.50000798561, 0.843035722937, 0.843040675246, 
-        0.999999686007]
-no iteration
 
-calculating string at kx = 0.0500
-    N = 8 (0.876)
-        WCC positions: 
-        [0.00703581031257, 0.0574815779546, 0.230363603541, 
-        0.358245877128, 0.490659128343, 0.509340974634, 
-        0.641754337065, 0.769635792828, 0.942517526231, 
-        0.992964125353]
-no iteration
-
-calculating string at kx = 0.1000
-    N = 8 (0.793)
-        WCC positions: 
-        [0.0291933175799, 0.044049605242, 0.251087491613, 
-        0.321806360992, 0.479528440059, 0.520470697051, 
-        0.678192742072, 0.748911802811, 0.955949985804, 
-        0.970806392001]
-no iteration
-
-calculating string at kx = 0.1500
-    N = 8 (0.776)
-        WCC positions: 
-        [0.0415304893396, 0.0603891477077, 0.259991580815, 
-        0.303971477777, 0.469942983959, 0.530057527049, 
-        0.696028579397, 0.740008427846, 0.939611477616, 
-        0.958469619259]
-no iteration
-
-calculating string at kx = 0.2000
-    N = 8 (0.654)
-        WCC positions: 
-        [0.0452972500577, 0.0784953195623, 0.259899318295, 
-        0.298392139907, 0.46130835182, 0.538692025155, 
-        0.701608511915, 0.740101198646, 0.921505192505, 
-        0.954703353429]
-no iteration
-
-calculating string at kx = 0.2500
-    N = 8 (0.583)
-        WCC positions: 
-        [0.0467638842205, 0.0914228067399, 0.254213923522, 
-        0.300127791962, 0.452176882846, 0.547823198664, 
-        0.69987205301, 0.74578610132, 0.90857687818, 0.95323611259]
-no iteration
-
-calculating string at kx = 0.3000
-    N = 8 (0.558)
-        WCC positions: 
-        [0.0467475469773, 0.102081309182, 0.24663891767, 
-        0.304142938461, 0.441674920367, 0.558325858177, 
-        0.695857566778, 0.753361346073, 0.897919081251, 
-        0.953252667804]
-no iteration
-
-calculating string at kx = 0.3500
-    N = 8 (0.558)
-        WCC positions: 
-        [0.0457124970691, 0.112427384403, 0.237767806638, 
-        0.30861862605, 0.430210945928, 0.569788305799, 
-        0.691381323151, 0.762231900085, 0.887572758003, 
-        0.954288192184]
-no iteration
-
-calculating string at kx = 0.4000
-    N = 8 (0.568)
-        WCC positions: 
-        [0.0434169989633, 0.123391137515, 0.227264779811, 
-        0.313297319122, 0.418709830318, 0.581290499906, 
-        0.686702352254, 0.772735081816, 0.876608854187, 
-        0.956582862674]
-no iteration
-
-calculating string at kx = 0.4500
-    N = 8 (0.572)
-        WCC positions: 
-        [0.0368244761387, 0.136706476521, 0.213467307013, 
-        0.321120580438, 0.404528404661, 0.595469186492, 
-        0.678878376949, 0.786530302192, 0.863292131915, 
-        0.963172657239]
-no iteration
-
-calculating string at kx = 0.5000
-    N = 8 (0.552)
-        WCC positions: 
-        [1.54084845276e-07, 2.82972888435e-06, 0.173894980042, 
-        0.173898288491, 0.359017013994, 0.359019393618, 
-        0.640983534167, 0.640985784993, 0.826105322141, 
-        0.826108698619]
-no iteration
-
-Checking neighbouring k-points k = 0.0000 and k = 0.0500
-Condition fulfilled
-
-Checking neighbouring k-points k = 0.0500 and k = 0.1000
-Condition fulfilled
-
-Checking neighbouring k-points k = 0.1000 and k = 0.1500
-Condition fulfilled
-
-Checking neighbouring k-points k = 0.1500 and k = 0.2000
-Condition fulfilled
-
-Checking neighbouring k-points k = 0.2000 and k = 0.2500
-Condition fulfilled
-
-Checking neighbouring k-points k = 0.2500 and k = 0.3000
-Condition fulfilled
-
-Checking neighbouring k-points k = 0.3000 and k = 0.3500
-Condition fulfilled
-
-Checking neighbouring k-points k = 0.3500 and k = 0.4000
-Condition fulfilled
-
-Checking neighbouring k-points k = 0.4000 and k = 0.4500
-Condition fulfilled
-
-Checking neighbouring k-points k = 0.4500 and k = 0.5000
-Condition fulfilled
+INFO: Adding lines required by 'num_lines'.
+INFO: Adding line at t = 0.0
+INFO:       Calculating line for N = 8
+INFO:       Calculating line for N = 10
+INFO: Adding line at t = 0.1
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_0.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Adding line at t = 0.2
+INFO: Saving surface result to file ./results/res_0.json (ASYNC)
+INFO:       Calculating line for N = 8
+INFO:       Calculating line for N = 10
+INFO: Adding line at t = 0.30000000000000004
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_0.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Adding line at t = 0.4
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_0.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Adding line at t = 0.5
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_0.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Adding line at t = 0.6000000000000001
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_0.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Adding line at t = 0.7000000000000001
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_0.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Adding line at t = 0.8
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_0.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Adding line at t = 0.9
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_0.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Adding line at t = 1.0
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_0.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Convergence criteria fulfilled for 9 of 10 neighbouring lines.
+INFO: Adding line at t = 0.05
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_0.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Saving surface result to file ./results/res_0.json (ASYNC)
+INFO: Convergence criteria fulfilled for 10 of 11 neighbouring lines.
+INFO: Adding line at t = 0.025
+INFO:       Calculating line for N = 8
+INFO:       Calculating line for N = 10
+INFO: Convergence criteria fulfilled for 11 of 12 neighbouring lines.
+INFO: Adding line at t = 0.0125
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_0.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Convergence criteria fulfilled for 13 of 13 neighbouring lines.
+INFO: Saving surface result to file ./results/res_0.json (ASYNC)
 
 +----------------------------------------------------------------------+
-|                       finished wcc calculation                       |
-|                       time: 0 h 1 min 33 sec                         |
+|                  Calculation finished in 0h 11m 42s                  |
 +----------------------------------------------------------------------+
-Z2 invariant: 0
-Computing the Z2 invariant for strings along k1 and k2=0.5
+
 +----------------------------------------------------------------------+
-|                       starting wcc calculation                       |
+|                         ==================                           |
+|                         CONVERGENCE REPORT                           |
+|                         ==================                           |
 |                                                                      |
-|                       gap_tol             0.02                       |
-|                       max_iter            10                         |
-|                       min_neighbour_dist  0.01                       |
-|                       no_iter             True                       |
-|                       no_neighbour_check  False                      |
-|                       num_strings         11                         |
-|                       use_pickle          True                       |
-|                       verbose             True                       |
-|                       wcc_tol             0.01                       |
+|                         Line Convergence                             |
+|                         ================                             |
+|                                                                      |
+|                             PosCheck                                 |
+|                             --------                                 |
+|                             PASSED: 14 of 14                         |
+|                                                                      |
+|                         Surface Convergence                          |
+|                         ===================                          |
+|                                                                      |
+|                             GapCheck                                 |
+|                             --------                                 |
+|                             PASSED: 13 of 13                         |
+|                                                                      |
+|                             MoveCheck                                |
+|                             ---------                                |
+|                             PASSED: 13 of 13                         |
 +----------------------------------------------------------------------+
-calculating string at kx = 0.0000
-    N = 8 (0.552)
-        WCC positions: 
-        [8.64363442084e-06, 0.173888780199, 0.173909526319, 
-        0.35900965542, 0.359030363406, 0.640976313369, 
-        0.640995340163, 0.826098238141, 0.826120418641, 
-        0.999991450494]
-no iteration
 
-calculating string at kx = 0.0500
-    N = 8 (0.272)
-        WCC positions: 
-        [0.0360943657915, 0.130466317149, 0.212854044091, 
-        0.321373927021, 0.418748072916, 0.581255257101, 
-        0.678628353533, 0.787147986534, 0.869536555762, 
-        0.963908179674]
-no iteration
-
-calculating string at kx = 0.1000
-    N = 8 (0.447)
-        WCC positions: 
-        [0.0258362084844, 0.114379689286, 0.213398521256, 
-        0.322229012824, 0.423486461607, 0.576514153587, 
-        0.67777073271, 0.786601671951, 0.885620240183, 
-        0.974163370571]
-no iteration
-
-calculating string at kx = 0.1500
-    N = 8 (0.581)
-        WCC positions: 
-        [0.0156501595474, 0.101522567216, 0.214038751396, 
-        0.323970585618, 0.425312337141, 0.574686259228, 
-        0.676028772538, 0.785960695606, 0.898476971404, 
-        0.984349154712]
-no iteration
-
-calculating string at kx = 0.2000
-    N = 8 (0.594)
-        WCC positions: 
-        [0.00745441994261, 0.0916580005892, 0.212437051982, 
-        0.327744905169, 0.424059277792, 0.575940468459, 
-        0.672255295185, 0.787562781071, 0.908342692702, 
-        0.992545667394]
-no iteration
-
-calculating string at kx = 0.2500
-    N = 8 (0.462)
-        WCC positions: 
-        [0.0111117748215, 0.085342962818, 0.204568750285, 
-        0.334361792374, 0.414982202272, 0.585017300815, 
-        0.665638132767, 0.795431101593, 0.914656530696, 
-        0.988887967117]
-no iteration
-
-calculating string at kx = 0.3000
-    N = 8 (0.598)
-        WCC positions: 
-        [0.0283241405808, 0.0871675905183, 0.191751319989, 
-        0.344923852399, 0.402576140979, 0.597423330564, 
-        0.655075510366, 0.808247824306, 0.912831183909, 
-        0.971675685286]
-no iteration
-
-calculating string at kx = 0.3500
-    N = 8 (0.534)
-        WCC positions: 
-        [0.0514374382767, 0.106175319237, 0.174591180451, 
-        0.352422746523, 0.397076405839, 0.60292317434, 
-        0.647577971095, 0.825407947298, 0.893824798401, 
-        0.94856354982]
-no iteration
-
-calculating string at kx = 0.4000
-    N = 8 (0.486)
-        WCC positions: 
-        [0.0736265005281, 0.138706977255, 0.154781827151, 
-        0.340541715599, 0.411633875366, 0.588366073351, 
-        0.659459983765, 0.845218061394, 0.861294872963, 
-        0.926375253842]
-no iteration
-
-calculating string at kx = 0.4500
-    N = 8 (0.452)
-        WCC positions: 
-        [0.0896716245262, 0.123234938239, 0.16950844741, 
-        0.334590080725, 0.423997438528, 0.576004126049, 
-        0.665410187061, 0.830492974627, 0.876765950261, 
-        0.910328995735]
-no iteration
-
-calculating string at kx = 0.5000
-    N = 8 (0.502)
-        WCC positions: 
-        [1.163560956e-05, 0.127069905672, 0.12707173799, 
-        0.384260796296, 0.384267105865, 0.615735630724, 
-        0.615741475148, 0.872928640987, 0.872930989607, 
-        0.999995496289]
-no iteration
-
-Checking neighbouring k-points k = 0.0000 and k = 0.0500
-Condition fulfilled
-
-Checking neighbouring k-points k = 0.0500 and k = 0.1000
-Condition fulfilled
-
-Checking neighbouring k-points k = 0.1000 and k = 0.1500
-Condition fulfilled
-
-Checking neighbouring k-points k = 0.1500 and k = 0.2000
-Condition fulfilled
-
-Checking neighbouring k-points k = 0.2000 and k = 0.2500
-Condition fulfilled
-
-Checking neighbouring k-points k = 0.2500 and k = 0.3000
-Condition fulfilled
-
-Checking neighbouring k-points k = 0.3000 and k = 0.3500
-Condition fulfilled
-
-Checking neighbouring k-points k = 0.3500 and k = 0.4000
-Condition fulfilled
-
-Checking neighbouring k-points k = 0.4000 and k = 0.4500
-Condition fulfilled
-
-Checking neighbouring k-points k = 0.4500 and k = 0.5000
-Condition not fulfilled
-
-calculating string at kx = 0.4750
-    N = 8 (0.410)
-        WCC positions: 
-        [0.0845431968524, 0.117514856905, 0.155096422618, 
-        0.346416368145, 0.41949778506, 0.580502488937, 
-        0.653584134858, 0.844904763906, 0.882485146031, 
-        0.915455551084]
-no iteration
-
-Checking neighbouring k-points k = 0.4500 and k = 0.4750
-Condition fulfilled
-
-Checking neighbouring k-points k = 0.4750 and k = 0.5000
-Condition fulfilled
 
 +----------------------------------------------------------------------+
-|                       finished wcc calculation                       |
-|                       time: 0 h 1 min 36 sec                         |
+|===================                                                   |
+|SURFACE CALCULATION                                                   |
+|===================                                                   |
+|starting at 2016-10-10 16:22:38,979                                   |
+|running Z2Pack version 2.1.0a0                                        |
+|                                                                      |
+|gap_tol:            0.3                                               |
+|init_result:        None                                              |
+|iterator:           range(8, 27, 2)                                   |
+|load:               True                                              |
+|load_quiet:         True                                              |
+|min_neighbour_dist: 0.01                                              |
+|move_tol:           0.3                                               |
+|num_lines:          11                                                |
+|pos_tol:            0.01                                              |
+|save_file:          ./results/res_1.json                              |
+|serializer:         auto                                              |
+|surface:            <function <lambda> at 0x7ff17dbf1f28>             |
+|system:             <z2pack.fp._first_prin<...>ject at 0x7ff15f71df60>|
 +----------------------------------------------------------------------+
-Z2 invariant: 0
+
+INFO: Adding lines required by 'num_lines'.
+INFO: Adding line at t = 0.0
+INFO:       Calculating line for N = 8
+INFO:       Calculating line for N = 10
+INFO: Adding line at t = 0.1
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_1.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Adding line at t = 0.2
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_1.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Adding line at t = 0.30000000000000004
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_1.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Adding line at t = 0.4
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_1.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Adding line at t = 0.5
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_1.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Adding line at t = 0.6000000000000001
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_1.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Adding line at t = 0.7000000000000001
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_1.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO:       Calculating line for N = 12
+INFO: Adding line at t = 0.8
+INFO: Saving surface result to file ./results/res_1.json (ASYNC)
+INFO:       Calculating line for N = 8
+INFO:       Calculating line for N = 10
+INFO: Adding line at t = 0.9
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_1.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Adding line at t = 1.0
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_1.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Convergence criteria fulfilled for 8 of 10 neighbouring lines.
+INFO: Adding line at t = 0.05
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_1.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Adding line at t = 0.95
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_1.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Convergence criteria fulfilled for 11 of 12 neighbouring lines.
+INFO: Adding line at t = 0.975
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_1.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Convergence criteria fulfilled for 12 of 13 neighbouring lines.
+INFO: Adding line at t = 0.9875
+INFO:       Calculating line for N = 8
+INFO: Saving surface result to file ./results/res_1.json (ASYNC)
+INFO:       Calculating line for N = 10
+INFO: Convergence criteria fulfilled for 14 of 14 neighbouring lines.
+INFO: Saving surface result to file ./results/res_1.json (ASYNC)
+
++----------------------------------------------------------------------+
+|                  Calculation finished in 0h 14m 47s                  |
++----------------------------------------------------------------------+
+
++----------------------------------------------------------------------+
+|                         ==================                           |
+|                         CONVERGENCE REPORT                           |
+|                         ==================                           |
+|                                                                      |
+|                         Line Convergence                             |
+|                         ================                             |
+|                                                                      |
+|                             PosCheck                                 |
+|                             --------                                 |
+|                             PASSED: 15 of 15                         |
+|                                                                      |
+|                         Surface Convergence                          |
+|                         ===================                          |
+|                                                                      |
+|                             GapCheck                                 |
+|                             --------                                 |
+|                             PASSED: 14 of 14                         |
+|                                                                      |
+|                             MoveCheck                                |
+|                             ---------                                |
+|                             PASSED: 14 of 14                         |
++----------------------------------------------------------------------+
+
+Z2 topological invariant at kx = 0: 0
+Z2 topological invariant at kx = 0.5: 0

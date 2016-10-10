@@ -23,8 +23,6 @@ scf_files
 res_pickle.txt
 examples/tb/results
 examples/fp/**/results
-examples/fp/Bi_qe/scf
-examples/fp/Bi_qe/input/bi.win
 examples/fp/Bi2Se3_qe/scf
 examples/fp/Bi2Se3_qe/input/bi2se3.win
 # VASP license

@@ -15,8 +15,8 @@ import xml.etree.ElementTree as ET
 import z2pack
 
 # Edit the paths to your Quantum Espresso and Wannier90 here
-qedir = '/home/greschd/software/espresso-5.4.0/bin/'
-wandir = '/home/greschd/software/wannier90-1.2'
+qedir = '/home/greschd/software/qe-6.0/bin/'
+wandir = '/home/greschd/software/wannier90-dev'
 
 # Commands to run pw, pw2wannier90, wannier90
 mpirun = 'mpirun -np 4 '
@@ -55,7 +55,7 @@ with open('input/bi.win', 'w') as f:
 input_files = ['input/' + name for name in ["bi.nscf.in", "bi.pw2wan.in", "bi.win" ]]
 system = z2pack.fp.System(
     input_files=input_files,
-    kpt_fct=[z2pack.fp.kpoint.qe, z2pack.fp.kpoint.wannier90],
+    kpt_fct=[z2pack.fp.kpoint.qe, z2pack.fp.kpoint.wannier90_full],
     kpt_path=["bi.nscf.in","bi.win"],
     command=z2cmd,
     executable='/bin/bash',

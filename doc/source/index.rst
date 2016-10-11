@@ -31,13 +31,16 @@
 | :ref:`z2pack_reference`
 | detailed description of the classes and functions
 |
+| :ref:`z2pack_material`
+| slides and exercises from workshops and talks
+|
 | :ref:`z2pack_links`
 | where to go next
 |
 
 .. rubric:: Getting in touch
 
-The development version of Z2Pack is hosted on `GitHub <http://github.com/Z2PackDev/Z2Pack>`_ . Post an issue there or contact `me <http://github.com/greschd>`_ directly with questions / suggestions / feedback about Z2Pack.
+The development version of Z2Pack is hosted on `GitHub <http://github.com/Z2PackDev/Z2Pack>`_ . If you have a suggestion or have found a bug in the code, please post an issue there. For general questions, you can write to the Z2Pack mailing list z2pack@lists.phys.ethz.ch . Send `me <mailto:greschd@gmx.ch?subject=Z2Pack%20mailing%20list%20subscription&body=Hi%20Dominik,%0D%0AI%20would%20like%20to%20subscribe%20to%20the%20Z2Pack%20mailing%20list.>`_ an email if you would like to subscribe to the mailing list.
 
 .. rubric:: Indices and tables
 
@@ -54,4 +57,5 @@ The development version of Z2Pack is hosted on `GitHub <http://github.com/Z2Pack
     tutorial.rst
     examples.rst
     reference.rst
+    other_material.rst
     links.rst

@@ -18,7 +18,7 @@
     degauss         =  0.001,
     noncolin        =  .true.,
     lspinorb        =  .true.,
-    nbnd=10
+    nbnd            =  16
 /
  &electrons
     mixing_beta     = 0.2

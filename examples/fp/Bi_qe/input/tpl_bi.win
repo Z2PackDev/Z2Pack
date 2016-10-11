@@ -1,5 +1,6 @@
 num_wann 10
 num_bands 10
+exclude_bands 11 - 16
 spinors : false
 num_iter 0
 shell_list 1

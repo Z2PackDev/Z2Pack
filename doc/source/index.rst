@@ -31,6 +31,9 @@
 | :ref:`z2pack_reference`
 | detailed description of the classes and functions
 |
+| :ref:`z2pack_material`
+| slides and exercises from workshops and talks
+|
 | :ref:`z2pack_links`
 | where to go next
 |
@@ -54,4 +57,5 @@ The development version of Z2Pack is hosted on `GitHub <http://github.com/Z2Pack
     tutorial.rst
     examples.rst
     reference.rst
+    other_material.rst
     links.rst

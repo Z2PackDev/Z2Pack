@@ -6,6 +6,7 @@
 # File:    test_espresso.py
 
 import os
+import json
 import shutil
 import tempfile
 import subprocess
@@ -23,7 +24,7 @@ def qe_system(request):
             'bi.nscf.in', 'bi.pw2wan.in', 'bi.win'
         ]]
 
-        qedir = '/home/greschd/software/espresso-5.1.2/bin/'
+        qedir = '/home/greschd/software/espresso-5.4.0/bin/'
         wandir = '/home/greschd/software/wannier90-1.2'
         mpirun = 'mpirun -np 4 '
         pwcmd = mpirun + qedir + '/pw.x '
@@ -59,17 +60,18 @@ def test_bismuth(qe_system, compare_wcc, surface_fct):
     # don't want to remove it if the test failed
     build_dir = tempfile.mkdtemp()
     system = qe_system(build_dir)
+    save_file = os.path.join(build_dir, 'result.json')
     result = z2pack.surface.run(
         system=system,
         surface=surface_fct,
         num_lines=4,
-        save_file=os.path.join(build_dir, 'result'),
+        save_file=save_file,
         pos_tol=None,
         gap_tol=None,
         move_tol=None
     )
     compare_wcc(result.wcc)
-    res2 = z2pack.io.load(os.path.join(build_dir, 'result'))
+    res2 = z2pack.io.load(save_file)
     assert np.isclose(result.wcc, res2.wcc).all()
     shutil.rmtree(build_dir)
 
@@ -98,17 +100,18 @@ def test_bismuth_correct_num_wcc(qe_system, compare_wcc, surface_fct):
     build_dir = tempfile.mkdtemp()
     system = qe_system(build_dir, num_wcc=10)
     
+    save_file = os.path.join(build_dir, 'result.json')
     result = z2pack.surface.run(
         system=system,
         surface=surface_fct,
         num_lines=4,
-        save_file=os.path.join(build_dir, 'result'),
+        save_file=save_file,
         pos_tol=None,
         gap_tol=None,
         move_tol=None
     )
     compare_wcc(result.wcc)
-    res2 = z2pack.io.load(os.path.join(build_dir, 'result'))
+    res2 = z2pack.io.load(save_file)
     assert np.isclose(result.wcc, res2.wcc).all()
     shutil.rmtree(build_dir)
     
@@ -117,12 +120,12 @@ def test_restart_broken(qe_system):
     surface_fct = lambda s, t: [0, s, t]
     build_dir = tempfile.mkdtemp()
     system = qe_system(build_dir)
+    save_file = os.path.join(build_dir, 'result.json')
     result = z2pack.surface.run(
         system=system,
         surface=surface_fct,
         num_lines=3,
-        save_file=os.path.join(build_dir, 'result'),
-        load=True,
+        save_file=save_file,
         pos_tol=None,
         gap_tol=None,
         move_tol=None
@@ -134,8 +137,9 @@ def test_restart_broken(qe_system):
             system=system,
             surface=surface_fct,
             num_lines=5,
-            save_file=os.path.join(build_dir, 'result'),
+            save_file=save_file,
             load=True,
+            serializer=json,
             pos_tol=None,
             gap_tol=None,
             move_tol=None

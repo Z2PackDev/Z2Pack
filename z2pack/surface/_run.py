@@ -84,7 +84,7 @@ def run_surface(
     :type save_file:    str
     
     :param init_result: Initial result which is loaded at the start of the calculation.
-    :type init_result:  :class:`LineResult`
+    :type init_result:  :class:`.LineResult`
     
     :param load:        Determines whether the initial result is loaded from ``save_file``.
     :type load:         bool
@@ -92,7 +92,7 @@ def run_surface(
     :param load_quiet:  Determines whether errors / inexistent files are ignored when loading from ``save_file``
     :type load_quiet:   bool
     
-    :param serializer:  Serializer which is used to save the result to file. Valid options are :py:mod:`msgpack`, :py:mod:`json` and :py:mod:`pickle`. By default (``serializer='auto'``), the serializer is inferred from the file ending. If this fails, :py:mod:`msgpack` is used.
+    :param serializer:  Serializer which is used to save the result to file. Valid options are :py:mod:`msgpack`, :py:mod:`json` and :py:mod:`pickle`. By default (``serializer='auto'``), the serializer is inferred from the file ending. If this fails, :py:mod:`json` is used.
     :type serializer:   module
 
     :returns:   :class:`SurfaceResult` instance.

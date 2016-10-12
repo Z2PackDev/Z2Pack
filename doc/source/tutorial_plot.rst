@@ -36,7 +36,7 @@ To get more control over how the plot looks, you can also create the figure and 
     
 The same technique can be used to combine multiple plots into one figure.
 
-Finally, there are keyword arguments (named ``settings``, ``wcc_settings`` or ``gap_settings``) which are passed to the :py:mod:`matplotlib` function creating the plot. They can be changed to modify the appearance of the different markers. Please consult the :ref:`reference <plot>` to see the default values for these. The following example shows how to change the color of the markers and lines in :func:`z2pack.plot.chern` from red to blue.
+Finally, there are keyword arguments (named ``settings``, ``wcc_settings`` or ``gap_settings``) which are passed to the :py:mod:`matplotlib <matplotlib.pyplot>` function creating the plot. They can be changed to modify the appearance of the different markers. Please consult the :ref:`reference <plot>` to see the default values for these. The following example shows how to change the color of the markers and lines in :func:`z2pack.plot.chern` from red to blue.
 
 .. code :: python
     

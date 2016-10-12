@@ -23,7 +23,7 @@ def prototype(kpt):
 
     :param kpt:     The list of k-points in the string INCLUDING the
         final point which should not be in the calculation
-    :type kpt:      list of numpy arrays
+    :type kpt:      :py:class:`list` of :py:obj:`numpy.array`
     """
     raise NotImplementedError('This is only the prototype for kpts')
 

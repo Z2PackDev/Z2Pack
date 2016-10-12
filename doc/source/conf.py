@@ -41,8 +41,11 @@ intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'msgpack': ('http://pythonhosted.org/msgpack-python', None),
     'tbmodels': ('http://z2pack.ethz.ch/tbmodels/', None),
+    'numpy': ('http://docs.scipy.org/doc/numpy/', None),
     'matplotlib': ('http://matplotlib.org', None)
 }
+
+nitpick_ignore = [('py:obj', 'module')]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

@@ -19,7 +19,7 @@ class SurfaceData(metaclass=ConstLocker):
     * ``t`` : A tuple containing all current line positions.
     * ``lines`` : A sorted list of objects which have two attributes ``t`` (the position, which is the sorting key) and ``result`` (the line's result).
     
-    The attributes of the underlying :class:`LineResult` instances can be directly accessed from the :class:`SurfaceData` object. This will create a list of attributes for all lines, in the order of their position.
+    The attributes of the underlying :class:`.LineResult` instances can be directly accessed from the :class:`.SurfaceData` object. This will create a list of attributes for all lines, in the order of their position.
     
     """
     # cannot be pickled if it is a local method (lambda) in __init__

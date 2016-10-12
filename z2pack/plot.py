@@ -75,10 +75,10 @@ def wcc_symmetry(
     :type surface_result: :class:`.SurfaceResult` or :class:`.SurfaceData`
 
     :param axis:      Axis where the plot is drawn
-    :type axis:       :py:mod:`matplotlib` axes.
+    :type axis:       matplotlib.axes.Axes
     
-    :param symmetry_operator:   Symmetry operator according to which the WCC are colored.
-    :type symmetry_operator:    2D array
+    :param symmetry_operator:   Symmetry operator according to which the WCC are colored, given as a 2D array.
+    :type symmetry_operator:    numpy.array
 
     :param wcc_settings:    Keyword arguments for the scatter plot of the wcc positions.
     :type wcc_settings:     dict
@@ -131,10 +131,10 @@ def wcc(
     Plots the WCCs and the largest gaps (y-axis) against the t-points (x-axis).
     
     :param surface_result:  Result for which the plot is drawn.
-    :type surface_result: :class:`SurfaceResult` or :class:`SurfaceData`
+    :type surface_result: :class:`.SurfaceResult` or :class:`.SurfaceData`
 
     :param axis:      Axis where the plot is drawn
-    :type axis:       :py:mod:`matplotlib` axes.
+    :type axis:       matplotlib.axes.Axes
 
     :param wcc_settings:    Keyword arguments for the scatter plot of the wcc positions.
     :type wcc_settings:     dict
@@ -167,10 +167,10 @@ def chern(
     Plots the sum of WCCs (polarization) (y-axis) against the t-points (x-axis).
 
     :param surface_result:  Result for which the plot is drawn.
-    :type surface_result: :class:`SurfaceResult` or :class:`SurfaceData`
+    :type surface_result: :class:`.SurfaceResult` or :class:`.SurfaceData`
 
     :param axis:      Axis where the plot is drawn
-    :type axis:       :mod:`matplotlib` ``axis``
+    :type axis:       matplotlib.axes.Axes
 
     :param settings:    Keyword arguments for the plotting function.
     :type settings:     dict

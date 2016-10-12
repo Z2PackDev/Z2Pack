@@ -21,7 +21,7 @@ class System(EigenstateSystem):
     This class is used when the system can be explicitly described as a matrix Hamiltonian :math:`\mathcal{H}(\mathbf{k})`.
 
     :param hamilton: A function taking the wavevector ``k`` (``list`` of length 3) as an input and returning the matrix Hamiltonian.
-    :type hamilton: function
+    :type hamilton: collections.abc.Callable
 
     :param dim:     Dimension of the system.
     :type dim:      int
@@ -31,7 +31,7 @@ class System(EigenstateSystem):
     :type pos: list
 
     :param bands: Specifies either the number of occupied bands (if it is an integer) or which bands should be taken into consideration (if it is a list of indices). If no value is given, half the given bands are considered.
-    :type bands: int or list
+    :type bands: :py:class:`int` or :py:class:`list`
 
     :param hermitian_tol:   Maximum absolute value in the difference between the Hamiltonian and its hermitian conjugate. Use ``hermitian_tol=None`` to deactivate the test entirely.
     :type hermitian_tol:    float

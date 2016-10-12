@@ -112,7 +112,7 @@ where ``kpt`` is a ``list`` containing the desired k-points *including* the peri
 
 3. Call to the first-principles code
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The call to the first-principles code is simple: just provide Z2Pack with the command line input (as a string) of how to call the first-principles code you are using. This is the ``command`` keyword argument to :class:`fp.System`.
+The call to the first-principles code is simple: just provide Z2Pack with the command line input (as a string) of how to call the first-principles code you are using. This is the ``command`` keyword argument to :class:`.fp.System`.
 
 4. Reading the .mmn file
 ~~~~~~~~~~~~~~~~~~~~~~~~

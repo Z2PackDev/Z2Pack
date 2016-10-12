@@ -72,7 +72,7 @@ def wcc_symmetry(
     .. note :: This works only if all lines are created from eigenstates, i.e. they are :class:`.EigenstateLineData` instances (not :class:`.WccLineData`).
     
     :param surface_result:  Result for which the plot is drawn.
-    :type surface_result: :class:`SurfaceResult` or :class:`SurfaceData`
+    :type surface_result: :class:`.SurfaceResult` or :class:`.SurfaceData`
 
     :param axis:      Axis where the plot is drawn
     :type axis:       :py:mod:`matplotlib` axes.

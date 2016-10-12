@@ -20,7 +20,7 @@ The simplest way of using these plotting functions is by just passing them a sur
     z2pack.plot.wcc(result)
     plt.show()
 
-Because Z2Pack uses :py:mod:`matplotlib` to create the plots, ``plt.show()`` will show the plot on screen.
+Because Z2Pack uses :py:mod:`matplotlib<matplotlib.pyplot>` to create the plots, ``plt.show()`` will show the plot on screen.
 
 To get more control over how the plot looks, you can also create the figure and axis yourself and then pass the ``axis`` as a keyword argument.
 

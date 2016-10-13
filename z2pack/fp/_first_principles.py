@@ -21,7 +21,7 @@ class System(OverlapSystem):
     r"""
     System class for systems which are calculated from first principles.
 
-    :param input_files: Path(s) of the input file(s)
+    :param input_files: Paths of the input files.
     :type input_files:  :py:class:`list` of :py:class:`str`
 
     :param kpt_fct:    Function that creates a ``str`` specifying the k-points (in the language of the first-principles code used), given a ``starting_point``, ``last_point``, ``end point`` and number of k-points ``N``. Can also be a :py:class:`list` of functions if k-points need to be written to more than one file.
@@ -29,7 +29,7 @@ class System(OverlapSystem):
     :param kpt_path:   Name of the file where the k-points ``str`` belongs. Will append to a file if it matches one of the ``file_names``, and create a separate file else. If ``kpt_fct`` is a :py:class:`list`, ``kpt_path`` should also be a list, specifying the path for each of the functions.
     :type kpt_path:    :py:class:`str`, or :py:class:`list` thereof 
 
-    :param command: Command to execute the first principles code
+    :param command: Command to execute the first principles code.
     :type command:  str
 
     :param executable:  Sets the executable executing the command. If nothing is specified, the :py:mod:`subprocess` default will be used.
@@ -38,13 +38,13 @@ class System(OverlapSystem):
     :param build_folder:    Folder where the calculation is executed.
     :type build_folder:     str
 
-    :param file_names:  Name(s) the input file(s) should get in the ``build_folder``. Default behaviour is taking the filenames from the input files.
+    :param file_names:  Names the input files should get in the ``build_folder``. Default behaviour is taking the filenames from the input files.
     :type file_names:   :py:class:`list` of :py:class:`str`
 
     :param mmn_path:    Path to the ``.mmn`` output file of ``Wannier90``
     :type mmn_path:     str
 
-    :param num_wcc:     Number of WCC which should be produced by the system. This parameter can be used to check the consistency of the calculation. By default, no so check is done.
+    :param num_wcc:     Number of WCC which should be produced by the system. This parameter can be used to check the consistency of the calculation. By default, no such check is done.
     :type num_wcc:      int
 
     .. note:: ``input_files`` and ``build_folder`` can be absolute or relative paths, the rest is relative to ``build_folder``

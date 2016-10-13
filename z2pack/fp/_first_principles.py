@@ -22,12 +22,12 @@ class System(OverlapSystem):
     System class for systems which are calculated from first principles.
 
     :param input_files: Path(s) of the input file(s)
-    :type input_files:  :py:class:`str` or :py:class:`list` of :py:class:`str`
+    :type input_files:  :py:class:`list` of :py:class:`str`
 
     :param kpt_fct:    Function that creates a ``str`` specifying the k-points (in the language of the first-principles code used), given a ``starting_point``, ``last_point``, ``end point`` and number of k-points ``N``. Can also be a :py:class:`list` of functions if k-points need to be written to more than one file.
 
     :param kpt_path:   Name of the file where the k-points ``str`` belongs. Will append to a file if it matches one of the ``file_names``, and create a separate file else. If ``kpt_fct`` is a :py:class:`list`, ``kpt_path`` should also be a list, specifying the path for each of the functions.
-    :type kpt_path:    :py:class:`str` or :py:class:`list` of :py:class:`str`
+    :type kpt_path:    :py:class:`str`, or :py:class:`list` thereof 
 
     :param command: Command to execute the first principles code
     :type command:  str
@@ -39,7 +39,7 @@ class System(OverlapSystem):
     :type build_folder:     str
 
     :param file_names:  Name(s) the input file(s) should get in the ``build_folder``. Default behaviour is taking the filenames from the input files.
-    :type file_names:   :py:class:`str` or :py:class:`list` of :py:class:`str`
+    :type file_names:   :py:class:`list` of :py:class:`str`
 
     :param mmn_path:    Path to the ``.mmn`` output file of ``Wannier90``
     :type mmn_path:     str
@@ -58,24 +58,19 @@ class System(OverlapSystem):
             command,
             executable=None,
             build_folder='build',
-            file_names='copy',
+            file_names=None,
             mmn_path='wannier90.mmn',
             num_wcc=None
     ):
         # convert to lists (input_files)
-        if not isinstance(input_files, str):
-            self._input_files = list(input_files)
-        else:
-            self._input_files = [input_files]
+        self._input_files = list(input_files)
         self._build_folder = os.path.abspath(build_folder)
 
         # copy to file_names and split off the name
-        if file_names == 'copy':
+        if file_names is None:
             self._file_names = [os.path.basename(filename) for filename in self._input_files]
-        elif isinstance(file_names, str):
-            self._file_names = [file_names]
         else:
-            self._file_names = file_names
+            self._file_names = list(file_names)
         self._file_names = self._to_abspath(self._file_names)
 
         # kpt_fct
@@ -146,7 +141,7 @@ class System(OverlapSystem):
         # read mmn file
         M = mmn.get_m(self._mmn_path)
         if len(M) == 0:
-            raise ValueError('No overlap matrices were found. Maybe switch from shell_list to search_shells in wannier90.win or add more k-points to the string.')
+            raise ValueError('No overlap matrices were found. Maybe switch from shell_list to search_shells in wannier90.win or add more k-points to the line.')
         if len(M) != N:
             raise ValueError('The number of overlap matrices found is {0}, but should be {1}. Maybe check search_shells in wannier90.win'.format(len(M), N))
         if self._num_wcc is not None:

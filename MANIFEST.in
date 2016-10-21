@@ -1,5 +1,6 @@
-# examples are provided via GitHub
-prune examples
+graft doc
+graft examples
+recursive-exclude examples POTCAR
 
 # tests are used for development only
 prune tests
@@ -9,9 +10,6 @@ prune dev_test
 prune TODO
 prune clear.sh
 
-# Documentation is provided on http://z2pack.ethz.ch/doc
-prune doc
-
 # selectively include ptools
 prune z2pack/_ptools
 prune futures
@@ -20,9 +18,6 @@ include z2pack/_ptools/export_decorator.py
 
 # installation related
 exclude MANIFEST.in
-
-# local setup (Cluster)
-exclude decorator.py
 
 # License & README
 include README.md

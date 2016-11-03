@@ -16,7 +16,7 @@
 
     .. rubric:: Please cite
 
-    * Dominik Gresch, Alexey A. Soluyanov, G. Autès, O. V. Yazyev, B. Andrei Bernevig, David Vanderbilt, and Matthias Troyer "Z2Pack: Numerical implementation of hybrid Wannier centers for identifying topological materials" [in preparation]
+    * Dominik Gresch, Gabriel Autès, Oleg V. Yazyev, Matthias Troyer, David Vanderbilt, B. Andrei Bernevig, and Alexey A. Soluyanov "Z2Pack: Numerical Implementation of Hybrid Wannier Centers for Identifying Topological Materials" [`arxiv:1610.08983 <https://arxiv.org/abs/1610.08983>`_]
     * Alexey A. Soluyanov and David Vanderbilt "Computing topological invariants without inversion symmetry" [`PhysRevB.83.235401 <http://dx.doi.org/10.1103/PhysRevB.83.235401>`_]
 
 

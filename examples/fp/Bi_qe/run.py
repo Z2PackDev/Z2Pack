@@ -37,7 +37,9 @@ if not os.path.exists('./scf'):
     os.makedirs('./scf')
     print("Running the scf calculation")
     shutil.copyfile('input/bi.scf.in', 'scf/bi.scf.in')
-    subprocess.call(pwcmd + ' < bi.scf.in > scf.out', shell=True, cwd='./scf')
+    out = subprocess.call(pwcmd + ' < bi.scf.in > scf.out', shell=True, cwd='./scf')
+    if out != 0:
+        raise RuntimeError('Error in SCF call. Inspect scf folder for details, and delete it to re-run the SCF calculation.')
 
 # Copying the lattice parameters from bi.save/data-file.xml into bi.win
 cell = ET.parse('scf/bi.save/data-file.xml').find('CELL').find('DIRECT_LATTICE_VECTORS')

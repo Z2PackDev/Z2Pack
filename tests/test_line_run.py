@@ -126,3 +126,7 @@ def test_load_inconsistent(simple_system, simple_line):
 def test_load_no_filename(simple_system, simple_line):
     with pytest.raises(ValueError):
         result = z2pack.line.run(system=simple_system, line=simple_line, load=True)
+
+def test_invalid_line(simple_system):
+    with pytest.raises(ValueError):
+        result = z2pack.line.run(system=simple_system, line=lambda t: [t / 2, 0, 0])

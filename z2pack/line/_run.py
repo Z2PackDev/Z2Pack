@@ -136,10 +136,17 @@ def _run_line_impl(
 
     start_time = time.time() # timing the run
 
+    # check if the line function is closed (up to an inverse lattice vector)
+    delta = np.array(line(1)) - np.array(line(0))
+    if not np.isclose((delta + 0.5) % 1 - 0.5, np.zeros(delta.shape)).all():
+        raise ValueError('Start and end points of the line differ by {}, which is not an inverse lattice vector.'.format(delta))
+    
+    # check if all controls are valid
     for ctrl in controls:
         if not isinstance(ctrl, LineControl):
             raise ValueError('{} control object is not a LineControl instance.'.format(ctrl.__class__))
 
+    # filter controls by type
     def filter_ctrl(ctrl_type):
         return [ctrl for ctrl in controls if isinstance(ctrl, ctrl_type)]
 

@@ -34,7 +34,8 @@ import z2pack
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
-    'sphinx.ext.intersphinx'
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.viewcode'
 ]
 
 intersphinx_mapping = {

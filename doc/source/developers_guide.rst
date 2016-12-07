@@ -13,6 +13,7 @@ TODO: Overview
 .. toctree::
     :maxdepth: 2
     
+    devguide_data_result.rst
     devguide_control.rst
     devguide_io.rst
     

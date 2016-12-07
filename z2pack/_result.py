@@ -34,6 +34,7 @@ class Result(metaclass=abc.ABCMeta):
         self.ctrl_convergence = ctrl_convergence
 
     def __getattr__(self, name):
+        """Forwards the attribute access to the ``.data`` attribute if attribute lookup fails on this instance (except for the ``data`` and ``convergence_report`` attributes)."""
         if name not in ['data', 'convergence_report']:
             return getattr(self.data, name)
         return super().__getattribute__(name)

@@ -1,3 +1,5 @@
+.. _devguide_control :
+
 Control objects
 ===============
 

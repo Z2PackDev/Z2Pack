@@ -40,7 +40,7 @@ The ``wcc`` attribute access will be forwarded from the :class:`.SurfaceResult` 
 :class:`.WccLineData` and :class:`.EigenstateLineData` - lazy properties and the Locker metaclass
 -------------------------------------------------------------------------------------------------
 
-The :class:`.WccLineData` and :class:`.EigenstateLineData` classes use two things that might not be obvious at first glance -- lazy properties, and the ``ConstLocker`` metaclass.
+The :class:`.WccLineData` and :class:`.EigenstateLineData` classes use two things that might not be obvious at first glance -- lazy properties, and the :py:class:`ConstLocker <fsc.locker.ConstLocker>` metaclass.
 
 First off, the lazy properties: This is a decorator which has two effects
 
@@ -52,4 +52,4 @@ First off, the lazy properties: This is a decorator which has two effects
     
 The attributes of the line ``Data`` objects have a hierarchical structure (the gap is calculated from the WCC, which is calculated from the Wilson loop, etc.), and the lazy properties are used to easily implement this without having to worry about computing anything twice.
 
-By itself, using the lazy properties has one drawback: The user (or the programmer) could inadvertently change an attribute of the ``Data`` instance. Because the subsequent properties might already be evaluated, this change will not be reflected. Since this is not desired, I decided to forbid changing attributes altogether. This is the purpose of the ``ConstLocker`` metaclass. Its only effect is that it is not possible to change attributes after the ``__init__`` method -- unless the instance is explicitly `unlocked`.
+By itself, using the lazy properties has one drawback: The user (or the programmer) could inadvertently change an attribute of the ``Data`` instance. Because the subsequent properties might already be evaluated, this change will not be reflected. Since this is not desired, I decided to forbid changing attributes altogether. This is the purpose of the :py:class:`ConstLocker <fsc.locker.ConstLocker>` metaclass. Its only effect is that it is not possible to change attributes after the ``__init__`` method -- unless the instance is explicitly `unlocked`.

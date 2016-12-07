@@ -43,7 +43,8 @@ intersphinx_mapping = {
     'msgpack': ('http://pythonhosted.org/msgpack-python', None),
     'tbmodels': ('http://z2pack.ethz.ch/tbmodels/', None),
     'numpy': ('http://docs.scipy.org/doc/numpy/', None),
-    'matplotlib': ('http://matplotlib.org', None)
+    'matplotlib': ('http://matplotlib.org', None),
+    'fsc.locker': ('http://frescolinogroup.github.io/frescolino/pylocker/1.1/', None),
 }
 
 nitpick_ignore = [('py:obj', 'module')]

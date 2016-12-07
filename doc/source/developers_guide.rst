@@ -24,3 +24,5 @@ If you're contributing to Z2Pack, I'll assume you are already somewhat familiar 
     devguide_control.rst
     devguide_io.rst
     
+    
+.. uml:: ../../z2pack

@@ -26,4 +26,5 @@ If you're contributing to Z2Pack, I'll assume you are already somewhat familiar 
     
 
 Here's an overview of the class structure, generated with `pyreverse <https://www.logilab.org/blogentry/6883>`_. You'll have to zoom in to reasonably see anything.
+
 .. uml:: ../../z2pack

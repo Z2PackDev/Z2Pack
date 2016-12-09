@@ -57,8 +57,8 @@ The development version of Z2Pack is hosted on `GitHub <http://github.com/Z2Pack
     :maxdepth: 2
     :hidden:
     
-    tutorial.rst
-    examples.rst
+    tutorial/index.rst
+    examples/index.rst
     reference.rst
     developers_guide.rst
     other_material.rst

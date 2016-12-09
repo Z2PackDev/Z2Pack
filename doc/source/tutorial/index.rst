@@ -9,9 +9,9 @@ If you've used a previous version of Z2Pack, you should probably read the :ref:`
 .. toctree::
     :maxdepth: 3
     
-    tutorial_new.rst
-    tutorial_installation.rst
-    tutorial_system.rst
-    tutorial_surface.rst
-    tutorial_invariants.rst
-    tutorial_plot.rst
+    new.rst
+    installation.rst
+    system.rst
+    surface.rst
+    invariants.rst
+    plot.rst

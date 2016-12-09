@@ -84,9 +84,9 @@ Z2Pack uses the Wannier90 software to compute overlap matrices from first-princi
 
 For first-principles codes that are not yet compatible with Wannier90 2.0 (and until 2.0.2 is released), a modified version of Wannier90 1.2 is available here:
 
-:download:`Wannier90 1.2, modified for ABINIT<downloads/wannier90-1.2.0.1.tar.gz>`
-:download:`Wannier90 1.2<downloads/wannier90-1.2.tar.gz>`
-:download:`Wannier90 2.0<downloads/wannier90-2.0.0.tar.gz>`
+:download:`Wannier90 1.2, modified for ABINIT<../downloads/wannier90-1.2.0.1.tar.gz>`
+:download:`Wannier90 1.2<../downloads/wannier90-1.2.tar.gz>`
+:download:`Wannier90 2.0<../downloads/wannier90-2.0.0.tar.gz>`
 
 .. warning:: Compiling your first-principles code with this version of Wannier90 will likely break Wannier90 for purposes other than Z2Pack. It is recommended to create a separate instance of the first-principles code for Z2Pack.
 

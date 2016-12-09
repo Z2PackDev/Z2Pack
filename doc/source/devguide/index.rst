@@ -25,6 +25,14 @@ If you're contributing to Z2Pack, I'll assume you are already somewhat familiar 
     io.rst
     
 
-Here's an overview of the class structure, generated with `pyreverse <https://www.logilab.org/blogentry/6883>`_. You'll have to zoom in to reasonably see anything.
+Here's an overview of the class and package structure, generated with `pyreverse <https://www.logilab.org/blogentry/6883>`_. You'll have to zoom in to reasonably see anything.
+
+**Classes**
 
 .. uml:: z2pack
+    :classes:
+    
+**Packages**
+
+.. uml:: z2pack
+    :packages:

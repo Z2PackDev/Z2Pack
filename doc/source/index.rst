@@ -60,6 +60,6 @@ The development version of Z2Pack is hosted on `GitHub <http://github.com/Z2Pack
     tutorial/index.rst
     examples/index.rst
     reference.rst
-    developers_guide.rst
+    devguide/index.rst
     other_material.rst
     links.rst

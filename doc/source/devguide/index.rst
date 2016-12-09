@@ -20,11 +20,11 @@ If you're contributing to Z2Pack, I'll assume you are already somewhat familiar 
 .. toctree::
     :maxdepth: 2
     
-    devguide_data_result.rst
-    devguide_control.rst
-    devguide_io.rst
+    data_result.rst
+    control.rst
+    io.rst
     
 
 Here's an overview of the class structure, generated with `pyreverse <https://www.logilab.org/blogentry/6883>`_. You'll have to zoom in to reasonably see anything.
 
-.. uml:: ../../z2pack
+.. uml:: z2pack

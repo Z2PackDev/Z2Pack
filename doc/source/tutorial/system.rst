@@ -83,16 +83,14 @@ There are four steps involved in each call to a first-principles code:
 1. Preparing input files
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-For the first step, the user needs to create input files for an NSCF run calling Wannier90. These input files should also contain a reference to the density file acquired in a previous SCF run. However, the **k-points** used in the NSCF run should not be in these files. The reason for this is that the k-points will change many times during a Z2Pack calculation.
+For the first step, the user needs to create input files for an NSCF run calling Wannier90. These input files should also contain a reference to the density file acquired in a previous SCF run. However, the **k-points** used in the NSCF run should not be in these files. The reason for this is that the k-points will change many times during a Z2Pack calculation. When creating the :class:`z2pack.fp.System` instance, the input files should be listed in the ``input_files`` keyword argument (as a list of strings).
 
-The Wannier90 input file should contain the ``exclude_bands`` tag to exclude the non-occupied bands. Also, you should make sure that overlaps between neighbouring k-points on the line are computed exactly once, i.e. there are no overlaps computed from one k-point to the neighbour's equivalent point in another unit cell. In most cases this can be done by setting ``shell_list 1``.
+The Wannier90 input file should contain the ``exclude_bands`` tag to exclude the non-occupied bands. Starting from version 2.1, Wannier90 has a dedicated interface to specify which overlap matrices should be computed. To use this interface, use the k-point function :func:`.wannier90_full`.
 
-If the unit cell is very long in a certain direction, however, it can happend that this setting will just compute overlaps between equivalent points in different unit cells. In that case, you can either add more k-points to the line (costly!) or set the parameter ``search_shells`` instead. It should be large enough s.t. the direct neighbours are included, but not so large that the neighbour's equivalent points are included.
+Wannier90 2.0 and before
+''''''''''''''''''''''''
 
-.. note::
-    As of yet, it is not possible to add k-points that do not belong to the line to the calculation. This means HF or metaGGA calculations cannot be done. We are planning on fixing that, though.
-
-When creating the :class:`z2pack.fp.System` instance, the input files should be listed in the ``input_files`` keyword argument (as a list of strings).
+For older versions of Wannier90, the interface to explicitly specify which overlaps are computed does not exist. This must be done manually, by setting the right input flags. The goal is that overlap matrices between neighbouring k-points along the line are computed exactly once, i.e. no overlaps are computed from one k-point to the neighbour's equivalent point in another unit cell. In most cases this can be done by setting ``shell_list 1``.If the unit cell is very long in a certain direction, however, it can happend that this setting will just compute overlaps between equivalent points in different unit cells. In that case, you can either add more k-points to the line (costly!) or set the parameter ``search_shells`` instead. It should be large enough s.t. the direct neighbours are included, but not so large that the neighbour's equivalent points are included.
 
 2. Preparing k-points input
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

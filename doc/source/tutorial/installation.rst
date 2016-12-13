@@ -80,9 +80,9 @@ Again, you can check that this worked by running the interpreter:
 Setting up first-principles codes
 ---------------------------------
 
-Z2Pack uses the Wannier90 software to compute overlap matrices from first-principles. This means that Z2Pack can be used with any first - principles code that interfaces to Wannier90. If you are using Wannier90 **version 2.0.2** or higher (which, at the time of writing this, is yet to be released), it is compatible with Z2Pack if ``skip_B1_tests = .TRUE.`` is set.
+Z2Pack uses the Wannier90 software to compute overlap matrices from first-principles. This means that Z2Pack can be used with any first - principles code that interfaces to Wannier90. If you are using Wannier90 **version 2.1.0** or higher (which, at the time of writing this, is yet to be released), it is compatible with Z2Pack.
 
-For first-principles codes that are not yet compatible with Wannier90 2.0 (and until 2.0.2 is released), a modified version of Wannier90 1.2 is available here:
+For first-principles codes that are not yet compatible with Wannier90 2.1 (and until 2.1 is released), a modified version of Wannier90 1.2 and 2.0 is available here:
 
 :download:`Wannier90 1.2, modified for ABINIT<../downloads/wannier90-1.2.0.1.tar.gz>`
 :download:`Wannier90 1.2<../downloads/wannier90-1.2.tar.gz>`

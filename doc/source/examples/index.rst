@@ -12,5 +12,5 @@ This is a collection of examples demonstrating the basic use of Z2Pack.
     Quantum ESPRESSO <espresso.rst>
     VASP <vasp.rst>
     2D tight-binding model <tb.rst>
-    Chirality of Weyl points (k•p) <weyl.rst>
+    weyl.rst
     wte2_tb.rst

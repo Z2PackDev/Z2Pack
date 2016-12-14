@@ -6,15 +6,12 @@
 # File:    chirality.py
 
 import os
-import time
 import lzma
 import pickle
 from contextlib import suppress
 
 import z2pack
-import numpy as np
 from tbmodels import Model
-import scipy.linalg as la
 import matplotlib.pyplot as plt
 
 MODEL_NAME = 'wte2_soc'
@@ -27,10 +24,9 @@ for s in subfolders:
     with suppress(FileExistsError):
         os.mkdir(s)
 
-def calculate_chirality(tag, center, radius, occ=56, overwrite=False, **kwargs):
-    t1 = time.time()
+def calculate_chirality(tag, center, radius, overwrite=False, **kwargs):
     # converting the Model to the pickle format (which is quicker to load)
-    # Note that keeping only the pickle format is dangerous, because it 
+    # Note that keeping only the pickle format is dangerous, because it
     # may become unreadable -- use the JSON format for long-term saving.
     try:
         with open(MODEL_PATH, 'rb') as f:
@@ -39,7 +35,7 @@ def calculate_chirality(tag, center, radius, occ=56, overwrite=False, **kwargs):
         # The .xz compression is used to avoid the GitHub file size limit
         with lzma.open(MODEL_SOURCE + '.xz') as fin, open(MODEL_SOURCE, 'wb') as fout:
             fout.write(fin.read())
-            
+
         model = Model.from_json_file(MODEL_SOURCE)
         with open(MODEL_PATH, 'wb') as f:
             pickle.dump(model, f, protocol=pickle.HIGHEST_PROTOCOL)
@@ -54,18 +50,19 @@ def calculate_chirality(tag, center, radius, occ=56, overwrite=False, **kwargs):
         **kwargs
     )
     # Again, the pickle format is used because it is faster than JSON
-    # or msgpack. If you wish to permanently store the result, use 
+    # or msgpack. If you wish to permanently store the result, use
     # z2pack.io.save(res, os.path.join('results', full_name + '.json'))
+    print('Chern number:', z2pack.invariant.chern(res))
 
-def plot_chirality(tag,  ax):
+def plot_chirality(tag, ax):
     full_name = MODEL_NAME + '_' + tag
     res = z2pack.io.load(os.path.join('results', full_name + '.p'))
     z2pack.plot.chern(res, axis=ax)
 
 if __name__ == "__main__":
     # calculate
-    calculate_chirality('0', [0.1203, 0.05232, 0.], 0.005, occ=56)
-    calculate_chirality('1', [0.1211, 0.02887, 0.], 0.005, occ=56, iterator=range(10, 33, 2))
+    calculate_chirality('0', [0.1203, 0.05232, 0.], 0.005)
+    calculate_chirality('1', [0.1211, 0.02887, 0.], 0.005, iterator=range(10, 33, 2))
 
     # plot
     fig, ax = plt.subplots(1, 2, figsize=[4, 2], sharey=True, gridspec_kw=dict(wspace=0.3))

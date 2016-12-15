@@ -39,7 +39,7 @@ def _check_dim(fct, kpt):
 def _check_closed(fct, kpt):
     """Checks whether the k-point list forms a closed loop."""
     delta = kpt[-1] - kpt[0]
-    if not np.isclose(np.array((delta + 0.5) // 1, dtype=int), delta).all():
+    if not np.isclose(np.round_(delta), delta).all():
         raise ValueError('The k-point line does not form a closed loop.')
     return fct(kpt)
 
@@ -128,7 +128,7 @@ def wannier90_nnkpts(kpt):
     N = len(kpt) - 1
     bz_diff = [np.zeros(3, dtype=int) for _ in range(N - 1)]
     # check whether the last k-point is in a different UC
-    bz_diff.append(np.array((kpt[-1] - kpt[0] + 0.5) // 1, dtype=int))
+    bz_diff.append(np.array(np.round_(kpt[-1] - kpt[0]), dtype=int))
     string = 'begin nnkpts\n'
     for i, k in enumerate(bz_diff):
         j = (i + 1) % N

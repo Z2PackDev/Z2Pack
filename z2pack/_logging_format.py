@@ -131,7 +131,7 @@ class DefaultFormatter(logging.Formatter):
                 msg = msg[:-1]
 
             if 'timing' in record.tags:
-                seconds = int(msg + 0.5) # round to the nearest second
+                seconds = round(msg) # round to the nearest second
                 minutes, seconds = seconds // 60, seconds % 60
                 hours, minutes = minutes // 60, minutes % 60
                 days, hours = hours // 24, hours % 24

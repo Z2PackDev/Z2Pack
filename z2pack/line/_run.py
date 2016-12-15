@@ -138,7 +138,7 @@ def _run_line_impl(
 
     # check if the line function is closed (up to an inverse lattice vector)
     delta = np.array(line(1)) - np.array(line(0))
-    if not np.isclose((delta + 0.5) % 1 - 0.5, np.zeros(delta.shape)).all():
+    if not np.isclose(np.round_(delta), delta).all():
         raise ValueError('Start and end points of the line differ by {}, which is not an inverse lattice vector.'.format(delta))
     
     # check if all controls are valid

@@ -16,7 +16,7 @@ import z2pack
 
 # Edit the paths to your Quantum Espresso and Wannier90 here
 qedir = '/home/greschd/software/qe-6.0/bin/'
-wandir = '/home/greschd/software/wannier90-dev'
+wandir = '/home/greschd/software/wannier90-2.1.0'
 
 # Commands to run pw, pw2wannier90, wannier90
 mpirun = 'mpirun -np 4 '

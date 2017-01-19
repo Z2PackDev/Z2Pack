@@ -140,7 +140,7 @@ Depending on which first-principles code you use, there are a few things that yo
 
 Quantum Espresso
 ''''''''''''''''
-Of the first-principles codes which have been tested, Quantum Espresso currently has the best integration with Z2Pack. Starting with version **TODO** (with Wannier90 version 2.1 or higher) it supports calculating topological invariants on arbitrary surfaces.
+Of the first-principles codes which have been tested, Quantum Espresso currently has the best integration with Z2Pack. Starting with version **6.0** (with Wannier90 version 2.1 or higher) it supports calculating topological invariants on arbitrary surfaces.
 
 ABINIT
 ''''''

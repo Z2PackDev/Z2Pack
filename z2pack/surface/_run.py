@@ -5,6 +5,7 @@
 # Date:    08.09.2015 11:07:35 CEST
 # File:    _run_surface.py
 
+import os
 import copy
 import time
 import logging
@@ -135,7 +136,11 @@ def run_surface(
         except IOError as e:
             if not load_quiet:
                 raise e
-
+                
+    if save_file is not None:
+        dirname = os.path.dirname(os.path.abspath(save_file))
+        if not os.path.isdir(dirname):
+            raise ValueError('Directory {} does not exist.'.format(dirname))
 
     return _run_surface_impl(
         *controls,

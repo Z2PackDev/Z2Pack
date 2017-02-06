@@ -5,6 +5,7 @@
 # Date:    12.02.2016 16:04:45 CET
 # File:    _run.py
 
+import os
 import time
 import contextlib
 
@@ -111,6 +112,11 @@ def run_line(
         except IOError as e:
             if not load_quiet:
                 raise e
+
+    if save_file is not None:
+        dirname = os.path.dirname(os.path.abspath(save_file))
+        if not os.path.isdir(dirname):
+            raise ValueError('Directory {} does not exist.'.format(dirname))
 
     return _run_line_impl(*controls, system=system, line=line, save_file=save_file, init_result=init_result)
 

@@ -180,3 +180,9 @@ def test_load_reference(simple_system, test_name, simple_surface, serializer):
     else:
         assert_res_equal(result, z2pack.io.load(path, serializer=serializer))
         assert_res_equal(result, z2pack.io.load(path))
+        
+def test_invalid_save_path(simple_system, simple_surface):
+    with pytest.raises(ValueError):
+        def surface(*args, **kwargs):
+            raise TypeError
+        z2pack.surface.run(system=simple_system, surface=surface, save_file='some/invalid/path/file.json')

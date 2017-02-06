@@ -36,7 +36,10 @@ class AsyncHandler:
                         return
                     tmp1 = tmp2
                     self.handler(tmp1)
-
+            # use concurrent.futures if you want to catch exceptions
+            # right now we don't catch them at all -- it might be preferable
+            # to catch them, but only if the can be caught exactly when
+            # they happen (i.e., not after the whole calculation has finished).
             self.thread = Thread(target=consume)
             self.thread.start()
         return self

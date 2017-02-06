@@ -130,3 +130,7 @@ def test_load_no_filename(simple_system, simple_line):
 def test_invalid_line(simple_system):
     with pytest.raises(ValueError):
         result = z2pack.line.run(system=simple_system, line=lambda t: [t / 2, 0, 0])
+
+def test_invalid_path(simple_system, simple_line):
+    with pytest.raises(ValueError):
+        z2pack.line.run(system=simple_system, line=simple_line, save_file='invalid/path/file.json')

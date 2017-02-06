@@ -5,6 +5,8 @@
 # File:    run.py
 
 import os
+import shutil
+import subprocess
 
 import z2pack
 import matplotlib.pyplot as plt
@@ -32,14 +34,15 @@ if not os.path.isfile('./scf/Bi.save/charge-density.dat'):
     print("Running the scf calculation")
     shutil.copy('input/bi.scf.in', 'scf')
     subprocess.check_output(pwcmd + " < bi.scf.in > scf.out", shell=True, cwd='scf')
-    
+
+os.makedirs('results', exist_ok=True)
 # creating the z2pack.fp object
 bi = z2pack.fp.System(  
     input_files=[
         os.path.join('input', fn) for fn in 
         ["bi.nscf.in", "bi.pw2z2.in"]
     ],
-    kpt_fct=[z2pack.fp.kpts.qe],
+    kpt_fct=[z2pack.fp.kpoint.qe],
     kpt_path=["bi.nscf.in"],
     command=z2cmd,
     executable='/bin/bash',
@@ -51,7 +54,7 @@ res_1 = z2pack.surface.run(
     system=bi,
     surface=lambda s, t: [s / 2, 0, t],
     save_file='results/res_1.json',
-    load=True
+    load=True,
     **settings
 )
 
@@ -59,9 +62,13 @@ res_2 = z2pack.surface.run(
     system=bi,
     surface=lambda s, t: [s / 2, 0.5, t],
     save_file='results/res_2.json',
-    load=True
+    load=True,
     **settings
 )
+
+# printing the invariants
+print('Z2 invariant for ky=0:', z2pack.invariant.z2(res_1))
+print('Z2 invariant for ky=0.5:', z2pack.invariant.z2(res_2))
 
 # creating the plot
 fig=plt.figure()

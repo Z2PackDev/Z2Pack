@@ -95,4 +95,5 @@ ax=fig.add_subplot(1,2,2)
 z2pack.plot.wcc(res_minus, axis=ax)
 z2pack.plot.chern(res_minus, axis=ax)
 
-plt.savefig('results/plot.pdf',bbox_inches='tight')
+os.makedirs('plots', exist_ok=True)
+plt.savefig('plots/plot.pdf',bbox_inches='tight')

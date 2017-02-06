@@ -20,12 +20,12 @@ z2cmd=pwcmd+"< bi.nscf.in >& pw.log;"+pw2z2cmd+"< bi.pw2z2.in >& pw2z2.log;"
 # Settings used for surface.run() Feel free to play around with the different
 # options.
 settings = {
-    'num_lines': 41,
+    'num_lines': 11,
     'pos_tol': 1e-2,
-    'gap_tol': 0.2,
+    'gap_tol': 0.3,
     'move_tol': 0.3,
-    'iterator': range(10, 36, 4),
-    'min_neighbour_dist': 2e-2
+    'iterator': range(8, 27, 2),
+    'min_neighbour_dist': 1e-2
 }
 
 # run the scf calculation
@@ -79,4 +79,5 @@ z2pack.plot.wcc(res_1, axis=ax)
 ax=fig.add_subplot(1,2,2)
 z2pack.plot.wcc(res_2, axis=ax)
 
-plt.savefig('results/wcc.pdf',bbox_inches='tight')
+os.makedirs('plots', exist_ok=True)
+plt.savefig('plots/wcc.pdf',bbox_inches='tight')

@@ -1,0 +1,6 @@
+&inputpp
+  prefix='Bi'
+  outdir='../scf'
+  seedname='bi'
+  isym=0
+/

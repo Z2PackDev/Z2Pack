@@ -5,10 +5,11 @@
 # File:    run.py
 
 import os
-import sys
-import matplotlib
-matplotlib.use('Agg')
+import shutil
+import subprocess
+
 import z2pack
+import matplotlib.pyplot as plt
 
 qedir="/home/greschd/software/espresso-5.3.0/bin"
 mpirun="mpirun -np 4 "
@@ -29,16 +30,15 @@ settings = {
 
 # run the scf calculation
 os.makedirs('scf', exist_ok=True)
-if(not os.path.isfile('./scf/SnTe.save/charge-density.dat')):
+if not os.path.isfile('./scf/SnTe.save/charge-density.dat'):
     print("Running the scf calculation")
-    os.chdir('./scf')
-    os.system('cp ../input/snte.scf.in ./')
-    os.system(pwcmd+" < snte.scf.in > scf.out")
-    os.chdir('../')
+    shutil.copy('input/snte.scf.in', 'scf')
+    subprocess.check_output(pwcmd + " < snte.scf.in > scf.out", shell=True, cwd='scf')
 
 # creating the z2pack.fp objects
 snte_plus = z2pack.fp.System(
-    input_files=[os.path.join('input', fn) for fn in
+    input_files=[
+        os.path.join('input', fn) for fn in
         ['snte.nscf.in', 'snte.pw2z2+i.in']
     ],
     file_names=["snte.nscf.in", "snte.pw2z2.in"],
@@ -81,6 +81,10 @@ res_minus = z2pack.surface.run(
     **settings
 )
 
+# printing the Chern numbers
+print('Chern number for +i eigenstates:', z2pack.invariant.chern(res_plus))
+print('Chern number for -i eigenstates:', z2pack.invariant.chern(res_minus))
+
 # creating plots
 fig=plt.figure()
 ax=fig.add_subplot(1,2,1)
@@ -91,4 +95,4 @@ ax=fig.add_subplot(1,2,2)
 z2pack.plot.wcc(res_minus, axis=ax)
 z2pack.plot.chern(res_minus, axis=ax)
 
-plt.savefig('wcc.pdf',bbox_inches='tight')
+plt.savefig('results/plot.pdf',bbox_inches='tight')

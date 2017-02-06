@@ -1,0 +1,60 @@
+pw2z2pack.x for QE 5.3.0
+
+post-processing tool to compute the overlap matrix (.mmn file) for Z2pack (http://z2pack.ethz.ch/)
+based on pw2wannier90.x
+
+
+------------
+INSTALLATION
+------------
+
+* copy the pw2z2pack.f90 in the ${QEDIR}/PP/src directory
+* add these lines to the ${QEDIR}/PP/src/Makefile:
+   
+pw2z2pack.x : pw2z2pack.o libpp.a $(MODULES) $(LIBOBJS)
+	$(LD) $(LDFLAGS) -o $@ \
+		pw2z2pack.o libpp.a $(MODULES) $(LIBOBJS) $(LIBS)
+	- ( cd ../../bin ; ln -fs ../PP/src/$@ . )
+
+* in the ${QEDIR}/PP/src/ directory run "make pw2z2pack.x"
+
+-------------------
+INPUT FILE
+-------------------
+
+Namelist: INPUTPP
+  prefix	CHARATER
+    prefix of files saved by program pw.x
+         
+  outdir	CHARACTER  
+    directory containing the {prefix}.save directory saved by pw.x
+
+  seedname	CHARACTER
+    name of the overlap matrix file {seedname}.mmn
+
+  isym		INTEGER
+    symmetry which should be used to split the states in two symmetry subspace
+    the number isym corresponds to the number of the symmetry given in pw.x standard output
+    when using the option verbosity='high' 
+    DEFAULT: 0 (.i.e. no symmetry is considered)
+
+  sym_eig	COMPLEX
+    eigenvalue of the symmetry operator isym 
+    if isym!=0, the code only computes overlap for symmetry eigenstates with symmetry eigenvalue sym_eig  
+
+  nexband	INTEGER
+    number of lower bands to exclude from the overlap calculation
+
+Example:
+
+&inputpp
+   prefix='job'
+   outdir='./'
+   seedname='job'
+   isym=10
+   sym_eig=(0.0d0,1.0d0)
+   nexband=2
+/
+
+
+

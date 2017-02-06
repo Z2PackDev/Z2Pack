@@ -1,0 +1,8 @@
+&inputpp
+  prefix='SnTe'
+  outdir='../scf'
+  seedname='snte'
+  isym=29
+  sym_eig=(0.0d0,-1.0d0)
+  nexband=12
+/

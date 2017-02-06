@@ -1,0 +1,36 @@
+&control
+  calculation   = 'scf'
+  prefix        = 'SnTe'
+  outdir        = './'
+  verbosity     = 'high'
+  wf_collect    = .true.
+  pseudo_dir    = '../pseudo'
+/
+
+&system
+  ibrav         = 2
+  celldm(1)     = 11.939861 
+  nat           = 2
+  ntyp          = 2
+  ecutwfc       = 30.0
+  occupations   = 'smearing'
+  degauss       = 0.001
+  noncolin      = .true.
+  lspinorb      = .true.
+/
+
+&electrons
+  mixing_beta   = 0.7
+  conv_thr      = 1.0d-8
+/
+
+ATOMIC_SPECIES
+Sn  118.71  Sn.rel-pbe-oncvpsp.UPF
+Te  127.60  Te.rel-pbe-oncvpsp.UPF
+
+ATOMIC_POSITIONS crystal
+Sn  0.0000000 0.0000000 0.0000000
+Te  0.5000000 0.5000000 0.5000000
+
+K_POINTS automatic
+6 6 6 0 0 0

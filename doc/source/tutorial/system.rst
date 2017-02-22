@@ -23,34 +23,34 @@ The class :class:`z2pack.hm.System` is constructed by passing the function which
 
     import z2pack
     import numpy as np
-    
+
     def hamiltonian(k):
         kx, ky, kz = k
         return np.array([
             [kz, kx - 1j * ky],
             [kx + 1j * ky, -kz]
         ])
-    
+
     system = z2pack.hm.System(hamiltonian)
-    
+
 By default, the lower-lying half of the states will be used for constructing the Wilson loop and Wannier charge centers. In this case, since the matrix has size 2, only the lowest band contributes. This behaviour can be changed by setting the ``bands`` keyword in the constructor. Either the number of "occupied" states can be given, or the relevant bands can be selected by index.
 
 This means that
 
 .. code :: python
-    
+
     system = z2pack.hm.System(hamiltonian, bands=2)
-    
+
 includes WCC from both bands, and
 
 .. code :: python
-    
+
     system = z2pack.hm.System(hamiltonian, bands=[1])
 
 includes only the upper band (because the index starts at 0).
 
 .. note ::
-    
+
     Keyword arguments which were not discussed here are described in the :ref:`z2pack_reference`. Throughout this tutorial, only the basic keywords will be covered. Clicking on a method or class name like :class:`z2pack.hm.System` will take you to the relevant section of the reference.
 
 Tight-binding models - :mod:`z2pack.tb`
@@ -64,8 +64,8 @@ The following code shows how to create a Z2Pack system from a tight-binding mode
 
     import z2pack
     import tbmodels
-    
-    model = tbmodels.Model.from_hr_file('path_to_directory/wannier90_hr.dat')
+
+    model = tbmodels.Model.from_wannier_files(hr_file='path_to_directory/wannier90_hr.dat')
     system = z2pack.tb.System(model)
 
 First-principles calculations - :mod:`z2pack.fp`
@@ -73,7 +73,7 @@ First-principles calculations - :mod:`z2pack.fp`
 
 In order to calculate topological invariants reliably using first-principles, Z2Pack needs to dynamically make calls to the first-principles code. This means that one must provide a way of calling the first-principles code automatically from within Z2Pack. The :class:`z2pack.fp.System` class aims to make this as simple as possible.
 
-There are four steps involved in each call to a first-principles code: 
+There are four steps involved in each call to a first-principles code:
 
 1. Input files created by the user are copied into the working folder
 #. A string specifying the k - points is either appended to one of those files or put in a separate file
@@ -106,7 +106,7 @@ The function given in ``kpt_fct`` must have the following syntax:
         ...
         return string
 
-where ``kpt`` is a ``list`` containing the desired k-points *including* the periodic image of the first point. Hence to compute a string with ``N`` k-points, ``N + 1`` points are given, and the last point is a periodic image of the first. Note thus that the function should be constructed in such a way that the first-principles code will not use the last point in its calculation. 
+where ``kpt`` is a ``list`` containing the desired k-points *including* the periodic image of the first point. Hence to compute a string with ``N`` k-points, ``N + 1`` points are given, and the last point is a periodic image of the first. Note thus that the function should be constructed in such a way that the first-principles code will not use the last point in its calculation.
 
 3. Call to the first-principles code
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -122,21 +122,21 @@ Combining these four steps, we get the following example (for VASP):
 
     system = z2pack.fp.System(
         input_files=[
-            "input/CHGCAR", 
-            "input/INCAR", 
-            "input/POSCAR", 
-            "input/POTCAR", 
-            "input/wannier90.win" 
+            "input/CHGCAR",
+            "input/INCAR",
+            "input/POSCAR",
+            "input/POTCAR",
+            "input/wannier90.win"
         ],                              # Step 1
         kpt_fct=z2pack.fp.kpoint.vasp,  # Step 2
         kpt_path="KPOINTS",             # Step 2
         command="mpirun $VASP >& log",  # Step 3
         mmn_path='wannier90.mmn'        # Step 4 (this is the default setting)
     )
-    
+
 First-principles codes
 ~~~~~~~~~~~~~~~~~~~~~~
-Depending on which first-principles code you use, there are a few things that you should look out for, and input parameters that must be set. In general, the easiest way to get started is by using one of the :ref:`examples <z2pack_examples>` provided. 
+Depending on which first-principles code you use, there are a few things that you should look out for, and input parameters that must be set. In general, the easiest way to get started is by using one of the :ref:`examples <z2pack_examples>` provided.
 
 Quantum Espresso
 ''''''''''''''''

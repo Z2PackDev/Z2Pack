@@ -48,7 +48,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Intended Audience :: Science/Research',
         'Topic :: Scientific/Engineering :: Physics',
-        'Development Status :: 4 - Beta'
+        'Development Status :: 5 - Production/Stable'
     ],
     license='GPL',
     keywords=['topology', 'topological', 'invariant', 'bandstructure', 'chern', 'z2', 'solid-state', 'tight-binding'],

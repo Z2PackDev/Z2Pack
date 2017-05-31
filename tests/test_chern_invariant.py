@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    11.03.2016 11:24:24 CET
-# File:    test_z2_invariant.py
 
 import z2pack
 import random

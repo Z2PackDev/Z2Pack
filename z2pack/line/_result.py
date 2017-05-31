@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    08.02.2016 15:02:23 CET
-# File:    _result.py
 
 from fsc.export import export
 

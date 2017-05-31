@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    21.04.2015 09:13:01 CEST
-# File:    weyl.py
 
 import numpy as np
 import matplotlib.pyplot as plt

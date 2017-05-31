@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Gabriel Autès, Dominik Gresch
-# File:    run.py
 
 import os
 import shutil
@@ -13,7 +10,7 @@ import matplotlib.pyplot as plt
 
 qedir="/home/greschd/software/espresso-5.3.0/bin"
 mpirun="mpirun -np 4 "
-pwcmd=mpirun+qedir+"/pw.x " 
+pwcmd=mpirun+qedir+"/pw.x "
 pw2z2cmd=qedir+"/pw2z2pack.x "
 z2cmd=pwcmd+"< bi.nscf.in >& pw.log;"+pw2z2cmd+"< bi.pw2z2.in >& pw2z2.log;"
 
@@ -37,9 +34,9 @@ if not os.path.isfile('./scf/Bi.save/charge-density.dat'):
 
 os.makedirs('results', exist_ok=True)
 # creating the z2pack.fp object
-bi = z2pack.fp.System(  
+bi = z2pack.fp.System(
     input_files=[
-        os.path.join('input', fn) for fn in 
+        os.path.join('input', fn) for fn in
         ["bi.nscf.in", "bi.pw2z2.in"]
     ],
     kpt_fct=[z2pack.fp.kpoint.qe],

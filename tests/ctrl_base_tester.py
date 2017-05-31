@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    19.02.2016 16:40:23 MST
-# File:    ctrl_base_tester.py
 
 import pytest
 import z2pack

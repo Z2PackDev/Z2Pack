@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Gabriel Autes, Dominik Gresch <greschd@gmx.ch>
-# Date:    26.04.2015 20:26:10 CEST
-# File:    run.py
 
 import os
 import shutil
@@ -65,7 +61,7 @@ system = z2pack.fp.System(
 # Run the WCC calculations
 result_0 = z2pack.surface.run(
     system=system,
-    surface=lambda s, t: [0, s / 2, t], 
+    surface=lambda s, t: [0, s / 2, t],
     save_file='./results/res_0.json',
     load=True
 )

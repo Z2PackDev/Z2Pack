@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    14.03.2016 17:14:23 CET
-# File:    hm_systems.py
 
 import pytest
 import numpy as np
@@ -61,5 +57,3 @@ def weyl_line(kz):
 @pytest.fixture
 def weyl_surface():
     return z2pack.shape.Sphere([0, 0, 0], 1.)
-
-

@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    24.03.2016 10:02:18 CET
-# File:    Bi_plot.py
 
 import os
 

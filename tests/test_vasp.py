@@ -1,10 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    21.07.2016 15:07:47 CEST
-# File:    test_vasp.py
-
 
 import shutil
 import tempfile
@@ -26,7 +21,7 @@ def vasp_system():
             build_folder=build_dir
         )
     return inner
-    
+
 @pytest.fixture
 def vasp_system_no_potcar():
     def inner(build_dir):
@@ -61,7 +56,7 @@ def test_bismuth(vasp_system, compare_wcc, surface_fct):
     )
     compare_wcc(result.wcc)
     shutil.rmtree(build_dir)
-    
+
 invalid_surface_fcts = [
     lambda s, t: [0, s / 2, t + 0.1],
     lambda s, t: [s, t]
@@ -76,4 +71,3 @@ def test_invalid_surface(vasp_system_no_potcar, surface_fct):
             system=system,
             surface=surface_fct
         )
-

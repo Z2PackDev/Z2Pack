@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    24.03.2016 15:26:43 CET
-# File:    test_espresso.py
 
 import os
 import json
@@ -81,7 +77,7 @@ def test_bismuth_wrong_num_wcc(qe_system, compare_wcc, surface_fct):
     # don't want to remove it if the test failed
     build_dir = tempfile.mkdtemp()
     system = qe_system(build_dir, num_wcc=12)
-    
+
     with pytest.raises(ValueError):
         result = z2pack.surface.run(
             system=system,
@@ -99,7 +95,7 @@ def test_bismuth_correct_num_wcc(qe_system, compare_wcc, surface_fct):
     # don't want to remove it if the test failed
     build_dir = tempfile.mkdtemp()
     system = qe_system(build_dir, num_wcc=10)
-    
+
     save_file = os.path.join(build_dir, 'result.json')
     result = z2pack.surface.run(
         system=system,
@@ -114,7 +110,7 @@ def test_bismuth_correct_num_wcc(qe_system, compare_wcc, surface_fct):
     res2 = z2pack.io.load(save_file)
     assert np.isclose(result.wcc, res2.wcc).all()
     shutil.rmtree(build_dir)
-    
+
 @pytest.mark.qe
 def test_restart_broken(qe_system):
     surface_fct = lambda s, t: [0, s, t]

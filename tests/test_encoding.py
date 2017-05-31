@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    20.07.2016 15:16:30 CEST
-# File:    test_encoding.py
 
 import json
 
@@ -16,9 +12,9 @@ import numpy as np
 def test_consistency_excat(obj):
     res = json.loads(
         json.dumps(
-            obj, 
+            obj,
             default=z2pack.io._encoding.encode
-        ), 
+        ),
         object_hook=z2pack.io._encoding.decode
     )
     assert obj == res
@@ -28,9 +24,9 @@ def test_consistency_excat(obj):
 def test_consistency_notype(obj):
     res = json.loads(
         json.dumps(
-            obj, 
+            obj,
             default=z2pack.io._encoding.encode
-        ), 
+        ),
         object_hook=z2pack.io._encoding.decode
     )
     assert obj == res

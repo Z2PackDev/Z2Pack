@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Authors:  Dominik Gresch <greschd@gmx.ch>, Gabriel Autes
-# Date:    27.09.2014 21:27:27 CEST
-# File:    kpts.py
+
 r"""
 A collection of functions for creating k-points input for different
 first-principles codes.
@@ -34,7 +31,7 @@ def _check_dim(fct, kpt):
         if len(k) != 3:
             raise ValueError('Dimension of point k = {} != 3'.format(k))
     return fct(kpt)
-    
+
 @decorator.decorator
 def _check_closed(fct, kpt):
     """Checks whether the k-point list forms a closed loop."""
@@ -117,7 +114,7 @@ def wannier90(kpt):
             string += str(coord).replace('e', 'd') + ' '
     string += '\nend kpoints\n'
     return string
-    
+
 @export
 @_check_dim
 @_check_closed
@@ -144,7 +141,7 @@ def wannier90_full(kpt):
     Returns both k-point and nearest neighbour input for wannier90.win
     """
     return wannier90(kpt) + '\n' + wannier90_nnkpts(kpt)
-    
+
 @export
 @_check_dim
 @_check_closed

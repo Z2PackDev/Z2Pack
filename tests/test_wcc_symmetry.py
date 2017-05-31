@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    14.03.2016 13:27:43 CET
-# File:    test_wcc_plot.py
 
 import matplotlib
 matplotlib.use('Agg')

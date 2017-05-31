@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    20.07.2016 17:10:29 CEST
-# File:    test_read_mmn.py
 
 import json
 

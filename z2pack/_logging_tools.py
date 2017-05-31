@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    22.03.2016 13:03:34 CET
-# File:    _logging_tools.py
 
 import copy
 import logging
@@ -13,7 +9,7 @@ class TagAdapter(logging.LoggerAdapter):
     r"""
     LoggerAdapter to facilitate adding tags to a log. The LogRecord instances will have a ``tags`` attribute. The logging function can take the ``tags`` keyword.
 
-    :param logger:  The logger which is to be adapted. 
+    :param logger:  The logger which is to be adapted.
 
     :param default_tags:    Tags which are added to all LogRecords.
     """

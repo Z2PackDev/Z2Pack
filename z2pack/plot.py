@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    20.02.2016 23:00:28 MST
-# File:    _plot.py
 
 """This submodule contains all functions for plotting Z2Pack results."""
 
@@ -67,16 +63,16 @@ def wcc_symmetry(
 ):
     r"""
     Plots the WCCs and the largest gaps (y-axis) against the t-points
-    (x-axis). The WCC are colored according to their symmetry expectation value for a given symmetry operator. 
-    
+    (x-axis). The WCC are colored according to their symmetry expectation value for a given symmetry operator.
+
     .. note :: This works only if all lines are created from eigenstates, i.e. they are :class:`.EigenstateLineData` instances (not :class:`.WccLineData`).
-    
+
     :param surface_result:  Result for which the plot is drawn.
     :type surface_result: :class:`.SurfaceResult` or :class:`.SurfaceData`
 
     :param axis:      Axis where the plot is drawn
     :type axis:       matplotlib.axes.Axes
-    
+
     :param symmetry_operator:   Symmetry operator according to which the WCC are colored, given as a 2D array.
     :type symmetry_operator:    numpy.array
 
@@ -88,7 +84,7 @@ def wcc_symmetry(
 
     :param gap_settings:    Keyword arguments for the plot of the gap positions.
     :type gap_settings:     dict
-    
+
     :param color_fct:   Function converting the symmetry operator eigenvalues to color codes.
 
     :returns:       :py:class:`matplotlib.figure.Figure` instance (only for ``axis=None``).
@@ -129,7 +125,7 @@ def wcc(
 ):
     r"""
     Plots the WCCs and the largest gaps (y-axis) against the t-points (x-axis).
-    
+
     :param surface_result:  Result for which the plot is drawn.
     :type surface_result: :class:`.SurfaceResult` or :class:`.SurfaceData`
 

@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    08.02.2016 16:04:23 CET
-# File:    _data.py
 
 from fsc.export import export
 from fsc.locker import ConstLocker
@@ -13,14 +9,14 @@ from sortedcontainers import SortedList
 class SurfaceData(metaclass=ConstLocker):
     """
     Data container for a surface calculation. It contains the :class:`.LineResult` instances of all the lines on the surface which have been calculated.
-    
+
     The following properties / attributes can be accessed:
-    
+
     * ``t`` : A tuple containing all current line positions.
     * ``lines`` : A sorted list of objects which have two attributes ``t`` (the position, which is the sorting key) and ``result`` (the line's result).
-    
+
     The attributes of the underlying :class:`.LineResult` instances can be directly accessed from the :class:`.SurfaceData` object. This will create a list of attributes for all lines, in the order of their position.
-    
+
     """
     # cannot be pickled if it is a local method (lambda) in __init__
     # when python3.4 support is dropped, operator.attrgetter can be used
@@ -33,10 +29,10 @@ class SurfaceData(metaclass=ConstLocker):
 
     def add_line(self, t, result):
         """Adds a line result to the list of lines.
-        
+
         :param t:   Position of the line (:math:`t_1`).
         :type t:    float
-        
+
         :param result:  Result of the line calculation.
         :type result:   :class:`.LineResult`
         """
@@ -53,7 +49,7 @@ class SurfaceData(metaclass=ConstLocker):
 
     def nearest_neighbour_dist(self, t):
         """
-        Returns the distance between :math:`t` and the nearest existing line. 
+        Returns the distance between :math:`t` and the nearest existing line.
         """
         if len(self.t) == 0:
             return 1

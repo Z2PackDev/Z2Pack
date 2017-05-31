@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    08.04.2016 13:58:36 CEST
-# File:    test_doc.py
 
 import sys
 import pytest

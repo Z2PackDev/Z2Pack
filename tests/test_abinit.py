@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    24.03.2016 16:00:14 CET
-# File:    test_abinit.py
 
 import shutil
 import tempfile

@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    07.02.2015 04:21:23 CET
-# File:    generic.py
 
 import z2pack
 import matplotlib.pyplot as plt
@@ -28,12 +24,12 @@ system = z2pack.fp.System(
 # Surface calculation for surfaces at kx=0 and kx=0.5
 # Standard settings are used
 res_0 = z2pack.surface.run(
-    system=system, 
+    system=system,
     surface=lambda s, t: [0, s / 2, t],
     save_file='res_0.msgpack'
 )
 res_1 = z2pack.surface.run(
-    system=system, 
+    system=system,
     surface=lambda s, t: [0.5, s / 2, t],
     save_file='res_1.msgpack'
 )

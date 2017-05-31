@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    15.04.2016 10:21:56 CEST
-# File:    _encoding.py
 
 import numbers
 import contextlib

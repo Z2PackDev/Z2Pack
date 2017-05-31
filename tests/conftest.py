@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    18.02.2016 18:07:11 MST
-# File:    conftest.py
 
 import os
 import json
@@ -76,5 +72,5 @@ def compare_wcc(compare_data):
                 return False
             return all(check_wcc(x, y) for x, y in zip(wcc0, wcc1))
         return _get_max_move(wcc0, wcc1) < 1e-8
-    
+
     return lambda data, tag=None: compare_data(check_wcc, data, tag)

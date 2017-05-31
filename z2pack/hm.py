@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    02.06.2015 23:27:55 CEST
-# File:    hm.py
 
 """
 This module contains a class for creating Systems which are described by a Hamiltonian matrix (hm), such as k•p models.

@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    22.06.2015 11:52:42 CEST
-# File:    _core_utils.py
 
 import copy
 

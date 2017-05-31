@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    07.02.2015 04:21:23 CET
-# File:    run.py
 
 import os
 
@@ -21,14 +17,14 @@ system = z2pack.fp.System(
     input_files=["input/CHGCAR", "input/INCAR", "input/POSCAR", "input/POTCAR", "input/wannier90.win" ],
     kpt_fct=z2pack.fp.kpoint.vasp,
     kpt_path="KPOINTS",
-    command="mpirun $VASP >& log" 
+    command="mpirun $VASP >& log"
 )
 
 if not os.path.exists('./results'):
     os.mkdir('./results')
 if not os.path.exists('./plots'):
     os.mkdir('./plots')
-    
+
 
 # Running the WCC calculation - standard settings
 result_0 = z2pack.surface.run(

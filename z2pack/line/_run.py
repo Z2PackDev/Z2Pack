@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    12.02.2016 16:04:45 CET
-# File:    _run.py
 
 import os
 import time
@@ -49,47 +45,47 @@ def run_line(
 
     :param system:      System for which the WCC should be calculated.
     :type system:       :class:`z2pack.system.EigenstateSystem` or :class:`z2pack.system.OverlapSystem`.
-    
+
     :param line:        Line along which the WCC should be calculated. The argument should be a callable which parametrizes the line :math:`\mathbf{k}(t)`, in reduced coordinates. It should take one argument (``float``) and return a list of ``float`` describing the point in k-space. Note that the line must be closed, that is :math:`\mathbf{k}(0) = \mathbf{k}(1) + \mathbf{G}`, where :math:`\mathbf{G}` is an inverse lattice vector.
 
     :param pos_tol:     The maximum movement of a WCC for the iteration w.r.t. the number of k-points in a single string to converge. The iteration can be turned off by setting ``pos_tol=None``.
     :type pos_tol:      float
 
     :param iterator:    Generator for the number of points in a k-point string. The iterator should also take care of the maximum number of iterations. It is needed even when ``pos_tol=None``, to provide a starting value.
-    
+
     :param save_file:   Path to a file where the result should be stored.
     :type save_file:    str
-    
+
     :param init_result: Initial result which is loaded at the start of the calculation.
     :type init_result:  :class:`LineResult`
-    
+
     :param load:        Determines whether the initial result is loaded from ``save_file``.
     :type load:         bool
-    
+
     :param load_quiet:  Determines whether errors / inexistent files are ignored when loading from ``save_file``
     :type load_quiet:   bool
-    
+
     :param serializer:  Serializer which is used to save the result to file. Valid options are :py:mod:`msgpack`, :py:mod:`json` and :py:mod:`pickle`. By default (``serializer='auto'``), the serializer is inferred from the file ending. If this fails, :py:mod:`msgpack` is used.
     :type serializer:   module
 
     :returns:   :class:`LineResult` instance.
-    
+
     Example usage:
-    
+
     .. code:: python
-    
+
         system = ... # Refer to the various ways of creating a System instance.
         result = z2pack.line.run(
             system=system,
             line=lambda t: [t, 0, 0] # Line along kx for ky, kz = 0.
         )
         print(result.wcc) # Prints the list of WCC.
-    
+
     """
 
     LINE_ONLY__LOGGER.info(locals(), tags=('setup', 'box', 'skip'))
     # This is here to avoid circular import with the Surface (is solved in Python 3.5 and higher)
-    
+
     from .. import io
 
     # setting up controls
@@ -130,7 +126,7 @@ def _run_line_impl(
         serializer='auto'
 ):
     """
-    Implementation of the line's run. 
+    Implementation of the line's run.
 
     :param controls: Control objects which govern the iteration.
     :type controls: AbstractControl
@@ -146,7 +142,7 @@ def _run_line_impl(
     delta = np.array(line(1)) - np.array(line(0))
     if not np.isclose(np.round_(delta), delta).all():
         raise ValueError('Start and end points of the line differ by {}, which is not an inverse lattice vector.'.format(delta))
-    
+
     # check if all controls are valid
     for ctrl in controls:
         if not isinstance(ctrl, LineControl):

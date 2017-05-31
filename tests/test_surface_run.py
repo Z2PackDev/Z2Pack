@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    14.03.2016 10:29:04 CET
-# File:    test_surface_run.py
 
 import os
 import json
@@ -153,11 +149,11 @@ def test_file_restart(simple_system, simple_surface, serializer):
         result = z2pack.surface.run(system=simple_system, surface=simple_surface, save_file=fp.name, serializer=serializer)
         result2 = z2pack.surface.run(system=simple_system, surface=simple_surface, save_file=fp.name, load=True, serializer=serializer)
     assert_res_equal(result, result2)
-    
+
 def test_load_inexisting(simple_system, simple_surface):
     with pytest.raises(IOError):
         result = z2pack.surface.run(system=simple_system, surface=simple_surface, save_file='invalid_name', load_quiet=False, load=True, serializer=json)
-    
+
 def test_load_no_serializer(simple_system, simple_surface):
     with pytest.raises(ValueError):
         result = z2pack.surface.run(system=simple_system, surface=simple_surface, save_file='invalid_name', load_quiet=False, load=True)
@@ -165,7 +161,7 @@ def test_load_no_serializer(simple_system, simple_surface):
 def test_load_inconsistent(simple_system, simple_surface):
     with pytest.raises(ValueError):
         result = z2pack.surface.run(system=simple_system, surface=simple_surface, init_result='bla', save_file='invalid_name', load=True, serializer=json)
-        
+
 def test_load_no_filename(simple_system, simple_surface, serializer):
     with pytest.raises(ValueError):
         result = z2pack.surface.run(system=simple_system, surface=simple_surface, load=True, serializer=serializer)
@@ -180,7 +176,7 @@ def test_load_reference(simple_system, test_name, simple_surface, serializer):
     else:
         assert_res_equal(result, z2pack.io.load(path, serializer=serializer))
         assert_res_equal(result, z2pack.io.load(path))
-        
+
 def test_invalid_save_path(simple_system, simple_surface):
     with pytest.raises(ValueError):
         def surface(*args, **kwargs):

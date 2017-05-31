@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    09.02.2016 10:08:45 CET
-# File:    bases.py
 
 """Abstract base classesfor Control objects, which govern the iteration of Z2Pack runs."""
 
@@ -19,15 +15,15 @@ class AbstractControl(metaclass=abc.ABCMeta):
 class StatefulControl(AbstractControl):
     """
         ABC for control objects which have a state. The state must not depend on the given convergence parameters.
-        
+
         **Concepts:**
-        
+
         `Constructor:` ``StatefulControl(state=s).state == s`` for any valid state s.
-        
+
         `State:` The state must be sufficient to uniquely determine the behaviour of the Control, for a given set of input parameters of the constructor. That is, given two equivalent StatefulControl objects, when applying
 
         .. code :: python
-            
+
             sc1 = StatefulControl(*args, **kwargs)
             sc2 = StatefulControl(*args, **kwargs)
             ...working with sc1 and/or sc2...

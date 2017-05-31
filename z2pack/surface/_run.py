@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    08.09.2015 11:07:35 CEST
-# File:    _run_surface.py
 
 import os
 import copy
@@ -61,7 +57,7 @@ def run_surface(
 
     :param system:      System for which the WCC should be calculated.
     :type system:       :class:`z2pack.system.EigenstateSystem` or :class:`z2pack.system.OverlapSystem`.
-    
+
     :param surface:     Surface on which the WCC / Wilson loops should be calculated. The argument should be a callable which parametrizes the surface :math:`\mathbf{k}(t_1, t_2)`, in reduced coordinates. It should take two arguments (``float``) and return a nested list of ``float`` describing the points in k-space. Note that the surface must be closed at least along the :math:`t_2` - direction, that is :math:`\mathbf{k}(t_1, 0) = \mathbf{k}(t_1, 1) + \mathbf{G}`, where :math:`\mathbf{G}` is an inverse lattice vector.
 
     :param pos_tol:     The maximum movement of a WCC for the iteration w.r.t. the number of k-points in a single string to converge. The iteration can be turned off by setting ``pos_tol=None``.
@@ -80,35 +76,35 @@ def run_surface(
     :type min_neighbour_dist:   float
 
     :param iterator:    Generator for the number of points in a k-point string. The iterator should also take care of the maximum number of iterations. It is needed even when ``pos_tol=None``, to provide a starting value.
-    
+
     :param save_file:   Path to a file where the result should be stored.
     :type save_file:    str
-    
+
     :param init_result: Initial result which is loaded at the start of the calculation.
     :type init_result:  :class:`.LineResult`
-    
+
     :param load:        Determines whether the initial result is loaded from ``save_file``.
     :type load:         bool
-    
+
     :param load_quiet:  Determines whether errors / inexistent files are ignored when loading from ``save_file``
     :type load_quiet:   bool
-    
+
     :param serializer:  Serializer which is used to save the result to file. Valid options are :py:mod:`msgpack`, :py:mod:`json` and :py:mod:`pickle`. By default (``serializer='auto'``), the serializer is inferred from the file ending. If this fails, :py:mod:`json` is used.
     :type serializer:   module
 
     :returns:   :class:`SurfaceResult` instance.
-    
+
     Example usage:
-    
+
     .. code:: python
-    
+
         system = ... # Refer to the various ways of creating a System instance.
         result = z2pack.surface.run(
             system=system,
             surface=lambda t1, t2: [t1, t2, 0] # kz=0 surface, with lines along ky.
         )
         print(result.wcc) # Prints a nested list of WCC (a list of WCC for each line in the surface).
-    
+
     """
     _LOGGER.info(locals(), tags=('setup', 'box', 'skip'))
 
@@ -136,7 +132,7 @@ def run_surface(
         except IOError as e:
             if not load_quiet:
                 raise e
-                
+
     if save_file is not None:
         dirname = os.path.dirname(os.path.abspath(save_file))
         if not os.path.isdir(dirname):
@@ -165,7 +161,7 @@ def _run_surface_impl(
         init_result=None,
         serializer='auto'
 ):
-    r"""Implementation of the surface's run. 
+    r"""Implementation of the surface's run.
 
     :param controls: Control objects which govern the iteration.
     :type controls: AbstractControl

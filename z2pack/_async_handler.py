@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    01.05.2016 09:07:35 CEST
-# File:    test.py
 
 import time
 from threading import Thread

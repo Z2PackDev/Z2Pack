@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    20.07.2016 17:32:38 CEST
-# File:    test_log.py
 
 import sys
 from io import StringIO
@@ -38,7 +34,7 @@ def CaptureLoggingOutput(compare_data):
     out.seek(0)
     res = out.read()
     compare_data(compare_lines, res)
-        
+
 
 def test_surface_report(compare_data, simple_system, simple_surface):
     with CaptureLoggingOutput(compare_data):
@@ -47,4 +43,3 @@ def test_surface_report(compare_data, simple_system, simple_surface):
 def test_line_report(compare_data, simple_system, simple_line):
     with CaptureLoggingOutput(compare_data):
         result = z2pack.line.run(system=simple_system, line=simple_line)
-    

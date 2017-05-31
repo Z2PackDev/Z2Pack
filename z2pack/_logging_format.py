@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    23.03.2016 10:05:18 CET
-# File:    _logging_format.py
 
 import sys
 import logging

@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    26.03.2016 22:56:57 CET
-# File:    test_fp_kpoint.py
 
 import pytest
 import numpy as np
@@ -32,7 +28,7 @@ straight_simple.extend([
 ])
 
 straight_any_direction = [
-    lambda t: [0, t, t], 
+    lambda t: [0, t, t],
     lambda t: [t, 0, t],
     lambda t: [0, 1 - t, 0],
     lambda t: [0.2, 0.2 + t, 0]
@@ -51,7 +47,7 @@ non_straight = [
     lambda t: [0, 0.2 * np.cos(2 * np.pi * t), 0.3 * np.sin(2 * np.pi * t)],
 ]
 
-all_valid = straight_simple + straight_any_direction + straight_unequal_spacing + straight_multiple_bz + non_straight 
+all_valid = straight_simple + straight_any_direction + straight_unequal_spacing + straight_multiple_bz + non_straight
 
 invalid = [
     lambda t: [0, 0, 0.9 * t],

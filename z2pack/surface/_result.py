@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    08.02.2016 15:02:23 CET
-# File:    _result.py
 
 from fsc.export import export
 
@@ -12,11 +8,11 @@ from .._result import Result
 @export
 class SurfaceResult(Result):
     """Container for the data, state and convergence status of a surface calculation. The attributes / properties of the data object (:class:`SurfaceData`) can be accessed directly from the :class:`SurfaceResult` object.
-    
+
     Example:
-    
+
     .. code:: python
-    
+
         result = z2pack.surface.run(...)
         print(result.t) # prints the positions of the lines
         print(result.pol) # prints the sum of WCC for each line

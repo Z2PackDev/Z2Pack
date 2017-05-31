@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    26.09.2014 22:44:18 CEST
-# File:    _first_principles.py
 
 import os
 import shutil
@@ -27,7 +23,7 @@ class System(OverlapSystem):
     :param kpt_fct:    Function that creates a ``str`` specifying the k-points (in the language of the first-principles code used), given a ``starting_point``, ``last_point``, ``end point`` and number of k-points ``N``. Can also be a :py:class:`list` of functions if k-points need to be written to more than one file.
 
     :param kpt_path:   Name of the file where the k-points ``str`` belongs. Will append to a file if it matches one of the ``file_names``, and create a separate file else. If ``kpt_fct`` is a :py:class:`list`, ``kpt_path`` should also be a list, specifying the path for each of the functions.
-    :type kpt_path:    :py:class:`str`, or :py:class:`list` thereof 
+    :type kpt_path:    :py:class:`str`, or :py:class:`list` thereof
 
     :param command: Command to execute the first principles code.
     :type command:  str

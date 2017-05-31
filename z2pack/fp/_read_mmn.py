@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    11.04.2014 13:08:23 CEST
-# File:    _read_mmn.py
 
 import re
 import numpy as np

@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    08.02.2016 15:02:23 CET
-# File:    _result.py
 
 import abc
 
@@ -13,7 +9,7 @@ from fsc.export import export
 class Result(metaclass=abc.ABCMeta):
     """
     Base class for Z2Pack results. Additionally to the data of the calculation, this object also saves the last state and convergence status of the calculation.
-    
+
     :param data:    Data object of the calculation
 
     :param stateful_ctrl:   List of StatefulControl objects of the calculation.

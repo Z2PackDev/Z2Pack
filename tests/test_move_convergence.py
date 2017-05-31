@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    20.02.2016 10:10:06 MST
-# File:    test_move_convergence.py
 
 from z2pack._control import SurfaceControl
 from z2pack.surface._control import MoveCheck

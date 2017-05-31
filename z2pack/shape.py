@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    12.04.2015 19:58:32 CEST
-# File:    shape.py
 
 """
 This module contains pre-defined shapes to use as the ``surface`` argument of :func:`.surface.run` or ``line`` argument for :func:`.line.run`, defining the shape of the surface or line.
@@ -20,12 +16,12 @@ class Sphere:
 
     :param radius:  Radius of the sphere
     :type radius:   float
-    
-    
+
+
     Example usage:
-    
+
     .. code :: python
-    
+
         z2pack.surface.run(
             system=..., # Refer to the various ways of defining a system.
             surface=z2pack.shape.Sphere(center=[0, 0, 0], radius=0.1)

@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    13.04.2015 15:45:41 CEST
-# File:    chirality.py
 
 import os
 import lzma

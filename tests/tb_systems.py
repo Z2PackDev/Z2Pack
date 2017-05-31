@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@ethz.ch>
-# Date:    22.09.2014 14:23:12 CEST
-# File:    squarelattice.py
 
 import itertools
 
@@ -16,11 +12,11 @@ def tb_system():
     t1, t2 = (0.2, 0.3)
 
     model = tbmodels.Model(
-        on_site=(1, 1, -1, -1), 
+        on_site=(1, 1, -1, -1),
         pos=[
-            [0., 0., 0.], 
-            [0., 0., 0.], 
-            [0.5, 0.5, 0.], 
+            [0., 0., 0.],
+            [0., 0., 0.],
+            [0.5, 0.5, 0.],
             [0.5, 0.5, 0.]
         ],
         occ=2

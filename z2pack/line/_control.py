@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    09.02.2016 13:38:55 CET
-# File:    line.py
 
 import itertools
 
@@ -70,7 +66,7 @@ class PosCheck(
 ):
     """
     Check the change in position between two line calculations.
-    
+
     :param pos_tol: Tolerance in the maximum movement of a single WCC position.
     :type pos_tol: float
     """

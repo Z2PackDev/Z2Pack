@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    14.03.2016 13:10:14 CET
-# File:    plottest_helpers.py
 
 import tempfile
 
@@ -19,7 +15,7 @@ def disable_diff_save(monkeypatch):
     def do_nothing(*args, **kwargs):
         pass
     monkeypatch.setattr(matplotlib.testing.compare, 'save_diff_image', do_nothing)
-    
+
 @pytest.fixture
 def assert_image_equal(disable_diff_save, pytestconfig):
     def inner(name, tol=1e-6):

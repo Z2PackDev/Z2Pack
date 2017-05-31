@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    20.02.2016 10:10:52 MST
-# File:    monkeypatch_data.py
 
 import pytest
 import z2pack

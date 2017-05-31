@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    11.03.2016 11:24:24 CET
-# File:    test_z2_invariant.py
 
 import z2pack
 import random
@@ -37,7 +33,7 @@ def test_linear(L, x, patch_surface_data):
     wcc = np.array([np.linspace(0, x, L), np.linspace(1, x, L)]).T
     data = SurfaceData(wcc)
     assert z2pack.invariant.z2(data) == 1
-    
+
 def test_linear_2(M, L, patch_surface_data):
     wcc = list(zip(np.linspace(0, 0.6, L), np.linspace(1, 0.6, L)))
     rand = list(sorted([random.random() for _ in range(M)] * 2))

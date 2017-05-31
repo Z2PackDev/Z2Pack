@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    08.02.2016 18:20:18 CET
-# File:    _data.py
 
 import functools
 
@@ -32,16 +28,16 @@ class _LazyProperty:
 @export
 class WccLineData(metaclass=ConstLocker):
     """Data container for a line constructed directly from the WCC, or from the overlap matrices via the :meth:`from_overlaps` method. The following attributes and properties can be accessed:
-    
+
     * ``wcc`` : A list of Wannier charge centers.
     * ``pol`` : The total polarization (sum of WCC) along the line.
     * ``gap_pos`` : The position of the largest gap between any two WCC.
     * ``gap_size``: The size of the largest gap between any two WCC.
-    
+
     .. note::
-        
+
         The WCC are given in reduced coordinates, which means the possible values range from 0 to 1. The same is true for all values derived from the WCC.
-    
+
     """
     def __init__(self, wcc):
         self.wcc = wcc
@@ -88,7 +84,7 @@ class WccLineData(metaclass=ConstLocker):
 @export
 class EigenstateLineData(WccLineData):
     r"""Data container for a line constructed from periodic eigenstates :math:`|u_{n, \mathbf{k}} \rangle`. This has all attributes that :class:`WccLineData` has, and the following additional ones:
-    
+
     * ``wilson`` : An array containing the Wilson loop (product of overlap matrices) for the line. The Wilson loop is given in the basis of the eigenstates at the start / end of the line.
     * ``wilson_eigenstates`` : Eigenstates of the Wilson loop, given as a list of 1D - arrays.
     """

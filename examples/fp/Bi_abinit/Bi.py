@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@ethz.ch>
-# Date:    14.08.2014 12:18:25 CEST
-# File:    Bi.py
 
 import os
 

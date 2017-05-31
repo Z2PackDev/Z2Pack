@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    19.02.2016 14:40:53 MST
-# File:    test_line_run.py
 
 import os
 import json
@@ -29,7 +25,7 @@ def test_trivial_run(simple_system, simple_line, compare_equal):
     assert result.ctrl_states['StepCounter'] == 10
     assert result.ctrl_states['PosCheck'] == dict(max_move=0, last_wcc=[0, 0])
     compare_equal(normalize_convergence_report(result.convergence_report))
-    
+
 def test_weyl(weyl_system, weyl_line, compare_data):
     result = z2pack.line.run(system=weyl_system, line=weyl_line)
     compare_data(lambda r1, r2: all(np.isclose(r1, r1).flatten()), result.wcc)
@@ -53,13 +49,13 @@ def test_iterator(simple_system, simple_line, compare_equal):
     result = z2pack.line.run(system=simple_system, line=simple_line, iterator=[5, 7, 9])
     assert result.ctrl_states['StepCounter'] == 7
     compare_equal(normalize_convergence_report(result.convergence_report))
-    
+
 def test_iterator_2(weyl_system, compare_equal):
     result = z2pack.line.run(system=weyl_system, line=weyl_line(0.1), iterator=[4, 12, 21], pos_tol=1e-12)
     assert result.ctrl_states['StepCounter'] == 21
     compare_equal(normalize_convergence_report(result.convergence_report))
-    
-    
+
+
 def test_iterator_3(simple_system, simple_line, compare_equal):
     result = z2pack.line.run(system=simple_system, line=simple_line, iterator=[4, 12, 21], pos_tol=None)
     assert result.ctrl_states['StepCounter'] == 4
@@ -82,7 +78,7 @@ def test_simple_save(simple_system, simple_line):
     result2 = z2pack.io.load(fp.name, serializer=json)
     os.remove(fp.name)
     assert_res_equal(result, result2)
-    
+
 def test_weyl_save(weyl_system, weyl_line):
     # Context manager doesn't work because the file is moved in the atomic save
     fp = tempfile.NamedTemporaryFile(delete=False)
@@ -114,7 +110,7 @@ def test_file_restart(simple_system, simple_line):
         result = z2pack.line.run(system=simple_system, line=simple_line, save_file=fp.name)
         result2 = z2pack.line.run(system=simple_system, line=simple_line, save_file=fp.name, load=True, serializer=json)
     assert_res_equal(result, result2)
-    
+
 def test_load_inexisting(simple_system, simple_line):
     with pytest.raises(IOError):
         result = z2pack.line.run(system=simple_system, line=simple_line, save_file='invalid_name', load_quiet=False, load=True, serializer=json)
@@ -122,7 +118,7 @@ def test_load_inexisting(simple_system, simple_line):
 def test_load_inconsistent(simple_system, simple_line):
     with pytest.raises(ValueError):
         result = z2pack.line.run(system=simple_system, line=simple_line, init_result='bla', save_file='invalid_name', load=True)
-        
+
 def test_load_no_filename(simple_system, simple_line):
     with pytest.raises(ValueError):
         result = z2pack.line.run(system=simple_system, line=simple_line, load=True)

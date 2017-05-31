@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Author:  Dominik Gresch <greschd@gmx.ch>
-# Date:    19.05.2015 00:12:05 CEST
-# File:    haldane.py
 
 import logging
 
@@ -31,7 +27,7 @@ def Hamilton(k, m, t1, t2, phi):
 
 def get_chern(m, t1, t2, phi):
     system = z2pack.hm.System(lambda k: Hamilton(k, m, t1, t2, phi), bands=1)
-    
+
     result = z2pack.surface.run(system=system, surface=lambda s, t: [t, s, 0.])
     return z2pack.invariant.chern(result)
 

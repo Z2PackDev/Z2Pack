@@ -13,12 +13,18 @@ import numpy as np
 import z2pack
 
 @pytest.fixture(params=[z2pack.fp.kpoint.qe, z2pack.fp.kpoint.qe_explicit])
-def qe_system(request):
+def qe_system(request, sample):
     def inner(build_dir, num_wcc=None):
-        shutil.copytree('samples/espresso/scf', build_dir + '/scf')
-        input_files = ['samples/espresso/input/' + name for name in [
-            'bi.nscf.in', 'bi.pw2wan.in', 'bi.win'
-        ]]
+        sample_dir = sample('espresso')
+        shutil.copytree(
+            os.path.join(sample_dir, 'scf'),
+            os.path.join(build_dir, 'scf')
+        )
+        input_files = [
+            os.path.join(sample_dir, 'input/') + name for name in [
+                'bi.nscf.in', 'bi.pw2wan.in', 'bi.win'
+            ]
+        ]
 
         qedir = '/home/greschd/software/espresso-5.4.0/bin/'
         wandir = '/home/greschd/software/wannier90-1.2'

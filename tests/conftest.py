@@ -74,3 +74,12 @@ def compare_wcc(compare_data):
         return _get_max_move(wcc0, wcc1) < 1e-8
 
     return lambda data, tag=None: compare_data(check_wcc, data, tag)
+
+@pytest.fixture
+def sample():
+    def inner(name):
+        return os.path.join(
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), 'samples'),
+            name
+        )
+    return inner

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
 import shutil
 import tempfile
 
@@ -10,9 +11,10 @@ import numpy as np
 import z2pack
 
 @pytest.fixture
-def vasp_system():
+def vasp_system(sample):
     def inner(build_dir):
-        input_files = ['samples/vasp/' + name for name in ['CHGCAR', 'INCAR', 'POSCAR', 'POTCAR', 'wannier90.win']]
+        samples_dir = sample('vasp')
+        input_files = [os.path.join(samples_dir, name) for name in ['CHGCAR', 'INCAR', 'POSCAR', 'POTCAR', 'wannier90.win']]
         return z2pack.fp.System(
             input_files=input_files,
             kpt_fct=z2pack.fp.kpoint.vasp,

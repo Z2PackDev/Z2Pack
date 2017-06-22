@@ -25,6 +25,9 @@ with open('./z2pack/_version.py', 'r') as f:
     match_expr = "__version__[^'" + '"]+([' + "'" + r'"])([^\1]+)\1'
     version = re.search(match_expr, f.read()).group(2).strip()
 
+extras = {'plot':  ['matplotlib'], 'tb': ['tbmodels'], 'test': ['pytest']}
+extras['test'] += extras['plot'] + extras['tb']
+
 setup(
     name='z2pack',
     version=version,
@@ -33,7 +36,7 @@ setup(
     author_email='greschd@gmx.ch',
     description='Automating the computation of topological numbers of band-structures',
     install_requires=['numpy', 'scipy', 'decorator', 'blessings', 'sortedcontainers', 'msgpack-python', 'fsc.locker', 'fsc.export', 'fsc.formatting', 'fsc.iohelper'],
-    extras_require={'plot':  ['matplotlib'], 'tb': ['tbmodels']},
+    extras_require=extras,
     long_description=readme,
     classifiers=[
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',

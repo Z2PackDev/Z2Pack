@@ -12,7 +12,8 @@ import z2pack
 @pytest.fixture
 def abinit_system():
     def inner(build_dir):
-        input_files = ['samples/abinit/' + name for name in [
+        sample_dir = samples('abinit')
+        input_files = [os.path.join(sample_dir, name) for name in [
             'Bi_nscf.files', 'Bi_nscf.in', 'wannier90.win', '83bi.5.hgh', 'Bi_scf_o_DEN'
         ]]
         return z2pack.fp.System(
@@ -21,7 +22,7 @@ def abinit_system():
             kpt_path="Bi_nscf.in",
             command="mpirun -np 4 abinit < Bi_nscf.files >& log",
             executable='/bin/bash',
-            build_folder=build_dir + '/build'
+            build_folder=os.path.join(build_dir, 'build')
         )
     return inner
 

@@ -15,10 +15,17 @@ import z2pack
 @pytest.fixture
 def qe_system_new():
     def inner(build_dir, num_wcc=None):
-        shutil.copytree('samples/espresso_new/scf', build_dir + '/scf')
-        input_files = ['samples/espresso_new/input/' + name for name in [
-            'bi.nscf.in', 'bi.pw2wan.in', 'bi.win'
-        ]]
+        sample_dir = sample('espresso_new')
+        shutil.copytree(
+            os.path.join(sample_dir, 'scf'),
+            os.path.join(build_dir, 'scf')
+        )
+        input_files = [
+            os.path.join(sample_dir, 'input/') + name for name in [
+                'bi.nscf.in', 'bi.pw2wan.in', 'bi.win'
+            ]
+        ]
+
 
         qedir = '/home/greschd/software/qe-6.0/bin/'
         wandir = '/home/greschd/software/wannier90-2.1.0'

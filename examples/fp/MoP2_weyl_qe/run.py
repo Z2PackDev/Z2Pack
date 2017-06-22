@@ -87,6 +87,6 @@ for res, axis in zip([result_1, result_2, result_3], ax):
     z2pack.plot.chern(res, axis=axis)
 plt.savefig('plots/plot.pdf', bbox_inches='tight')
 
-print('Chern number / Weyl chirality around WP1: {0}'.format(z2pack.invariant.chern(result)))
-print('Chern number / Weyl chirality around WP2: {0}'.format(z2pack.invariant.chern(result)))
-print('Chern number / Weyl chirality around both Weyl points: {0}'.format(z2pack.invariant.chern(result)))
+print('Chern number / Weyl chirality around WP1: {0}'.format(z2pack.invariant.chern(result_1)))
+print('Chern number / Weyl chirality around WP2: {0}'.format(z2pack.invariant.chern(result_2)))
+print('Chern number / Weyl chirality around both Weyl points: {0}'.format(z2pack.invariant.chern(result_3)))

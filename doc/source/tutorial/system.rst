@@ -2,7 +2,6 @@
 
 Creating a Z2Pack System
 ========================
-
 The first step in creating a calculation with Z2Pack is to define the system which you are going to study. Currently, there are three different types of systems or models available:
 
 .. contents::
@@ -10,7 +9,6 @@ The first step in creating a calculation with Z2Pack is to define the system whi
 
 Models with an explicit Hamilton matrix - :mod:`z2pack.hm`
 ----------------------------------------------------------
-
 The simplest way of creating a system is when it can be explicitly described by a matrix Hamiltonian :math:`\mathcal{H}(\mathbf{k})`. For example, an effective model for an isotropic Weyl point is given by
 
 .. math ::
@@ -55,7 +53,6 @@ includes only the upper band (because the index starts at 0).
 
 Tight-binding models - :mod:`z2pack.tb`
 ---------------------------------------
-
 For tight-binding models, the `TBmodels <http://z2pack.ethz.ch/tbmodels>`_ package (which started its life as a part of Z2Pack) is used. TBmodels uses its :py:class:`tbmodels.Model` class to describe a tight-binding model. There are several ways to create those, described in the `TBmodels tutorial <http://z2pack.ethz.ch/tbmodels/tutorial.html>`_ . Instances of  :py:class:`tbmodels.Model` can be used to construct Z2Pack systems, using the :class:`z2pack.tb.System` class.
 
 The following code shows how to create a Z2Pack system from a tight-binding model given in Wannier90's ``*_hr.dat`` format.
@@ -70,7 +67,6 @@ The following code shows how to create a Z2Pack system from a tight-binding mode
 
 First-principles calculations - :mod:`z2pack.fp`
 ------------------------------------------------
-
 In order to calculate topological invariants reliably using first-principles, Z2Pack needs to dynamically make calls to the first-principles code. This means that one must provide a way of calling the first-principles code automatically from within Z2Pack. The :class:`z2pack.fp.System` class aims to make this as simple as possible.
 
 There are four steps involved in each call to a first-principles code:
@@ -82,20 +78,20 @@ There are four steps involved in each call to a first-principles code:
 
 1. Preparing input files
 ~~~~~~~~~~~~~~~~~~~~~~~~
-
 For the first step, the user needs to create input files for an NSCF run calling Wannier90. These input files should also contain a reference to the density file acquired in a previous SCF run. However, the **k-points** used in the NSCF run should not be in these files. The reason for this is that the k-points will change many times during a Z2Pack calculation. When creating the :class:`z2pack.fp.System` instance, the input files should be listed in the ``input_files`` keyword argument (as a list of strings).
 
-The Wannier90 input file should contain the ``exclude_bands`` tag to exclude the non-occupied bands.
+The Wannier90 input file should contain the ``exclude_bands`` tag, such that only the bands for which the topological invariant should be calculated are included. Usually, this means that the unoccupied bands are excluded.
 
 Wannier90 2.1 and newer
 '''''''''''''''''''''''
-
-Starting from version 2.1, Wannier90 has a dedicated interface to specify which overlap matrices should be computed. To use this interface, use the k-point function :func:`.wannier90_full`.
+Starting from version 2.1, Wannier90 has a dedicated interface to specify which overlap matrices should be computed. To use this interface, use the k-point function :func:`.wannier90_full` as described in the next section.
 
 Wannier90 2.0 and before
 ''''''''''''''''''''''''
+For older versions of Wannier90, the interface to explicitly specify which overlaps are computed does not exist. This must be done manually, by setting the right input flags. The goal is that overlap matrices between neighbouring k-points along the line are computed exactly once, i.e. no overlaps are computed from one k-point to the neighbour's equivalent point in another unit cell. In most cases this can be done by setting ``shell_list 1``.If the unit cell is very long in a certain direction, however, it can happend that this setting will just compute overlaps between equivalent points in different unit cells. In that case, you have two options:
 
-For older versions of Wannier90, the interface to explicitly specify which overlaps are computed does not exist. This must be done manually, by setting the right input flags. The goal is that overlap matrices between neighbouring k-points along the line are computed exactly once, i.e. no overlaps are computed from one k-point to the neighbour's equivalent point in another unit cell. In most cases this can be done by setting ``shell_list 1``.If the unit cell is very long in a certain direction, however, it can happend that this setting will just compute overlaps between equivalent points in different unit cells. In that case, you can either add more k-points to the line (costly!) or set the parameter ``search_shells`` instead. It should be large enough s.t. the direct neighbours are included, but not so large that the neighbour's equivalent points are included.
+    * Add more k-points to the line using the ``iterator`` parameter. For example, ``iterator=range(20, 51, 2)`` would mean that the calculation starts with 20 k-points instead of 8. Of course, this increases the cost of the computation
+    * Set the parameter ``search_shells`` instead of ``shell_list``. It should be large enough s.t. the direct neighbours are included, but not so large that the neighbour's equivalent points are included.
 
 2. Preparing k-points input
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -141,18 +137,14 @@ Combining these four steps, we get the following example (for VASP):
 
 First-principles codes
 ~~~~~~~~~~~~~~~~~~~~~~
-Depending on which first-principles code you use, there are a few things that you should look out for, and input parameters that must be set. In general, the easiest way to get started is by using one of the :ref:`examples <z2pack_examples>` provided.
+Depending on which first-principles code you use, there are a few things that you should look out for, and input parameters that must be set. In general, the easiest way to get started is by using one of the :ref:`examples <z2pack_examples>` provided. Here is a short description of the special input flags needed for different codes.
 
 Quantum Espresso
 ''''''''''''''''
-Of the first-principles codes which have been tested, Quantum Espresso currently has the best integration with Z2Pack. Starting with version **6.0** (with Wannier90 version 2.1 or higher) it supports calculating topological invariants on arbitrary surfaces.
-
-ABINIT
-''''''
+Of the first-principles codes which have been tested, Quantum Espresso currently has the best integration with Z2Pack. Starting with version **6.0** (with Wannier90 version 2.1 or higher) it supports calculating topological invariants on arbitrary surfaces. To enable this, use the new Wannier90 interface described above (:meth:`.wannier90_full`), and add the option ``regular_mesh = .false.`` to the ``pw2wannier90`` input.
 
 VASP
 ''''
-
 Required input arguments:
 
 .. code ::

@@ -13,7 +13,7 @@ import numpy as np
 import z2pack
 
 @pytest.fixture
-def qe_system_new():
+def qe_system_new(sample):
     def inner(build_dir, num_wcc=None):
         sample_dir = sample('espresso_new')
         shutil.copytree(

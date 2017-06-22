@@ -85,7 +85,12 @@ There are four steps involved in each call to a first-principles code:
 
 For the first step, the user needs to create input files for an NSCF run calling Wannier90. These input files should also contain a reference to the density file acquired in a previous SCF run. However, the **k-points** used in the NSCF run should not be in these files. The reason for this is that the k-points will change many times during a Z2Pack calculation. When creating the :class:`z2pack.fp.System` instance, the input files should be listed in the ``input_files`` keyword argument (as a list of strings).
 
-The Wannier90 input file should contain the ``exclude_bands`` tag to exclude the non-occupied bands. Starting from version 2.1, Wannier90 has a dedicated interface to specify which overlap matrices should be computed. To use this interface, use the k-point function :func:`.wannier90_full`.
+The Wannier90 input file should contain the ``exclude_bands`` tag to exclude the non-occupied bands.
+
+Wannier90 2.1 and newer
+'''''''''''''''''''''''
+
+Starting from version 2.1, Wannier90 has a dedicated interface to specify which overlap matrices should be computed. To use this interface, use the k-point function :func:`.wannier90_full`.
 
 Wannier90 2.0 and before
 ''''''''''''''''''''''''

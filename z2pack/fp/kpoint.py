@@ -138,7 +138,7 @@ def wannier90_nnkpts(kpt):
 @_check_closed
 def wannier90_full(kpt):
     """
-    Returns both k-point and nearest neighbour input for wannier90.win
+    Returns both k-point and nearest neighbour input for wannier90.win. This is the recommended function to use for Wannier90 2.1 and higher.
     """
     return wannier90(kpt) + '\n' + wannier90_nnkpts(kpt)
 

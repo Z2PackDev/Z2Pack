@@ -112,31 +112,20 @@ def test_bismuth_correct_num_wcc(qe_system_new, compare_wcc, surface_fct):
     assert np.isclose(result.wcc, res2.wcc).all()
     shutil.rmtree(build_dir)
 
-@pytest.mark.qe
-def test_restart_broken(qe_system_new):
+def test_broken(qe_system_new):
     surface_fct = lambda s, t: [0, s, t]
     build_dir = tempfile.mkdtemp()
     system = qe_system_new(build_dir)
     save_file = os.path.join(build_dir, 'result.json')
-    result = z2pack.surface.run(
-        system=system,
-        surface=surface_fct,
-        num_lines=3,
-        save_file=save_file,
-        pos_tol=None,
-        gap_tol=None,
-        move_tol=None
-    )
+
     # breaking the system
     system._executable = 'echo foo'
     with pytest.raises(FileNotFoundError):
         result = z2pack.surface.run(
             system=system,
             surface=surface_fct,
-            num_lines=5,
+            num_lines=3,
             save_file=save_file,
-            load=True,
-            serializer=json,
             pos_tol=None,
             gap_tol=None,
             move_tol=None

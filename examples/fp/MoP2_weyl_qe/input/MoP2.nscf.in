@@ -1,0 +1,40 @@
+! Pwscf input file created with pymatgen.py
+! Compound: MoP2
+&control
+         calculation     = 'bands'
+         prefix          = 'MoP2'
+         restart_mode    = 'from_scratch'
+         pseudo_dir      = '../'
+         outdir          = '../scf' 
+         wf_collect      = .true.
+         verbosity       = 'high'
+       /
+&system
+         ibrav           =  9
+         celldm(1)       =   5.9416769
+         celldm(2)       =   3.55578525539087844284
+         celldm(3)       =   1.58437758412314738248
+         nat             =        6
+         ntyp            =        2
+         ecutwfc         =       50.00000000
+         occupations     =  'smearing'
+         smearing        =  'gauss'
+         degauss         =        1.00000000e-03
+         noncolin        =  .true.
+         lspinorb        =  .true.
+         nbnd=32
+/
+&electrons
+         conv_thr        =        1.00000000e-08
+         mixing_beta     =        3.00000000e-01
+   /
+ATOMIC_SPECIES
+Mo  95.9400 Mo.rel-pbe-n-nc.UPF
+ P  30.9738  P.rel-pbe-n-nc.UPF
+ATOMIC_POSITIONS crystal
+Mo       0.09250000       0.09250000       0.50000000
+Mo       0.90750000       0.90750000       0.00000000
+P        0.29810000       0.29810000       0.30150000
+P        0.70190000       0.70190000       0.80150000
+P        0.42990000       0.42990000       0.61880000
+P        0.57010000       0.57010000       0.11880000

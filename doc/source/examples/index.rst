@@ -14,3 +14,4 @@ This is a collection of examples demonstrating the basic use of Z2Pack.
     2D tight-binding model <tb.rst>
     weyl.rst
     wte2_tb.rst
+    mop2_qe.rst

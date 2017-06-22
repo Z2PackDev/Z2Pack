@@ -1,0 +1,9 @@
+&inputpp
+  outdir='../scf'
+  prefix='MoP2'
+  seedname='MoP2'
+  wan_mode='standalone'
+  write_amn =.false.
+  write_mmn =.true.
+  regular_mesh = .false.
+/

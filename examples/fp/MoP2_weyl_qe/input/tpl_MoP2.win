@@ -1,0 +1,21 @@
+num_wann    24
+num_bands   24
+exclude_bands   1-8
+spinors         true
+num_iter        0
+use_bloch_phases    true
+begin projections
+    random
+end projections
+begin unit_cell_cart
+{unit}
+ {lattice}
+end unit_cell_cart
+begin atoms_frac
+Mo       0.09250000       0.09250000       0.50000000
+Mo       0.90750000       0.90750000       0.00000000
+P        0.29810000       0.29810000       0.30150000
+P        0.70190000       0.70190000       0.80150000
+P        0.42990000       0.42990000       0.61880000
+P        0.57010000       0.57010000       0.11880000
+end atoms_frac

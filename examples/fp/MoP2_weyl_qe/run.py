@@ -5,6 +5,7 @@ import os
 import shutil
 import subprocess
 
+import numpy as np
 import matplotlib.pyplot as plt
 import xml.etree.ElementTree as ET
 
@@ -83,10 +84,21 @@ result_3 = z2pack.surface.run(
 
 # Combining the two plots
 fig, ax = plt.subplots(3, 1, sharex=True, figsize=(5, 12))
-for res, axis in zip([result_1, result_2, result_3], ax):
+for res, axis, title in zip(
+        [result_1, result_2, result_3],
+        ax,
+        ['Sphere around WP1', 'Sphere around WP2', 'Sphere around both WPs']
+):
     z2pack.plot.chern(res, axis=axis)
+    axis.set_ylabel(r'$\bar{\varphi}$', rotation='horizontal')
+    axis.yaxis.set_ticks([0, 1])
+    axis.yaxis.set_ticklabels([r'$0$', r'$2\pi$'])
+    axis.set_title(title)
+ax[2].set_xlabel(r'$\theta$')
+ax[2].xaxis.set_ticks([0, 1])
+ax[2].xaxis.set_ticklabels([r'$-\pi$', r'$0$'])
 plt.savefig('plots/plot.pdf', bbox_inches='tight')
 
-print('Chern number / Weyl chirality around WP1: {0}'.format(z2pack.invariant.chern(result_1)))
-print('Chern number / Weyl chirality around WP2: {0}'.format(z2pack.invariant.chern(result_2)))
-print('Chern number / Weyl chirality around both Weyl points: {0}'.format(z2pack.invariant.chern(result_3)))
+print('Chern number / Weyl chirality around WP1: {0:.2f}'.format(z2pack.invariant.chern(result_1)))
+print('Chern number / Weyl chirality around WP2: {0:.2f}'.format(z2pack.invariant.chern(result_2)))
+print('Chern number / Weyl chirality around both Weyl points: {0:.2f}'.format(z2pack.invariant.chern(result_3)))

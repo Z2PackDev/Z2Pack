@@ -83,20 +83,20 @@ result_3 = z2pack.surface.run(
 )
 
 # Combining the two plots
-fig, ax = plt.subplots(3, 1, sharex=True, figsize=(5, 12))
+fig, ax = plt.subplots(1, 3, sharey=True, figsize=(14, 4))
 for res, axis, title in zip(
         [result_1, result_2, result_3],
         ax,
         ['Sphere around WP1', 'Sphere around WP2', 'Sphere around both WPs']
 ):
     z2pack.plot.chern(res, axis=axis)
-    axis.set_ylabel(r'$\bar{\varphi}$', rotation='horizontal')
-    axis.yaxis.set_ticks([0, 1])
-    axis.yaxis.set_ticklabels([r'$0$', r'$2\pi$'])
     axis.set_title(title)
-ax[2].set_xlabel(r'$\theta$')
-ax[2].xaxis.set_ticks([0, 1])
-ax[2].xaxis.set_ticklabels([r'$-\pi$', r'$0$'])
+    axis.set_xlabel(r'$\theta$')
+    axis.xaxis.set_ticks([0, 1])
+    axis.xaxis.set_ticklabels([r'$-\pi$', r'$0$'])
+ax[0].set_ylabel(r'$\bar{\varphi}$', rotation='horizontal')
+ax[0].yaxis.set_ticks([0, 1])
+ax[0].yaxis.set_ticklabels([r'$0$', r'$2\pi$'])
 plt.savefig('plots/plot.pdf', bbox_inches='tight')
 
 print('Chern number / Weyl chirality around WP1: {0:.2f}'.format(z2pack.invariant.chern(result_1)))

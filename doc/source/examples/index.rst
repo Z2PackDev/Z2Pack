@@ -12,6 +12,7 @@ This is a collection of examples demonstrating the basic use of Z2Pack.
     Quantum ESPRESSO <espresso.rst>
     VASP <vasp.rst>
     2D tight-binding model <tb.rst>
+    haldane.rst
     weyl.rst
     wte2_tb.rst
     mop2_qe.rst

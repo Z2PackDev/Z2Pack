@@ -39,5 +39,9 @@ class TagFilter:
 def FilterManager(logger, filter):
     """Adds a filter to a specific logger, and removes it upon exiting."""
     logger.addFilter(filter)
-    yield
-    logger.removeFilter(filter)
+    try:
+        yield
+    except Exception as e:
+        raise e
+    finally:
+        logger.removeFilter(filter)

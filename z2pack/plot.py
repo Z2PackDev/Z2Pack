@@ -52,7 +52,7 @@ def wcc_symmetry(
         *,
         axis=None,
         symmetry_operator,
-        wcc_settings={'s': 50., 'lw': 1., 'facecolor': 'none', 'edgecolors': 'k'},
+        wcc_settings={'s': 50., 'lw': 1.},
         gaps=True,
         gap_settings={'marker': 'D', 'color': 'b', 'linestyle': 'none'},
         color_fct=lambda x: colorsys.hsv_to_rgb(

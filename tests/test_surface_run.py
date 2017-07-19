@@ -171,11 +171,13 @@ def test_load_reference(simple_system, test_name, simple_surface, serializer):
     path = 'reference_results/result_{}.'.format(tag) + serializer.__name__
     result = z2pack.surface.run(system=simple_system, surface=simple_surface)
     if not os.path.isfile(path):
-        z2pack.save(result, path, serializer=serializer)
+        z2pack.io.save(result, path, serializer=serializer)
         raise ValueError('File {} did not exist!'.format(path))
     else:
-        assert_res_equal(result, z2pack.io.load(path, serializer=serializer))
-        assert_res_equal(result, z2pack.io.load(path))
+        val1 = z2pack.io.load(path, serializer=serializer)
+        assert_res_equal(result, val1)
+        val2 = z2pack.io.load(path)
+        assert_res_equal(result, val2)
 
 def test_invalid_save_path(simple_system, simple_surface):
     with pytest.raises(ValueError):

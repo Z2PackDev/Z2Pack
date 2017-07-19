@@ -68,8 +68,8 @@ class WccLineData(metaclass=ConstLocker):
             self.gap_pos, self.gap_size = _gapfind(self.wcc)
 
     def __getattr__(self, name):
-        if name == 'eigenstates':
-            raise AttributeError("This data does not have the 'eigenstates' attribute. This is because the system used does not provide eigenstates, but only overlap matrices. The functionality which resulted in this error can be used only for systems providing eigenstates.")
+        if name in ['eigenstates', 'overlaps', 'wilson']:
+            raise AttributeError("This data does not have the '{}' attribute. This is because the system used does not provide this output, meaning that the functionality which caused this error cannot be used for these systems.".format(name))
         return super().__getattribute__(name)
 
 @export
@@ -96,6 +96,11 @@ class OverlapLineData(WccLineData):
         with change_lock(self, 'none'):
             self.wcc = wcc
             self.wilson_eigenstates = wilson_eigenstates
+
+    def __getattr__(self, name):
+        if name in ['eigenstates']:
+            raise AttributeError("This data does not have the '{}' attribute. This is because the system used does not provide this output, meaning that the functionality which caused this error cannot be used for these systems.".format(name))
+        return super().__getattribute__(name)
 
 @export
 class EigenstateLineData(OverlapLineData):

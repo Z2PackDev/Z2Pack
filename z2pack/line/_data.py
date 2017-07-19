@@ -42,21 +42,12 @@ class WccLineData(metaclass=ConstLocker):
     def __init__(self, wcc):
         self.wcc = wcc
 
-    @classmethod
-    def from_overlaps(cls, overlaps):
-        r"""Creates a :class:`WccLineData` object from a list containing the overlap matrices :math:`M_{m,n}^{\mathbf{k}, \mathbf{k+b}} = \langle u_n^\mathbf{k} | u_m^\mathbf{k+b} \rangle`."""
-        return cls(cls._calculate_wannier(cls._wilson(overlaps))[0])
-
     @staticmethod
     def _calculate_wannier(wilson):
         eigs, eigvec = la.eig(wilson)
         wcc = np.array([np.angle(z) / (2 * np.pi) % 1 for z in eigs])
         idx = np.argsort(wcc)
         return list(wcc[idx]), list(eigvec.T[idx])
-
-    @staticmethod
-    def _wilson(overlaps):
-        return functools.reduce(np.dot, overlaps)
 
     @_LazyProperty
     def pol(self):
@@ -82,31 +73,18 @@ class WccLineData(metaclass=ConstLocker):
         return super().__getattribute__(name)
 
 @export
-class EigenstateLineData(WccLineData):
-    r"""Data container for a line constructed from periodic eigenstates :math:`|u_{n, \mathbf{k}} \rangle`. This has all attributes that :class:`WccLineData` has, and the following additional ones:
-
-    * ``wilson`` : An array containing the Wilson loop (product of overlap matrices) for the line. The Wilson loop is given in the basis of the eigenstates at the start / end of the line.
-    * ``wilson_eigenstates`` : Eigenstates of the Wilson loop, given as a list of 1D - arrays.
-    """
-    def __init__(self, eigenstates):
-        self.eigenstates = eigenstates
-
-    @_LazyProperty
-    def wilson(self):
-        # create overlaps
-        overlaps = []
-
-        for eig1, eig2 in zip(self.eigenstates, self.eigenstates[1:]):
-            overlaps.append(np.dot(
-                np.conjugate(eig1),
-                np.array(eig2).T
-            ))
-        return self._wilson(overlaps)
+class OverlapLineData(WccLineData):
+    def __init__(self, overlaps):
+        self.overlaps = overlaps
 
     @_LazyProperty
     def wcc(self):
         self._calculate_wannier()
         return self.wcc
+
+    @_LazyProperty
+    def wilson(self):
+        return functools.reduce(np.dot, self.overlaps)
 
     @_LazyProperty
     def wilson_eigenstates(self):
@@ -118,3 +96,25 @@ class EigenstateLineData(WccLineData):
         with change_lock(self, 'none'):
             self.wcc = wcc
             self.wilson_eigenstates = wilson_eigenstates
+
+@export
+class EigenstateLineData(OverlapLineData):
+    r"""Data container for a line constructed from periodic eigenstates :math:`|u_{n, \mathbf{k}} \rangle`. This has all attributes that :class:`OverlapLineData` has, and the following additional ones:
+
+    * ``wilson`` : An array containing the Wilson loop (product of overlap matrices) for the line. The Wilson loop is given in the basis of the eigenstates at the start / end of the line.
+    * ``wilson_eigenstates`` : Eigenstates of the Wilson loop, given as a list of 1D - arrays.
+    """
+    def __init__(self, eigenstates):
+        self.eigenstates = eigenstates
+
+    @_LazyProperty
+    def overlaps(self):
+        # create overlaps
+        overlaps = []
+
+        for eig1, eig2 in zip(self.eigenstates, self.eigenstates[1:]):
+            overlaps.append(np.dot(
+                np.conjugate(eig1),
+                np.array(eig2).T
+            ))
+        return overlaps

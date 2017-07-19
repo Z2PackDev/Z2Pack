@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import scipy.linalg as la
 from fsc.export import export
 from fsc.locker import ConstLocker
 from sortedcontainers import SortedList
@@ -54,6 +55,12 @@ class SurfaceData(metaclass=ConstLocker):
         if len(self.t) == 0:
             return 1
         return min(abs(t - tval) for tval in self.t)
+
+    @property
+    def second_order_line(self):
+        from ..line._data import EigenstateLineData
+        eigenstates = [la.eig(w)[1].T for w in self.wilson]
+        return EigenstateLineData(eigenstates=eigenstates)
 
 class SurfaceLine:
     __slots__ = ['t', 'result']

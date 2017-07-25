@@ -21,13 +21,14 @@ class System(_HmSystem):
 
     :param kwargs:  Keyword arguments passed to :class:`.hm.System`.
 
-    The ``pos`` and ``bands`` keywords of :class:`.hm.System` are determined from the ``tb_model`` unless otherwise specified.
+    The ``pos``, ``bands`` and ``dim`` keywords of :class:`.hm.System` are determined from the ``tb_model`` unless otherwise specified.
     """
     def __init__(self, tb_model, **kwargs):
         super().__init__(
             hamilton=tb_model.hamilton,
             **ChainMap(kwargs, dict(
                 pos=copy.deepcopy(tb_model.pos),
-                bands=tb_model.occ
+                bands=tb_model.occ,
+                dim=tb_model.dim
             ))
         )

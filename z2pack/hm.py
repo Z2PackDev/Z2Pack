@@ -37,7 +37,7 @@ class System(EigenstateSystem):
     :param convention: The convention used for the Hamiltonian, following the `pythtb formalism <http://www.physics.rutgers.edu/pythtb/_downloads/pythtb-formalism.pdf>`_. Convention 1 means that the eigenvalues of :math:`\mathcal{H}(\mathbf{k})` are wave vectors :math:`\left|\psi_{n\mathbf{k}}\right>`. With convention 2, they are the cell-periodic Bloch functions :math:`\left|u_{n\mathbf{k}}\right>`.
     :type convention: int
 
-    :param check_periodic: Evaluate the Hamiltonian at :math:`\{0, 1\}^d` as a simple check if it is periodic.
+    :param check_periodic: Evaluate the Hamiltonian at :math:`\{0, 1\}^d` as a simple check if it is periodic. Note that this does not work if the Hamiltonian is written such that the eigenstates acquire a phase when being translated by a lattice vector.
     :type check_periodic: bool
     """
 
@@ -63,12 +63,13 @@ class System(EigenstateSystem):
 
         if check_periodic:
             k_values = itertools.product([0, 1], repeat=dim)
-            ham_gamma = self._hamilton(next(k_values))
+            k_first = next(k_values)
+            ham_first = self._hamilton()
             for k in k_values:
-                if not np.allclose(ham_gamma, self._hamilton(k)):
+                if not np.allclose(ham_first, self._hamilton(k)):
                     raise ValueError(
-                        'The given Hamiltonian is not periodic: H(k=0) != H(k={})'
-                        .format(k)
+                        'The given Hamiltonian is not periodic: H(k={}) != H(k={})'
+                        .format(k_first, k)
                     )
 
         size = len(self._hamilton([0] * dim))  # assuming to be square...

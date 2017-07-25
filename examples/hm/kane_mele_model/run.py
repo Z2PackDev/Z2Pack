@@ -20,8 +20,9 @@ def get_kane_mele_hamiltonian(t, lambda_v, lambda_R, lambda_SO):
     def inner(k):
         k = np.array(k) * 2 * np.pi
         kx, ky, kz = k
-        x = kx / 2
-        y = sqrt(3) * ky / 2
+        # change to reduced coordinates
+        x = (kx - ky) / 2
+        y = (kx + ky) / 2
         return (
             t * (1 + 2 * cos(x) * cos(y)) * kron(pauli_x, identity) +
             lambda_v * kron(pauli_z, identity) +
@@ -34,10 +35,19 @@ def get_kane_mele_hamiltonian(t, lambda_v, lambda_R, lambda_SO):
         )
     return inner
 
-def get_z2(hamiltonian):
-    system = z2pack.hm.System(hamiltonian, bands=2)
-    res = z2pack.surface.run(system=system, surface=lambda s, t: [s / 2, t, 0])
-    return z2pack.invariant.z2(res)
-
 if __name__ == '__main__':
-    print('Z2 invariant: {}'.format(get_z2(get_kane_mele_hamiltonian(t=1, lambda_v=0.1, lambda_R=0.05, lambda_SO=0.06))))
+    system = z2pack.hm.System(
+        get_kane_mele_hamiltonian(
+            t=1, lambda_v=0.1, lambda_R=0.05, lambda_SO=0.06
+        )
+    )
+    res = z2pack.surface.run(system=system, surface=lambda s, t: [s / 2, t, 0])
+    print('Z2 invariant: {}'.format(z2pack.invariant.z2(res)))
+    fig, ax = plt.subplots(figsize=[5, 3])
+    z2pack.plot.wcc(res, axis=ax)
+    ax.set_xticks([0, 1])
+    ax.set_xticklabels(['0', '0.5'])
+    ax.set_xlabel(r'$k_y$')
+    ax.set_yticks([0, 1])
+    ax.set_ylabel(r'$\bar{y}$', rotation='horizontal')
+    plt.savefig('plot.pdf', bbox_inches='tight')

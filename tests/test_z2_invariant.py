@@ -29,11 +29,16 @@ def test_trivial(N, M, patch_surface_data):
     data = SurfaceData(wcc)
     assert z2pack.invariant.z2(data, check_kramers_pairs=False) == 0
 
-def test_no_kramers_pairs(N, M, patch_surface_data):
+def test_not_even_number_wcc(N, M, patch_surface_data):
     wcc = [np.linspace(0, 1, 2 * M + 1) for j in range(N + 1)]
     data = SurfaceData(wcc)
     with pytest.raises(ValueError):
         z2pack.invariant.z2(data)
+
+def test_not_kramers_pairs(patch_surface_data):
+    data = SurfaceData([[0., 0.], [0.5, 0.6]])
+    with pytest.raises(ValueError):
+        print(z2pack.invariant.z2(data))
 
 def test_linear(L, x, patch_surface_data):
     wcc = np.array([np.linspace(0, x, L), np.linspace(1, x, L)]).T

@@ -9,7 +9,7 @@ from hm_systems import weyl_surface
 
 def test_non_hermitian():
     H = lambda k: np.array([[0, 1], [2, 0]])
-    system = z2pack.hm.System(hamilton=H)
+    system = z2pack.hm.System(hamilton=H, check_periodic=True)
     with pytest.raises(ValueError):
         z2pack.surface.run(
             system=system,

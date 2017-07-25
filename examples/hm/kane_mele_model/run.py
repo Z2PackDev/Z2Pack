@@ -39,7 +39,8 @@ if __name__ == '__main__':
     system = z2pack.hm.System(
         get_kane_mele_hamiltonian(
             t=1, lambda_v=0.1, lambda_R=0.05, lambda_SO=0.06
-        )
+        ),
+        check_periodic=True
     )
     res = z2pack.surface.run(system=system, surface=lambda s, t: [s / 2, t, 0])
     print('Z2 invariant: {}'.format(z2pack.invariant.z2(res)))

@@ -5,6 +5,8 @@
 This module contains a class for creating Systems which are described by a Hamiltonian matrix (hm), such as k•p models.
 """
 
+import itertools
+
 import numpy as np
 import scipy.linalg as la
 from fsc.export import export
@@ -31,6 +33,9 @@ class System(EigenstateSystem):
 
     :param hermitian_tol:   Maximum absolute value in the difference between the Hamiltonian and its hermitian conjugate. Use ``hermitian_tol=None`` to deactivate the test entirely.
     :type hermitian_tol:    float
+
+    :param check_periodic: Evaluate the Hamiltonian at :math:`\{0, 1\}^d` as a simple check if it is periodic.
+    :type check_periodic: bool
     """
     def __init__(
             self,
@@ -39,10 +44,18 @@ class System(EigenstateSystem):
             dim=3,
             pos=None,
             bands=None,
-            hermitian_tol=1e-6
+            hermitian_tol=1e-6,
+            check_periodic=False
     ):
         self._hamilton = hamilton
         self._hermitian_tol = hermitian_tol
+
+        if check_periodic:
+            k_values = itertools.product([0, 1], repeat=dim)
+            H0 = self._hamilton(next(k_values))
+            for k in k_values:
+                if not np.allclose(H0, self._hamilton(k)):
+                    raise ValueError('The given Hamiltonian is not periodic: H(k=0) != H(k={})'.format(k))
 
         size = len(self._hamilton([0] * dim)) # assuming to be square...
         # add one atom for each orbital in the hamiltonian

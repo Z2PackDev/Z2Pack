@@ -34,7 +34,7 @@ class System(EigenstateSystem):
     :param hermitian_tol:   Maximum absolute value in the difference between the Hamiltonian and its hermitian conjugate. Use ``hermitian_tol=None`` to deactivate the test entirely.
     :type hermitian_tol:    float
 
-    :param check_periodic: Evaluate the Hamiltonian at :math:`\{0, 1\}^d` as a simple check if it is periodic.
+    :param check_periodic: Evaluate the Hamiltonian at :math:`\{0, 1\}^d` as a simple check if it is periodic. Note that this does not work if the Hamiltonian is written such that the eigenstates acquire a phase when being translated by a lattice vector.
     :type check_periodic: bool
     """
     def __init__(
@@ -52,10 +52,11 @@ class System(EigenstateSystem):
 
         if check_periodic:
             k_values = itertools.product([0, 1], repeat=dim)
-            H0 = self._hamilton(next(k_values))
+            k0 = next(k_values)
+            H0 = self._hamilton(k0)
             for k in k_values:
                 if not np.allclose(H0, self._hamilton(k)):
-                    raise ValueError('The given Hamiltonian is not periodic: H(k=0) != H(k={})'.format(k))
+                    raise ValueError('The given Hamiltonian is not periodic: H(k={}) != H(k={})'.format(k0, k))
 
         size = len(self._hamilton([0] * dim)) # assuming to be square...
         # add one atom for each orbital in the hamiltonian

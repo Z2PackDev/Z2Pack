@@ -19,7 +19,7 @@ pauli_z = np.array([[1, 0], [0, -1]], dtype=complex)
 def get_kane_mele_hamiltonian(t, lambda_v, lambda_R, lambda_SO):
     def inner(k):
         k = np.array(k) * 2 * np.pi
-        kx, ky, kz = k
+        kx, ky = k
         # change to reduced coordinates
         x = (kx - ky) / 2
         y = (kx + ky) / 2
@@ -40,9 +40,10 @@ if __name__ == '__main__':
         get_kane_mele_hamiltonian(
             t=1, lambda_v=0.1, lambda_R=0.05, lambda_SO=0.06
         ),
+        dim=2,
         check_periodic=True
     )
-    res = z2pack.surface.run(system=system, surface=lambda s, t: [s / 2, t, 0])
+    res = z2pack.surface.run(system=system, surface=lambda s, t: [s / 2, t])
     print('Z2 invariant: {}'.format(z2pack.invariant.z2(res)))
     fig, ax = plt.subplots(figsize=[5, 3])
     z2pack.plot.wcc(res, axis=ax)

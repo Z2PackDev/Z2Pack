@@ -30,6 +30,18 @@ def test_explicit_bands(bands, weyl_surface, compare_wcc):
     res = z2pack.surface.run(system=system, surface=weyl_surface)
     compare_wcc(res.wcc)
 
+def test_non_periodic_raises():
+    with pytest.raises(ValueError):
+        system = z2pack.hm.System(
+            lambda k: np.array(
+                [
+                    [k[2], k[0] -1j * k[1]],
+                    [k[0] + 1j * k[1], -k[2]]
+                ]
+            ),
+            check_periodic=True
+        )
+
 def test_invalid_pos():
     with pytest.raises(ValueError):
         system = z2pack.hm.System(

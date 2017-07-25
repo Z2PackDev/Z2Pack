@@ -62,3 +62,14 @@ def _pol_step(pol_list):
     for p1, p2 in zip(pol_list[:-1], pol_list[1:]):
         res.append(min((p2 - p1 + o for o in offset), key=abs))
     return res
+
+def _check_kramers_pairs(wcc, tol=1e-3):
+    return _get_degenerate_dist(wcc) < tol
+
+def _get_degenerate_dist(wcc):
+    """
+    Get the maximum distance between pairs of approximately degenerate WCC.
+    """
+    if len(wcc) % 2 != 0:
+        raise ValueError('The number of WCC must be even!')
+    return _get_max_move(wcc[::2], wcc[1::2])

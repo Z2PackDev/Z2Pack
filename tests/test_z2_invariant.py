@@ -27,7 +27,13 @@ def x(request):
 def test_trivial(N, M, patch_surface_data):
     wcc = [np.linspace(0, 1, M) for j in range(N)]
     data = SurfaceData(wcc)
-    assert z2pack.invariant.z2(data) == 0
+    assert z2pack.invariant.z2(data, check_kramers_pairs=False) == 0
+
+def test_no_kramers_pairs(N, M, patch_surface_data):
+    wcc = [np.linspace(0, 1, 2 * M + 1) for j in range(N + 1)]
+    data = SurfaceData(wcc)
+    with pytest.raises(ValueError):
+        z2pack.invariant.z2(data)
 
 def test_linear(L, x, patch_surface_data):
     wcc = np.array([np.linspace(0, x, L), np.linspace(1, x, L)]).T

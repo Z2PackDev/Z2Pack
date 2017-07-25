@@ -46,9 +46,10 @@ def z2(surface_result, check_kramers_pairs=True):  # pylint: disable=invalid-nam
         print(z2pack.invariant.z2(result)) # Prints the Z2 invariant
     """
     wcc = surface_result.wcc
-    if check_kramers_pairs and len(wcc) > 0:  # pylint: disable=len-as-condition
-        if not _check_kramers_pairs(list(wcc[0])) and _check_kramers_pairs(
-            list(wcc[-1])
+    if check_kramers_pairs and wcc:
+        if not (
+            _check_kramers_pairs(list(wcc[0]))
+            and _check_kramers_pairs(list(wcc[-1]))
         ):
             raise ValueError(
                 'The given WCC are not degenerate Kramers pairs at the edges of the surface.'

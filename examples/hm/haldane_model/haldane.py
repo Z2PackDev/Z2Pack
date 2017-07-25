@@ -29,7 +29,9 @@ def Hamilton(k, m, t1, t2, phi):
 
 
 def get_chern(m, t1, t2, phi):
-    system = z2pack.hm.System(lambda k: Hamilton(k, m, t1, t2, phi), bands=1)
+    system = z2pack.hm.System(
+        lambda k: Hamilton(k, m, t1, t2, phi), bands=1, check_periodic=True
+    )
 
     result = z2pack.surface.run(
         system=system,

@@ -57,16 +57,26 @@ class SurfaceData(metaclass=ConstLocker):
             return 1
         return min(abs(t - tval) for tval in self.t)
 
-    def second_order_line(self, selector_fct=lambda ev, es: np.ones_like(ev, dtype=bool)):
+    def nested_line(self, selector_fct=lambda ev, es: np.ones_like(ev, dtype=bool)):
         from ..line._data import EigenstateLineData
-        eigs = [la.eig(w) for w in self.wilson]
-        # eigenvals = [e[0] for e in eigs]
-        # eigenstates = [e[1].T for e in eigs]
-        selected_eigenstates = [
-            (es.T)[[i for i, s in enumerate(selector_fct(ev, es)) if s]]
-            for ev, es in eigs
+        selected_wilson_eigenstates = [
+            [
+                es_val for es_val, select in zip(es, selector_fct(ev, es))
+                if select
+            ]
+            for ev, es in zip(self.wcc, self.wilson_eigenstates)
         ]
-        return EigenstateLineData(eigenstates=selected_eigenstates)
+        wannier_band_states = [[
+                es_wil_vec @ es_ham[0] / la.norm(es_wil_vec @ es_ham[0])
+                for es_wil_vec in es_wil
+            ]
+            for es_wil, es_ham in zip(
+                selected_wilson_eigenstates,
+                self.eigenstates
+            )
+        ]
+        wannier_band_states.append(wannier_band_states[0])
+        return EigenstateLineData(eigenstates=wannier_band_states)
 
 class SurfaceLine:
     __slots__ = ['t', 'result']

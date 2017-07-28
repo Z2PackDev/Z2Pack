@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import numpy as np
 import scipy.linalg as la
 from fsc.export import export
 from fsc.locker import ConstLocker
@@ -56,11 +57,16 @@ class SurfaceData(metaclass=ConstLocker):
             return 1
         return min(abs(t - tval) for tval in self.t)
 
-    @property
-    def second_order_line(self):
+    def second_order_line(self, selector_fct=lambda ev, es: np.ones_like(ev, dtype=bool)):
         from ..line._data import EigenstateLineData
-        eigenstates = [la.eig(w)[1].T for w in self.wilson]
-        return EigenstateLineData(eigenstates=eigenstates)
+        eigs = [la.eig(w) for w in self.wilson]
+        # eigenvals = [e[0] for e in eigs]
+        # eigenstates = [e[1].T for e in eigs]
+        selected_eigenstates = [
+            (es.T)[[i for i, s in enumerate(selector_fct(ev, es)) if s]]
+            for ev, es in eigs
+        ]
+        return EigenstateLineData(eigenstates=selected_eigenstates)
 
 class SurfaceLine:
     __slots__ = ['t', 'result']

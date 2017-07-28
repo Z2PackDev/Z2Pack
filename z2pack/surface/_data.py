@@ -67,7 +67,7 @@ class SurfaceData(metaclass=ConstLocker):
             for ev, es in zip(self.wcc, self.wilson_eigenstates)
         ]
         wannier_band_states = [[
-                es_wil_vec @ es_ham[0] / la.norm(es_wil_vec @ es_ham[0])
+                es_wil_vec @ es_ham[0]
                 for es_wil_vec in es_wil
             ]
             for es_wil, es_ham in zip(

@@ -110,7 +110,7 @@ class EigenstateLineData(OverlapLineData):
     * ``wilson_eigenstates`` : Eigenstates of the Wilson loop, given as a list of 1D - arrays.
     """
     def __init__(self, eigenstates):
-        self.eigenstates = eigenstates
+        self.eigenstates = [e / la.norm(e) for e in eigenstates]
 
     @_LazyProperty
     def overlaps(self):
@@ -118,8 +118,7 @@ class EigenstateLineData(OverlapLineData):
         overlaps = []
 
         for eig1, eig2 in zip(self.eigenstates, self.eigenstates[1:]):
-            overlaps.append(np.dot(
-                np.conjugate(eig1),
-                np.array(eig2).T
-            ))
+            overlaps.append(
+                np.dot(np.conjugate(eig1), np.array(eig2).T)
+            )
         return overlaps

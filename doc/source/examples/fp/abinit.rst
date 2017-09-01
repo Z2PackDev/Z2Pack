@@ -17,6 +17,5 @@ to exclude non-occupied bands.
 Note also that you will have to **change the command** that is used to call
 ABINIT to match your system.
 
-.. include:: ../../../examples/fp/generic.py 
+.. include:: ../../../../examples/fp/generic.py 
     :code: python
-

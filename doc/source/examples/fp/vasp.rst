@@ -11,6 +11,5 @@ is subject to VASP's license.
 .. warning::
     VASP may add additional bands automatically if the initial number of bands is not divisible by the number of cores used. This will lead to meaningless results, and the number of WCC calculated will be too high. To correct this, the variable ``exclude_bands`` in the Wannier90 input file must be adjusted to account for the additional bands. Alternatively, you may change the number of cores used.
 
-.. include:: ../../../examples/fp/Bi_vasp/run.py 
+.. include:: ../../../../examples/fp/Bi_vasp/run.py 
     :code: python
-

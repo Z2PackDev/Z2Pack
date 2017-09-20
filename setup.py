@@ -25,7 +25,12 @@ with open('./z2pack/_version.py', 'r') as f:
     match_expr = "__version__[^'" + '"]+([' + "'" + r'"])([^\1]+)\1'
     version = re.search(match_expr, f.read()).group(2).strip()
 
-extras = {'plot':  ['matplotlib'], 'tb': ['tbmodels'], 'test': ['pytest']}
+extras = {
+    'plot':  ['matplotlib'],
+    'tb': ['tbmodels'],
+    'test': ['pytest'],
+    'doc': ['sphinx', 'sphinx_rtd_theme'],
+}
 extras['test'] += extras['plot'] + extras['tb']
 
 setup(

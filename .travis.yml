@@ -1,21 +1,15 @@
 language: python
 cache: pip
-sudo: true
 
 python:
     - "3.4"
     - "3.5"
     - "3.6"
 
-before_install:
-    - sudo apt-get update -qq
-    - sudo apt-get install -qq liblapack.so 
-
 install:
-    - pip install matplotlib tbmodels
-    - pip install .
+    - pip install .[test]
 
 # run tests
-script: 
+script:
     - cd tests
     - py.test --no-plot-compare

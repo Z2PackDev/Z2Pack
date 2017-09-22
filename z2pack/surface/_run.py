@@ -152,9 +152,11 @@ def run_surface(
 
 
 # filter out LogRecords tagged as 'line_only' in the line.
-@filter_manager(logging.getLogger('z2pack.line'),
-                TagFilter(('line_only', )))  # noqa
-def _run_surface_impl(  # noqa
+@filter_manager(   # noqa
+    logging.getLogger('z2pack.line'),
+    TagFilter(('line_only', ))
+) # noqa
+def _run_surface_impl(
     *controls,
     system,
     surface,
@@ -171,6 +173,7 @@ def _run_surface_impl(  # noqa
 
     The other parameters are the same as for :meth:`.run`.
     """
+
     start_time = time.time()
 
     # CONTROL SETUP

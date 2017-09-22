@@ -1,0 +1,7 @@
+ignore-paths:
+  - doc
+  - examples
+  - futures
+
+pyflakes:
+  run: false

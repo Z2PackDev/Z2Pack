@@ -7,36 +7,32 @@ import abc
 
 class AbstractControl(metaclass=abc.ABCMeta):
     """ABC for all control objects. Instances must also have a 'state' attribute to work correctly, which is not enforced by the ABC."""
-
-    @abc.abstractmethod
-    def __init__(self, *args, **kwargs):
-        pass
+    pass
 
 
 class StatefulControl(AbstractControl):
     """
-        ABC for control objects which have a state. The state must not depend on the given convergence parameters.
+    ABC for control objects which have a state. The state must not depend on the given convergence parameters.
 
-        **Concepts:**
+    **Concepts:**
 
-        `Constructor:` ``StatefulControl(state=s).state == s`` for any valid state s.
+    `Constructor:` ``StatefulControl(state=s).state == s`` for any valid state s.
 
-        `State:` The state must be sufficient to uniquely determine the behaviour of the Control, for a given set of input parameters of the constructor. That is, given two equivalent StatefulControl objects, when applying
+    `State:` The state must be sufficient to uniquely determine the behaviour of the Control, for a given set of input parameters of the constructor. That is, given two equivalent StatefulControl objects, when applying
 
-        .. code :: python
+    .. code :: python
 
-            sc1 = StatefulControl(*args, **kwargs)
-            sc2 = StatefulControl(*args, **kwargs)
-            ...working with sc1 and/or sc2...
-            sc2.state = sc1.state
+        sc1 = StatefulControl(*args, **kwargs)
+        sc2 = StatefulControl(*args, **kwargs)
+        ...working with sc1 and/or sc2...
+        sc2.state = sc1.state
 
-        ``sc1`` and ``sc2`` are again equivalent. In particular, it is not necessary to use ``update()`` on ``sc2`` in the case of a DataControl.
-
+    ``sc1`` and ``sc2`` are again equivalent. In particular, it is not necessary to use ``update()`` on ``sc2`` in the case of a DataControl.
     """
 
     @abc.abstractmethod
     def __init__(self, *, state=None, **kwargs):
-        pass
+        super().__init__(**kwargs)
 
     @property
     @abc.abstractmethod

@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""
+Defines helpers to asynchronously perform a function on data which is added to a queue.
+"""
 
 import time
 from threading import Thread
@@ -20,11 +23,14 @@ class AsyncHandler:
         if self.handler is not None:
             self._empty = object()
             self.write_obj = self._empty
+            self.thread = None
 
     def __enter__(self):
+        """Create a thread that will perform the asynchronous task."""
         if self.handler is not None:
 
             def consume():
+                """Consume elements in the queue, stopping if the Sentinel is encounetered."""
                 tmp1 = self._empty
                 while True:
                     tmp2 = self.write_obj

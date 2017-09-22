@@ -1,22 +1,20 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""pytest configuration file for Z2Pack tests."""
 
 import os
 import json
-import pytest
-import pickle
 import logging
 import operator
 from collections.abc import Iterable
 
-from ctrl_base_tester import test_ctrl_base
+import pytest
+from ctrl_base_tester import test_ctrl_base  # pylint: disable=unused-import
 
 import z2pack
 logging.getLogger('z2pack').setLevel(logging.CRITICAL)
 from z2pack._utils import _get_max_move
 
 
-def pytest_addoption(parser):
+def pytest_addoption(parser):  # pylint: disable=missing-docstring
     parser.addoption('-A', action='store_true', help='run ABINIT tests')
     parser.addoption('-V', action='store_true', help='run VASP tests')
     parser.addoption(
@@ -29,7 +27,7 @@ def pytest_addoption(parser):
     )
 
 
-def pytest_configure(config):
+def pytest_configure(config):  # pylint: disable=missing-docstring
     # register additional marker
     config.addinivalue_line(
         "markers", "abinit: mark tests which run with ABINIT"
@@ -40,7 +38,7 @@ def pytest_configure(config):
     )
 
 
-def pytest_runtest_setup(item):
+def pytest_runtest_setup(item):  # pylint: disable=missing-docstring
     abinit_marker = item.get_marker("abinit")
     vasp_marker = item.get_marker("vasp")
     qe_marker = item.get_marker("qe")

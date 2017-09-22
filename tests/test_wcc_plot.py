@@ -1,10 +1,9 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Tests for the WCC plot function."""
+# pylint: disable=redefined-outer-name,unused-argument,unused-wildcard-import,unexpected-keyword-arg
 
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import pytest
 
 import z2pack
 
@@ -13,14 +12,16 @@ from monkeypatch_data import *
 
 
 def test_wcc_plot(assert_image_equal, patch_surface_data):
+    """Test WCC plot with passing an axis."""
     res = SurfaceData([[0, 1], [0.2, 0.9], [0.5, 0.6], [0.5, 0.5]],
                       t_list=[0, 0.1, 0.5, 1.])
-    fig, ax = plt.subplots()
-    z2pack.plot.wcc(res, axis=ax)
+    _, axis = plt.subplots()
+    z2pack.plot.wcc(res, axis=axis)
     assert_image_equal('simple_wcc')
 
 
 def test_no_axis_given(assert_image_equal, patch_surface_data):
+    """Test WCC plot without passing an axis."""
     res = SurfaceData([[0, 1], [0.2, 0.9], [0.5, 0.6], [0.5, 0.5]],
                       t_list=[0, 0.1, 0.5, 1.])
     z2pack.plot.wcc(res)
@@ -30,8 +31,9 @@ def test_no_axis_given(assert_image_equal, patch_surface_data):
 
 
 def test_no_gap(assert_image_equal, patch_surface_data):
+    """Test WCC plot with passing an axis, without plotting the gaps."""
     res = SurfaceData([[0, 1], [0.2, 0.9], [0.5, 0.6], [0.5, 0.5]],
                       t_list=[0, 0.1, 0.5, 1.])
-    fig, ax = plt.subplots()
-    z2pack.plot.wcc(res, axis=ax, gaps=False)
+    _, axis = plt.subplots()
+    z2pack.plot.wcc(res, axis=axis, gaps=False)
     assert_image_equal('wcc_no_gap')

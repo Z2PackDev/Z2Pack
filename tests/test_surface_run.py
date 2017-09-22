@@ -1,13 +1,13 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Test surface calculations."""
+# pylint: disable=unused-argument,redefined-outer-name,unused-wildcard-import,too-many-arguments
 
 import os
 import json
 import pickle
-import msgpack
 import tempfile
 
 import pytest
+import msgpack
 import numpy as np
 
 import z2pack
@@ -26,11 +26,6 @@ def move_tol(request):
     return request.param
 
 
-@pytest.fixture(params=[10**n for n in range(-5, -2)])
-def pos_tol(request):
-    return request.param
-
-
 @pytest.fixture(params=[10**n for n in range(-4, -1)])
 def gap_tol(request):
     return request.param
@@ -42,6 +37,9 @@ def serializer(request):
 
 
 def assert_res_equal(result1, result2):
+    """
+    Checks that two results are equal.
+    """
     assert result1.wcc == result2.wcc
     if hasattr(result1, 'wilson') or hasattr(result2, 'wilson'):
         assert all(np.isclose(result1.wilson, result2.wilson).flatten())
@@ -52,6 +50,7 @@ def assert_res_equal(result1, result2):
 
 
 def test_simple(simple_system, simple_surface, num_lines):
+    """Test result of a simple surface calculation."""
     result = z2pack.surface.run(
         system=simple_system, surface=simple_surface, num_lines=num_lines
     )
@@ -62,6 +61,9 @@ def test_simple(simple_system, simple_surface, num_lines):
 
 
 def test_neighbour_dist(weyl_system, weyl_surface):
+    """
+    Test that no additional neighbours are added if the min_neighbour_dist is reached.
+    """
     result = z2pack.surface.run(
         system=weyl_system,
         surface=weyl_surface,
@@ -77,6 +79,7 @@ def test_weyl(
     compare_data, compare_equal, pos_tol, gap_tol, move_tol, num_lines,
     weyl_system, weyl_surface
 ):
+    """Test Weyl node system."""
     result = z2pack.surface.run(
         system=weyl_system,
         surface=weyl_surface,
@@ -93,6 +96,7 @@ def test_tb(
     compare_wcc, compare_equal, pos_tol, gap_tol, move_tol, num_lines,
     tb_system, tb_surface
 ):
+    """Test tight-binding model."""
     result = z2pack.surface.run(
         system=tb_system,
         surface=tb_surface,
@@ -107,22 +111,26 @@ def test_tb(
 
 # saving tests
 def test_simple_save(num_lines, simple_system, simple_surface):
-    fp = tempfile.NamedTemporaryFile(delete=False)
+    """
+    Test saving to a file during a simple surface calculation.
+    """
+    temp_file = tempfile.NamedTemporaryFile(delete=False)
     result1 = z2pack.surface.run(
         system=simple_system,
         surface=simple_surface,
         num_lines=num_lines,
-        save_file=fp.name
+        save_file=temp_file.name
     )
-    result2 = z2pack.io.load(fp.name, serializer=json)
-    os.remove(fp.name)
+    result2 = z2pack.io.load(temp_file.name, serializer=json)
+    os.remove(temp_file.name)
     assert_res_equal(result1, result2)
 
 
 def test_weyl_save(
     pos_tol, gap_tol, move_tol, num_lines, weyl_system, weyl_surface
 ):
-    fp = tempfile.NamedTemporaryFile(delete=False)
+    """Test saving to a file with the Weyl system."""
+    temp_file = tempfile.NamedTemporaryFile(delete=False)
     result1 = z2pack.surface.run(
         system=weyl_system,
         surface=weyl_surface,
@@ -130,15 +138,16 @@ def test_weyl_save(
         move_tol=move_tol,
         gap_tol=gap_tol,
         pos_tol=pos_tol,
-        save_file=fp.name
+        save_file=temp_file.name
     )
-    result2 = z2pack.io.load(fp.name, serializer=json)
-    os.remove(fp.name)
+    result2 = z2pack.io.load(temp_file.name, serializer=json)
+    os.remove(temp_file.name)
     assert_res_equal(result1, result2)
 
 
 def test_tb_save(pos_tol, gap_tol, move_tol, num_lines, tb_system, tb_surface):
-    fp = tempfile.NamedTemporaryFile(delete=False)
+    """Test saving to a file with the tight-binding system."""
+    temp_file = tempfile.NamedTemporaryFile(delete=False)
     result1 = z2pack.surface.run(
         system=tb_system,
         surface=tb_surface,
@@ -146,15 +155,16 @@ def test_tb_save(pos_tol, gap_tol, move_tol, num_lines, tb_system, tb_surface):
         move_tol=move_tol,
         gap_tol=gap_tol,
         pos_tol=pos_tol,
-        save_file=fp.name
+        save_file=temp_file.name
     )
-    result2 = z2pack.io.load(fp.name, serializer=json)
-    os.remove(fp.name)
+    result2 = z2pack.io.load(temp_file.name, serializer=json)
+    os.remove(temp_file.name)
     assert_res_equal(result1, result2)
 
 
 # test restart
 def test_restart(simple_system, simple_surface):
+    """Test restarting a run from a savefile."""
     result1 = z2pack.surface.run(system=simple_system, surface=simple_surface)
     result2 = z2pack.surface.run(
         system=simple_system, surface=simple_surface, init_result=result1
@@ -162,10 +172,14 @@ def test_restart(simple_system, simple_surface):
     assert_res_equal(result1, result2)
 
 
-# test that restart doesn't recalculate
 def test_restart_nocalc(simple_system, simple_surface):
+    """
+    Test that no additional calculations are performed when restarting from a (finished) saved calculation.
+    """
+
     class Mock:
-        def get_eig(self, *args, **kwargs):
+        @staticmethod
+        def get_eig(*args, **kwargs):
             raise ValueError('This restart should not re-compute anything!')
 
     result1 = z2pack.surface.run(system=simple_system, surface=simple_surface)
@@ -175,8 +189,8 @@ def test_restart_nocalc(simple_system, simple_surface):
     assert_res_equal(result1, result2)
 
 
-# test restart with smaller precision
 def test_restart_2(weyl_system, weyl_surface):
+    """Test restart from a reduced precision run."""
     result1 = z2pack.surface.run(system=weyl_system, surface=weyl_surface)
     result2 = z2pack.surface.run(
         system=weyl_system,
@@ -193,9 +207,12 @@ def test_restart_2(weyl_system, weyl_surface):
 
 
 def test_invalid_restart(simple_system, simple_surface):
+    """
+    Test that you cannot pass the initial result explicitly and load from a file at the same time.
+    """
     result = z2pack.surface.run(system=simple_system, surface=simple_surface)
     with pytest.raises(ValueError):
-        result2 = z2pack.surface.run(
+        z2pack.surface.run(
             system=simple_system,
             surface=simple_surface,
             init_result=result,
@@ -204,26 +221,23 @@ def test_invalid_restart(simple_system, simple_surface):
 
 
 def test_file_restart(simple_system, simple_surface, serializer):
-    with tempfile.NamedTemporaryFile() as fp:
-        result = z2pack.surface.run(
+    """Test a restart from a save file."""
+    with tempfile.NamedTemporaryFile() as temp_file:
+        kwargs = dict(
             system=simple_system,
             surface=simple_surface,
-            save_file=fp.name,
+            save_file=temp_file.name,
             serializer=serializer
         )
-        result2 = z2pack.surface.run(
-            system=simple_system,
-            surface=simple_surface,
-            save_file=fp.name,
-            load=True,
-            serializer=serializer
-        )
-    assert_res_equal(result, result2)
+        result1 = z2pack.surface.run(**kwargs)
+        result2 = z2pack.surface.run(load=True, **kwargs)
+    assert_res_equal(result1, result2)
 
 
 def test_load_inexisting(simple_system, simple_surface):
+    """Test that trying to load from an inexisting file raises when load_quiet=False."""
     with pytest.raises(IOError):
-        result = z2pack.surface.run(
+        z2pack.surface.run(
             system=simple_system,
             surface=simple_surface,
             save_file='invalid_name',
@@ -234,8 +248,11 @@ def test_load_inexisting(simple_system, simple_surface):
 
 
 def test_load_no_serializer(simple_system, simple_surface):
+    """
+    Test that loading from a file with no known extension or serializer given raises an error.
+    """
     with pytest.raises(ValueError):
-        result = z2pack.surface.run(
+        z2pack.surface.run(
             system=simple_system,
             surface=simple_surface,
             save_file='invalid_name',
@@ -244,21 +261,12 @@ def test_load_no_serializer(simple_system, simple_surface):
         )
 
 
-def test_load_inconsistent(simple_system, simple_surface):
-    with pytest.raises(ValueError):
-        result = z2pack.surface.run(
-            system=simple_system,
-            surface=simple_surface,
-            init_result='bla',
-            save_file='invalid_name',
-            load=True,
-            serializer=json
-        )
-
-
 def test_load_no_filename(simple_system, simple_surface, serializer):
+    """
+    Test that trying to load raises an error if no filename is given.
+    """
     with pytest.raises(ValueError):
-        result = z2pack.surface.run(
+        z2pack.surface.run(
             system=simple_system,
             surface=simple_surface,
             load=True,
@@ -267,11 +275,14 @@ def test_load_no_filename(simple_system, simple_surface, serializer):
 
 
 def test_load_reference(simple_system, test_name, simple_surface, serializer):
+    """
+    Compare surface result to a reference from a file.
+    """
     tag = test_name.split('/')[1]
     path = 'reference_results/result_{}.'.format(tag) + serializer.__name__
     result = z2pack.surface.run(system=simple_system, surface=simple_surface)
     if not os.path.isfile(path):
-        z2pack.save(result, path, serializer=serializer)
+        z2pack.io.save(result, path, serializer=serializer)
         raise ValueError('File {} did not exist!'.format(path))
     else:
         assert_res_equal(result, z2pack.io.load(path, serializer=serializer))
@@ -279,6 +290,9 @@ def test_load_reference(simple_system, test_name, simple_surface, serializer):
 
 
 def test_invalid_save_path(simple_system, simple_surface):
+    """
+    Test that trying to save to an invalid path raises an error.
+    """
     with pytest.raises(ValueError):
 
         def surface(*args, **kwargs):

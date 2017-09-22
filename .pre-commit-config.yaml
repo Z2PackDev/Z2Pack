@@ -9,4 +9,4 @@
   hooks:
   - id: prospector
     language: system
-    exclude: '^(doc/)|(examples/)|(futures/)|(tests/)'
+    exclude: '^(doc/)|(examples/)|(futures/)'

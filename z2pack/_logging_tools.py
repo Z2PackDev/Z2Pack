@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""Helper tools for adding tags to a log and managing filter."""
 
 import copy
 import logging
@@ -41,12 +42,12 @@ class TagFilter:
 
 
 @contextmanager
-def FilterManager(logger, filter):
+def filter_manager(logger, filter_):
     """Adds a filter to a specific logger, and removes it upon exiting."""
-    logger.addFilter(filter)
+    logger.addFilter(filter_)
     try:
         yield
-    except Exception as e:
-        raise e
+    except Exception as exc:
+        raise exc
     finally:
-        logger.removeFilter(filter)
+        logger.removeFilter(filter_)

@@ -21,7 +21,7 @@ from .._control import (
 )
 from .. import io
 from .._async_handler import AsyncHandler
-from .._logging_tools import TagAdapter, TagFilter, FilterManager
+from .._logging_tools import TagAdapter, TagFilter, filter_manager
 _LOGGER = TagAdapter(_LOGGER, default_tags=('surface', ))
 
 from ..line import _run as _line_run
@@ -153,7 +153,7 @@ def run_surface(
 
 
 # filter out LogRecords tagged as 'line_only' in the line.
-@FilterManager(logging.getLogger('z2pack.line'), TagFilter(('line_only', )))
+@filter_manager(logging.getLogger('z2pack.line'), TagFilter(('line_only', )))
 def _run_surface_impl(
     *controls,
     system,

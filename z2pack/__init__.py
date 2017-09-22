@@ -1,12 +1,10 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
-The core module contains the routines that are shared between different specialisations of Z2Pack (first-principles, tight-binding, effective models), and interfaces  to those.
+The core module contains the routines that are shared between different specialisations of Z2Pack (first-principles, tight-binding, effective models), and interfaces to those.
 
 .. codeauthor:: Dominik Gresch <greschd@gmx.ch>
 """
 
-from ._version import __version__
+__version__ = '2.1.1a0'
 
 from . import line
 from . import surface

@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Defines the base class for Z2Pack results (data + convergence information)."""
 
 import abc
 

@@ -58,7 +58,7 @@ class System(EigenstateSystem):
             self._bands = bands
 
     def get_eig(self, kpt):
-        __doc__ = super().__doc__
+        __doc__ = super().__doc__  # pylint: disable=redefined-builtin,no-member,unused-variable
         # create k-points for string
         k_points = kpt[:-1]
 

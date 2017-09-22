@@ -1,7 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-import itertools
+"""Control objects for line calculations."""
 
 from fsc.export import export
 

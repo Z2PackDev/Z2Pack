@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Control objects for surface calculations."""
 
 from fsc.export import export
 

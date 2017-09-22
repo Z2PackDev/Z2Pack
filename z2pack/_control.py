@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Abstract base classesfor Control objects, which govern the iteration of Z2Pack runs."""
+"""Abstract base classes for Control objects, which govern the iteration of Z2Pack runs."""
 
 import abc
 

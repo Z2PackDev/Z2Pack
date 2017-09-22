@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+""""Defines the result (data + convergence information) object for surface calculations."""
 
 from fsc.export import export
 

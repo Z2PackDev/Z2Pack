@@ -28,7 +28,7 @@ def chern(surface_result):
 
 
 @export
-def z2(surface_result):
+def z2(surface_result):  # pylint: disable=invalid-name
     r"""
     Computes the :math:`\mathbb{Z}_2` invariant corresponding to a given surface result.
 
@@ -45,7 +45,7 @@ def z2(surface_result):
     wcc = surface_result.wcc
     gap = surface_result.gap_pos
     inv = 1
-    for g1, g2, w2 in zip(gap, gap[1:], wcc[1:]):
-        for w in w2:
-            inv *= _sgng(g1, g2, w)
+    for gap_left, gap_right, wcc_right in zip(gap, gap[1:], wcc[1:]):
+        for wcc_pos in wcc_right:
+            inv *= _sgng(gap_left, gap_right, wcc_pos)
     return 1 if inv == -1 else 0

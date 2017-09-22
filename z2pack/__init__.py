@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 """
 The core module contains the routines that are shared between different specialisations of Z2Pack (first-principles, tight-binding, effective models), and interfaces  to those.
 
@@ -20,7 +19,8 @@ from . import hm
 from . import tb
 from . import fp
 
-from . import _logging_format # sets default logging levels / format
+from . import _logging_format  # sets default logging levels / format
 
-
-__all__ = ['__version__', 'line', 'surface', 'shape', 'fp', 'invariant', 'plot']
+__all__ = [
+    '__version__', 'line', 'surface', 'shape', 'fp', 'invariant', 'plot'
+]

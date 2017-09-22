@@ -26,12 +26,12 @@ with open('./z2pack/_version.py', 'r') as f:
     version = re.search(match_expr, f.read()).group(2).strip()
 
 extras = {
-    'plot':  ['matplotlib'],
+    'plot': ['matplotlib'],
     'tb': ['tbmodels'],
-    'test': ['pytest'],
     'doc': ['sphinx', 'sphinx_rtd_theme'],
+    'dev': ['pytest', 'yapf', 'pre-commit'],
 }
-extras['test'] += extras['plot'] + extras['tb']
+extras['dev'] += extras['plot'] + extras['tb']
 
 setup(
     name='z2pack',
@@ -39,14 +39,18 @@ setup(
     url='http://z2pack.ethz.ch',
     author='Dominik Gresch',
     author_email='greschd@gmx.ch',
-    description='Automating the computation of topological numbers of band-structures',
-    install_requires=['numpy', 'scipy', 'decorator', 'blessings', 'sortedcontainers', 'msgpack-python', 'fsc.locker', 'fsc.export', 'fsc.formatting', 'fsc.iohelper'],
+    description=
+    'Automating the computation of topological numbers of band-structures',
+    install_requires=[
+        'numpy', 'scipy', 'decorator', 'blessings', 'sortedcontainers',
+        'msgpack-python', 'fsc.locker', 'fsc.export', 'fsc.formatting',
+        'fsc.iohelper'
+    ],
     extras_require=extras,
     long_description=readme,
     classifiers=[
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
-        'Natural Language :: English',
-        'Operating System :: Unix',
+        'Natural Language :: English', 'Operating System :: Unix',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
@@ -56,12 +60,11 @@ setup(
         'Development Status :: 5 - Production/Stable'
     ],
     license='GPL',
-    keywords=['topology', 'topological', 'invariant', 'bandstructure', 'chern', 'z2', 'solid-state', 'tight-binding'],
+    keywords=[
+        'topology', 'topological', 'invariant', 'bandstructure', 'chern', 'z2',
+        'solid-state', 'tight-binding'
+    ],
     packages=[
-        'z2pack',
-        'z2pack.io',
-        'z2pack.fp',
-        'z2pack.surface',
-        'z2pack.line'
+        'z2pack', 'z2pack.io', 'z2pack.fp', 'z2pack.surface', 'z2pack.line'
     ]
 )

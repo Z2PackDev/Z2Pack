@@ -20,6 +20,7 @@ for s in subfolders:
     with suppress(FileExistsError):
         os.mkdir(s)
 
+
 def calculate_chirality(tag, center, radius, overwrite=False, **kwargs):
     # converting the Model to the pickle format (which is quicker to load)
     # Note that keeping only the pickle format is dangerous, because it
@@ -29,7 +30,9 @@ def calculate_chirality(tag, center, radius, overwrite=False, **kwargs):
             model = pickle.load(f)
     except IOError:
         # The .xz compression is used to avoid the GitHub file size limit
-        with lzma.open(MODEL_SOURCE + '.xz') as fin, open(MODEL_SOURCE, 'wb') as fout:
+        with lzma.open(MODEL_SOURCE + '.xz') as fin, open(
+            MODEL_SOURCE, 'wb'
+        ) as fout:
             fout.write(fin.read())
 
         model = Model.from_json_file(MODEL_SOURCE)
@@ -50,18 +53,24 @@ def calculate_chirality(tag, center, radius, overwrite=False, **kwargs):
     # z2pack.io.save(res, os.path.join('results', full_name + '.json'))
     print('Chern number:', z2pack.invariant.chern(res))
 
+
 def plot_chirality(tag, ax):
     full_name = MODEL_NAME + '_' + tag
     res = z2pack.io.load(os.path.join('results', full_name + '.p'))
     z2pack.plot.chern(res, axis=ax)
 
+
 if __name__ == "__main__":
     # calculate
     calculate_chirality('0', [0.1203, 0.05232, 0.], 0.005)
-    calculate_chirality('1', [0.1211, 0.02887, 0.], 0.005, iterator=range(10, 33, 2))
+    calculate_chirality(
+        '1', [0.1211, 0.02887, 0.], 0.005, iterator=range(10, 33, 2)
+    )
 
     # plot
-    fig, ax = plt.subplots(1, 2, figsize=[4, 2], sharey=True, gridspec_kw=dict(wspace=0.3))
+    fig, ax = plt.subplots(
+        1, 2, figsize=[4, 2], sharey=True, gridspec_kw=dict(wspace=0.3)
+    )
     ax[0].set_xticks([0, 1])
     ax[1].set_xticks([0, 1])
     ax[0].set_xticklabels([r'$-\pi$', r'$0$'])
@@ -76,4 +85,6 @@ if __name__ == "__main__":
     ax[1].text(-0.05, 1.05, r'(b)', ha='right')
     plot_chirality('0', ax[0])
     plot_chirality('1', ax[1])
-    plt.savefig('plots/WTe2_chirality.pdf', bbox_inches='tight', rasterized=True)
+    plt.savefig(
+        'plots/WTe2_chirality.pdf', bbox_inches='tight', rasterized=True
+    )

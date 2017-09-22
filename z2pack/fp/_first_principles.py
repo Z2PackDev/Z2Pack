@@ -12,6 +12,7 @@ from fsc.export import export
 from ..system import OverlapSystem
 from . import _read_mmn as mmn
 
+
 @export
 class System(OverlapSystem):
     r"""
@@ -45,18 +46,19 @@ class System(OverlapSystem):
 
     .. note:: ``input_files`` and ``build_folder`` can be absolute or relative paths, the rest is relative to ``build_folder``
     """
+
     def __init__(
-            self,
-            *,
-            input_files,
-            kpt_fct,
-            kpt_path,
-            command,
-            executable=None,
-            build_folder='build',
-            file_names=None,
-            mmn_path='wannier90.mmn',
-            num_wcc=None
+        self,
+        *,
+        input_files,
+        kpt_fct,
+        kpt_path,
+        command,
+        executable=None,
+        build_folder='build',
+        file_names=None,
+        mmn_path='wannier90.mmn',
+        num_wcc=None
     ):
         # convert to lists (input_files)
         self._input_files = list(input_files)
@@ -64,7 +66,9 @@ class System(OverlapSystem):
 
         # copy to file_names and split off the name
         if file_names is None:
-            self._file_names = [os.path.basename(filename) for filename in self._input_files]
+            self._file_names = [
+                os.path.basename(filename) for filename in self._input_files
+            ]
         else:
             self._file_names = list(file_names)
         self._file_names = self._to_abspath(self._file_names)
@@ -88,14 +92,15 @@ class System(OverlapSystem):
         self._kpt_path = self._to_abspath(self._kpt_path)
 
         # check whether to append k-points or write separate file
-        self._k_mode = ['a' if path in self._file_names else 'w' for path in self._kpt_path]
+        self._k_mode = [
+            'a' if path in self._file_names else 'w' for path in self._kpt_path
+        ]
 
         # check if the number of functions matches the number of paths
         if len(self._kpt_path) != len(self._kpt_fct):
             raise ValueError(
-                'kpt_fct ({0}) and kpt_path({1}) must have the same length'.format(
-                    len(self._kpt_path), len(self._kpt_fct)
-                )
+                'kpt_fct ({0}) and kpt_path({1}) must have the same length'.
+                format(len(self._kpt_path), len(self._kpt_fct))
             )
         self._mmn_path = self._to_abspath(mmn_path)
         self._calling_path = os.getcwd()
@@ -116,7 +121,8 @@ class System(OverlapSystem):
         os.mkdir(self._build_folder)
         _copy(self._input_files, self._file_names)
 
-        for i, (k_mode, f_path) in enumerate(zip(self._k_mode, self._kpt_path)):
+        for i, (k_mode,
+                f_path) in enumerate(zip(self._k_mode, self._kpt_path)):
             with open(f_path, k_mode) as f:
                 f.write(self._kpt_fct[i](kpt))
 
@@ -137,16 +143,25 @@ class System(OverlapSystem):
         # read mmn file
         M = mmn.get_m(self._mmn_path)
         if len(M) == 0:
-            raise ValueError('No overlap matrices were found. Maybe switch from shell_list to search_shells in wannier90.win or add more k-points to the line.')
+            raise ValueError(
+                'No overlap matrices were found. Maybe switch from shell_list to search_shells in wannier90.win or add more k-points to the line.'
+            )
         if len(M) != N:
-            raise ValueError('The number of overlap matrices found is {0}, but should be {1}. Maybe check search_shells in wannier90.win'.format(len(M), N))
+            raise ValueError(
+                'The number of overlap matrices found is {0}, but should be {1}. Maybe check search_shells in wannier90.win'.
+                format(len(M), N)
+            )
         if self._num_wcc is not None:
             shape = (self._num_wcc, self._num_wcc)
             for i, overlaps in enumerate(M):
                 if overlaps.shape != shape:
-                    raise ValueError('The shape of overlap matrix #{} is {}, but should be {}.'.format(i, overlaps.shape, shape))
+                    raise ValueError(
+                        'The shape of overlap matrix #{} is {}, but should be {}.'.
+                        format(i, overlaps.shape, shape)
+                    )
 
         return M
+
 
 def _copy(initial_paths, final_names):
     """
@@ -159,7 +174,8 @@ def _copy(initial_paths, final_names):
                                 where to copy to
     folder:                     folder to copy into
     """
-    if isinstance(initial_paths, collections.abc.Iterable) and not isinstance(initial_paths, str):
+    if isinstance(initial_paths, collections.abc.Iterable
+                  ) and not isinstance(initial_paths, str):
         for i, f in zip(initial_paths, final_names):
             _copy(i, f)
     else:

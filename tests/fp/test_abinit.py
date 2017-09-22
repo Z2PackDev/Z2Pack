@@ -9,13 +9,18 @@ import numpy as np
 
 import z2pack
 
+
 @pytest.fixture
 def abinit_system():
     def inner(build_dir):
         sample_dir = samples('abinit')
-        input_files = [os.path.join(sample_dir, name) for name in [
-            'Bi_nscf.files', 'Bi_nscf.in', 'wannier90.win', '83bi.5.hgh', 'Bi_scf_o_DEN'
-        ]]
+        input_files = [
+            os.path.join(sample_dir, name)
+            for name in [
+                'Bi_nscf.files', 'Bi_nscf.in', 'wannier90.win', '83bi.5.hgh',
+                'Bi_scf_o_DEN'
+            ]
+        ]
         return z2pack.fp.System(
             input_files=input_files,
             kpt_fct=z2pack.fp.kpoint.abinit,
@@ -24,12 +29,12 @@ def abinit_system():
             executable='/bin/bash',
             build_folder=os.path.join(build_dir, 'build')
         )
+
     return inner
 
-surface_fcts = [
-    lambda s, t: [0, s / 2, t],
-    lambda s, t: [t, s, s]
-]
+
+surface_fcts = [lambda s, t: [0, s / 2, t], lambda s, t: [t, s, s]]
+
 
 @pytest.mark.abinit
 @pytest.mark.parametrize('surface_fct', surface_fcts)

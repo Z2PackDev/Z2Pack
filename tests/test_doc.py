@@ -7,6 +7,7 @@ import importlib
 
 import fsc.export
 
+
 # This should never appear in any serious code ;)
 # To out-manoeuver pickle's caching, and force re-loading z2pack
 def test_all_doc():

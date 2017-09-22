@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 """This submodule contains all functions for plotting Z2Pack results."""
 
 import colorsys
@@ -10,6 +9,7 @@ import numpy as np
 from fsc.export import export
 
 from ._utils import _pol_step
+
 
 @decorator.decorator
 def _plot(func, data, *, axis=None, **kwargs):
@@ -33,17 +33,16 @@ def _plot(func, data, *, axis=None, **kwargs):
     if return_fig:
         return fig
 
+
 def _plot_gaps(surface_result, *, axis, gaps, gap_settings):
     if gaps:
         for offset in [-1, 0, 1]:
             axis.plot(
                 surface_result.t,
-                [
-                    gap_pos % 1 + offset
-                    for gap_pos in surface_result.gap_pos
-                ],
-                **gap_settings
+                [gap_pos % 1 + offset
+                 for gap_pos in surface_result.gap_pos], **gap_settings
             )
+
 
 @export
 @_plot
@@ -100,9 +99,10 @@ def wcc_symmetry(
                 color_fct(
                     np.dot(
                         np.dot(w_eigenstate, basis_transformation),
-                        np.dot(symmetry_operator, np.dot(
-                            basis_transformation.T, w_eigenstate.T
-                        ))
+                        np.dot(
+                            symmetry_operator,
+                            np.dot(basis_transformation.T, w_eigenstate.T)
+                        )
                     )
                 )
             )
@@ -113,15 +113,21 @@ def wcc_symmetry(
                          facecolors=colors,
                          **wcc_settings)
 
+
 @export
 @_plot
 def wcc(
-        surface_result,
-        *,
-        axis=None,
-        wcc_settings={'s': 50., 'lw': 1., 'facecolor': 'none', 'edgecolors': 'k'},
-        gaps=True,
-        gap_settings={'marker': 'D', 'color': 'b', 'linestyle': 'none'}
+    surface_result,
+    *,
+    axis=None,
+    wcc_settings={'s': 50.,
+                  'lw': 1.,
+                  'facecolor': 'none',
+                  'edgecolors': 'k'},
+    gaps=True,
+    gap_settings={'marker': 'D',
+                  'color': 'b',
+                  'linestyle': 'none'}
 ):
     r"""
     Plots the WCCs and the largest gaps (y-axis) against the t-points (x-axis).
@@ -148,16 +154,18 @@ def wcc(
     for line in surface_result.lines:
         for offset in [-1, 0, 1]:
             axis.scatter([line.t] * len(line.wcc),
-                         [x % 1 + offset for x in line.wcc],
-                         **wcc_settings)
+                         [x % 1 + offset for x in line.wcc], **wcc_settings)
+
 
 @export
 @_plot
 def chern(
-        surface_result,
-        *,
-        axis=None,
-        settings={'marker': 'o', 'markerfacecolor': 'r', 'color': 'r'}
+    surface_result,
+    *,
+    axis=None,
+    settings={'marker': 'o',
+              'markerfacecolor': 'r',
+              'color': 'r'}
 ):
     r"""
     Plots the sum of WCCs (polarization) (y-axis) against the t-points (x-axis).

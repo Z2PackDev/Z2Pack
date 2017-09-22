@@ -10,13 +10,16 @@ import z2pack
 import pytest
 import numpy as np
 
+
 def test_base(test_ctrl_base):
     test_ctrl_base(MoveCheck)
     assert issubclass(MoveCheck, SurfaceControl)
 
+
 @pytest.fixture(params=np.linspace(0.1, 0.5, 11))
 def move_tol(request):
     return request.param
+
 
 def test_single_update(move_tol, patch_max_move, patch_surface_data):
     mc = MoveCheck(move_tol=move_tol)

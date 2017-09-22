@@ -5,6 +5,7 @@ from fsc.export import export
 
 from .._result import Result
 
+
 @export
 class LineResult(Result):
     """Container for the data, state and convergence status of a line calculation. The attributes / properties of the data object (:class:`WccLineData` or :class:`EigenstateLineData`) can be accessed directly from the :class:`LineResult` object."""

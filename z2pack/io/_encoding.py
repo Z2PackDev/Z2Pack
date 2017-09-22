@@ -15,6 +15,7 @@ from ..line import LineResult, WccLineData, EigenstateLineData
 from ..surface._data import SurfaceData, SurfaceLine
 from ..surface._result import SurfaceResult
 
+
 @export
 @singledispatch
 def encode(obj):
@@ -23,35 +24,38 @@ def encode(obj):
     """
     raise TypeError('cannot JSONify {} object {}'.format(type(obj), obj))
 
+
 @encode.register(np.bool_)
 def _(obj):
     return bool(obj)
+
 
 @encode.register(numbers.Real)
 def _(obj):
     return float(obj)
 
+
 @encode.register(numbers.Complex)
 def _(obj):
     return dict(__complex__=True, real=encode(obj.real), imag=encode(obj.imag))
+
 
 @encode.register(Iterable)
 def _(obj):
     return list(obj)
 
+
 @encode.register(EigenstateLineData)
 def _(obj):
     return dict(
-        __eigenstate_line_data__=True,
-        eigenstates=encode(obj.eigenstates)
+        __eigenstate_line_data__=True, eigenstates=encode(obj.eigenstates)
     )
+
 
 @encode.register(WccLineData)
 def _(obj):
-    return dict(
-        __wcc_line_data__=True,
-        wcc=encode(obj.wcc)
-    )
+    return dict(__wcc_line_data__=True, wcc=encode(obj.wcc))
+
 
 @encode.register(LineResult)
 def _(obj):
@@ -62,20 +66,16 @@ def _(obj):
         ctrl_states=obj.ctrl_states
     )
 
+
 @encode.register(SurfaceLine)
 def _(obj):
-    return dict(
-        __surface_line__=True,
-        t=obj.t,
-        result=encode(obj.result)
-    )
+    return dict(__surface_line__=True, t=obj.t, result=encode(obj.result))
+
 
 @encode.register(SurfaceData)
 def _(obj):
-    return dict(
-        __surface_data__=True,
-        lines=encode(obj.lines)
-    )
+    return dict(__surface_data__=True, lines=encode(obj.lines))
+
 
 @encode.register(SurfaceResult)
 def _(obj):
@@ -86,7 +86,9 @@ def _(obj):
         ctrl_states=obj.ctrl_states
     )
 
+
 #-----------------------------------------------------------------------#
+
 
 @export
 @singledispatch
@@ -96,6 +98,7 @@ def decode(obj):
     """
     return obj
 
+
 def decode_surface_result(obj):
     # The states / convergence of the controls are set manually
     res = SurfaceResult(obj['data'], [], [])
@@ -103,11 +106,14 @@ def decode_surface_result(obj):
     res.ctrl_states = decode(obj['ctrl_states'])
     return res
 
+
 def decode_surface_data(obj):
     return SurfaceData(decode(obj['lines']))
 
+
 def decode_surface_line(obj):
     return SurfaceLine(obj['t'], decode(obj['result']))
+
 
 def decode_line_result(obj):
     # The states / convergence of the controls are set manually
@@ -116,14 +122,18 @@ def decode_line_result(obj):
     res.ctrl_states = decode(obj['ctrl_states'])
     return res
 
+
 def decode_wcc_line_data(obj):
     return WccLineData(obj['wcc'])
+
 
 def decode_eigenstate_line_data(obj):
     return EigenstateLineData(obj['eigenstates'])
 
+
 def decode_complex(obj):
     return complex(obj['real'], obj['imag'])
+
 
 @decode.register(dict)
 def _(obj):

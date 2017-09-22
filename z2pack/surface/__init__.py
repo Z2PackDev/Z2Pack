@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 """This module contains the functions and data / result containers for calculating the Wilson loop / Wannier charge centers on a surface in :math:`\mathbf{k}`-space."""
 
 import logging as _logging

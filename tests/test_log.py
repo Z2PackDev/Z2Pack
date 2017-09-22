@@ -8,10 +8,12 @@ from contextlib import contextmanager
 import z2pack
 import logging
 
-
 from hm_systems import simple_system, simple_surface, simple_line
 
-IGNORE_LINES = ['Calculation finished', 'starting at', 'Z2Pack version', ' at 0x']
+IGNORE_LINES = [
+    'Calculation finished', 'starting at', 'Z2Pack version', ' at 0x'
+]
+
 
 def compare_lines(x, y):
     for xline, yline in zip(x.splitlines(), y.splitlines()):
@@ -19,6 +21,7 @@ def compare_lines(x, y):
             continue
         assert xline == yline
     return True
+
 
 @contextmanager
 def CaptureLoggingOutput(compare_data):
@@ -38,7 +41,10 @@ def CaptureLoggingOutput(compare_data):
 
 def test_surface_report(compare_data, simple_system, simple_surface):
     with CaptureLoggingOutput(compare_data):
-        result = z2pack.surface.run(system=simple_system, surface=simple_surface)
+        result = z2pack.surface.run(
+            system=simple_system, surface=simple_surface
+        )
+
 
 def test_line_report(compare_data, simple_system, simple_line):
     with CaptureLoggingOutput(compare_data):

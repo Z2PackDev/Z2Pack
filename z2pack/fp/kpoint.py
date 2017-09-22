@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 r"""
 A collection of functions for creating k-points input for different
 first-principles codes.
@@ -8,10 +7,10 @@ first-principles codes.
 All functions have the same calling structure as :func:`prototype`.
 """
 
-
 import decorator
 import numpy as np
 from fsc.export import export
+
 
 @export
 def prototype(kpt):
@@ -24,6 +23,7 @@ def prototype(kpt):
     """
     raise NotImplementedError('This is only the prototype for kpts')
 
+
 @decorator.decorator
 def _check_dim(fct, kpt):
     """Checks if all k-points are three-dimensional."""
@@ -32,6 +32,7 @@ def _check_dim(fct, kpt):
             raise ValueError('Dimension of point k = {} != 3'.format(k))
     return fct(kpt)
 
+
 @decorator.decorator
 def _check_closed(fct, kpt):
     """Checks whether the k-point list forms a closed loop."""
@@ -39,6 +40,7 @@ def _check_closed(fct, kpt):
     if not np.isclose(np.round_(delta), delta).all():
         raise ValueError('The k-point line does not form a closed loop.')
     return fct(kpt)
+
 
 @export
 @_check_dim
@@ -62,6 +64,7 @@ def abinit(kpt):
     string += '\n'
     return string
 
+
 @export
 @_check_dim
 @_check_closed
@@ -76,11 +79,12 @@ def qe(kpt):
     string = "\nK_POINTS crystal_b\n 2 \n"
     for coord in start_point:
         string += str(coord).replace('e', 'd') + ' '
-    string += str(N-1)+'\n'
+    string += str(N - 1) + '\n'
     for coord in last_point:
         string += str(coord).replace('e', 'd') + ' '
-    string += str(1)+'\n'
+    string += str(1) + '\n'
     return string
+
 
 @export
 @_check_dim
@@ -99,6 +103,7 @@ def qe_explicit(kpt):
         string += '{} {} {} 1\n'.format(*k)
     return string
 
+
 @export
 @_check_dim
 @_check_closed
@@ -115,6 +120,7 @@ def wannier90(kpt):
     string += '\nend kpoints\n'
     return string
 
+
 @export
 @_check_dim
 @_check_closed
@@ -129,9 +135,12 @@ def wannier90_nnkpts(kpt):
     string = 'begin nnkpts\n'
     for i, k in enumerate(bz_diff):
         j = (i + 1) % N
-        string += ' {0:>3} {1:>3}    {2[0]: } {2[1]: } {2[2]: }\n'.format(i + 1, j + 1, k)
+        string += ' {0:>3} {1:>3}    {2[0]: } {2[1]: } {2[2]: }\n'.format(
+            i + 1, j + 1, k
+        )
     string += 'end nnkpts\n'
     return string
+
 
 @export
 @_check_dim
@@ -141,6 +150,7 @@ def wannier90_full(kpt):
     Returns both k-point and nearest neighbour input for wannier90.win. This is the recommended function to use for Wannier90 2.1 and higher.
     """
     return wannier90(kpt) + '\n' + wannier90_nnkpts(kpt)
+
 
 @export
 @_check_dim
@@ -164,15 +174,23 @@ def vasp(kpt):
             nonzero.append(i)
             mesh.append(str(N))
         else:
-            raise ValueError('The k-points must be aligned in (positive) kx-, ky- or kz-direction for VASP runs.')
+            raise ValueError(
+                'The k-points must be aligned in (positive) kx-, ky- or kz-direction for VASP runs.'
+            )
     mesh_str = ' '.join(mesh)
 
     if len(nonzero) != 1:
-        raise ValueError('The k-points can change only in kx-, ky- or kz direction for VASP runs. The given k-points change in {} directions.'.format(len(nonzero)))
+        raise ValueError(
+            'The k-points can change only in kx-, ky- or kz direction for VASP runs. The given k-points change in {} directions.'.
+            format(len(nonzero))
+        )
 
     start_point = kpt[0]
     if not np.isclose(start_point[nonzero[0]], 0):
-        raise ValueError('The k-points must start at k{0} = 0 for VASP runs, since they change in k{0}-direction.'.format(['x', 'y', 'z'][nonzero[0]]))
+        raise ValueError(
+            'The k-points must start at k{0} = 0 for VASP runs, since they change in k{0}-direction.'.
+            format(['x', 'y', 'z'][nonzero[0]])
+        )
 
     string = 'Automatic mesh\n0              ! number of k-points = 0 ->automatic generation scheme\nGamma          ! generate a Gamma centered grid\n'
     string += mesh_str + '        ! subdivisions\n'
@@ -181,11 +199,15 @@ def vasp(kpt):
     string += '         ! shift\n'
     return string
 
+
 def _check_equal_spacing(kpt, run_type):
     """Checks if the k-points are equally spaced, and throws an error if not. run_type is added in the error message."""
     deltas = [(k2 - k1) % 1 for k2, k1 in zip(kpt[1:], kpt[:-1])]
     for d in deltas[1:]:
         if not np.isclose(d, deltas[0]).all():
-            raise ValueError('The k-points must be equally spaced for {} runs.'.format(run_type))
+            raise ValueError(
+                'The k-points must be equally spaced for {} runs.'.
+                format(run_type)
+            )
 
     return deltas[0]

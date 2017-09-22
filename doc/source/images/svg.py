@@ -14,36 +14,41 @@ STRETCH = np.sin(np.pi / 3)
 
 pic = svg.canvas(width=300, height=200 * STRETCH)
 
-pic.add(svg.rect(
-    x=0,
-    y=0,
-    width=300,
-    height=300,
-    fill='#111111'
-))
+pic.add(svg.rect(x=0, y=0, width=300, height=300, fill='#111111'))
 
-pic.add(svg.path(
-    d="""
+pic.add(
+    svg.path(
+        d="""
         M0,0
         l {half_right},{down}
         l {right},0
         l {half_right},{up}
         l {right},0
         l {half_right},{down}
-    """.format(half_right=50, right=100, down=100 * STRETCH, up=-100 * STRETCH),
-    **LINE_PROPS
-))
-pic.add(svg.path(
-    d="""
+    """.format(
+            half_right=50, right=100, down=100 * STRETCH, up=-100 * STRETCH
+        ),
+        **LINE_PROPS
+    )
+)
+pic.add(
+    svg.path(
+        d="""
         M0,{bottom}
         l {half_right},{up}
         l {right},0
         l {half_right},{down}
         l {right},0
         l {half_right},{up}
-    """.format(half_right=50, right=100, down=100 * STRETCH, up=-100 * STRETCH, bottom=200*STRETCH),
-    **LINE_PROPS
-))
-
+    """.format(
+            half_right=50,
+            right=100,
+            down=100 * STRETCH,
+            up=-100 * STRETCH,
+            bottom=200 * STRETCH
+        ),
+        **LINE_PROPS
+    )
+)
 
 pic.write_svg('hex.svg')

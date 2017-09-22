@@ -5,6 +5,7 @@ import copy
 
 __all__ = ['_get_max_move', '_sgng', '_gapfind', '_dist']
 
+
 def _get_max_move(list_a, list_b):
     """
     new style convergence check!!
@@ -20,11 +21,13 @@ def _get_max_move(list_a, list_b):
 
     return max_move
 
+
 def _sgng(z, zplus, x):
     """
     calculates the invariant between two WCC strings
     """
     return -1 if (max(zplus, z) > x and min(zplus, z) < x) else 1
+
 
 def _gapfind(wcc):
     """
@@ -46,6 +49,7 @@ def _gapfind(wcc):
         gappos = N - 1
     return (wcc[gappos] + gapsize / 2) % 1, gapsize
 
+
 def _dist(x, y):
     """
     Returns the smallest distance on the periodic [0, 1) between x, y
@@ -54,6 +58,7 @@ def _dist(x, y):
     x = x % 1
     y = y % 1
     return min(abs(1 + x - y) % 1, abs(1 - x + y) % 1)
+
 
 def _pol_step(pol_list):
     offset = [-1, 0, 1]

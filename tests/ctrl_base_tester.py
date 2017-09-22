@@ -4,12 +4,10 @@
 import pytest
 import z2pack
 from z2pack._control import (
-    AbstractControl,
-    IterationControl,
-    DataControl,
-    StatefulControl,
+    AbstractControl, IterationControl, DataControl, StatefulControl,
     ConvergenceControl
 )
+
 
 @pytest.fixture
 def test_ctrl_base():
@@ -23,4 +21,5 @@ def test_ctrl_base():
             assert issubclass(ctrl, DataControl)
         if hasattr(ctrl, '__next__'):
             assert issubclass(ctrl, IterationControl)
+
     return inner

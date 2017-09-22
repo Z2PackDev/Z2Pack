@@ -8,11 +8,11 @@ import subprocess
 import z2pack
 import matplotlib.pyplot as plt
 
-qedir="/home/greschd/software/espresso-5.3.0/bin"
-mpirun="mpirun -np 4 "
-pwcmd=mpirun+qedir+"/pw.x "
-pw2z2cmd=qedir+"/pw2z2pack.x "
-z2cmd=pwcmd+"< bi.nscf.in >& pw.log;"+pw2z2cmd+"< bi.pw2z2.in >& pw2z2.log;"
+qedir = "/home/greschd/software/espresso-5.3.0/bin"
+mpirun = "mpirun -np 4 "
+pwcmd = mpirun + qedir + "/pw.x "
+pw2z2cmd = qedir + "/pw2z2pack.x "
+z2cmd = pwcmd + "< bi.nscf.in >& pw.log;" + pw2z2cmd + "< bi.pw2z2.in >& pw2z2.log;"
 
 # Settings used for surface.run() Feel free to play around with the different
 # options.
@@ -30,14 +30,15 @@ os.makedirs('scf', exist_ok=True)
 if not os.path.isfile('./scf/Bi.save/charge-density.dat'):
     print("Running the scf calculation")
     shutil.copy('input/bi.scf.in', 'scf')
-    subprocess.check_output(pwcmd + " < bi.scf.in > scf.out", shell=True, cwd='scf')
+    subprocess.check_output(
+        pwcmd + " < bi.scf.in > scf.out", shell=True, cwd='scf'
+    )
 
 os.makedirs('results', exist_ok=True)
 # creating the z2pack.fp object
 bi = z2pack.fp.System(
     input_files=[
-        os.path.join('input', fn) for fn in
-        ["bi.nscf.in", "bi.pw2z2.in"]
+        os.path.join('input', fn) for fn in ["bi.nscf.in", "bi.pw2z2.in"]
     ],
     kpt_fct=[z2pack.fp.kpoint.qe],
     kpt_path=["bi.nscf.in"],
@@ -68,13 +69,13 @@ print('Z2 invariant for ky=0:', z2pack.invariant.z2(res_1))
 print('Z2 invariant for ky=0.5:', z2pack.invariant.z2(res_2))
 
 # creating the plot
-fig=plt.figure()
+fig = plt.figure()
 
-ax=fig.add_subplot(1,2,1)
+ax = fig.add_subplot(1, 2, 1)
 z2pack.plot.wcc(res_1, axis=ax)
 
-ax=fig.add_subplot(1,2,2)
+ax = fig.add_subplot(1, 2, 2)
 z2pack.plot.wcc(res_2, axis=ax)
 
 os.makedirs('plots', exist_ok=True)
-plt.savefig('plots/wcc.pdf',bbox_inches='tight')
+plt.savefig('plots/wcc.pdf', bbox_inches='tight')

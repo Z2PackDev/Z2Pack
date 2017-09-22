@@ -12,9 +12,11 @@ from z2pack.surface import SurfaceData
 
 from z2pack.line import LineResult
 
+
 @pytest.fixture
 def patch_max_move(monkeypatch):
     monkeypatch.setattr(z2pack.surface._control, '_get_max_move', min)
+
 
 @pytest.fixture
 def patch_surface_data(monkeypatch):
@@ -24,4 +26,5 @@ def patch_surface_data(monkeypatch):
         self.lines = SortedList(key=lambda x: x.t)
         for t, wcc in zip(t_list, wcc_list):
             self.add_line(t, LineResult(LineData(wcc), tuple(), tuple()))
+
     monkeypatch.setattr(SurfaceData, '__init__', __init__)

@@ -13,6 +13,7 @@ from fsc.formatting import shorten, to_box
 
 from ._version import __version__
 
+
 def _make_title(title, delimiter, overline=False, modifier=None):
     """Creates a title by addin the appropriate over-/underline"""
     delimiter *= len(title)
@@ -26,6 +27,7 @@ def _make_title(title, delimiter, overline=False, modifier=None):
     res.extend([title, delimiter])
     return '\n'.join(res)
 
+
 def _offset(string, num_offset=4):
     """Add a given offset (whitespace) to each line in the string"""
     return '\n'.join(' ' * num_offset + s for s in string.split('\n'))
@@ -33,6 +35,7 @@ def _offset(string, num_offset=4):
 
 class DefaultFormatter(logging.Formatter):
     """Formatter used for z2pack logs"""
+
     def __init__(self):
         self.term = blessings.Terminal()
         super().__init__(style='{')
@@ -43,14 +46,23 @@ class DefaultFormatter(logging.Formatter):
             # Creating the Convergence Report string from its dictionary.
             if 'convergence_report' in record.tags:
                 report = msg
-                msg = _make_title('CONVERGENCE REPORT', '=', overline=True, modifier=self.term.bold)
+                msg = _make_title(
+                    'CONVERGENCE REPORT',
+                    '=',
+                    overline=True,
+                    modifier=self.term.bold
+                )
 
                 # For Surface calculations
                 if 'surface' in record.tags:
+
                     def make_report_entry(key, val):
                         title = _make_title(key, '-')
                         if val is None:
-                            return _offset(title + '\nFAILED: Convergence check has not run!')
+                            return _offset(
+                                title +
+                                '\nFAILED: Convergence check has not run!'
+                            )
                         passed = len(val['PASSED'])
                         failed = len(val['FAILED'])
                         try:
@@ -61,26 +73,20 @@ class DefaultFormatter(logging.Formatter):
                         report = ''
                         if passed:
                             report += '\n' + self.term.bold_green(
-                                'PASSED: {0} of {1}'.format(
-                                    passed, total
-                                )
+                                'PASSED: {0} of {1}'.format(passed, total)
                             )
                         if failed:
                             report += '\n' + self.term.bold_red(
-                                'FAILED: {0} of {1}'.format(
-                                    failed, total
-                                )
+                                'FAILED: {0} of {1}'.format(failed, total)
                             )
                         if missing:
                             report += '\n' + self.term.bold_yellow(
-                                'MISSING: {0} of {1}'.format(
-                                    missing, total
-                                )
+                                'MISSING: {0} of {1}'.format(missing, total)
                             )
                         return _offset(title + report)
+
                     # line convergence objects
                     line_msg = _make_title('Line Convergence', '=')
-
 
                     for key, val in sorted(report['line'].items()):
                         line_msg += '\n\n' + make_report_entry(key, val)
@@ -93,7 +99,9 @@ class DefaultFormatter(logging.Formatter):
                 # For Line calculations
                 elif 'line' in record.tags:
                     for key, val in sorted(report.items()):
-                        msg += '\n\n{}: {}'.format(key, 'PASSED' if val else 'FAILED')
+                        msg += '\n\n{}: {}'.format(
+                            key, 'PASSED' if val else 'FAILED'
+                        )
 
             if 'setup' in record.tags:
                 kwargs = msg
@@ -121,13 +129,15 @@ class DefaultFormatter(logging.Formatter):
                     val_str = str(value)
                     max_width = 70 - dist
                     if len(val_str) > max_width:
-                        val_str = shorten(val_str, max_width, show_number=False)
+                        val_str = shorten(
+                            val_str, max_width, show_number=False
+                        )
                     msg += format_string.format(key + ':', val_str)
                     msg += '\n'
                 msg = msg[:-1]
 
             if 'timing' in record.tags:
-                seconds = round(msg) # round to the nearest second
+                seconds = round(msg)  # round to the nearest second
                 minutes, seconds = seconds // 60, seconds % 60
                 hours, minutes = minutes // 60, minutes % 60
                 days, hours = hours // 24, hours % 24
@@ -153,10 +163,7 @@ class DefaultFormatter(logging.Formatter):
             if 'skip-after' in record.tags:
                 msg += '\n'
 
-
-
         return msg
-
 
 
 DEFAULT_HANDLER = logging.StreamHandler(sys.stdout)

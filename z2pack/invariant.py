@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 """
 This submodule contains functions for calculating the topological invariants from the result of a WCC / Wilson loop calculation.
 """
@@ -8,6 +7,7 @@ This submodule contains functions for calculating the topological invariants fro
 from fsc.export import export
 
 from ._utils import _pol_step, _sgng
+
 
 @export
 def chern(surface_result):
@@ -25,6 +25,7 @@ def chern(surface_result):
         print(z2pack.invariant.chern(result)) # Prints the Chern number
     """
     return sum(_pol_step(surface_result.pol))
+
 
 @export
 def z2(surface_result):

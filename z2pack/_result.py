@@ -5,6 +5,7 @@ import abc
 
 from fsc.export import export
 
+
 @export
 class Result(metaclass=abc.ABCMeta):
     """
@@ -16,6 +17,7 @@ class Result(metaclass=abc.ABCMeta):
 
     :param convergence_ctrl:    List of ConvergenceControl objects of the calculation.
     """
+
     def __init__(self, data, stateful_ctrl, convergence_ctrl):
         self.data = data
         ctrl_states = dict()

@@ -5,6 +5,7 @@ from fsc.export import export
 from fsc.locker import ConstLocker
 from sortedcontainers import SortedList
 
+
 @export
 class SurfaceData(metaclass=ConstLocker):
     """
@@ -54,6 +55,7 @@ class SurfaceData(metaclass=ConstLocker):
         if len(self.t) == 0:
             return 1
         return min(abs(t - tval) for tval in self.t)
+
 
 class SurfaceLine:
     __slots__ = ['t', 'result']

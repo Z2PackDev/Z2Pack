@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 """Abstract base classesfor Control objects, which govern the iteration of Z2Pack runs."""
 
 import abc
@@ -8,9 +7,11 @@ import abc
 
 class AbstractControl(metaclass=abc.ABCMeta):
     """ABC for all control objects. Instances must also have a 'state' attribute to work correctly, which is not enforced by the ABC."""
+
     @abc.abstractmethod
     def __init__(self, *args, **kwargs):
         pass
+
 
 class StatefulControl(AbstractControl):
     """
@@ -32,6 +33,7 @@ class StatefulControl(AbstractControl):
         ``sc1`` and ``sc2`` are again equivalent. In particular, it is not necessary to use ``update()`` on ``sc2`` in the case of a DataControl.
 
     """
+
     @abc.abstractmethod
     def __init__(self, *, state=None, **kwargs):
         pass
@@ -51,24 +53,30 @@ class StatefulControl(AbstractControl):
 
 class DataControl(AbstractControl):
     """ABC for control objects which can be updated with data."""
+
     @abc.abstractmethod
     def update(self, data):
         pass
 
+
 class IterationControl(AbstractControl):
     """ABC for iteration control objects. Enforces the existence of ..."""
+
     @abc.abstractmethod
     def __next__(self):
         pass
+
 
 class ConvergenceControl(AbstractControl):
     """ABC for convergence tester objects. Enforces the existence of an update method, and the ``converged`` property.
     For LineControl objects, the converged property must be valid (False) also before the first update() call.
     This is not required for SurfaceControl objects."""
+
     @property
     @abc.abstractmethod
     def converged(self):
         pass
+
 
 # The only purpose of these subclasses is to distinguish between
 # ConvergenceControls which take a SurfaceData object and those which take
@@ -76,6 +84,7 @@ class ConvergenceControl(AbstractControl):
 class SurfaceControl(AbstractControl):
     """Specializes AbstractControl for Surface objects"""
     pass
+
 
 class LineControl(AbstractControl):
     """Specializes AbstractControl for Line objects"""

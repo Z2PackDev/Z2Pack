@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 """
 This module contains a class for creating Systems which are described by a Hamiltonian matrix (hm), such as k•p models.
 """
@@ -10,6 +9,7 @@ import scipy.linalg as la
 from fsc.export import export
 
 from .system import EigenstateSystem
+
 
 @export
 class System(EigenstateSystem):
@@ -32,25 +32,23 @@ class System(EigenstateSystem):
     :param hermitian_tol:   Maximum absolute value in the difference between the Hamiltonian and its hermitian conjugate. Use ``hermitian_tol=None`` to deactivate the test entirely.
     :type hermitian_tol:    float
     """
+
     def __init__(
-            self,
-            hamilton,
-            *,
-            dim=3,
-            pos=None,
-            bands=None,
-            hermitian_tol=1e-6
+        self, hamilton, *, dim=3, pos=None, bands=None, hermitian_tol=1e-6
     ):
         self._hamilton = hamilton
         self._hermitian_tol = hermitian_tol
 
-        size = len(self._hamilton([0] * dim)) # assuming to be square...
+        size = len(self._hamilton([0] * dim))  # assuming to be square...
         # add one atom for each orbital in the hamiltonian
         if pos is None:
             self._pos = [np.zeros(dim) for _ in range(size)]
         else:
             if len(pos) != size:
-                raise ValueError('The number of positions ({0}) does not match the size of the Hamiltonian ({1}).'.format(len(pos), size))
+                raise ValueError(
+                    'The number of positions ({0}) does not match the size of the Hamiltonian ({1}).'.
+                    format(len(pos), size)
+                )
             self._pos = [np.array(p) for p in pos]
         if bands is None:
             bands = size // 2
@@ -70,8 +68,11 @@ class System(EigenstateSystem):
             ham = self._hamilton(k)
             if self._hermitian_tol is not None:
                 diff = la.norm(ham - ham.conjugate().transpose(), ord=np.inf)
-                if  diff > self._hermitian_tol:
-                    raise ValueError('The Hamiltonian you used is not hermitian, with the maximum difference between the Hamiltonian and its adjoint being {0}. Use the ``hamilton_tol`` input parameter (in the ``tb.Hamilton`` constructor; currently {1}) to set the sensitivity of this test or turn it off completely (``hamilton_tol=None``).'.format(diff, self._hermitian_tol))
+                if diff > self._hermitian_tol:
+                    raise ValueError(
+                        'The Hamiltonian you used is not hermitian, with the maximum difference between the Hamiltonian and its adjoint being {0}. Use the ``hamilton_tol`` input parameter (in the ``tb.Hamilton`` constructor; currently {1}) to set the sensitivity of this test or turn it off completely (``hamilton_tol=None``).'.
+                        format(diff, self._hermitian_tol)
+                    )
             eigval, eigvec = la.eigh(ham)
             eigval = np.real(eigval)
             idx = eigval.argsort()

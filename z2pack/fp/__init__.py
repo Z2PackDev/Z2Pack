@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 r"""
 This specialisation of Z2Pack can handle systems computed with ab initio
 codes interfacing to Wannier90.

@@ -20,9 +20,10 @@ pwcmd = mpirun + qedir + '/pw.x '
 pw2wancmd = mpirun + qedir + '/pw2wannier90.x '
 wancmd = wandir + '/wannier90.x'
 
-z2cmd = (wancmd + ' bi -pp;' +
-         pwcmd + '< bi.nscf.in >& pw.log;' +
-         pw2wancmd + '< bi.pw2wan.in >& pw2wan.log;')
+z2cmd = (
+    wancmd + ' bi -pp;' + pwcmd + '< bi.nscf.in >& pw.log;' + pw2wancmd +
+    '< bi.pw2wan.in >& pw2wan.log;'
+)
 
 # creating the results folder, running the SCF calculation if needed
 if not os.path.exists('./plots'):
@@ -33,12 +34,17 @@ if not os.path.exists('./scf'):
     os.makedirs('./scf')
     print("Running the scf calculation")
     shutil.copyfile('input/bi.scf.in', 'scf/bi.scf.in')
-    out = subprocess.call(pwcmd + ' < bi.scf.in > scf.out', shell=True, cwd='./scf')
+    out = subprocess.call(
+        pwcmd + ' < bi.scf.in > scf.out', shell=True, cwd='./scf'
+    )
     if out != 0:
-        raise RuntimeError('Error in SCF call. Inspect scf folder for details, and delete it to re-run the SCF calculation.')
+        raise RuntimeError(
+            'Error in SCF call. Inspect scf folder for details, and delete it to re-run the SCF calculation.'
+        )
 
 # Copying the lattice parameters from bi.save/data-file.xml into bi.win
-cell = ET.parse('scf/bi.save/data-file.xml').find('CELL').find('DIRECT_LATTICE_VECTORS')
+cell = ET.parse('scf/bi.save/data-file.xml'
+                ).find('CELL').find('DIRECT_LATTICE_VECTORS')
 unit = cell[0].attrib['UNITS']
 lattice = '\n '.join([line.text.strip('\n ') for line in cell[1:]])
 
@@ -50,11 +56,13 @@ with open('input/bi.win', 'w') as f:
 # Creating the System. Note that the SCF charge file does not need to be
 # copied, but instead can be referenced in the .files file.
 # The k-points input is appended to the .in file
-input_files = ['input/' + name for name in ["bi.nscf.in", "bi.pw2wan.in", "bi.win" ]]
+input_files = [
+    'input/' + name for name in ["bi.nscf.in", "bi.pw2wan.in", "bi.win"]
+]
 system = z2pack.fp.System(
     input_files=input_files,
     kpt_fct=[z2pack.fp.kpoint.qe, z2pack.fp.kpoint.wannier90],
-    kpt_path=["bi.nscf.in","bi.win"],
+    kpt_path=["bi.nscf.in", "bi.win"],
     command=z2cmd,
     executable='/bin/bash',
     mmn_path='bi.mmn'
@@ -75,10 +83,16 @@ result_1 = z2pack.surface.run(
 )
 
 # Combining the two plots
-fig, ax = plt.subplots(1, 2, sharey=True, figsize=(9,5))
+fig, ax = plt.subplots(1, 2, sharey=True, figsize=(9, 5))
 z2pack.plot.wcc(result_0, axis=ax[0])
 z2pack.plot.wcc(result_1, axis=ax[1])
 plt.savefig('plots/plot.pdf', bbox_inches='tight')
 
-print('Z2 topological invariant at kx = 0: {0}'.format(z2pack.invariant.z2(result_0)))
-print('Z2 topological invariant at kx = 0.5: {0}'.format(z2pack.invariant.z2(result_1)))
+print(
+    'Z2 topological invariant at kx = 0: {0}'.
+    format(z2pack.invariant.z2(result_0))
+)
+print(
+    'Z2 topological invariant at kx = 0.5: {0}'.
+    format(z2pack.invariant.z2(result_1))
+)

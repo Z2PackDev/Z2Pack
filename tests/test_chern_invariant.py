@@ -1,26 +1,26 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Test the function that computes the Chern invariant."""
+# pylint: disable=unused-argument,redefined-outer-name,unused-wildcard-import
 
-import z2pack
 import random
 
+import z2pack
 import pytest
 
 from monkeypatch_data import *
 
 
-@pytest.fixture(params=range(10))
-def N(request):
+@pytest.fixture(params=range(6))
+def num_lines(request):
     return request.param
 
 
-@pytest.fixture(params=range(1, 10))
-def M(request):
+@pytest.fixture(params=range(2, 5))
+def num_lines_nonzero(request):
     return request.param
 
 
-@pytest.fixture(params=range(4, 10))
-def L(request):
+@pytest.fixture(params=range(1, 6))
+def num_wcc(request):
     return request.param
 
 
@@ -34,28 +34,30 @@ def x(request):
     return request.param
 
 
-def test_trivial(N, M, patch_surface_data):
+def test_trivial(num_lines, num_wcc, patch_surface_data):
     """Test straight WCC lines"""
-    wcc = [np.linspace(0, 1, M) for j in range(N)]
+    wcc = [np.linspace(0, 1, num_wcc) for j in range(num_lines)]
     data = SurfaceData(wcc)
     assert z2pack.invariant.chern(data) == 0
 
 
-def test_linear(L, x, offset, patch_surface_data):
+def test_linear(num_lines_nonzero, x, offset, patch_surface_data):
     """Test a linear offset"""
-    wcc = np.array([np.linspace(x, offset + x, L)]).T
+    wcc = np.array([np.linspace(x, offset + x, num_lines_nonzero)]).T
     data = SurfaceData(wcc)
-    assert (abs(offset) / (L - 1) >= 0.5) or np.isclose(
+    assert (abs(offset) / (num_lines_nonzero - 1) >= 0.5) or np.isclose(
         z2pack.invariant.chern(data), offset
     )
 
 
-def test_linear_2(M, L, x, offset, patch_surface_data):
-    """Test a linear offset, with some additional lines in between"""
-    wcc = [np.linspace(x, offset + x, L)]
-    wcc += [[random.random()] * L] * M
+def test_linear_2(num_lines_nonzero, num_wcc, x, offset, patch_surface_data):
+    """
+    Test a linear offset, with some additional lines in between
+    """
+    wcc = [np.linspace(x, offset + x, num_lines_nonzero)]
+    wcc += [[random.random()] * num_lines_nonzero] * num_wcc
     wcc = np.array(wcc).T
     data = SurfaceData(wcc)
-    assert (abs(offset) / (L - 1) >= 0.5) or np.isclose(
+    assert (abs(offset) / (num_lines_nonzero - 1) >= 0.5) or np.isclose(
         z2pack.invariant.chern(data), offset
     )

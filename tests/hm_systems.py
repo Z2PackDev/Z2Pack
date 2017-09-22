@@ -1,5 +1,7 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""
+Fixtures for hamiltonian matrix (hm) system tests.
+"""
+# pylint: disable=redefined-outer-name,invalid-name
 
 import pytest
 import numpy as np
@@ -48,6 +50,9 @@ def simple_surface():
 
 @pytest.fixture(params=[False, True])
 def weyl_system(request):
+    """
+    Creates a Weyl point system.
+    """
     res = z2pack.hm.System(
         lambda k: np.array(
             [

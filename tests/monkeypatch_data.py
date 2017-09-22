@@ -1,12 +1,13 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""
+Fixtures that monkeypatch Data classes so that they can simply be set to the desired value.
+"""
 
 import pytest
-import z2pack
 
 import numpy as np
 from sortedcontainers import SortedList
 
+import z2pack
 from z2pack.line import WccLineData as LineData
 from z2pack.surface import SurfaceData
 
@@ -15,11 +16,15 @@ from z2pack.line import LineResult
 
 @pytest.fixture
 def patch_max_move(monkeypatch):
-    monkeypatch.setattr(z2pack.surface._control, '_get_max_move', min)
+    monkeypatch.setattr(z2pack.surface._control, '_get_max_move', min)  # pylint: disable=protected-access
 
 
 @pytest.fixture
 def patch_surface_data(monkeypatch):
+    """
+    Monkeypatch the SurfaceData class so that it can be set from a nested list of WCC and list of t-values.
+    """
+
     def __init__(self, wcc_list, t_list=None):
         if t_list is None:
             t_list = np.linspace(0, 1, len(wcc_list))

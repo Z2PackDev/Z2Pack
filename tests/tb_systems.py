@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Fixtures for testing tight-binding systems."""
+# pylint: disable=invalid-name
 
 import itertools
 
@@ -10,6 +10,9 @@ import tbmodels
 
 @pytest.fixture
 def tb_system():
+    """
+    Creates a simple tight-binding system.
+    """
     t1, t2 = (0.2, 0.3)
 
     model = tbmodels.Model(
@@ -36,4 +39,7 @@ def tb_system():
 
 @pytest.fixture
 def tb_surface():
+    """
+    Creates a simple 2D surface in 3D space.
+    """
     return lambda s, t: [s, t, 0]

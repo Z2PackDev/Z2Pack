@@ -1,7 +1,6 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Test the function that parses Wannier90 *.mmn files."""
+# pylint: disable=protected-access
 
-import json
 
 import pytest
 import z2pack

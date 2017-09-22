@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Defines the System class for first-principles calculations."""
 
 import os
 import shutil
@@ -116,6 +115,9 @@ class System(OverlapSystem):
         return [self._to_abspath(p) for p in path]
 
     def _create_input(self, kpt):
+        """
+        Create all input file(s).
+        """
         with contextlib.suppress(FileNotFoundError):
             shutil.rmtree(self._build_folder)
         os.mkdir(self._build_folder)
@@ -127,7 +129,7 @@ class System(OverlapSystem):
                 f.write(self._kpt_fct[i](kpt))
 
     def get_mmn(self, kpt):
-        N = len(kpt) - 1
+        num_kpt = len(kpt) - 1
 
         # create input
         self._create_input(kpt)
@@ -141,26 +143,26 @@ class System(OverlapSystem):
         )
 
         # read mmn file
-        M = mmn.get_m(self._mmn_path)
-        if len(M) == 0:
+        overlap_matrices = mmn.get_m(self._mmn_path)
+        if not overlap_matrices:
             raise ValueError(
                 'No overlap matrices were found. Maybe switch from shell_list to search_shells in wannier90.win or add more k-points to the line.'
             )
-        if len(M) != N:
+        if len(overlap_matrices) != num_kpt:
             raise ValueError(
                 'The number of overlap matrices found is {0}, but should be {1}. Maybe check search_shells in wannier90.win'.
-                format(len(M), N)
+                format(len(overlap_matrices), num_kpt)
             )
         if self._num_wcc is not None:
             shape = (self._num_wcc, self._num_wcc)
-            for i, overlaps in enumerate(M):
+            for i, overlaps in enumerate(overlap_matrices):
                 if overlaps.shape != shape:
                     raise ValueError(
                         'The shape of overlap matrix #{} is {}, but should be {}.'.
                         format(i, overlaps.shape, shape)
                     )
 
-        return M
+        return overlap_matrices
 
 
 def _copy(initial_paths, final_names):

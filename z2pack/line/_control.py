@@ -14,6 +14,7 @@ class StepCounter(IterationControl, StatefulControl, LineControl):
     """Counts the number of k-points along the line."""
 
     def __init__(self, *, iterator):
+        super().__init__()
         self._iterator = iter(iterator)
         self._state = 0
 
@@ -63,6 +64,7 @@ class PosCheck(
     """
 
     def __init__(self, *, pos_tol):
+        super().__init__()
         if not (pos_tol > 0 and pos_tol <= 1):
             raise ValueError('pos_tol must be in (0, 1]')
         self.pos_tol = pos_tol

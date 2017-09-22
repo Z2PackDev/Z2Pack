@@ -2,16 +2,16 @@ language: python
 cache: pip
 
 python:
-    - "3.4"
-    - "3.5"
-    - "3.6"
+  - "3.6"
+  - "3.4"
+  - "3.5"
 
 install:
-    - pip install .[dev]
+  - pip install .[dev]
 
 script:
-    - cd tests
-    - py.test --no-plot-compare
+  - cd tests
+  - py.test --no-plot-compare
 
 jobs:
   include:

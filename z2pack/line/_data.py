@@ -16,7 +16,7 @@ class _LazyProperty:
     def __init__(self, method):
         self.method = method
 
-    def __get__(self, instance, owner):
+    def __get__(self, instance, owner):  # pylint: disable=missing-docstring
         if not instance:
             return None
 
@@ -48,10 +48,12 @@ class WccLineData(metaclass=ConstLocker):
     @classmethod
     def from_overlaps(cls, overlaps):
         r"""Creates a :class:`WccLineData` object from a list containing the overlap matrices :math:`M_{m,n}^{\mathbf{k}, \mathbf{k+b}} = \langle u_n^\mathbf{k} | u_m^\mathbf{k+b} \rangle`."""
-        return cls(cls._calculate_wannier(cls._wilson(overlaps))[0])
+        return cls(
+            cls._calculate_wannier_from_wilson(cls._wilson(overlaps))[0]
+        )
 
     @staticmethod
-    def _calculate_wannier(wilson):
+    def _calculate_wannier_from_wilson(wilson):
         eigs, eigvec = la.eig(wilson)
         wcc = np.array([np.angle(z) / (2 * np.pi) % 1 for z in eigs])
         idx = np.argsort(wcc)
@@ -96,7 +98,7 @@ class EigenstateLineData(WccLineData):
     * ``wilson_eigenstates`` : Eigenstates of the Wilson loop, given as a list of 1D - arrays.
     """
 
-    def __init__(self, eigenstates):
+    def __init__(self, eigenstates):  # pylint: disable=super-init-not-called
         self.eigenstates = eigenstates
 
     @_LazyProperty
@@ -120,7 +122,9 @@ class EigenstateLineData(WccLineData):
         return self.wilson_eigenstates
 
     def _calculate_wannier(self):
-        wcc, wilson_eigenstates = super()._calculate_wannier(self.wilson)
+        wcc, wilson_eigenstates = self._calculate_wannier_from_wilson(
+            self.wilson
+        )
         with change_lock(self, 'none'):
             self.wcc = wcc
             self.wilson_eigenstates = wilson_eigenstates

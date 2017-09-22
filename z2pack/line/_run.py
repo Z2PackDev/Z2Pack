@@ -113,9 +113,9 @@ def run_line(
             )
         try:
             init_result = io.load(save_file, serializer=serializer)
-        except IOError as e:
+        except IOError as exception:
             if not load_quiet:
-                raise e
+                raise exception
 
     if save_file is not None:
         dirname = os.path.dirname(os.path.abspath(save_file))
@@ -138,7 +138,7 @@ def _run_line_impl(
     save_file=None,
     init_result=None,
     serializer='auto'
-):
+):  # pylint: disable=too-many-locals
     """
     Implementation of the line's run.
 
@@ -160,22 +160,12 @@ def _run_line_impl(
             format(delta)
         )
 
-    # check if all controls are valid
-    for ctrl in controls:
-        if not isinstance(ctrl, LineControl):
-            raise ValueError(
-                '{} control object is not a LineControl instance.'.
-                format(ctrl.__class__)
-            )
+    _validate_controls(controls)
 
-    # filter controls by type
-    def filter_ctrl(ctrl_type):
-        return [ctrl for ctrl in controls if isinstance(ctrl, ctrl_type)]
-
-    stateful_ctrl = filter_ctrl(StatefulControl)
-    iteration_ctrl = filter_ctrl(IterationControl)
-    data_ctrl = filter_ctrl(DataControl)
-    convergence_ctrl = filter_ctrl(ConvergenceControl)
+    stateful_ctrl = _filter_ctrl(controls, StatefulControl)
+    iteration_ctrl = _filter_ctrl(controls, IterationControl)
+    data_ctrl = _filter_ctrl(controls, DataControl)
+    convergence_ctrl = _filter_ctrl(controls, ConvergenceControl)
 
     def save():
         if save_file is not None:
@@ -197,13 +187,14 @@ def _run_line_impl(
 
     # Detect which type of System is active
     if hasattr(system, 'get_eig'):
-        DataType = EigenstateLineData
+        data_type = EigenstateLineData
         system_fct = system.get_eig
     else:
-        DataType = WccLineData.from_overlaps
+        data_type = WccLineData.from_overlaps
         system_fct = system.get_mmn
 
     def collect_convergence():
+        """Collect convergence control results."""
         res = [c_ctrl.converged for c_ctrl in convergence_ctrl]
         LINE_ONLY__LOGGER.info(
             '{} of {} line convergence criteria fulfilled.'.
@@ -228,7 +219,7 @@ def _run_line_impl(
                 )
                 return result
 
-        data = DataType(
+        data = data_type(
             system_fct(
                 list(
                     np.array(line(k))
@@ -251,3 +242,18 @@ def _run_line_impl(
         result.convergence_report, tags=('convergence_report', 'box')
     )
     return result
+
+
+def _validate_controls(controls):
+    """Validate that Controls are of LineControl type."""
+    for ctrl in controls:
+        if not isinstance(ctrl, LineControl):
+            raise ValueError(
+                '{} control object is not a LineControl instance.'.
+                format(ctrl.__class__)
+            )
+
+
+def _filter_ctrl(controls, ctrl_type):
+    """Filter controls by their type."""
+    return [ctrl for ctrl in controls if isinstance(ctrl, ctrl_type)]

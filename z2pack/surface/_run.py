@@ -152,8 +152,9 @@ def run_surface(
 
 
 # filter out LogRecords tagged as 'line_only' in the line.
-@filter_manager(logging.getLogger('z2pack.line'), TagFilter(('line_only', )))
-def _run_surface_impl(
+@filter_manager(logging.getLogger('z2pack.line'),
+                TagFilter(('line_only', )))  # noqa
+def _run_surface_impl(  # noqa
     *controls,
     system,
     surface,
@@ -173,7 +174,6 @@ def _run_surface_impl(
     start_time = time.time()
 
     # CONTROL SETUP
-
     def filter_ctrl(ctrl_type):
         return [ctrl for ctrl in controls if isinstance(ctrl, ctrl_type)]
 
@@ -184,7 +184,6 @@ def _run_surface_impl(
     convergence_ctrl = filter_ctrl(ConvergenceControl)
 
     # HELPER FUNCTIONS
-
     def get_line(t, init_line_result=None):
         """
         Runs a line calculation and returns its result.
@@ -291,7 +290,7 @@ def _run_surface_impl(
             result = add_line(t)
 
         # STEP 3 -- MAIN LOOP
-        N = len(data.lines)
+        num_lines = len(data.lines)
         conv = collect_convergence()
         while not all(conv):
             # add lines for all non-converged values
@@ -302,10 +301,10 @@ def _run_surface_impl(
                 result = add_line(t)
 
             # check if new lines appeared
-            N_new = len(data.lines)
-            if N == N_new:
+            num_lines_new = len(data.lines)
+            if num_lines == num_lines_new:
                 break
-            N = N_new
+            num_lines = num_lines_new
             conv = collect_convergence()
 
     end_time = time.time()

@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Defines the data container for line calculations."""
 
 import functools
 
@@ -67,12 +66,12 @@ class WccLineData(metaclass=ConstLocker):
         return sum(self.wcc) % 1
 
     @_LazyProperty
-    def gap_pos(self):
+    def gap_pos(self):  # pylint: disable=method-hidden
         self._calculate_gap()
         return self.gap_pos
 
     @_LazyProperty
-    def gap_size(self):
+    def gap_size(self):  # pylint: disable=method-hidden
         self._calculate_gap()
         return self.gap_size
 
@@ -81,6 +80,7 @@ class WccLineData(metaclass=ConstLocker):
             self.gap_pos, self.gap_size = _gapfind(self.wcc)
 
     def __getattr__(self, name):
+        """Forward to parent class unless for the 'eigenstates' attribute, in which case an AttributError is raised."""
         if name == 'eigenstates':
             raise AttributeError(
                 "This data does not have the 'eigenstates' attribute. This is because the system used does not provide eigenstates, but only overlap matrices. The functionality which resulted in this error can be used only for systems providing eigenstates."
@@ -101,6 +101,7 @@ class EigenstateLineData(WccLineData):
 
     @_LazyProperty
     def wilson(self):
+        """Wilson loop along the line."""
         # create overlaps
         overlaps = []
 
@@ -109,12 +110,12 @@ class EigenstateLineData(WccLineData):
         return self._wilson(overlaps)
 
     @_LazyProperty
-    def wcc(self):
+    def wcc(self):  # pylint: disable=method-hidden
         self._calculate_wannier()
         return self.wcc
 
     @_LazyProperty
-    def wilson_eigenstates(self):
+    def wilson_eigenstates(self):  # pylint: disable=method-hidden
         self._calculate_wannier()
         return self.wilson_eigenstates
 

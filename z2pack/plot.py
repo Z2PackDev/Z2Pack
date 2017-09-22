@@ -13,6 +13,7 @@ from ._utils import _pol_step
 
 @decorator.decorator
 def _plot(func, data, *, axis=None, **kwargs):
+    """Decorator that sets up the figure axes and handles options common to all plots."""
     # import is here s.t. the import of the package does not fail
     # if matplotlib is not present
     import matplotlib.pyplot as plt
@@ -185,7 +186,13 @@ def chern(
     pol = surface_result.pol
     pol_step = _pol_step(pol)
     for offset in [-1, 0, 1]:
-        for t, p, p_step in zip(zip(t_list, t_list[1:]), pol, pol_step):
-            axis.plot(t, [p + offset, p + p_step + offset], **settings)
-        for t, p, p_step in zip(zip(t_list, t_list[1:]), pol[1:], pol_step):
-            axis.plot(t, [p - p_step + offset, p + offset], **settings)
+        for t, p_value, p_step in zip(zip(t_list, t_list[1:]), pol, pol_step):
+            axis.plot(
+                t, [p_value + offset, p_value + p_step + offset], **settings
+            )
+        for t, p_value, p_step in zip(
+            zip(t_list, t_list[1:]), pol[1:], pol_step
+        ):
+            axis.plot(
+                t, [p_value - p_step + offset, p_value + offset], **settings
+            )

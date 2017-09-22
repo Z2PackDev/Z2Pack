@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Defines functions for encoding and decoding Z2Pack objects."""
 
 import numbers
 import contextlib
@@ -87,7 +86,7 @@ def _(obj):
     )
 
 
-#-----------------------------------------------------------------------#
+# --------------------------------------------------------------------- #
 
 
 @export
@@ -136,12 +135,11 @@ def decode_complex(obj):
 
 
 @decode.register(dict)
-def _(obj):
+def _(obj):  # pylint: disable=missing-docstring
     with contextlib.suppress(AttributeError):
         obj = {k.decode('utf-8'): v for k, v in obj.items()}
     special_markers = [key for key in obj.keys() if key.startswith('__')]
     if len(special_markers) == 1:
         name = special_markers[0].strip('__')
         return globals()['decode_' + name](obj)
-    else:
-        return obj
+    return obj

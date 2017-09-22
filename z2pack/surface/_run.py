@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Defines functions to run a surface calculation."""
 
 import os
 import copy
@@ -131,9 +130,9 @@ def run_surface(
             )
         try:
             init_result = io.load(save_file, serializer=serializer)
-        except IOError as e:
+        except IOError as exception:
             if not load_quiet:
-                raise e
+                raise exception
 
     if save_file is not None:
         dirname = os.path.dirname(os.path.abspath(save_file))
@@ -190,6 +189,7 @@ def _run_surface_impl(
         """
         Runs a line calculation and returns its result.
         """
+        # pylint: disable=protected-access
         return _line_run._run_line_impl(
             *copy.deepcopy(line_ctrl),
             system=system,

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""Defines the functions to run a line calculation."""
 
 import os
 import time
@@ -43,7 +44,7 @@ def run_line(
     load_quiet=True,
     serializer='auto'
 ):
-    """
+    r"""
     Calculates the Wannier charge centers for a given system and line, automatically converging w.r.t. the number of k-points along the line.
 
     :param system:      System for which the WCC should be calculated.

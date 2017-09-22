@@ -1,7 +1,6 @@
 """Test the function that parses Wannier90 *.mmn files."""
 # pylint: disable=protected-access
 
-
 import pytest
 import z2pack
 import numpy as np

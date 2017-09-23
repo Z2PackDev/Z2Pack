@@ -1,4 +1,5 @@
 """pytest configuration file for Z2Pack tests."""
+# pylint: disable=protected-access,redefined-outer-name,unused-argument
 
 import os
 import json
@@ -93,6 +94,9 @@ def compare_wcc(compare_data):
     """Checks whether two lists of WCC (or nested lists of WCC) are almost equal, up to a periodic shift."""
 
     def check_wcc(wcc0, wcc1):
+        """
+        Check that two sets of WCC are equal.
+        """
         if isinstance(wcc0[0], Iterable):
             if len(wcc0) != len(wcc1):
                 return False
@@ -104,6 +108,10 @@ def compare_wcc(compare_data):
 
 @pytest.fixture
 def sample():
+    """
+    Returns the path to the sample of the given name.
+    """
+
     def inner(name):
         return os.path.join(
             os.path.join(

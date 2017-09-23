@@ -1,8 +1,8 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""
+Fixtures for testing Control classes.
+"""
 
 import pytest
-import z2pack
 from z2pack._control import (
     AbstractControl, IterationControl, DataControl, StatefulControl,
     ConvergenceControl
@@ -11,7 +11,11 @@ from z2pack._control import (
 
 @pytest.fixture
 def test_ctrl_base():
-    def inner(ctrl):
+    """
+    Test that a control class is a subclass of the right abstract classes.
+    """
+
+    def inner(ctrl):  # pylint: disable=missing-docstring
         assert issubclass(ctrl, AbstractControl)
         if hasattr(ctrl, 'converged'):
             assert issubclass(ctrl, ConvergenceControl)

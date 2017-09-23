@@ -1,11 +1,12 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""
+Tests for QE DFT calculations.
+"""
+# pylint: disable=redefined-outer-name,unused-argument,protected-access
 
 import os
 import json
 import shutil
 import tempfile
-import subprocess
 
 import pytest
 import numpy as np
@@ -15,7 +16,11 @@ import z2pack
 
 @pytest.fixture(params=[z2pack.fp.kpoint.qe, z2pack.fp.kpoint.qe_explicit])
 def qe_system(request, sample):
-    def inner(build_dir, num_wcc=None):
+    """
+    Creates a QE system.
+    """
+
+    def inner(build_dir, num_wcc=None):  # pylint: disable=missing-docstring
         sample_dir = sample('espresso')
         shutil.copytree(
             os.path.join(sample_dir, 'scf'), os.path.join(build_dir, 'scf')
@@ -50,15 +55,18 @@ def qe_system(request, sample):
     return inner
 
 
-surface_fcts = [
+SURFACE_FCTS = [
     lambda s, t: [0, s / 2, t], lambda s, t: [t, s, s],
     lambda s, t: [t, t, s / 2]
 ]
 
 
 @pytest.mark.qe
-@pytest.mark.parametrize('surface_fct', surface_fcts)
+@pytest.mark.parametrize('surface_fct', SURFACE_FCTS)
 def test_bismuth(qe_system, compare_wcc, surface_fct):
+    """
+    Test Bi calculation.
+    """
     # don't want to remove it if the test failed
     build_dir = tempfile.mkdtemp()
     system = qe_system(build_dir)
@@ -79,14 +87,17 @@ def test_bismuth(qe_system, compare_wcc, surface_fct):
 
 
 @pytest.mark.qe
-@pytest.mark.parametrize('surface_fct', [surface_fcts[0]])
+@pytest.mark.parametrize('surface_fct', [SURFACE_FCTS[0]])
 def test_bismuth_wrong_num_wcc(qe_system, compare_wcc, surface_fct):
+    """
+    Test that Bi calculation raises if the wrong number of WCC is produced when num_wcc is set.
+    """
     # don't want to remove it if the test failed
     build_dir = tempfile.mkdtemp()
     system = qe_system(build_dir, num_wcc=12)
 
     with pytest.raises(ValueError):
-        result = z2pack.surface.run(
+        z2pack.surface.run(
             system=system,
             surface=surface_fct,
             num_lines=4,
@@ -98,8 +109,11 @@ def test_bismuth_wrong_num_wcc(qe_system, compare_wcc, surface_fct):
 
 
 @pytest.mark.qe
-@pytest.mark.parametrize('surface_fct', [surface_fcts[0]])
+@pytest.mark.parametrize('surface_fct', [SURFACE_FCTS[0]])
 def test_bismuth_correct_num_wcc(qe_system, compare_wcc, surface_fct):
+    """
+    Test with correct num_wcc given.
+    """
     # don't want to remove it if the test failed
     build_dir = tempfile.mkdtemp()
     system = qe_system(build_dir, num_wcc=10)
@@ -122,11 +136,14 @@ def test_bismuth_correct_num_wcc(qe_system, compare_wcc, surface_fct):
 
 @pytest.mark.qe
 def test_restart_broken(qe_system):
+    """
+    Test that restart raises if the fp.System is broken.
+    """
     surface_fct = lambda s, t: [0, s, t]
     build_dir = tempfile.mkdtemp()
     system = qe_system(build_dir)
     save_file = os.path.join(build_dir, 'result.json')
-    result = z2pack.surface.run(
+    z2pack.surface.run(
         system=system,
         surface=surface_fct,
         num_lines=3,
@@ -138,7 +155,7 @@ def test_restart_broken(qe_system):
     # breaking the system
     system._executable = 'echo foo'
     with pytest.raises(FileNotFoundError):
-        result = z2pack.surface.run(
+        z2pack.surface.run(
             system=system,
             surface=surface_fct,
             num_lines=5,

@@ -1,19 +1,24 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""
+Tests for ABINIT DFT calculations.
+"""
+# pylint: disable=redefined-outer-name
 
+import os
 import shutil
 import tempfile
 
-import pytest
-import numpy as np
-
 import z2pack
+import pytest
 
 
 @pytest.fixture
-def abinit_system():
-    def inner(build_dir):
-        sample_dir = samples('abinit')
+def abinit_system(sample):
+    """
+    Create ABINIT system.
+    """
+
+    def inner(build_dir):  # pylint: disable=missing-docstring
+        sample_dir = sample('abinit')
         input_files = [
             os.path.join(sample_dir, name)
             for name in [
@@ -33,12 +38,15 @@ def abinit_system():
     return inner
 
 
-surface_fcts = [lambda s, t: [0, s / 2, t], lambda s, t: [t, s, s]]
+SURFACE_FCTS = [lambda s, t: [0, s / 2, t], lambda s, t: [t, s, s]]
 
 
 @pytest.mark.abinit
-@pytest.mark.parametrize('surface_fct', surface_fcts)
+@pytest.mark.parametrize('surface_fct', SURFACE_FCTS)
 def test_bismuth(abinit_system, compare_wcc, surface_fct):
+    """
+    Test bismuth run with ABINIT.
+    """
     # don't want to remove it if the test failed
     build_dir = tempfile.mkdtemp()
     system = abinit_system(build_dir)

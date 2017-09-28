@@ -3,4 +3,4 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = build
-HTMLBUILDDIR  = ../../Z2Pack_website/web/doc/2.1
+HTMLBUILDDIR  = build/html

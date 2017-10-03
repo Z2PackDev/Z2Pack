@@ -31,7 +31,11 @@ def Hamilton(k, m, t1, t2, phi):
 def get_chern(m, t1, t2, phi):
     system = z2pack.hm.System(lambda k: Hamilton(k, m, t1, t2, phi), bands=1)
 
-    result = z2pack.surface.run(system=system, surface=lambda s, t: [t, s, 0.])
+    result = z2pack.surface.run(
+        system=system,
+        surface=lambda s, t: [t, s, 0.],
+        min_neighbour_dist=1e-5
+    )
     return z2pack.invariant.chern(result)
 
 

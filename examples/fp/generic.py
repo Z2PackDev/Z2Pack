@@ -45,10 +45,12 @@ z2pack.plot.wcc(res_1, axis=ax[1])
 plt.savefig('plot.pdf', bbox_inches='tight')
 
 print(
-    'Z2 topological invariant at kx = 0: {0}'.
-    format(z2pack.invariant.z2(res_0))
+    'Z2 topological invariant at kx = 0: {0}'.format(
+        z2pack.invariant.z2(res_0)
+    )
 )
 print(
-    'Z2 topological invariant at kx = 0.5: {0}'.
-    format(z2pack.invariant.z2(res_1))
+    'Z2 topological invariant at kx = 0.5: {0}'.format(
+        z2pack.invariant.z2(res_1)
+    )
 )

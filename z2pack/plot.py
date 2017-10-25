@@ -126,9 +126,11 @@ def wcc(
                   'facecolor': 'none',
                   'edgecolors': 'k'},
     gaps=True,
-    gap_settings={'marker': 'D',
-                  'color': 'b',
-                  'linestyle': 'none'}
+    gap_settings={
+        'marker': 'D',
+        'color': 'b',
+        'linestyle': 'none'
+    }
 ):
     r"""
     Plots the WCCs and the largest gaps (y-axis) against the t-points (x-axis).
@@ -164,9 +166,11 @@ def chern(
     surface_result,
     *,
     axis=None,
-    settings={'marker': 'o',
-              'markerfacecolor': 'r',
-              'color': 'r'}
+    settings={
+        'marker': 'o',
+        'markerfacecolor': 'r',
+        'color': 'r'
+    }
 ):
     r"""
     Plots the sum of WCCs (polarization) (y-axis) against the t-points (x-axis).

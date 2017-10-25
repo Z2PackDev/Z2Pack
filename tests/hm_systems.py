@@ -15,8 +15,9 @@ class OverlapMockSystem(z2pack.system.OverlapSystem):
 
     def get_mmn(self, kpt):
         return [
-            z2pack.line.
-            EigenstateLineData(self.eigenstate_system.get_eig(kpt)).wilson
+            z2pack.line.EigenstateLineData(
+                self.eigenstate_system.get_eig(kpt)
+            ).wilson
         ]
 
 

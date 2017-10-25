@@ -70,15 +70,17 @@ def compare_data(request, test_name, scope="session"):
         if val is None:
             request.config.cache.set(
                 full_name,
-                json.
-                loads(json.dumps(data, default=z2pack.io._encoding.encode))
+                json.loads(
+                    json.dumps(data, default=z2pack.io._encoding.encode)
+                )
             )
             raise ValueError('Reference data does not exist.')
         else:
             assert compare_fct(
                 val,
-                json.
-                loads(json.dumps(data, default=z2pack.io._encoding.encode))
+                json.loads(
+                    json.dumps(data, default=z2pack.io._encoding.encode)
+                )
             )  # get rid of json-specific quirks
 
     return inner

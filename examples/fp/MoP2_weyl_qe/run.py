@@ -98,9 +98,10 @@ result_3 = z2pack.surface.run(
 
 # Combining the two plots
 fig, ax = plt.subplots(1, 3, sharey=True, figsize=(14, 4))
-for res, axis, title in zip([result_1, result_2, result_3], ax, [
-    'Sphere around WP1', 'Sphere around WP2', 'Sphere around both WPs'
-]):
+for res, axis, title in zip(
+    [result_1, result_2, result_3], ax,
+    ['Sphere around WP1', 'Sphere around WP2', 'Sphere around both WPs']
+):
     z2pack.plot.chern(res, axis=axis)
     axis.set_title(title)
     axis.set_xlabel(r'$\theta$')
@@ -112,14 +113,17 @@ ax[0].yaxis.set_ticklabels([r'$0$', r'$2\pi$'])
 plt.savefig('plots/plot.pdf', bbox_inches='tight')
 
 print(
-    'Chern number / Weyl chirality around WP1: {0:.2f}'.
-    format(z2pack.invariant.chern(result_1))
+    'Chern number / Weyl chirality around WP1: {0:.2f}'.format(
+        z2pack.invariant.chern(result_1)
+    )
 )
 print(
-    'Chern number / Weyl chirality around WP2: {0:.2f}'.
-    format(z2pack.invariant.chern(result_2))
+    'Chern number / Weyl chirality around WP2: {0:.2f}'.format(
+        z2pack.invariant.chern(result_2)
+    )
 )
 print(
-    'Chern number / Weyl chirality around both Weyl points: {0:.2f}'.
-    format(z2pack.invariant.chern(result_3))
+    'Chern number / Weyl chirality around both Weyl points: {0:.2f}'.format(
+        z2pack.invariant.chern(result_3)
+    )
 )

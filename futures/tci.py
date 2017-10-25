@@ -29,19 +29,19 @@ def tci_h(k):
     t1a, t1b, t2a, t2b, t1, t2, tz = (1.0, -1.0, 0.5, -0.5, 2.5, 0.5, 2.0)
     H = np.matrix([[
         2 * t1a * cos(kx) + 2 * t2a * cos(kx) * cos(ky),
-        2 * t2a * sin(kx) * sin(ky),
-        t1 + 2 * t2 * (cos(kx) + cos(ky)) + tz * exp(1j * kz), 0
+        2 * t2a * sin(kx) * sin(ky), t1 + 2 * t2 *
+        (cos(kx) + cos(ky)) + tz * exp(1j * kz), 0
     ], [
         2 * t2a * sin(kx) * sin(ky),
-        2 * t1a * cos(kx) + 2 * t2a * cos(kx) * cos(ky), 0,
-        t1 + 2 * t2 * (cos(kx) + cos(ky)) + tz * exp(1j * kz)
+        2 * t1a * cos(kx) + 2 * t2a * cos(kx) * cos(ky), 0, t1 + 2 * t2 *
+        (cos(kx) + cos(ky)) + tz * exp(1j * kz)
     ], [
         t1 + 2 * t2 * (cos(kx) + cos(ky)) + tz * exp(-1j * kz), 0,
         2 * t1b * cos(kx) + 2 * t2b * cos(kx) * cos(ky),
         2 * t2b * sin(kx) * sin(ky)
     ], [
-        0, t1 + 2 * t2 * (cos(kx) + cos(ky)) + tz * exp(-1j * kz),
-        2 * t2b * sin(kx) * sin(ky),
+        0, t1 + 2 * t2 *
+        (cos(kx) + cos(ky)) + tz * exp(-1j * kz), 2 * t2b * sin(kx) * sin(ky),
         2 * t1b * cos(kx) + 2 * t2b * cos(kx) * cos(ky)
     ]],
                   dtype=complex)

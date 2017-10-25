@@ -39,12 +39,13 @@ if not os.path.exists('./scf'):
 # Copying the lattice parameters from bi.save/data-file.xml into bi.win
 cell = ET.parse('scf/bi.xml').find('output').find('atomic_structure'
                                                   ).find('cell')
+unit = cell.get('unit', 'Bohr')
 lattice = '\n'.join([cell.find(vec).text for vec in ['a1', 'a2', 'a3']])
 
 with open('input/tpl_bi.win', 'r') as f:
     tpl_bi_win = f.read()
 with open('input/bi.win', 'w') as f:
-    f.write(tpl_bi_win.format(lattice=lattice))
+    f.write(tpl_bi_win.format(unit=unit, lattice=lattice))
 
 # Creating the System. Note that the SCF charge file does not need to be
 # copied, but instead can be referenced in the .files file.

@@ -11,12 +11,12 @@ import xml.etree.ElementTree as ET
 import z2pack
 
 # Edit the paths to your Quantum Espresso and Wannier90 here
-qedir = '/home/greschd/software/qe-6.2/bin'
-wandir = '/home/greschd/software/wannier90-2.1.0'
+qedir = '/home/tony/qe-6.2/bin'
+wandir = '/home/tony/wannier90-2.1.0'
 
 # Commands to run pw, pw2wannier90, wannier90
-mpirun = 'mpirun -np 4 '
-pwcmd = mpirun + qedir + '/pw.x '
+mpirun = ''
+pwcmd = 'pw.x '
 pw2wancmd = mpirun + qedir + '/pw2wannier90.x '
 wancmd = wandir + '/wannier90.x'
 

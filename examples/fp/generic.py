@@ -10,14 +10,18 @@ import matplotlib.pyplot as plt
 # The command (mpirun ...) will have to be replaced to match your system.
 SYSTEM_NAME = 'system'
 system = z2pack.fp.System(
-    input_files=[os.path.join('input', filename) for filename in [
-        SYSTEM_NAME + '_nscf.files',
-        SYSTEM_NAME + '_nscf.in',
-        'wannier90.win'
-    ]],
+    input_files=[
+        os.path.join('input', filename)
+        for filename in [
+            SYSTEM_NAME + '_nscf.files', SYSTEM_NAME + '_nscf.in',
+            'wannier90.win'
+        ]
+    ],
     kpt_fct=z2pack.fp.kpoint.abinit,
     kpt_path=SYSTEM_NAME + '_nscf.in',
-    command='mpirun -np 7 ~/software/abinit-7.10.5/src/98_main/abinit < {}_nscf.files >& log'.format(SYSTEM_NAME),
+    command=
+    'mpirun -np 7 ~/software/abinit-7.10.5/src/98_main/abinit < {}_nscf.files >& log'.
+    format(SYSTEM_NAME),
     executable='/bin/bash'
 )
 
@@ -40,5 +44,13 @@ z2pack.plot.wcc(res_0, axis=ax[0])
 z2pack.plot.wcc(res_1, axis=ax[1])
 plt.savefig('plot.pdf', bbox_inches='tight')
 
-print('Z2 topological invariant at kx = 0: {0}'.format(z2pack.invariant.z2(res_0)))
-print('Z2 topological invariant at kx = 0.5: {0}'.format(z2pack.invariant.z2(res_1)))
+print(
+    'Z2 topological invariant at kx = 0: {0}'.format(
+        z2pack.invariant.z2(res_0)
+    )
+)
+print(
+    'Z2 topological invariant at kx = 0.5: {0}'.format(
+        z2pack.invariant.z2(res_1)
+    )
+)

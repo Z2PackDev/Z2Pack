@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Defines the data container for line calculations."""
 
 import functools
 
@@ -10,12 +9,14 @@ from fsc.locker import ConstLocker, change_lock
 
 from .._utils import _gapfind
 
+
 class _LazyProperty:
     """Descriptor that replaces itself with the return value of the method when accessed. The class is unlocked before setting the attribute, s.t. it can be used with a Locker type class."""
+
     def __init__(self, method):
         self.method = method
 
-    def __get__(self, instance, owner):
+    def __get__(self, instance, owner):  # pylint: disable=missing-docstring
         if not instance:
             return None
 
@@ -24,6 +25,7 @@ class _LazyProperty:
         with change_lock(instance, 'none'):
             setattr(instance, self.method.__name__, value)
         return value
+
 
 @export
 class WccLineData(metaclass=ConstLocker):
@@ -39,16 +41,19 @@ class WccLineData(metaclass=ConstLocker):
         The WCC are given in reduced coordinates, which means the possible values range from 0 to 1. The same is true for all values derived from the WCC.
 
     """
+
     def __init__(self, wcc):
         self.wcc = wcc
 
     @classmethod
     def from_overlaps(cls, overlaps):
         r"""Creates a :class:`WccLineData` object from a list containing the overlap matrices :math:`M_{m,n}^{\mathbf{k}, \mathbf{k+b}} = \langle u_n^\mathbf{k} | u_m^\mathbf{k+b} \rangle`."""
-        return cls(cls._calculate_wannier(cls._wilson(overlaps))[0])
+        return cls(
+            cls._calculate_wannier_from_wilson(cls._wilson(overlaps))[0]
+        )
 
     @staticmethod
-    def _calculate_wannier(wilson):
+    def _calculate_wannier_from_wilson(wilson):
         eigs, eigvec = la.eig(wilson)
         wcc = np.array([np.angle(z) / (2 * np.pi) % 1 for z in eigs])
         idx = np.argsort(wcc)
@@ -63,12 +68,12 @@ class WccLineData(metaclass=ConstLocker):
         return sum(self.wcc) % 1
 
     @_LazyProperty
-    def gap_pos(self):
+    def gap_pos(self):  # pylint: disable=method-hidden
         self._calculate_gap()
         return self.gap_pos
 
     @_LazyProperty
-    def gap_size(self):
+    def gap_size(self):  # pylint: disable=method-hidden
         self._calculate_gap()
         return self.gap_size
 
@@ -77,9 +82,13 @@ class WccLineData(metaclass=ConstLocker):
             self.gap_pos, self.gap_size = _gapfind(self.wcc)
 
     def __getattr__(self, name):
+        """Forward to parent class unless for the 'eigenstates' attribute, in which case an AttributError is raised."""
         if name == 'eigenstates':
-            raise AttributeError("This data does not have the 'eigenstates' attribute. This is because the system used does not provide eigenstates, but only overlap matrices. The functionality which resulted in this error can be used only for systems providing eigenstates.")
+            raise AttributeError(
+                "This data does not have the 'eigenstates' attribute. This is because the system used does not provide eigenstates, but only overlap matrices. The functionality which resulted in this error can be used only for systems providing eigenstates."
+            )
         return super().__getattribute__(name)
+
 
 @export
 class EigenstateLineData(WccLineData):
@@ -88,33 +97,34 @@ class EigenstateLineData(WccLineData):
     * ``wilson`` : An array containing the Wilson loop (product of overlap matrices) for the line. The Wilson loop is given in the basis of the eigenstates at the start / end of the line.
     * ``wilson_eigenstates`` : Eigenstates of the Wilson loop, given as a list of 1D - arrays.
     """
-    def __init__(self, eigenstates):
+
+    def __init__(self, eigenstates):  # pylint: disable=super-init-not-called
         self.eigenstates = eigenstates
 
     @_LazyProperty
     def wilson(self):
+        """Wilson loop along the line."""
         # create overlaps
         overlaps = []
 
         for eig1, eig2 in zip(self.eigenstates, self.eigenstates[1:]):
-            overlaps.append(np.dot(
-                np.conjugate(eig1),
-                np.array(eig2).T
-            ))
+            overlaps.append(np.dot(np.conjugate(eig1), np.array(eig2).T))
         return self._wilson(overlaps)
 
     @_LazyProperty
-    def wcc(self):
+    def wcc(self):  # pylint: disable=method-hidden
         self._calculate_wannier()
         return self.wcc
 
     @_LazyProperty
-    def wilson_eigenstates(self):
+    def wilson_eigenstates(self):  # pylint: disable=method-hidden
         self._calculate_wannier()
         return self.wilson_eigenstates
 
     def _calculate_wannier(self):
-        wcc, wilson_eigenstates = super()._calculate_wannier(self.wilson)
+        wcc, wilson_eigenstates = self._calculate_wannier_from_wilson(
+            self.wilson
+        )
         with change_lock(self, 'none'):
             self.wcc = wcc
             self.wilson_eigenstates = wilson_eigenstates

@@ -1,0 +1,17 @@
+num_wann 10
+num_bands 10
+exclude_bands 11 - 16
+spinors : false
+num_iter 0
+use_bloch_phases : true
+Begin projections
+random
+End projections
+begin unit_cell_cart
+Bohr
+ {lattice}
+end unit_cell_cart
+begin atoms_frac
+Bi  0.2338900  0.2338900  0.2338900
+Bi -0.2338900 -0.2338900 -0.2338900
+end atoms_frac

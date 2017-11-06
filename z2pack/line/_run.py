@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""Defines the functions to run a line calculation."""
 
 import os
 import time
@@ -14,33 +15,36 @@ from . import EigenstateLineData, WccLineData
 from ._control import StepCounter, PosCheck, ForceFirstUpdate
 
 from .._control import (
-    StatefulControl,
-    IterationControl,
-    DataControl,
-    ConvergenceControl,
+    StatefulControl, IterationControl, DataControl, ConvergenceControl,
     LineControl
 )
 
 from .._logging_tools import TagAdapter
 
 # tag which triggers filtering when called from the surface's run.
-LINE_ONLY__LOGGER = TagAdapter(_LOGGER, default_tags=('line', 'line_only',))
-_LOGGER = TagAdapter(_LOGGER, default_tags=('line',))
+LINE_ONLY__LOGGER = TagAdapter(
+    _LOGGER, default_tags=(
+        'line',
+        'line_only',
+    )
+)
+_LOGGER = TagAdapter(_LOGGER, default_tags=('line', ))
+
 
 @export
 def run_line(
-        *,
-        system,
-        line,
-        pos_tol=1e-2,
-        iterator=range(8, 27, 2),
-        save_file=None,
-        init_result=None,
-        load=False,
-        load_quiet=True,
-        serializer='auto'
+    *,
+    system,
+    line,
+    pos_tol=1e-2,
+    iterator=range(8, 27, 2),
+    save_file=None,
+    init_result=None,
+    load=False,
+    load_quiet=True,
+    serializer='auto'
 ):
-    """
+    r"""
     Calculates the Wannier charge centers for a given system and line, automatically converging w.r.t. the number of k-points along the line.
 
     :param system:      System for which the WCC should be calculated.
@@ -99,32 +103,42 @@ def run_line(
     # setting up init_result
     if init_result is not None:
         if load:
-            raise ValueError('Inconsistent input parameters "init_result != None" and "load == True". Cannot decide whether to load result from file or use given result.')
+            raise ValueError(
+                'Inconsistent input parameters "init_result != None" and "load == True". Cannot decide whether to load result from file or use given result.'
+            )
     elif load:
         if save_file is None:
-            raise ValueError('Cannot load result from file: No filename given in the "save_file" parameter.')
+            raise ValueError(
+                'Cannot load result from file: No filename given in the "save_file" parameter.'
+            )
         try:
             init_result = io.load(save_file, serializer=serializer)
-        except IOError as e:
+        except IOError as exception:
             if not load_quiet:
-                raise e
+                raise exception
 
     if save_file is not None:
         dirname = os.path.dirname(os.path.abspath(save_file))
         if not os.path.isdir(dirname):
             raise ValueError('Directory {} does not exist.'.format(dirname))
 
-    return _run_line_impl(*controls, system=system, line=line, save_file=save_file, init_result=init_result)
+    return _run_line_impl(
+        *controls,
+        system=system,
+        line=line,
+        save_file=save_file,
+        init_result=init_result
+    )
 
 
 def _run_line_impl(
-        *controls,
-        system,
-        line,
-        save_file=None,
-        init_result=None,
-        serializer='auto'
-):
+    *controls,
+    system,
+    line,
+    save_file=None,
+    init_result=None,
+    serializer='auto'
+):  # pylint: disable=too-many-locals
     """
     Implementation of the line's run.
 
@@ -136,26 +150,22 @@ def _run_line_impl(
     # This is here to avoid circular import with the Surface (is solved in Python 3.5 and higher)
     from .. import io
 
-    start_time = time.time() # timing the run
+    start_time = time.time()  # timing the run
 
     # check if the line function is closed (up to an inverse lattice vector)
     delta = np.array(line(1)) - np.array(line(0))
     if not np.isclose(np.round_(delta), delta).all():
-        raise ValueError('Start and end points of the line differ by {}, which is not an inverse lattice vector.'.format(delta))
+        raise ValueError(
+            'Start and end points of the line differ by {}, which is not an inverse lattice vector.'.
+            format(delta)
+        )
 
-    # check if all controls are valid
-    for ctrl in controls:
-        if not isinstance(ctrl, LineControl):
-            raise ValueError('{} control object is not a LineControl instance.'.format(ctrl.__class__))
+    _validate_controls(controls)
 
-    # filter controls by type
-    def filter_ctrl(ctrl_type):
-        return [ctrl for ctrl in controls if isinstance(ctrl, ctrl_type)]
-
-    stateful_ctrl = filter_ctrl(StatefulControl)
-    iteration_ctrl = filter_ctrl(IterationControl)
-    data_ctrl = filter_ctrl(DataControl)
-    convergence_ctrl = filter_ctrl(ConvergenceControl)
+    stateful_ctrl = _filter_ctrl(controls, StatefulControl)
+    iteration_ctrl = _filter_ctrl(controls, IterationControl)
+    data_ctrl = _filter_ctrl(controls, DataControl)
+    convergence_ctrl = _filter_ctrl(controls, ConvergenceControl)
 
     def save():
         if save_file is not None:
@@ -170,21 +180,28 @@ def _run_line_impl(
                 d_ctrl.update(init_result.data)
         for s_ctrl in stateful_ctrl:
             with contextlib.suppress(KeyError):
-                s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__.__name__]
+                s_ctrl.state = init_result.ctrl_states[
+                    s_ctrl.__class__.__name__
+                ]
         result = LineResult(init_result.data, stateful_ctrl, convergence_ctrl)
         save()
 
     # Detect which type of System is active
     if hasattr(system, 'get_eig'):
-        DataType = EigenstateLineData
+        data_type = EigenstateLineData
         system_fct = system.get_eig
     else:
-        DataType = WccLineData.from_overlaps
+        data_type = WccLineData.from_overlaps
         system_fct = system.get_mmn
 
     def collect_convergence():
+        """Collect convergence control results."""
         res = [c_ctrl.converged for c_ctrl in convergence_ctrl]
-        LINE_ONLY__LOGGER.info('{} of {} line convergence criteria fulfilled.'.format(sum(res), len(res)))
+        LINE_ONLY__LOGGER.info(
+            '{} of {} line convergence criteria fulfilled.'.format(
+                sum(res), len(res)
+            )
+        )
         return res
 
     # main loop
@@ -193,14 +210,26 @@ def _run_line_impl(
         for it_ctrl in iteration_ctrl:
             try:
                 run_options.update(next(it_ctrl))
-                _LOGGER.info('Calculating line for N = {}'.format(run_options['num_steps']), tags=('offset',))
+                _LOGGER.info(
+                    'Calculating line for N = {}'.format(
+                        run_options['num_steps']
+                    ),
+                    tags=('offset', )
+                )
             except StopIteration:
-                _LOGGER.warn('Iterator stopped before the calculation could converge.')
+                _LOGGER.warn(
+                    'Iterator stopped before the calculation could converge.'
+                )
                 return result
 
-        data = DataType(system_fct(
-            list(np.array(line(k)) for k in np.linspace(0., 1., run_options['num_steps']))
-        ))
+        data = data_type(
+            system_fct(
+                list(
+                    np.array(line(k))
+                    for k in np.linspace(0., 1., run_options['num_steps'])
+                )
+            )
+        )
 
         for d_ctrl in data_ctrl:
             d_ctrl.update(data)
@@ -209,6 +238,26 @@ def _run_line_impl(
         save()
 
     end_time = time.time()
-    LINE_ONLY__LOGGER.info(end_time - start_time, tags=('box', 'skip-before', 'timing'))
-    LINE_ONLY__LOGGER.info(result.convergence_report, tags=('convergence_report', 'box'))
+    LINE_ONLY__LOGGER.info(
+        end_time - start_time, tags=('box', 'skip-before', 'timing')
+    )
+    LINE_ONLY__LOGGER.info(
+        result.convergence_report, tags=('convergence_report', 'box')
+    )
     return result
+
+
+def _validate_controls(controls):
+    """Validate that Controls are of LineControl type."""
+    for ctrl in controls:
+        if not isinstance(ctrl, LineControl):
+            raise ValueError(
+                '{} control object is not a LineControl instance.'.format(
+                    ctrl.__class__
+                )
+            )
+
+
+def _filter_ctrl(controls, ctrl_type):
+    """Filter controls by their type."""
+    return [ctrl for ctrl in controls if isinstance(ctrl, ctrl_type)]

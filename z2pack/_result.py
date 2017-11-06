@@ -1,9 +1,9 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Defines the base class for Z2Pack results (data + convergence information)."""
 
 import abc
 
 from fsc.export import export
+
 
 @export
 class Result(metaclass=abc.ABCMeta):
@@ -16,6 +16,7 @@ class Result(metaclass=abc.ABCMeta):
 
     :param convergence_ctrl:    List of ConvergenceControl objects of the calculation.
     """
+
     def __init__(self, data, stateful_ctrl, convergence_ctrl):
         self.data = data
         ctrl_states = dict()

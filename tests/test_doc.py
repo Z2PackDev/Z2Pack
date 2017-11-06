@@ -1,15 +1,16 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Test that all exported objects are documented."""
 
 import sys
-import pytest
-import importlib
 
 import fsc.export
+
 
 # This should never appear in any serious code ;)
 # To out-manoeuver pickle's caching, and force re-loading z2pack
 def test_all_doc():
+    """
+    Test that all exported objects are documented.
+    """
     old_name = 'z2pack'
     new_name = 'hoopy_z2pack'
     for key in list(sys.modules.keys()):
@@ -20,7 +21,7 @@ def test_all_doc():
             del sys.modules[key]
     fsc.export.test_doc()
     try:
-        import z2pack
+        import z2pack  # pylint: disable=unused-variable
     finally:
         # reset to the previous z2pack -- just doing import breaks pickle
         for key in list(sys.modules.keys()):

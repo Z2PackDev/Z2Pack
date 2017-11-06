@@ -1,9 +1,9 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Defines the data containers for surface calculations."""
 
 from fsc.export import export
 from fsc.locker import ConstLocker
 from sortedcontainers import SortedList
+
 
 @export
 class SurfaceData(metaclass=ConstLocker):
@@ -51,11 +51,13 @@ class SurfaceData(metaclass=ConstLocker):
         """
         Returns the distance between :math:`t` and the nearest existing line.
         """
-        if len(self.t) == 0:
+        if not self.t:
             return 1
         return min(abs(t - tval) for tval in self.t)
 
+
 class SurfaceLine:
+    """Wraps the line result and its position in the surface."""
     __slots__ = ['t', 'result']
 
     def __init__(self, t, result):

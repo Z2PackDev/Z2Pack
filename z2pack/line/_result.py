@@ -1,9 +1,9 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+""""Defines the result (data + convergence information) object for line calculations."""
 
 from fsc.export import export
 
 from .._result import Result
+
 
 @export
 class LineResult(Result):

@@ -1,27 +1,20 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-import itertools
+"""Control objects for line calculations."""
 
 from fsc.export import export
 
 from .._control import (
-    DataControl,
-    ConvergenceControl,
-    IterationControl,
-    LineControl,
+    DataControl, ConvergenceControl, IterationControl, LineControl,
     StatefulControl
 )
 from .._utils import _get_max_move
 
+
 @export
-class StepCounter(
-        IterationControl,
-        StatefulControl,
-        LineControl
-):
+class StepCounter(IterationControl, StatefulControl, LineControl):
     """Counts the number of k-points along the line."""
+
     def __init__(self, *, iterator):
+        super().__init__()
         self._iterator = iter(iterator)
         self._state = 0
 
@@ -40,13 +33,11 @@ class StepCounter(
         self._state = new_val
         return dict(num_steps=self._state)
 
+
 @export
-class ForceFirstUpdate(
-        DataControl,
-        ConvergenceControl,
-        LineControl
-):
+class ForceFirstUpdate(DataControl, ConvergenceControl, LineControl):
     """Makes sure at least one update is done, even when the pos_tol argument is not used."""
+
     def __init__(self):
         self._converged = False
 
@@ -57,12 +48,13 @@ class ForceFirstUpdate(
     def update(self, data):
         self._converged = True
 
+
 @export
 class PosCheck(
-        DataControl,
-        ConvergenceControl,
-        StatefulControl,
-        LineControl,
+    DataControl,
+    ConvergenceControl,
+    StatefulControl,
+    LineControl,
 ):
     """
     Check the change in position between two line calculations.
@@ -70,7 +62,9 @@ class PosCheck(
     :param pos_tol: Tolerance in the maximum movement of a single WCC position.
     :type pos_tol: float
     """
+
     def __init__(self, *, pos_tol):
+        super().__init__()
         if not (pos_tol > 0 and pos_tol <= 1):
             raise ValueError('pos_tol must be in (0, 1]')
         self.pos_tol = pos_tol
@@ -91,10 +85,7 @@ class PosCheck(
 
     @property
     def state(self):
-        return dict(
-            max_move=self.max_move,
-            last_wcc=self.last_wcc
-        )
+        return dict(max_move=self.max_move, last_wcc=self.last_wcc)
 
     @state.setter
     def state(self, state):

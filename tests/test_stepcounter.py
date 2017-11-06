@@ -1,44 +1,55 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Tests of the StepCounter control."""
+# pylint: disable=redefined-outer-name
 
 from z2pack.line._control import StepCounter
 import z2pack
 
 import pytest
 
+
 def test_base(test_ctrl_base):
     test_ctrl_base(StepCounter)
-    assert issubclass(StepCounter, z2pack._control.LineControl)
+    assert issubclass(StepCounter, z2pack._control.LineControl)  # pylint: disable=protected-access
+
 
 @pytest.fixture(params=list(range(1, 20)))
-def N1(request):
-    return request.param
-
-@pytest.fixture(params=list(range(1, 20)))
-def N2(request):
+def num_steps(request):
     return request.param
 
 
-def test_step(N1):
-    sc = StepCounter(iterator=range(0, 100, 2))
-    for _ in range(N1):
-        n = next(sc)['num_steps']
-        assert sc.state == n
-    assert n == 2 * N1
+def test_step():
+    """
+    Test that a simple stepcounter produces the correct sequence.
+    """
+    step_counter = StepCounter(iterator=range(0, 100, 2))
+    for step_number in range(1, 50):
+        i = next(step_counter)['num_steps']
+        assert step_counter.state == i
+        assert i == 2 * step_number
+    with pytest.raises(StopIteration):
+        next(step_counter)
 
-def test_nonzero_start(N1, N2):
-    sc = StepCounter(iterator=range(0, 1000, 3))
-    sc.state = N2
-    assert sc.state == N2
-    for _ in range(N1):
-        n = next(sc)['num_steps']
-        assert sc.state == n
-    assert n == 3 * (N1 + int(N2 / 3))
 
-def test_stopiteration(N1):
-    sc = StepCounter(iterator=range(0, 3 * N1, 2))
+def test_nonzero_start(num_steps):
+    """
+    Test that starting from a non-zero step number produces the correct sequence.
+    """
+    step_counter = StepCounter(iterator=range(0, 1000, 3))
+    step_counter.state = num_steps
+    assert step_counter.state == num_steps
+    for step_number in range(1, 20):
+        i = next(step_counter)['num_steps']
+        assert step_counter.state == i
+        assert i == 3 * (step_number + int(num_steps / 3))
+
+
+def test_stopiteration(num_steps):
+    """
+    Test that a StopIteration is raised for different StepCounter lengths.
+    """
+    step_counter = StepCounter(iterator=range(0, 3 * num_steps, 2))
     with pytest.raises(StopIteration):
         while True:
-            n = next(sc)['num_steps']
-            assert sc.state == n
-    assert n == int((3 * N1 - 1) / 2) * 2
+            i = next(step_counter)['num_steps']
+            assert step_counter.state == i
+    assert i == int((3 * num_steps - 1) / 2) * 2

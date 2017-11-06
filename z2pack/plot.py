@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 """This submodule contains all functions for plotting Z2Pack results."""
 
 import colorsys
@@ -11,8 +10,10 @@ from fsc.export import export
 
 from ._utils import _pol_step
 
+
 @decorator.decorator
 def _plot(func, data, *, axis=None, **kwargs):
+    """Decorator that sets up the figure axes and handles options common to all plots."""
     # import is here s.t. the import of the package does not fail
     # if matplotlib is not present
     import matplotlib.pyplot as plt
@@ -33,17 +34,16 @@ def _plot(func, data, *, axis=None, **kwargs):
     if return_fig:
         return fig
 
+
 def _plot_gaps(surface_result, *, axis, gaps, gap_settings):
     if gaps:
         for offset in [-1, 0, 1]:
             axis.plot(
                 surface_result.t,
-                [
-                    gap_pos % 1 + offset
-                    for gap_pos in surface_result.gap_pos
-                ],
-                **gap_settings
+                [gap_pos % 1 + offset
+                 for gap_pos in surface_result.gap_pos], **gap_settings
             )
+
 
 @export
 @_plot
@@ -52,7 +52,7 @@ def wcc_symmetry(
         *,
         axis=None,
         symmetry_operator,
-        wcc_settings={'s': 50., 'lw': 1., 'facecolor': 'none', 'edgecolors': 'k'},
+        wcc_settings={'s': 50., 'lw': 1.},
         gaps=True,
         gap_settings={'marker': 'D', 'color': 'b', 'linestyle': 'none'},
         color_fct=lambda x: colorsys.hsv_to_rgb(
@@ -100,9 +100,10 @@ def wcc_symmetry(
                 color_fct(
                     np.dot(
                         np.dot(w_eigenstate, basis_transformation),
-                        np.dot(symmetry_operator, np.dot(
-                            basis_transformation.T, w_eigenstate.T
-                        ))
+                        np.dot(
+                            symmetry_operator,
+                            np.dot(basis_transformation.T, w_eigenstate.T)
+                        )
                     )
                 )
             )
@@ -113,15 +114,23 @@ def wcc_symmetry(
                          facecolors=colors,
                          **wcc_settings)
 
+
 @export
 @_plot
 def wcc(
-        surface_result,
-        *,
-        axis=None,
-        wcc_settings={'s': 50., 'lw': 1., 'facecolor': 'none', 'edgecolors': 'k'},
-        gaps=True,
-        gap_settings={'marker': 'D', 'color': 'b', 'linestyle': 'none'}
+    surface_result,
+    *,
+    axis=None,
+    wcc_settings={'s': 50.,
+                  'lw': 1.,
+                  'facecolor': 'none',
+                  'edgecolors': 'k'},
+    gaps=True,
+    gap_settings={
+        'marker': 'D',
+        'color': 'b',
+        'linestyle': 'none'
+    }
 ):
     r"""
     Plots the WCCs and the largest gaps (y-axis) against the t-points (x-axis).
@@ -148,16 +157,20 @@ def wcc(
     for line in surface_result.lines:
         for offset in [-1, 0, 1]:
             axis.scatter([line.t] * len(line.wcc),
-                         [x % 1 + offset for x in line.wcc],
-                         **wcc_settings)
+                         [x % 1 + offset for x in line.wcc], **wcc_settings)
+
 
 @export
 @_plot
 def chern(
-        surface_result,
-        *,
-        axis=None,
-        settings={'marker': 'o', 'markerfacecolor': 'r', 'color': 'r'}
+    surface_result,
+    *,
+    axis=None,
+    settings={
+        'marker': 'o',
+        'markerfacecolor': 'r',
+        'color': 'r'
+    }
 ):
     r"""
     Plots the sum of WCCs (polarization) (y-axis) against the t-points (x-axis).
@@ -177,7 +190,13 @@ def chern(
     pol = surface_result.pol
     pol_step = _pol_step(pol)
     for offset in [-1, 0, 1]:
-        for t, p, p_step in zip(zip(t_list, t_list[1:]), pol, pol_step):
-            axis.plot(t, [p + offset, p + p_step + offset], **settings)
-        for t, p, p_step in zip(zip(t_list, t_list[1:]), pol[1:], pol_step):
-            axis.plot(t, [p - p_step + offset, p + offset], **settings)
+        for t, p_value, p_step in zip(zip(t_list, t_list[1:]), pol, pol_step):
+            axis.plot(
+                t, [p_value + offset, p_value + p_step + offset], **settings
+            )
+        for t, p_value, p_step in zip(
+            zip(t_list, t_list[1:]), pol[1:], pol_step
+        ):
+            axis.plot(
+                t, [p_value - p_step + offset, p_value + offset], **settings
+            )

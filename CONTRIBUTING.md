@@ -23,7 +23,7 @@ To build the documentation locally, you first need to pull the Z2Pack source, an
 
     pip install -e path_to_z2pack_source[doc]
 
-where ``path_to_z2pack_source`` needs to be replaced with the top-level path of the Z2Pack source. In the ``doc`` subfolder, there is a Makefile that generates the documentation. You probably want to change the value of ``HTMLBUILDDIR`` to ``build/html``. After that, you can simply call ``make`` to build and ``make view`` to open the documentation.
+where ``path_to_z2pack_source`` needs to be replaced with the top-level path of the Z2Pack source. In the ``doc`` subfolder, copy the configuration template ``config.mk.tpl`` to ``config.mk``. After that, you can simply call ``make`` to build and ``make view`` to open the documentation.
 
 To contribute your changes to the documentation, you can commit them to your fork of the Z2Pack repository, and create a pull request on the main repository. The guidelines described in the next section about branching and pull requests also apply here.
 

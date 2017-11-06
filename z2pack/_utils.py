@@ -1,9 +1,9 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Utilities for calculating properties of Wannier charge center lists."""
 
 import copy
 
 __all__ = ['_get_max_move', '_sgng', '_gapfind', '_dist']
+
 
 def _get_max_move(list_a, list_b):
     """
@@ -20,11 +20,13 @@ def _get_max_move(list_a, list_b):
 
     return max_move
 
+
 def _sgng(z, zplus, x):
     """
     calculates the invariant between two WCC strings
     """
     return -1 if (max(zplus, z) > x and min(zplus, z) < x) else 1
+
 
 def _gapfind(wcc):
     """
@@ -33,9 +35,9 @@ def _gapfind(wcc):
     wcc = sorted(wcc)
     gapsize = 0
     gappos = 0
-    N = len(wcc)
-    for i, (w1, w2) in enumerate(zip(wcc, wcc[1:])):
-        temp = w2 - w1
+    num_wcc = len(wcc)
+    for i, (wcc_left, wcc_right) in enumerate(zip(wcc, wcc[1:])):
+        temp = wcc_right - wcc_left
         if temp > gapsize:
             gapsize = temp
             gappos = i
@@ -43,8 +45,9 @@ def _gapfind(wcc):
     temp = wcc[0] - wcc[-1] + 1
     if temp > gapsize:
         gapsize = temp
-        gappos = N - 1
+        gappos = num_wcc - 1
     return (wcc[gappos] + gapsize / 2) % 1, gapsize
+
 
 def _dist(x, y):
     """
@@ -55,10 +58,14 @@ def _dist(x, y):
     y = y % 1
     return min(abs(1 + x - y) % 1, abs(1 - x + y) % 1)
 
+
 def _pol_step(pol_list):
+    """
+    Returns the value of the minimal change in each step for a list of polarization values.
+    """
     offset = [-1, 0, 1]
     pol_list = [p % 1 for p in pol_list]
     res = []
-    for p1, p2 in zip(pol_list[:-1], pol_list[1:]):
-        res.append(min((p2 - p1 + o for o in offset), key=abs))
+    for pol_left, pol_right in zip(pol_list[:-1], pol_list[1:]):
+        res.append(min((pol_right - pol_left + o for o in offset), key=abs))
     return res

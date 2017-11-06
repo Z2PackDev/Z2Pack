@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Defines functions to run a surface calculation."""
 
 import os
 import copy
@@ -16,36 +15,34 @@ from . import SurfaceResult
 from ._control import MoveCheck, GapCheck
 
 from .._control import (
-    LineControl,
-    SurfaceControl,
-    DataControl,
-    StatefulControl,
+    LineControl, SurfaceControl, DataControl, StatefulControl,
     ConvergenceControl
 )
 from .. import io
 from .._async_handler import AsyncHandler
-from .._logging_tools import TagAdapter, TagFilter, FilterManager
-_LOGGER = TagAdapter(_LOGGER, default_tags=('surface',))
+from .._logging_tools import TagAdapter, TagFilter, filter_manager
+_LOGGER = TagAdapter(_LOGGER, default_tags=('surface', ))
 
 from ..line import _run as _line_run
 from ..line._control import StepCounter, PosCheck, ForceFirstUpdate
 
+
 @export
 def run_surface(
-        *,
-        system,
-        surface,
-        pos_tol=1e-2,
-        gap_tol=0.3,
-        move_tol=0.3,
-        num_lines=11,
-        min_neighbour_dist=0.01,
-        iterator=range(8, 27, 2),
-        init_result=None,
-        save_file=None,
-        load=False,
-        load_quiet=True,
-        serializer='auto'
+    *,
+    system,
+    surface,
+    pos_tol=1e-2,
+    gap_tol=0.3,
+    move_tol=0.3,
+    num_lines=11,
+    min_neighbour_dist=0.01,
+    iterator=range(8, 27, 2),
+    init_result=None,
+    save_file=None,
+    load=False,
+    load_quiet=True,
+    serializer='auto'
 ):
     r"""
     Calculates the Wannier charge centers for a given system and surface.
@@ -123,15 +120,19 @@ def run_surface(
     # setting up init_result
     if init_result is not None:
         if load:
-            raise ValueError('Inconsistent input parameters "init_result != None" and "load == True". Cannot decide whether to load result from file or use given result.')
+            raise ValueError(
+                'Inconsistent input parameters "init_result != None" and "load == True". Cannot decide whether to load result from file or use given result.'
+            )
     elif load:
         if save_file is None:
-            raise ValueError('Cannot load result from file: No filename given in the "save_file" parameter.')
+            raise ValueError(
+                'Cannot load result from file: No filename given in the "save_file" parameter.'
+            )
         try:
             init_result = io.load(save_file, serializer=serializer)
-        except IOError as e:
+        except IOError as exception:
             if not load_quiet:
-                raise e
+                raise exception
 
     if save_file is not None:
         dirname = os.path.dirname(os.path.abspath(save_file))
@@ -149,17 +150,21 @@ def run_surface(
         serializer=serializer
     )
 
+
 # filter out LogRecords tagged as 'line_only' in the line.
-@FilterManager(logging.getLogger('z2pack.line'), TagFilter(('line_only',)))
+@filter_manager(   # noqa
+    logging.getLogger('z2pack.line'),
+    TagFilter(('line_only', ))
+) # noqa
 def _run_surface_impl(
-        *controls,
-        system,
-        surface,
-        num_lines,
-        min_neighbour_dist,
-        save_file=None,
-        init_result=None,
-        serializer='auto'
+    *controls,
+    system,
+    surface,
+    num_lines,
+    min_neighbour_dist,
+    save_file=None,
+    init_result=None,
+    serializer='auto'
 ):
     r"""Implementation of the surface's run.
 
@@ -168,10 +173,10 @@ def _run_surface_impl(
 
     The other parameters are the same as for :meth:`.run`.
     """
+
     start_time = time.time()
 
     # CONTROL SETUP
-
     def filter_ctrl(ctrl_type):
         return [ctrl for ctrl in controls if isinstance(ctrl, ctrl_type)]
 
@@ -182,11 +187,11 @@ def _run_surface_impl(
     convergence_ctrl = filter_ctrl(ConvergenceControl)
 
     # HELPER FUNCTIONS
-
     def get_line(t, init_line_result=None):
         """
         Runs a line calculation and returns its result.
         """
+        # pylint: disable=protected-access
         return _line_run._run_line_impl(
             *copy.deepcopy(line_ctrl),
             system=system,
@@ -196,13 +201,17 @@ def _run_surface_impl(
 
     # setting up async handler
     if save_file is not None:
+
         def handler(res):
-            _LOGGER.info('Saving surface result to file {} (ASYNC)'.format(save_file))
+            _LOGGER.info(
+                'Saving surface result to file {} (ASYNC)'.format(save_file)
+            )
             io.save(res, save_file, serializer=serializer)
     else:
         handler = None
 
     with AsyncHandler(handler) as save_thread:
+
         def add_line(t):
             """
             Adds a line to the Surface, if it is within min_neighbour_dist of
@@ -214,7 +223,10 @@ def _run_surface_impl(
                 if dist == 0:
                     _LOGGER.info("Line at t = {} exists already.".format(t))
                 else:
-                    _LOGGER.warn("'min_neighbour_dist' reached: cannot add line at t = {}".format(t))
+                    _LOGGER.warn(
+                        "'min_neighbour_dist' reached: cannot add line at t = {}".
+                        format(t)
+                    )
                 return SurfaceResult(data, stateful_ctrl, convergence_ctrl)
 
             _LOGGER.info('Adding line at t = {}'.format(t))
@@ -243,7 +255,10 @@ def _run_surface_impl(
             res = np.array([True] * (len(data.lines) - 1))
             for c_ctrl in convergence_ctrl:
                 res &= c_ctrl.converged
-            _LOGGER.info('Convergence criteria fulfilled for {} of {} neighbouring lines.'.format(sum(res), len(res)))
+            _LOGGER.info(
+                'Convergence criteria fulfilled for {} of {} neighbouring lines.'.
+                format(sum(res), len(res))
+            )
             return res
 
         # STEP 1 -- MAKE USE OF INIT_RESULT
@@ -256,7 +271,9 @@ def _run_surface_impl(
             # get states from pre-existing Controls
             for s_ctrl in stateful_ctrl:
                 with contextlib.suppress(KeyError):
-                    s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__.__name__]
+                    s_ctrl.state = init_result.ctrl_states[
+                        s_ctrl.__class__.__name__
+                    ]
 
             data = init_result.data
 
@@ -277,26 +294,26 @@ def _run_surface_impl(
             result = add_line(t)
 
         # STEP 3 -- MAIN LOOP
-        N = len(data.lines)
+        num_lines = len(data.lines)
         conv = collect_convergence()
         while not all(conv):
             # add lines for all non-converged values
-            new_t = [
-                (t1 + t2) / 2
-                for (t1, t2), c in zip(zip(data.t, data.t[1:]), conv)
-                if not c
-            ]
+            new_t = [(t1 + t2) / 2
+                     for (t1, t2), c in zip(zip(data.t, data.t[1:]), conv)
+                     if not c]
             for t in new_t:
                 result = add_line(t)
 
             # check if new lines appeared
-            N_new = len(data.lines)
-            if N == N_new:
+            num_lines_new = len(data.lines)
+            if num_lines == num_lines_new:
                 break
-            N = N_new
+            num_lines = num_lines_new
             conv = collect_convergence()
 
     end_time = time.time()
     _LOGGER.info(end_time - start_time, tags=('box', 'skip-before', 'timing'))
-    _LOGGER.info(result.convergence_report, tags=('box', 'convergence_report', 'skip'))
+    _LOGGER.info(
+        result.convergence_report, tags=('box', 'convergence_report', 'skip')
+    )
     return result

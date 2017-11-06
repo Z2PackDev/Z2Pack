@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 r"""Z2Pack can easily be extended to work with different models / systems. The base classes defined here provide the interface to Z2Pack. Of the two classes, :class:`EigenstateSystem` is the more general one and should be preferred if possible."""
 
 import abc
 
 from fsc.export import export
+
 
 @export
 class EigenstateSystem(metaclass=abc.ABCMeta):
@@ -22,6 +22,7 @@ class EigenstateSystem(metaclass=abc.ABCMeta):
         :type kpt:  list
         """
         pass
+
 
 @export
 class OverlapSystem(metaclass=abc.ABCMeta):

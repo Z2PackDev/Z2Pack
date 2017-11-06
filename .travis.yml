@@ -2,14 +2,22 @@ language: python
 cache: pip
 
 python:
-    - "3.4"
-    - "3.5"
-    - "3.6"
+  - "3.6"
+  - "3.4"
+  - "3.5"
 
 install:
-    - pip install .[test]
+  - pip install .[dev]
 
-# run tests
 script:
-    - cd tests
-    - py.test --no-plot-compare
+  - cd tests
+  - py.test --no-plot-compare
+
+jobs:
+  include:
+    - stage: compliance
+      script: pre-commit run --all-files
+
+stages:
+  - compliance
+  - test

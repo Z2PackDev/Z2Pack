@@ -1,9 +1,9 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+""""Defines the result (data + convergence information) object for surface calculations."""
 
 from fsc.export import export
 
 from .._result import Result
+
 
 @export
 class SurfaceResult(Result):
@@ -56,7 +56,9 @@ class SurfaceResult(Result):
                 ctrl_report = dict()
                 ctrl_report['PASSED'] = []
                 ctrl_report['FAILED'] = []
-                for t_pair, conv in zip(zip(self.t[:-1], self.t[1:]), converged):
+                for t_pair, conv in zip(
+                    zip(self.t[:-1], self.t[1:]), converged
+                ):
                     if conv:
                         ctrl_report['PASSED'].append(t_pair)
                     else:

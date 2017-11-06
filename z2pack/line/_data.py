@@ -47,10 +47,8 @@ class WccLineData(metaclass=ConstLocker):
 
     @classmethod
     def from_overlaps(cls, overlaps):
-        r"""Creates a :class:`WccLineData` object from a list containing the overlap matrices :math:`M_{m,n}^{\mathbf{k}, \mathbf{k+b}} = \langle u_n^\mathbf{k} | u_m^\mathbf{k+b} \rangle`."""
-        return cls(
-            cls._calculate_wannier_from_wilson(cls._wilson(overlaps))[0]
-        )
+        r"""Creates a :class:`OverlapLineData` object from a list containing the overlap matrices :math:`M_{m,n}^{\mathbf{k}, \mathbf{k+b}} = \langle u_n^\mathbf{k} | u_m^\mathbf{k+b} \rangle`."""
+        return OverlapLineData(overlaps)
 
     @staticmethod
     def _calculate_wannier_from_wilson(wilson):
@@ -58,10 +56,6 @@ class WccLineData(metaclass=ConstLocker):
         wcc = np.array([np.angle(z) / (2 * np.pi) % 1 for z in eigs])
         idx = np.argsort(wcc)
         return list(wcc[idx]), list(eigvec.T[idx])
-
-    @staticmethod
-    def _wilson(overlaps):
-        return functools.reduce(np.dot, overlaps)
 
     @_LazyProperty
     def pol(self):
@@ -91,25 +85,31 @@ class WccLineData(metaclass=ConstLocker):
 
 
 @export
-class EigenstateLineData(WccLineData):
-    r"""Data container for a line constructed from periodic eigenstates :math:`|u_{n, \mathbf{k}} \rangle`. This has all attributes that :class:`WccLineData` has, and the following additional ones:
+class OverlapLineData(WccLineData):
+    r"""
+    Data container for Line Data constructred from overlap matrices. This has all attributes that :class:`WccLineData` has, and the following additional ones:
 
+    * ``overlaps`` : A list containing the overlap matrix for each step of k-points, as numpy array.
     * ``wilson`` : An array containing the Wilson loop (product of overlap matrices) for the line. The Wilson loop is given in the basis of the eigenstates at the start / end of the line.
     * ``wilson_eigenstates`` : Eigenstates of the Wilson loop, given as a list of 1D - arrays.
     """
 
-    def __init__(self, eigenstates):  # pylint: disable=super-init-not-called
-        self.eigenstates = eigenstates
+    def __init__(self, overlaps):  # pylint: disable=super-init-not-called
+        self.overlaps = [np.array(o, dtype=complex) for o in overlaps]
+
+    def _calculate_wannier(self):
+        wcc, wilson_eigenstates = self._calculate_wannier_from_wilson(
+            self.wilson
+        )
+        with change_lock(self, 'none'):
+            self.wcc = wcc
+            self.wilson_eigenstates = wilson_eigenstates
 
     @_LazyProperty
     def wilson(self):
         """Wilson loop along the line."""
         # create overlaps
-        overlaps = []
-
-        for eig1, eig2 in zip(self.eigenstates, self.eigenstates[1:]):
-            overlaps.append(np.dot(np.conjugate(eig1), np.array(eig2).T))
-        return self._wilson(overlaps)
+        return functools.reduce(np.dot, self.overlaps)
 
     @_LazyProperty
     def wcc(self):  # pylint: disable=method-hidden
@@ -121,10 +121,20 @@ class EigenstateLineData(WccLineData):
         self._calculate_wannier()
         return self.wilson_eigenstates
 
-    def _calculate_wannier(self):
-        wcc, wilson_eigenstates = self._calculate_wannier_from_wilson(
-            self.wilson
-        )
-        with change_lock(self, 'none'):
-            self.wcc = wcc
-            self.wilson_eigenstates = wilson_eigenstates
+
+@export
+class EigenstateLineData(OverlapLineData):
+    r"""Data container for a line constructed from periodic eigenstates :math:`|u_{n, \mathbf{k}} \rangle`. This has all attributes that :class:`OverlapLineData` has, and the following additional ones:
+
+    * ``eigenstates`` : The eigenstates of the Hamiltonian, given as a list of arrays which contain the eigenstates as row vectors.
+    """
+
+    def __init__(self, eigenstates):  # pylint: disable=super-init-not-called
+        self.eigenstates = eigenstates
+
+    @_LazyProperty
+    def overlaps(self):  # pylint: disable=method-hidden
+        overlaps = []
+        for eig1, eig2 in zip(self.eigenstates, self.eigenstates[1:]):
+            overlaps.append(np.dot(np.conjugate(eig1), np.array(eig2).T))
+        return overlaps

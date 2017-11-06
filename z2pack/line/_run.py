@@ -11,7 +11,7 @@ from fsc.export import export
 
 from . import _LOGGER
 from . import LineResult
-from . import EigenstateLineData, WccLineData
+from . import EigenstateLineData, OverlapLineData
 from ._control import StepCounter, PosCheck, ForceFirstUpdate
 
 from .._control import (
@@ -191,7 +191,7 @@ def _run_line_impl(
         data_type = EigenstateLineData
         system_fct = system.get_eig
     else:
-        data_type = WccLineData.from_overlaps
+        data_type = OverlapLineData
         system_fct = system.get_mmn
 
     def collect_convergence():

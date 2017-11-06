@@ -36,13 +36,14 @@ def serializer(request):
     return request.param
 
 
-def assert_res_equal(result1, result2):
+def assert_res_equal(result1, result2, ignore_wilson=False):
     """
     Checks that two results are equal.
     """
     assert result1.wcc == result2.wcc
-    if hasattr(result1, 'wilson') or hasattr(result2, 'wilson'):
-        assert all(np.isclose(result1.wilson, result2.wilson).flatten())
+    if not ignore_wilson:
+        if hasattr(result1, 'wilson') or hasattr(result2, 'wilson'):
+            assert all(np.isclose(result1.wilson, result2.wilson).flatten())
     assert result1.gap_size == result2.gap_size
     assert result1.gap_pos == result2.gap_pos
     assert result1.ctrl_states == result2.ctrl_states
@@ -287,6 +288,30 @@ def test_load_reference(simple_system, test_name, simple_surface, serializer):
     else:
         assert_res_equal(result, z2pack.io.load(path, serializer=serializer))
         assert_res_equal(result, z2pack.io.load(path))
+
+
+def test_load_reference_legacy_v1(
+    simple_system, test_name, simple_surface, serializer
+):
+    """
+    Compare surface result to a reference from a file. The reference results are from Z2Pack version 2.1, where the OverlapLineData does not exist.
+    """
+    tag = test_name.split('/')[1]
+    path = 'reference_results/result_{}.'.format(tag) + serializer.__name__
+    result = z2pack.surface.run(system=simple_system, surface=simple_surface)
+    if not os.path.isfile(path):
+        z2pack.io.save(result, path, serializer=serializer)
+        raise ValueError('File {} did not exist!'.format(path))
+    else:
+        for saved_res in [
+            z2pack.io.load(path, serializer=serializer),
+            z2pack.io.load(path)
+        ]:
+            assert_res_equal(
+                result,
+                saved_res,
+                ignore_wilson=not hasattr(saved_res, 'wilson')
+            )
 
 
 def test_invalid_save_path(simple_system, simple_surface):

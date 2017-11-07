@@ -2,6 +2,7 @@
 
 from fsc.export import export
 
+from ..line._control import _create_line_controls
 from .._control import (
     DataControl,
     ConvergenceControl,
@@ -56,3 +57,15 @@ class GapCheck(DataControl, ConvergenceControl, SurfaceControl):
                 for w1 in l1.wcc
             ) for l1, l2 in zip(data.lines, data.lines[1:])
         ]
+
+
+def _create_surface_controls(*, pos_tol, iterator, move_tol, gap_tol):
+    """
+    Helper function to create the control objects needed by a surface calculation.
+    """
+    controls = _create_line_controls(pos_tol=pos_tol, iterator=iterator)
+    if move_tol is not None:
+        controls.append(MoveCheck(move_tol=move_tol))
+    if gap_tol is not None:
+        controls.append(GapCheck(gap_tol=gap_tol))
+    return controls

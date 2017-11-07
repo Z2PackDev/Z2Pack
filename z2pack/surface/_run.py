@@ -1,6 +1,5 @@
 """Defines functions to run a surface calculation."""
 
-import os
 import copy
 import time
 import logging
@@ -12,19 +11,19 @@ from fsc.export import export
 from . import _LOGGER
 from . import SurfaceData
 from . import SurfaceResult
-from ._control import MoveCheck, GapCheck
+from ._control import _create_surface_controls
 
 from .._control import (
-    LineControl, SurfaceControl, DataControl, StatefulControl,
+    LineControl, SurfaceControl, StatefulControl, DataControl,
     ConvergenceControl
 )
 from .. import io
+from .._run_utils import _filter_ctrl, _load_init_result, _check_save_dir
 from .._async_handler import AsyncHandler
 from .._logging_tools import TagAdapter, TagFilter, filter_manager
 _LOGGER = TagAdapter(_LOGGER, default_tags=('surface', ))
 
 from ..line import _run as _line_run
-from ..line._control import StepCounter, PosCheck, ForceFirstUpdate
 
 
 @export
@@ -106,18 +105,21 @@ def run_surface(
     _LOGGER.info(locals(), tags=('setup', 'box', 'skip'))
 
     # setting up controls
-    controls = []
-    controls.append(StepCounter(iterator=iterator))
-    if pos_tol is None:
-        controls.append(ForceFirstUpdate())
-    else:
-        controls.append(PosCheck(pos_tol=pos_tol))
-    if move_tol is not None:
-        controls.append(MoveCheck(move_tol=move_tol))
-    if gap_tol is not None:
-        controls.append(GapCheck(gap_tol=gap_tol))
+    controls = _create_surface_controls(
+        pos_tol=pos_tol, iterator=iterator, gap_tol=gap_tol, move_tol=move_tol
+    )
 
     # setting up init_result
+    init_result = _load_init_result(
+        init_result=init_result,
+        save_file=save_file,
+        load=load,
+        load_quiet=load_quiet,
+        serializer=serializer,
+        valid_type=SurfaceResult,
+    )
+    _check_save_dir(save_file=save_file)
+
     if init_result is not None:
         if load:
             raise ValueError(
@@ -133,11 +135,6 @@ def run_surface(
         except IOError as exception:
             if not load_quiet:
                 raise exception
-
-    if save_file is not None:
-        dirname = os.path.dirname(os.path.abspath(save_file))
-        if not os.path.isdir(dirname):
-            raise ValueError('Directory {} does not exist.'.format(dirname))
 
     return _run_surface_impl(
         *controls,
@@ -177,14 +174,11 @@ def _run_surface_impl(
     start_time = time.time()
 
     # CONTROL SETUP
-    def filter_ctrl(ctrl_type):
-        return [ctrl for ctrl in controls if isinstance(ctrl, ctrl_type)]
-
-    line_ctrl = filter_ctrl(LineControl)
-    controls = filter_ctrl(SurfaceControl)
-    stateful_ctrl = filter_ctrl(StatefulControl)
-    data_ctrl = filter_ctrl(DataControl)
-    convergence_ctrl = filter_ctrl(ConvergenceControl)
+    line_ctrl = _filter_ctrl(controls, LineControl)
+    controls = _filter_ctrl(controls, SurfaceControl)
+    stateful_ctrl = _filter_ctrl(controls, StatefulControl)
+    data_ctrl = _filter_ctrl(controls, DataControl)
+    convergence_ctrl = _filter_ctrl(controls, ConvergenceControl)
 
     # HELPER FUNCTIONS
     def get_line(t, init_line_result=None):

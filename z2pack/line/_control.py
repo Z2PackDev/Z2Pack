@@ -91,3 +91,16 @@ class PosCheck(
     def state(self, state):
         self.max_move = state['max_move']
         self.last_wcc = state['last_wcc']
+
+
+def _create_line_controls(*, pos_tol, iterator):
+    """
+    Helper function to create all controls needed by a Line calculation.
+    """
+    controls = []
+    controls.append(StepCounter(iterator=iterator))
+    if pos_tol is None:
+        controls.append(ForceFirstUpdate())
+    else:
+        controls.append(PosCheck(pos_tol=pos_tol))
+    return controls

@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """Defines the functions to run a line calculation."""
 
-import time
 import contextlib
 
 import numpy as np
@@ -13,7 +12,7 @@ from . import LineResult
 from . import EigenstateLineData, OverlapLineData
 from ._control import _create_line_controls
 
-from .._run_utils import _filter_ctrl, _load_init_result, _check_save_dir
+from .._run_utils import _filter_ctrl, _load_init_result, _check_save_dir, _log_run
 from .._control import (
     StatefulControl, IterationControl, DataControl, ConvergenceControl,
     LineControl
@@ -21,7 +20,7 @@ from .._control import (
 from .._logging_tools import TagAdapter
 
 # tag which triggers filtering when called from the surface's run.
-LINE_ONLY_LOGGER = TagAdapter(
+_LINE_ONLY_LOGGER = TagAdapter(
     _LOGGER, default_tags=(
         'line',
         'line_only',
@@ -31,6 +30,7 @@ _LOGGER = TagAdapter(_LOGGER, default_tags=('line', ))
 
 
 @export
+@_log_run(_LINE_ONLY_LOGGER)
 def run_line(
     *,
     system,
@@ -86,8 +86,6 @@ def run_line(
 
     """
 
-    LINE_ONLY_LOGGER.info(locals(), tags=('setup', 'box', 'skip'))
-
     # setting up controls
     controls = _create_line_controls(pos_tol=pos_tol, iterator=iterator)
 
@@ -129,8 +127,6 @@ def _run_line_impl(
     """
     # This is here to avoid circular import with the Surface (is solved in Python 3.5 and higher)
     from .. import io
-
-    start_time = time.time()  # timing the run
 
     # check if the line function is closed (up to an inverse lattice vector)
     delta = np.array(line(1)) - np.array(line(0))
@@ -177,7 +173,7 @@ def _run_line_impl(
     def collect_convergence():
         """Collect convergence control results."""
         res = [c_ctrl.converged for c_ctrl in convergence_ctrl]
-        LINE_ONLY_LOGGER.info(
+        _LINE_ONLY_LOGGER.info(
             '{} of {} line convergence criteria fulfilled.'.format(
                 sum(res), len(res)
             )
@@ -217,13 +213,6 @@ def _run_line_impl(
         result = LineResult(data, stateful_ctrl, convergence_ctrl)
         save()
 
-    end_time = time.time()
-    LINE_ONLY_LOGGER.info(
-        end_time - start_time, tags=('box', 'skip-before', 'timing')
-    )
-    LINE_ONLY_LOGGER.info(
-        result.convergence_report, tags=('convergence_report', 'box')
-    )
     return result
 
 

@@ -3,6 +3,35 @@ Helper functions to create common tasks in different run methods (line, surface,
 """
 
 import os
+import time
+
+from decorator import decorator
+
+__all__ = []
+
+
+def _log_run(logger):
+    """
+    Log the inputs, elapsed time and convergence report for a calculation run.
+    """
+
+    def inner(fct, **kwargs):  # pylint: disable=missing-docstring
+        logger.info(kwargs, tags=('setup', 'box', 'skip'))
+        start_time = time.time()
+
+        result = fct(**kwargs)
+
+        end_time = time.time()
+        logger.info(
+            end_time - start_time, tags=('box', 'skip-before', 'timing')
+        )
+        logger.info(
+            result.convergence_report, tags=('convergence_report', 'box')
+        )
+
+        return result
+
+    return decorator(inner)
 
 
 def _load_init_result(

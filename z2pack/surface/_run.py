@@ -1,7 +1,6 @@
 """Defines functions to run a surface calculation."""
 
 import copy
-import time
 import logging
 import contextlib
 
@@ -18,15 +17,23 @@ from .._control import (
     ConvergenceControl
 )
 from .. import io
-from .._run_utils import _filter_ctrl, _load_init_result, _check_save_dir
+from .._run_utils import _filter_ctrl, _load_init_result, _check_save_dir, _log_run
 from .._async_handler import AsyncHandler
 from .._logging_tools import TagAdapter, TagFilter, filter_manager
-_LOGGER = TagAdapter(_LOGGER, default_tags=('surface', ))
-
 from ..line import _run as _line_run
+
+# tag which triggers filtering when called from the volume's run.
+_SURFACE_ONLY_LOGGER = TagAdapter(
+    _LOGGER, default_tags=(
+        'surface',
+        'surface_only',
+    )
+)
+_LOGGER = TagAdapter(_LOGGER, default_tags=('surface', ))
 
 
 @export
+@_log_run(_SURFACE_ONLY_LOGGER)
 def run_surface(
     *,
     system,
@@ -102,8 +109,6 @@ def run_surface(
         print(result.wcc) # Prints a nested list of WCC (a list of WCC for each line in the surface).
 
     """
-    _LOGGER.info(locals(), tags=('setup', 'box', 'skip'))
-
     # setting up controls
     controls = _create_surface_controls(
         pos_tol=pos_tol, iterator=iterator, gap_tol=gap_tol, move_tol=move_tol
@@ -119,22 +124,6 @@ def run_surface(
         valid_type=SurfaceResult,
     )
     _check_save_dir(save_file=save_file)
-
-    if init_result is not None:
-        if load:
-            raise ValueError(
-                'Inconsistent input parameters "init_result != None" and "load == True". Cannot decide whether to load result from file or use given result.'
-            )
-    elif load:
-        if save_file is None:
-            raise ValueError(
-                'Cannot load result from file: No filename given in the "save_file" parameter.'
-            )
-        try:
-            init_result = io.load(save_file, serializer=serializer)
-        except IOError as exception:
-            if not load_quiet:
-                raise exception
 
     return _run_surface_impl(
         *controls,
@@ -170,9 +159,6 @@ def _run_surface_impl(
 
     The other parameters are the same as for :meth:`.run`.
     """
-
-    start_time = time.time()
-
     # CONTROL SETUP
     line_ctrl = _filter_ctrl(controls, LineControl)
     controls = _filter_ctrl(controls, SurfaceControl)
@@ -305,9 +291,4 @@ def _run_surface_impl(
             num_lines = num_lines_new
             conv = collect_convergence()
 
-    end_time = time.time()
-    _LOGGER.info(end_time - start_time, tags=('box', 'skip-before', 'timing'))
-    _LOGGER.info(
-        result.convergence_report, tags=('box', 'convergence_report', 'skip')
-    )
     return result

@@ -1,4 +1,4 @@
-"""Defines functions to run a surface calculation."""
+"""Defines functions to run a surface calculation."""  # noqa
 
 import os
 import copy
@@ -12,6 +12,7 @@ from fsc.export import export
 from . import _LOGGER
 from . import VolumeData
 from . import VolumeResult
+from ._control import _create_volume_controls
 
 from .._control import (
     LineControl, SurfaceControl, VolumeControl, DataControl, StatefulControl,
@@ -23,7 +24,6 @@ from .._logging_tools import TagAdapter, TagFilter, filter_manager
 _LOGGER = TagAdapter(_LOGGER, default_tags=('volume', ))
 
 from ..surface import _run as _surface_run
-from ..line._control import _create_line_controls
 
 
 @export
@@ -108,78 +108,61 @@ def run_volume(
     """
     _LOGGER.info(locals(), tags=('setup', 'box', 'skip'))
 
+    #     # setting up controls
+    controls = _create_volume_controls(
+        pos_tol=pos_tol, iterator=iterator, gap_tol=gap_tol, move_tol=move_tol
+    )
 
-#
-#     # setting up controls
-#     controls = []
-#     controls.append(StepCounter(iterator=iterator))
-#     if pos_tol is None:
-#         controls.append(ForceFirstUpdate())
-#     else:
-#         controls.append(PosCheck(pos_tol=pos_tol))
-#     if move_tol is not None:
-#         controls.append(MoveCheck(move_tol=move_tol))
-#     if gap_tol is not None:
-#         controls.append(GapCheck(gap_tol=gap_tol))
-#
-#     # setting up init_result
-#     if init_result is not None:
-#         if load:
-#             raise ValueError(
-#                 'Inconsistent input parameters "init_result != None" and "load == True". Cannot decide whether to load result from file or use given result.'
-#             )
-#     elif load:
-#         if save_file is None:
-#             raise ValueError(
-#                 'Cannot load result from file: No filename given in the "save_file" parameter.'
-#             )
-#         try:
-#             init_result = io.load(save_file, serializer=serializer)
-#         except IOError as exception:
-#             if not load_quiet:
-#                 raise exception
-#
-#     if save_file is not None:
-#         dirname = os.path.dirname(os.path.abspath(save_file))
-#         if not os.path.isdir(dirname):
-#             raise ValueError('Directory {} does not exist.'.format(dirname))
-#
-#     return _run_surface_impl(
-#         *controls,
-#         system=system,
-#         surface=surface,
-#         num_lines=num_lines,
-#         min_neighbour_dist=min_neighbour_dist,
-#         save_file=save_file,
-#         init_result=init_result,
-#         serializer=serializer
-#     )
-#
-#
-# # filter out LogRecords tagged as 'line_only' in the line.
-# @filter_manager(   # noqa
-#     logging.getLogger('z2pack.line'),
-#     TagFilter(('line_only', ))
-# ) # noqa
-# def _run_surface_impl(
-#     *controls,
-#     system,
-#     surface,
-#     num_lines,
-#     min_neighbour_dist,
-#     save_file=None,
-#     init_result=None,
-#     serializer='auto'
-# ):
-#     r"""Implementation of the surface's run.
-#
-#     :param controls: Control objects which govern the iteration.
-#     :type controls: AbstractControl
-#
-#     The other parameters are the same as for :meth:`.run`.
-#     """
-#
-#     start_time = time.time()
+    init_result = _load_init_result(
+        init_result=init_result,
+        save_file=save_file,
+        load=load,
+        load_quiet=load_quiet,
+        serializer=serializer,
+        valid_type=VolumeResult,
+    )
+    _check_save_dir(save_file=save_file)
+
+    return _run_volume_impl(
+        *controls,
+        system=system,
+        volume=volume,
+        num_lines=num_lines,
+        num_surfaces=num_surfaces,
+        min_neighbour_dist=min_neighbour_dist,
+        save_file=save_file,
+        init_result=init_result,
+        serializer=serializer
+    )
+
+
+# filter out LogRecords tagged as 'surface_only' in the surface.
+@filter_manager(   # noqa
+    logging.getLogger('z2pack.surface'),
+    TagFilter(('surface_only', ))
+) # noqa
+def _run_volume_impl(
+    *controls,
+    system,
+    volume,
+    num_lines,
+    num_surfaces,
+    min_neighbour_dist,
+    save_file=None,
+    init_result=None,
+    serializer='auto'
+):
+    r"""Implementation of the volume's run.
+
+    :param controls: Control objects which govern the iteration.
+    :type controls: AbstractControl
+
+    The other parameters are the same as for :meth:`.run`.
+    """
+    pass
+    # start_time = time.time()
+
+
 #
 #     # CONTROL SETUP
 #     def filter_ctrl(ctrl_type):

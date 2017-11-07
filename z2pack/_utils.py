@@ -54,9 +54,9 @@ def _dist(x, y):
     Returns the smallest distance on the periodic [0, 1) between x, y
     where x, y should be in [0, 1)
     """
-    x = x % 1
-    y = y % 1
-    return min(abs(1 + x - y) % 1, abs(1 - x + y) % 1)
+    x %= 1
+    y %= 1
+    return min((x - y) % 1, (y - x) % 1)
 
 
 def _pol_step(pol_list):

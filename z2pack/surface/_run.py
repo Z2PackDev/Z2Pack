@@ -8,16 +8,15 @@ import numpy as np
 from fsc.export import export
 
 from . import _LOGGER
-from . import SurfaceData
-from . import SurfaceResult
-from ._control import _create_surface_controls
+from . import SurfaceData, SurfaceResult
+from ._control import _create_surface_controls, SurfaceControlContainer
 
-from .._control import (
-    LineControl, SurfaceControl, StatefulControl, DataControl,
-    ConvergenceControl
-)
+# from .._control import (
+#     ControlContainer, LineControl, SurfaceControl, DataControl, StatefulControl,
+#     ConvergenceControl, IterationControl
+# )
 from .. import io
-from .._run_utils import _filter_ctrl, _load_init_result, _check_save_dir, _log_run
+from .._run_utils import _load_init_result, _check_save_dir, _log_run
 from .._async_handler import AsyncHandler
 from .._logging_tools import TagAdapter, TagFilter, filter_manager
 from ..line import _run as _line_run
@@ -160,11 +159,7 @@ def _run_surface_impl(
     The other parameters are the same as for :meth:`.run`.
     """
     # CONTROL SETUP
-    line_ctrl = _filter_ctrl(controls, LineControl)
-    controls = _filter_ctrl(controls, SurfaceControl)
-    stateful_ctrl = _filter_ctrl(controls, StatefulControl)
-    data_ctrl = _filter_ctrl(controls, DataControl)
-    convergence_ctrl = _filter_ctrl(controls, ConvergenceControl)
+    ctrl_container = SurfaceControlContainer(controls)
 
     # HELPER FUNCTIONS
     def get_line(t, init_line_result=None):
@@ -173,7 +168,7 @@ def _run_surface_impl(
         """
         # pylint: disable=protected-access
         return _line_run._run_line_impl(
-            *copy.deepcopy(line_ctrl),
+            *copy.deepcopy(ctrl_container.line),
             system=system,
             line=lambda ky: surface(t, ky),
             init_result=init_line_result
@@ -207,7 +202,9 @@ def _run_surface_impl(
                         "'min_neighbour_dist' reached: cannot add line at t = {}".
                         format(t)
                     )
-                return SurfaceResult(data, stateful_ctrl, convergence_ctrl)
+                return SurfaceResult(
+                    data, ctrl_container.stateful, ctrl_container.convergence
+                )
 
             _LOGGER.info('Adding line at t = {}'.format(t))
             data.add_line(t, get_line(t))
@@ -220,10 +217,12 @@ def _run_surface_impl(
             """
 
             # update data controls
-            for d_ctrl in data_ctrl:
+            for d_ctrl in ctrl_container.data:
                 d_ctrl.update(data)
 
-            result = SurfaceResult(data, stateful_ctrl, convergence_ctrl)
+            result = SurfaceResult(
+                data, ctrl_container.stateful, ctrl_container.convergence
+            )
             save_thread.send(copy.deepcopy(result))
 
             return result
@@ -233,7 +232,7 @@ def _run_surface_impl(
             Calculates which neighbours are not converged
             """
             res = np.array([True] * (len(data.lines) - 1))
-            for c_ctrl in convergence_ctrl:
+            for c_ctrl in ctrl_container.convergence:
                 res &= c_ctrl.converged
             _LOGGER.info(
                 'Convergence criteria fulfilled for {} of {} neighbouring lines.'.
@@ -249,7 +248,7 @@ def _run_surface_impl(
             init_result = copy.deepcopy(init_result)
 
             # get states from pre-existing Controls
-            for s_ctrl in stateful_ctrl:
+            for s_ctrl in ctrl_container.stateful:
                 with contextlib.suppress(KeyError):
                     s_ctrl.state = init_result.ctrl_states[
                         s_ctrl.__class__.__name__

@@ -4,11 +4,26 @@ from fsc.export import export
 
 from ..line._control import _create_line_controls
 from .._control import (
-    DataControl,
-    ConvergenceControl,
-    SurfaceControl,
+    ControlContainer, DataControl, ConvergenceControl, StatefulControl,
+    IterationControl, SurfaceControl, LineControl
 )
 from .._utils import _get_max_move
+
+
+@export
+class SurfaceControlContainer(ControlContainer):
+    def __init__(self, controls):
+        super().__init__(
+            controls=controls,
+            categories={
+                'line': [LineControl],
+                'stateful': [StatefulControl, SurfaceControl],
+                'data': [DataControl, SurfaceControl],
+                'convergence': [ConvergenceControl, SurfaceControl],
+                'iteration': [IterationControl, SurfaceControl],
+            },
+            valid_type=(SurfaceControl, LineControl),
+        )
 
 
 @export

@@ -8,15 +8,10 @@ import numpy as np
 from fsc.export import export
 
 from . import _LOGGER
-from . import LineResult
-from . import EigenstateLineData, OverlapLineData
-from ._control import _create_line_controls
+from . import LineResult, EigenstateLineData, OverlapLineData
+from ._control import _create_line_controls, LineControlContainer
 
-from .._run_utils import _filter_ctrl, _load_init_result, _check_save_dir, _log_run
-from .._control import (
-    StatefulControl, IterationControl, DataControl, ConvergenceControl,
-    LineControl
-)
+from .._run_utils import _load_init_result, _check_save_dir, _log_run
 from .._logging_tools import TagAdapter
 
 # tag which triggers filtering when called from the surface's run.
@@ -116,7 +111,7 @@ def _run_line_impl(
     save_file=None,
     init_result=None,
     serializer='auto'
-):  # pylint: disable=too-many-locals
+):
     """
     Implementation of the line's run.
 
@@ -136,12 +131,7 @@ def _run_line_impl(
             format(delta)
         )
 
-    _validate_controls(controls)
-
-    stateful_ctrl = _filter_ctrl(controls, StatefulControl)
-    iteration_ctrl = _filter_ctrl(controls, IterationControl)
-    data_ctrl = _filter_ctrl(controls, DataControl)
-    convergence_ctrl = _filter_ctrl(controls, ConvergenceControl)
+    ctrl_container = LineControlContainer(controls)
 
     def save():
         if save_file is not None:
@@ -150,16 +140,19 @@ def _run_line_impl(
 
     # initialize stateful and data controls from old result
     if init_result is not None:
-        for d_ctrl in data_ctrl:
+        for d_ctrl in ctrl_container.data:
             # not necessary for StatefulControls
-            if d_ctrl not in stateful_ctrl:
+            if d_ctrl not in ctrl_container.stateful:
                 d_ctrl.update(init_result.data)
-        for s_ctrl in stateful_ctrl:
+        for s_ctrl in ctrl_container.stateful:
             with contextlib.suppress(KeyError):
                 s_ctrl.state = init_result.ctrl_states[
                     s_ctrl.__class__.__name__
                 ]
-        result = LineResult(init_result.data, stateful_ctrl, convergence_ctrl)
+        result = LineResult(
+            init_result.data, ctrl_container.stateful,
+            ctrl_container.convergence
+        )
         save()
 
     # Detect which type of System is active
@@ -172,7 +165,7 @@ def _run_line_impl(
 
     def collect_convergence():
         """Collect convergence control results."""
-        res = [c_ctrl.converged for c_ctrl in convergence_ctrl]
+        res = [c_ctrl.converged for c_ctrl in ctrl_container.convergence]
         _LINE_ONLY_LOGGER.info(
             '{} of {} line convergence criteria fulfilled.'.format(
                 sum(res), len(res)
@@ -183,7 +176,7 @@ def _run_line_impl(
     # main loop
     while not all(collect_convergence()):
         run_options = dict()
-        for it_ctrl in iteration_ctrl:
+        for it_ctrl in ctrl_container.iteration:
             try:
                 run_options.update(next(it_ctrl))
                 _LOGGER.info(
@@ -207,21 +200,12 @@ def _run_line_impl(
             )
         )
 
-        for d_ctrl in data_ctrl:
+        for d_ctrl in ctrl_container.data:
             d_ctrl.update(data)
 
-        result = LineResult(data, stateful_ctrl, convergence_ctrl)
+        result = LineResult(
+            data, ctrl_container.stateful, ctrl_container.convergence
+        )
         save()
 
     return result
-
-
-def _validate_controls(controls):
-    """Validate that Controls are of LineControl type."""
-    for ctrl in controls:
-        if not isinstance(ctrl, LineControl):
-            raise ValueError(
-                '{} control object is not a LineControl instance.'.format(
-                    ctrl.__class__
-                )
-            )

@@ -1,4 +1,4 @@
-"""Defines functions to run a surface calculation."""  # noqa
+"""Defines functions to run a surface calculation."""
 
 import os
 import copy

@@ -94,8 +94,3 @@ def _check_save_dir(*, save_file):
         dirname = os.path.dirname(os.path.abspath(save_file))
         if not os.path.isdir(dirname):
             raise ValueError('Directory {} does not exist.'.format(dirname))
-
-
-def _filter_ctrl(controls, ctrl_type):
-    """Filters control objects of the given type."""
-    return [ctrl for ctrl in controls if isinstance(ctrl, ctrl_type)]

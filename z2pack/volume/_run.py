@@ -1,8 +1,6 @@
 """Defines functions to run a surface calculation."""
 
-import os
 import copy
-import time
 import logging
 import contextlib
 
@@ -16,6 +14,7 @@ from ._control import _create_volume_controls, VolumeControlContainer
 
 from .. import io
 from .._async_handler import AsyncHandler
+from .._run_utils import _load_init_result, _check_save_dir
 from .._logging_tools import TagAdapter, TagFilter, filter_manager
 _LOGGER = TagAdapter(_LOGGER, default_tags=('volume', ))
 
@@ -155,149 +154,137 @@ def _run_volume_impl(
 
     The other parameters are the same as for :meth:`.run`.
     """
-    pass
-    # start_time = time.time()
+    ctrl_container = VolumeControlContainer(controls)
 
+    # HELPER FUNCTIONS
+    def get_surface(s, init_surface_result=None):
+        """
+        Runs a line calculation and returns its result.
+        """
+        # pylint: disable=protected-access
+        return _surface_run._run_surface_impl(
+            *copy.deepcopy(ctrl_container.surface),
+            system=system,
+            surface=lambda t1, t2: volume(s, t1, t2),
+            num_lines=num_lines,
+            min_neighbour_dist=min_neighbour_dist,
+            init_result=init_surface_result,
+        )
 
-#
-#     # CONTROL SETUP
-#     def filter_ctrl(ctrl_type):
-#         return [ctrl for ctrl in controls if isinstance(ctrl, ctrl_type)]
-#
-#     line_ctrl = filter_ctrl(LineControl)
-#     controls = filter_ctrl(SurfaceControl)
-#     stateful_ctrl = filter_ctrl(StatefulControl)
-#     data_ctrl = filter_ctrl(DataControl)
-#     convergence_ctrl = filter_ctrl(ConvergenceControl)
-#
-#     # HELPER FUNCTIONS
-#     def get_line(t, init_line_result=None):
-#         """
-#         Runs a line calculation and returns its result.
-#         """
-#         # pylint: disable=protected-access
-#         return _line_run._run_line_impl(
-#             *copy.deepcopy(line_ctrl),
-#             system=system,
-#             line=lambda ky: surface(t, ky),
-#             init_result=init_line_result
-#         )
-#
-#     # setting up async handler
-#     if save_file is not None:
-#
-#         def handler(res):
-#             _LOGGER.info(
-#                 'Saving surface result to file {} (ASYNC)'.format(save_file)
-#             )
-#             io.save(res, save_file, serializer=serializer)
-#     else:
-#         handler = None
-#
-#     with AsyncHandler(handler) as save_thread:
-#
-#         def add_line(t):
-#             """
-#             Adds a line to the Surface, if it is within min_neighbour_dist of
-#             the given lines.
-#             """
-#             # find whether the line is allowed still
-#             dist = data.nearest_neighbour_dist(t)
-#             if dist < min_neighbour_dist:
-#                 if dist == 0:
-#                     _LOGGER.info("Line at t = {} exists already.".format(t))
-#                 else:
-#                     _LOGGER.warn(
-#                         "'min_neighbour_dist' reached: cannot add line at t = {}".
-#                         format(t)
-#                     )
-#                 return SurfaceResult(data, stateful_ctrl, convergence_ctrl)
-#
-#             _LOGGER.info('Adding line at t = {}'.format(t))
-#             data.add_line(t, get_line(t))
-#
-#             return update_result()
-#
-#         def update_result():
-#             """
-#             Updates all data controls, then creates the result object, saves it to file if necessary and returns the result.
-#             """
-#
-#             # update data controls
-#             for d_ctrl in data_ctrl:
-#                 d_ctrl.update(data)
-#
-#             result = SurfaceResult(data, stateful_ctrl, convergence_ctrl)
-#             save_thread.send(copy.deepcopy(result))
-#
-#             return result
-#
-#         def collect_convergence():
-#             """
-#             Calculates which neighbours are not converged
-#             """
-#             res = np.array([True] * (len(data.lines) - 1))
-#             for c_ctrl in convergence_ctrl:
-#                 res &= c_ctrl.converged
-#             _LOGGER.info(
-#                 'Convergence criteria fulfilled for {} of {} neighbouring lines.'.
-#                 format(sum(res), len(res))
-#             )
-#             return res
-#
-#         # STEP 1 -- MAKE USE OF INIT_RESULT
-#         # initialize stateful controls from old result
-#         if init_result is not None:
-#             _LOGGER.info("Initializing result from 'init_result'.")
-#             # make sure old result doesn't change
-#             init_result = copy.deepcopy(init_result)
-#
-#             # get states from pre-existing Controls
-#             for s_ctrl in stateful_ctrl:
-#                 with contextlib.suppress(KeyError):
-#                     s_ctrl.state = init_result.ctrl_states[
-#                         s_ctrl.__class__.__name__
-#                     ]
-#
-#             data = init_result.data
-#
-#             # re-run lines with existing result as input
-#             _LOGGER.info('Re-running existing lines.')
-#             for line in data.lines:
-#                 _LOGGER.info('Re-running line for t = {}'.format(line.t))
-#                 line.result = get_line(line.t, line.result)
-#                 update_result()
-#
-#         else:
-#             data = SurfaceData()
-#
-#         # STEP 2 -- PRODUCE REQUIRED STRINGS
-#         # create lines required by num_lines
-#         _LOGGER.info("Adding lines required by 'num_lines'.")
-#         for t in np.linspace(0, 1, num_lines):
-#             result = add_line(t)
-#
-#         # STEP 3 -- MAIN LOOP
-#         num_lines = len(data.lines)
-#         conv = collect_convergence()
-#         while not all(conv):
-#             # add lines for all non-converged values
-#             new_t = [(t1 + t2) / 2
-#                      for (t1, t2), c in zip(zip(data.t, data.t[1:]), conv)
-#                      if not c]
-#             for t in new_t:
-#                 result = add_line(t)
-#
-#             # check if new lines appeared
-#             num_lines_new = len(data.lines)
-#             if num_lines == num_lines_new:
-#                 break
-#             num_lines = num_lines_new
-#             conv = collect_convergence()
-#
-#     end_time = time.time()
-#     _LOGGER.info(end_time - start_time, tags=('box', 'skip-before', 'timing'))
-#     _LOGGER.info(
-#         result.convergence_report, tags=('box', 'convergence_report', 'skip')
-#     )
-#     return result
+    # setting up async handler
+    if save_file is not None:
+
+        def handler(res):
+            _LOGGER.info(
+                'Saving volume result to file {} (ASYNC)'.format(save_file)
+            )
+            io.save(res, save_file, serializer=serializer)
+    else:
+        handler = None
+
+    with AsyncHandler(handler) as save_thread:
+
+        def add_surface(s):
+            """
+            Adds a surface to the Volume, if it is within min_neighbour_dist of
+            the given surfaces.
+            """
+            # find whether the line is allowed still
+            dist = data.nearest_neighbour_dist(s)
+            if dist < min_neighbour_dist:
+                if dist == 0:
+                    _LOGGER.info("Surface at s = {} exists already.".format(s))
+                else:
+                    _LOGGER.warn(
+                        "'min_neighbour_dist' reached: cannot add surface at s = {}".
+                        format(s)
+                    )
+                return VolumeResult(
+                    data, ctrl_container.stateful, ctrl_container.convergence
+                )
+
+            _LOGGER.info('Adding surface at s = {}'.format(s))
+            data.add_surface(s, get_surface(s))
+
+            return update_result()
+
+        def update_result():
+            """
+            Updates all data controls, then creates the result object, saves it to file if necessary and returns the result.
+            """
+
+            # update data controls
+            for d_ctrl in ctrl_container.data:
+                d_ctrl.update(data)
+
+            result = VolumeResult(
+                data, ctrl_container.stateful, ctrl_container.convergence
+            )
+            save_thread.send(copy.deepcopy(result))
+
+            return result
+
+        def collect_convergence():
+            """
+            Calculates which neighbours are not converged
+            """
+            res = np.array([True] * (len(data.surfaces) - 1))
+            for c_ctrl in ctrl_container.convergence:
+                res &= c_ctrl.converged
+            _LOGGER.info(
+                'Convergence criteria fulfilled for {} of {} neighbouring surfaces.'.
+                format(sum(res), len(res))
+            )
+            return res
+
+        # STEP 1 -- MAKE USE OF INIT_RESULT
+        # initialize stateful controls from old result
+        if init_result is not None:
+            _LOGGER.info("Initializing result from 'init_result'.")
+            # make sure old result doesn't change
+            init_result = copy.deepcopy(init_result)
+
+            # get states from pre-existing Controls
+            for s_ctrl in ctrl_container.stateful:
+                with contextlib.suppress(KeyError):
+                    s_ctrl.state = init_result.ctrl_states[
+                        s_ctrl.__class__.__name__
+                    ]
+
+            data = init_result.data
+
+            # re-run lines with existing result as input
+            _LOGGER.info('Re-running existing surfaces.')
+            for surface in data.surfaces:
+                _LOGGER.info('Re-running surface for s = {}'.format(surface.s))
+                surface.result = get_surface(surface.t, surface.result)
+                update_result()
+
+        else:
+            data = VolumeData()
+
+        # STEP 2 -- PRODUCE REQUIRED SURFACES
+        # create surfaces required by num_surfaces
+        _LOGGER.info("Adding lines required by 'num_surfaces'.")
+        for s in np.linspace(0, 1, num_surfaces):
+            result = add_surface(s)
+
+        # STEP 3 -- MAIN LOOP
+        num_surfaces = len(data.surfaces)
+        conv = collect_convergence()
+        while not all(conv):
+            # add lines for all non-converged values
+            new_s = [(s1 + s2) / 2
+                     for (s1, s2), c in zip(zip(data.s, data.s[1:]), conv)
+                     if not c]
+            for s in new_s:
+                result = add_surface(s)
+
+            # check if new lines appeared
+            num_surfaces_new = len(data.surfaces)
+            if num_surfaces == num_surfaces_new:
+                break
+            num_surfaces = num_surfaces_new
+            conv = collect_convergence()
+
+    return result

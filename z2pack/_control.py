@@ -75,8 +75,12 @@ class ConvergenceControl(AbstractControl):
 
 
 # The only purpose of these subclasses is to distinguish between
-# ConvergenceControls which take a SurfaceData object and those which take
-# a LineData object.
+# ConvergenceControls which take a VolumeData, SurfaceData or LineData object.
+class VolumeControl(AbstractControl):
+    """Specializes AbstractControl for Volume objects"""
+    pass
+
+
 class SurfaceControl(AbstractControl):
     """Specializes AbstractControl for Surface objects"""
     pass

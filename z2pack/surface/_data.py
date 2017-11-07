@@ -36,7 +36,7 @@ class SurfaceData(metaclass=ConstLocker):
         :param result:  Result of the line calculation.
         :type result:   :class:`.LineResult`
         """
-        self.lines.add(SurfaceLine(t, result))
+        self.lines.add(LinePosition(t, result))
 
     def __getattr__(self, key):
         if key != 'lines':
@@ -56,7 +56,7 @@ class SurfaceData(metaclass=ConstLocker):
         return min(abs(t - tval) for tval in self.t)
 
 
-class SurfaceLine:
+class LinePosition:
     """Wraps the line result and its position in the surface."""
     __slots__ = ['t', 'result']
 

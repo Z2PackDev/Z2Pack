@@ -12,6 +12,10 @@ from .._utils import _get_max_move
 
 @export
 class SurfaceControlContainer(ControlContainer):
+    """
+    Container for controls used in the surface run.
+    """
+
     def __init__(self, controls):
         super().__init__(
             controls=controls,

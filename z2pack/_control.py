@@ -14,7 +14,7 @@ class ControlContainer(types.SimpleNamespace):
     Container for controls, giving simple access to the different types of controls.
     """
 
-    def __init__(self, *, controls, categories, valid_type):  # pylint: disable=no-method-docstring
+    def __init__(self, *, controls, categories, valid_type):  # pylint: disable=missing-docstring
         self.all = controls
         for ctrl in self.all:
             if not isinstance(ctrl, valid_type):

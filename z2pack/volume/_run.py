@@ -12,12 +12,8 @@ from fsc.export import export
 from . import _LOGGER
 from . import VolumeData
 from . import VolumeResult
-from ._control import _create_volume_controls
+from ._control import _create_volume_controls, VolumeControlContainer
 
-from .._control import (
-    LineControl, SurfaceControl, VolumeControl, DataControl, StatefulControl,
-    ConvergenceControl
-)
 from .. import io
 from .._async_handler import AsyncHandler
 from .._logging_tools import TagAdapter, TagFilter, filter_manager

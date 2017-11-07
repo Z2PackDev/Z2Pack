@@ -11,6 +11,10 @@ from .._utils import _get_max_move
 
 @export
 class LineControlContainer(ControlContainer):
+    """
+    Container for controls used in the line run.
+    """
+
     def __init__(self, controls):
         super().__init__(
             controls=controls,

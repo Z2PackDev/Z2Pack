@@ -100,7 +100,7 @@ def _(obj):
 
 @encode.register(VolumeData)
 def _(obj):
-    return dict(__volume_data__=True, surfaces=encode(obj.lines))
+    return dict(__volume_data__=True, surfaces=encode(obj.surfaces))
 
 
 @encode.register(VolumeResult)

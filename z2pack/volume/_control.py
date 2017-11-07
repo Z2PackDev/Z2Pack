@@ -25,7 +25,7 @@ class VolumeControlContainer(ControlContainer):
         super().__init__(
             controls=controls,
             categories={
-                'surface': [SurfaceControl],
+                'surface': [(SurfaceControl, LineControl)],
                 'stateful': [StatefulControl, VolumeControl],
                 'data': [DataControl, VolumeControl],
                 'convergence': [ConvergenceControl, VolumeControl],

@@ -49,6 +49,11 @@ def simple_surface():
     return lambda s, t: [0, 0, 0]
 
 
+@pytest.fixture
+def simple_volume():
+    return lambda t1, t2, t3: [0, 0, 0]
+
+
 @pytest.fixture(params=[False, True])
 def weyl_system(request):
     """

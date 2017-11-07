@@ -55,13 +55,16 @@ class System(OverlapSystem):
         command,
         executable=None,
         build_folder='build',
+        symm_folder='scf',
         file_names=None,
         mmn_path='wannier90.mmn',
+        symm_path='pwscf.xml'
         num_wcc=None
     ):
         # convert to lists (input_files)
         self._input_files = list(input_files)
         self._build_folder = os.path.abspath(build_folder)
+        self._symm_folder = ox.path.abspath(scf_folder)
 
         # copy to file_names and split off the name
         if file_names is None:
@@ -102,16 +105,20 @@ class System(OverlapSystem):
                 format(len(self._kpt_path), len(self._kpt_fct))
             )
         self._mmn_path = self._to_abspath(mmn_path)
+        self._symm_path = self._to_abspath(symm_path, self._symm_folder)
         self._calling_path = os.getcwd()
 
         self._num_wcc = num_wcc
 
-    def _to_abspath(self, path):
+    def _to_abspath(self, path, root_path=None):
         """
-        Returns a list of absolute paths from a list of paths relative to the build folder, or a single absolute path from a single relative path.
+        Returns a list of absolute paths from a list of paths relative to the build folder (or root path folder is specified),
+        or a single absolute path from a single relative path.
         """
+        if root_path is None:
+            root_path = self._build_folder
         if isinstance(path, str):
-            return os.path.join(self._build_folder, path)
+            return os.path.join(root_path, path)
         return [self._to_abspath(p) for p in path]
 
     def _create_input(self, kpt):
@@ -128,7 +135,7 @@ class System(OverlapSystem):
             with open(f_path, k_mode) as f:
                 f.write(self._kpt_fct[i](kpt))
 
-    def get_mmn(self, kpt):
+    def get_mmn(self, kpt, use_symm=False):
         num_kpt = len(kpt) - 1
 
         # create input
@@ -162,7 +169,12 @@ class System(OverlapSystem):
                         format(i, overlaps.shape, shape)
                     )
 
-        return overlap_matrices
+        symm_projectors = None
+        if use_symm:
+            # if use_symm = True, we need to parse the .dmn file and write the result into symm_projectors
+            pass
+
+        return overlap_matrices, symm_projectors
 
 
 def _copy(initial_paths, final_names):

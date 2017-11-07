@@ -32,6 +32,7 @@ def run_surface(
     *,
     system,
     surface,
+    use_symm = False,
     pos_tol=1e-2,
     gap_tol=0.3,
     move_tol=0.3,
@@ -56,6 +57,9 @@ def run_surface(
     :type system:       :class:`z2pack.system.EigenstateSystem` or :class:`z2pack.system.OverlapSystem`.
 
     :param surface:     Surface on which the WCC / Wilson loops should be calculated. The argument should be a callable which parametrizes the surface :math:`\mathbf{k}(t_1, t_2)`, in reduced coordinates. It should take two arguments (``float``) and return a nested list of ``float`` describing the points in k-space. Note that the surface must be closed at least along the :math:`t_2` - direction, that is :math:`\mathbf{k}(t_1, 0) = \mathbf{k}(t_1, 1) + \mathbf{G}`, where :math:`\mathbf{G}` is an inverse lattice vector.
+
+    :param use_symm:    If true, the topological invariants in each symmetry subspace of every symmetry are calculated.
+    :type use_symm:     bool
 
     :param pos_tol:     The maximum movement of a WCC for the iteration w.r.t. the number of k-points in a single string to converge. The iteration can be turned off by setting ``pos_tol=None``.
     :type pos_tol:      float
@@ -143,6 +147,7 @@ def run_surface(
         *controls,
         system=system,
         surface=surface,
+        use_symm=use_symm,
         num_lines=num_lines,
         min_neighbour_dist=min_neighbour_dist,
         save_file=save_file,
@@ -160,6 +165,7 @@ def _run_surface_impl(
     *controls,
     system,
     surface,
+    use_symm,
     num_lines,
     min_neighbour_dist,
     save_file=None,

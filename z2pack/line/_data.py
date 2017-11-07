@@ -46,10 +46,10 @@ class WccLineData(metaclass=ConstLocker):
         self.wcc = wcc
 
     @classmethod
-    def from_overlaps(cls, overlaps):
+    def from_overlaps(cls, overlaps, symm_projectors = None):
         r"""Creates a :class:`WccLineData` object from a list containing the overlap matrices :math:`M_{m,n}^{\mathbf{k}, \mathbf{k+b}} = \langle u_n^\mathbf{k} | u_m^\mathbf{k+b} \rangle`."""
         return cls(
-            cls._calculate_wannier_from_wilson(cls._wilson(overlaps))[0]
+            cls._calculate_wannier_from_wilson(cls._wilson(overlaps, symm_projectors=symm_projectors))[0]
         )
 
     @staticmethod
@@ -60,7 +60,7 @@ class WccLineData(metaclass=ConstLocker):
         return list(wcc[idx]), list(eigvec.T[idx])
 
     @staticmethod
-    def _wilson(overlaps):
+    def _wilson(overlaps, symm_projectors):
         return functools.reduce(np.dot, overlaps)
 
     @_LazyProperty
@@ -82,7 +82,7 @@ class WccLineData(metaclass=ConstLocker):
             self.gap_pos, self.gap_size = _gapfind(self.wcc)
 
     def __getattr__(self, name):
-        """Forward to parent class unless for the 'eigenstates' attribute, in which case an AttributError is raised."""
+        """Forward to parent class unless for the 'eigenstates' attribute, in which case an AttributeError is raised."""
         if name == 'eigenstates':
             raise AttributeError(
                 "This data does not have the 'eigenstates' attribute. This is because the system used does not provide eigenstates, but only overlap matrices. The functionality which resulted in this error can be used only for systems providing eigenstates."

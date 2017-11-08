@@ -34,16 +34,22 @@ class System(OverlapSystem):
     :param build_folder:    Folder where the calculation is executed.
     :type build_folder:     str
 
+    :param scf_folder:  Folder where the output of the scf calculation is stored.
+    :type xml_path:     str
+
     :param file_names:  Names the input files should get in the ``build_folder``. Default behaviour is taking the filenames from the input files.
     :type file_names:   :py:class:`list` of :py:class:`str`
 
     :param mmn_path:    Path to the ``.mmn`` output file of ``Wannier90``
     :type mmn_path:     str
 
+    :param xml_path:    Relative path to the output xml file of the scf calculation in ``scf_folder``
+    :type xml_path:     str
+
     :param num_wcc:     Number of WCC which should be produced by the system. This parameter can be used to check the consistency of the calculation. By default, no such check is done.
     :type num_wcc:      int
 
-    .. note:: ``input_files`` and ``build_folder`` can be absolute or relative paths, the rest is relative to ``build_folder``
+    .. note:: ``input_files``, ``build_folder`` and ``scf_folder`` can be absolute or relative paths; all other paths excpet ``xml_path`` are relative to ``build_folder``
     """
 
     def __init__(
@@ -55,16 +61,16 @@ class System(OverlapSystem):
         command,
         executable=None,
         build_folder='build',
-        symm_folder='scf',
+        scf_folder='scf',
         file_names=None,
         mmn_path='wannier90.mmn',
-        symm_path='pwscf.xml'
+        xml_path='pwscf.xml',
         num_wcc=None
     ):
         # convert to lists (input_files)
         self._input_files = list(input_files)
         self._build_folder = os.path.abspath(build_folder)
-        self._symm_folder = ox.path.abspath(scf_folder)
+        self._scf_folder = os.path.abspath(scf_folder)
 
         # copy to file_names and split off the name
         if file_names is None:
@@ -105,7 +111,7 @@ class System(OverlapSystem):
                 format(len(self._kpt_path), len(self._kpt_fct))
             )
         self._mmn_path = self._to_abspath(mmn_path)
-        self._symm_path = self._to_abspath(symm_path, self._symm_folder)
+        self._xml_path = self._to_abspath(xml_path, root_path = self._scf_folder)
         self._calling_path = os.getcwd()
 
         self._num_wcc = num_wcc

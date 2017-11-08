@@ -1,8 +1,10 @@
 """Utilitites to select the local symmetries of a surface from a list of all symmetries of the crystal"""
 
+import os
 import xml.etree.ElementTree as ET
 import numpy as np
 import scipy.linalg as la
+from fsc.export import export
 
 
 def reduced_dist(k1, k2):
@@ -29,7 +31,7 @@ def to_reciprocal(real_space):
         k_space.append(2 * np.pi / c * np.cross(real_space[(i + 1) % 3], real_space[(i + 2) % 3]))
     return k_space
 
-
+@export
 def symm_from_scf(xml_path):
     """
     Read symmetries from scf xml output file at xml path
@@ -46,7 +48,7 @@ def symm_from_scf(xml_path):
         symmetries.append(s.reshape((n, n)))
     return symmetries
 
-
+@export
 def reduced_from_wannier(xml_path):
     """
     Get the basis transformation matrix from the reduced reciprocal space to cartesian basis
@@ -57,18 +59,21 @@ def reduced_from_wannier(xml_path):
         real_space.append(np.fromstring(vec.text, sep=' '))
     return np.array(to_reciprocal(real_space)).T
 
-
+@export
 def pw_symm_file(symmetries, output_path):
     """
     Write .sym file for use in pw2wannier90
     symmetries: matrix of real space symmetry matrices in cartesian basis
-    output_path: absolute or relative path to output file, eg. /home/ex.sym. The file name has to be the "seedname".sym.
+    output_path: Path to the file to which the local symmetries are written. The filename has to "seedname".sym.
     """
+
     with open(output_path, 'w') as f:
-        f.write(str(len(symmetries)) + '\n\n')
+        f.write(str(len(symmetries)) + '\n')
         for symm in symmetries:
+            symm = np.vstack((symm, [0 for i in range(len(symm[0]))]))
+            f.write('\n')
             f.write('\n'.join(map(lambda x: ' '.join(map('{:E}'.format, x)), symm)))
-            f.write('\n\n')
+            f.write('\n')
         f.close()
 
 
@@ -84,20 +89,19 @@ def reduced_symm(symm, basis):
     symm = EtoB.dot(symm).dot(BtoE)
     return symm
 
-
-def find_local(symmetries, surface, basis, precision=3, eps=1e-5):
+@export
+def find_local(symmetries, surface, precision=3, eps=1e-5):
     """
     Select those symmetries that leave all k-points on the surface invariant.
-    symmetries: 3x3 symmetry matrix in real space.
+    symmetries: 3x3 symmetry matrix in reduced real space.
     surface : function t, s -> R^3, with the output being coordinates in the reduced basis
-    basis: reduced basis of real space; basis vectors as columns
     precision: number of random k-points for which S(k) = k is checked
     """
     local_symmetries = []
     k_points = [surface(*list(np.random.rand(2))) for i in range(precision)]
 
     for symm in symmetries:
-        k_symm = reduced_symm(symm, basis)
+        k_symm = symm.conj()
         local = True
         for kp in k_points:
             if(la.norm(reduced_dist(kp, np.dot(k_symm, kp))) > eps):

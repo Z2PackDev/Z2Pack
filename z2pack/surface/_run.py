@@ -5,6 +5,7 @@ import copy
 import time
 import logging
 import contextlib
+import re
 
 import numpy as np
 from fsc.export import export
@@ -25,6 +26,8 @@ _LOGGER = TagAdapter(_LOGGER, default_tags=('surface', ))
 
 from ..line import _run as _line_run
 from ..line._control import StepCounter, PosCheck, ForceFirstUpdate
+
+from ._symm import *
 
 
 @export
@@ -58,7 +61,7 @@ def run_surface(
 
     :param surface:     Surface on which the WCC / Wilson loops should be calculated. The argument should be a callable which parametrizes the surface :math:`\mathbf{k}(t_1, t_2)`, in reduced coordinates. It should take two arguments (``float``) and return a nested list of ``float`` describing the points in k-space. Note that the surface must be closed at least along the :math:`t_2` - direction, that is :math:`\mathbf{k}(t_1, 0) = \mathbf{k}(t_1, 1) + \mathbf{G}`, where :math:`\mathbf{G}` is an inverse lattice vector.
 
-    :param use_symm:    If true, the topological invariants in each symmetry subspace of every symmetry are calculated.
+    :param use_symm:    (Only applicable for fp calculations) If true, the local symmetries of the surface are calculated and written to /build_folder/local.sym
     :type use_symm:     bool
 
     :param pos_tol:     The maximum movement of a WCC for the iteration w.r.t. the number of k-points in a single string to converge. The iteration can be turned off by setting ``pos_tol=None``.
@@ -204,6 +207,21 @@ def _run_surface_impl(
             line=lambda ky: surface(t, ky),
             init_result=init_line_result
         )
+
+    # create local.sym file for use in pw2wannier90 calculations
+    if use_symm and not hasattr(system, 'get_eig'):
+        # get symmetries from scf file
+        xml_path = system._xml_path
+        symms = symm_from_scf(xml_path) #this reads the symmetry matrices in the reduced basis
+        symms = find_local(symms, surface) #this selects the local symmetries
+        #The .sym file has to be in cartesian coordinates
+        basis_transform = reduced_from_wannier(xml_path)
+        for i, s in enumerate(symms):
+            symms[i] = basis_transform.dot(s).dot(np.linalg.inv(basis_transform)) #transform to cartesian basis
+        symm_path = [p for p in system._input_files if re.search(".sym$", p)]
+        if len(symm_path) != 1:
+            raise Exception("There is no seedname.sym file included in the system's input files.")
+        pw_symm_file(symms, symm_path[0])
 
     # setting up async handler
     if save_file is not None:

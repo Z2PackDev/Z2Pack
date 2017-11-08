@@ -7,4 +7,5 @@
   write_mmn =.true.
   write_dmn =.true.
   regular_mesh = .false.
+  read_sym =.true.
 /  

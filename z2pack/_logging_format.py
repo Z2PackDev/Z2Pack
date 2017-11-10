@@ -83,21 +83,16 @@ class DefaultFormatter(logging.Formatter):
     def _create_setup_message(self, record):
         """Create message from setup record."""
         kwargs = record.msg
-        if 'surface' in record.tags:
-            msg = self._make_title(
-                'SURFACE CALCULATION',
-                '=',
-                overline=True,
-                modifier=self.term.bold
-            )
 
-        if 'line' in record.tags:
-            msg = self._make_title(
-                'LINE CALCULATION',
-                '=',
-                overline=True,
-                modifier=self.term.bold
-            )
+        calc_type = (set(record.tags) & set(['volume', 'line', 'surface']
+                                            )).pop()
+        msg = self._make_title(
+            '{} CALCULATION'.format(calc_type.upper()),
+            '=',
+            overline=True,
+            modifier=self.term.bold
+        )
+
         msg += '\n' + 'starting at {}'.format(self.formatTime(record))
         msg += '\nrunning Z2Pack version {}\n\n'.format(__version__)
 

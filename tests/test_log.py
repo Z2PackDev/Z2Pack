@@ -18,10 +18,10 @@ def compare_lines(x, y):
     """
     Compare two outputs, skipping the IGNORE_LINES.
     """
-    for xline, yline in zip(x.splitlines(), y.splitlines()):
+    for i, (xline, yline) in enumerate(zip(x.splitlines(), y.splitlines())):
         if any((part in xline) and (part in yline) for part in IGNORE_LINES):
             continue
-        assert xline == yline
+        assert xline == yline, 'Line {} does not match.'.format(i)
     return True
 
 

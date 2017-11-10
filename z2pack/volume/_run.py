@@ -265,7 +265,7 @@ def _run_volume_impl(
 
         # STEP 2 -- PRODUCE REQUIRED SURFACES
         # create surfaces required by num_surfaces
-        _LOGGER.info("Adding lines required by 'num_surfaces'.")
+        _LOGGER.info("Adding surfaces required by 'num_surfaces'.")
         for s in np.linspace(0, 1, num_surfaces):
             result = add_surface(s)
 

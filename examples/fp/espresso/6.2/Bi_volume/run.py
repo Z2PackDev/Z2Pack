@@ -69,3 +69,6 @@ result = z2pack.volume.run(
     save_file='./results/res.json',
     load=True
 )
+
+fig = z2pack.plot.wcc_3d(result)
+plt.show()

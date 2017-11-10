@@ -61,19 +61,25 @@ class DefaultFormatter(logging.Formatter):
             'CONVERGENCE REPORT', '=', overline=True, modifier=self.term.bold
         )
 
-        # For Surface calculations
-        if 'surface' in record.tags:
-            # line convergence objects
-            line_msg = self._make_title('Line Convergence', '=')
+        def _make_kind_msg(kind):
+            """
+            Create the convergence report message for a particular kind of convergence control.
+            """
+            msg = self._make_title(
+                '{} Convergence'.format(kind.capitalize()), '='
+            )
+            for key, val in sorted(report[kind].items()):
+                msg += '\n\n' + self._make_report_entry(key, val)
+            return msg
 
-            for key, val in sorted(report['line'].items()):
-                line_msg += '\n\n' + self._make_report_entry(key, val)
+        if 'volume' in record.tags:
+            msg += '\n\n' + _make_kind_msg(kind='line')
+            msg += '\n\n' + _make_kind_msg(kind='surface')
+            msg += '\n\n' + _make_kind_msg(kind='volume')
+        elif 'surface' in record.tags:
+            msg += '\n\n' + _make_kind_msg(kind='line')
+            msg += '\n\n' + _make_kind_msg(kind='surface')
 
-            surface_msg = self._make_title('Surface Convergence', '=')
-            for key, val in sorted(report['surface'].items()):
-                surface_msg += '\n\n' + self._make_report_entry(key, val)
-            msg += '\n\n' + line_msg
-            msg += '\n\n' + surface_msg
         # For Line calculations
         elif 'line' in record.tags:
             for key, val in sorted(report.items()):

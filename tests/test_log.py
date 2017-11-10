@@ -7,7 +7,7 @@ from contextlib import contextmanager
 
 import z2pack
 
-from hm_systems import simple_system, simple_surface, simple_line
+from hm_systems import simple_system, simple_volume, simple_surface, simple_line
 
 IGNORE_LINES = [
     'Calculation finished', 'starting at', 'Z2Pack version', ' at 0x'
@@ -42,6 +42,11 @@ def capture_logging_output(compare_data):
     out.seek(0)
     res = out.read()
     compare_data(compare_lines, res)
+
+
+def test_volume_report(compare_data, simple_system, simple_volume):
+    with capture_logging_output(compare_data):
+        z2pack.volume.run(system=simple_system, volume=simple_volume)
 
 
 def test_surface_report(compare_data, simple_system, simple_surface):

@@ -13,7 +13,7 @@ from . import VolumeResult
 from ._control import _create_volume_controls, VolumeControlContainer
 
 from .._async_handler import AsyncHandler
-from .._run_utils import _load_init_result, _check_save_dir
+from .._run_utils import _load_init_result, _check_save_dir, _log_run
 from .._logging_tools import TagAdapter, TagFilter, filter_manager
 _LOGGER = TagAdapter(_LOGGER, default_tags=('volume', ))
 
@@ -21,6 +21,7 @@ from ..surface import _run as _surface_run
 
 
 @export
+@_log_run(_LOGGER)
 def run_volume(
     *,
     system,
@@ -100,9 +101,7 @@ def run_volume(
         print(result.wcc) # Prints a nested list of WCC (a list for each surface, which each contains a list of WCC for each line).
 
     """
-    _LOGGER.info(locals(), tags=('setup', 'box', 'skip'))
-
-    #     # setting up controls
+    # setting up controls
     controls = _create_volume_controls(
         pos_tol=pos_tol, iterator=iterator, gap_tol=gap_tol, move_tol=move_tol
     )

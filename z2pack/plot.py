@@ -11,28 +11,35 @@ from fsc.export import export
 from ._utils import _pol_step
 
 
-@decorator.decorator
-def _plot(func, data, *, axis=None, **kwargs):
+def _plot(proj_3d=False):
     """Decorator that sets up the figure axes and handles options common to all plots."""
-    # import is here s.t. the import of the package does not fail
-    # if matplotlib is not present
-    import matplotlib.pyplot as plt
 
-    # create axis if it does not exist
-    if axis is None:
-        return_fig = True
-        fig = plt.figure()
-        axis = fig.add_subplot(111)
-    else:
-        return_fig = False
+    @decorator.decorator
+    def inner(func, data, *, axis=None, **kwargs):  # pylint: disable=missing-docstring
+        # import is here s.t. the import of the package does not fail
+        # if matplotlib is not present
+        import matplotlib.pyplot as plt
+        from mpl_toolkits.mplot3d import Axes3D  # pylint: disable=unused-variable
 
-    axis.set_xlim(0, 1)
-    axis.set_ylim(0, 1)
+        # create axis if it does not exist
+        if axis is None:
+            return_fig = True
+            fig = plt.figure()
+            axis = fig.add_subplot(111, projection='3d' if proj_3d else None)
+        else:
+            return_fig = False
 
-    func(data, axis=axis, **kwargs)
+        axis.set_xlim(0, 1)
+        axis.set_ylim(0, 1)
+        if proj_3d:
+            axis.set_zlim(0, 1)
 
-    if return_fig:
-        return fig
+        func(data, axis=axis, **kwargs)
+
+        if return_fig:
+            return fig
+
+    return inner
 
 
 def _plot_gaps(surface_result, *, axis, gaps, gap_settings):
@@ -46,7 +53,7 @@ def _plot_gaps(surface_result, *, axis, gaps, gap_settings):
 
 
 @export
-@_plot
+@_plot()
 def wcc_symmetry(
         surface_result,
         *,
@@ -116,7 +123,7 @@ def wcc_symmetry(
 
 
 @export
-@_plot
+@_plot()
 def wcc(
     surface_result,
     *,
@@ -161,7 +168,7 @@ def wcc(
 
 
 @export
-@_plot
+@_plot()
 def chern(
     surface_result,
     *,
@@ -200,3 +207,36 @@ def chern(
             axis.plot(
                 t, [p_value - p_step + offset, p_value + offset], **settings
             )
+
+
+@export
+@_plot(proj_3d=True)
+def wcc_3d(volume_result, *, axis=None, settings={}):
+    """
+    Plots the WCCs (z-axis) for a volume calculation against their reciprocal space coordinates.
+
+    :param volume_result:  Result for which the plot is drawn.
+    :type volume_result: :class:`.VolumeResult` or :class:`.VolumeData`
+
+    :param axis:      Axis where the plot is drawn
+    :type axis:       matplotlib.axes.Axes3DSubplot
+
+    :param settings: Settings passed to the ``scatter`` function.
+    :type settings: dict
+    """
+    surface_positions = volume_result.s
+    line_positions = volume_result.t
+    volume_wcc = volume_result.wcc
+
+    x_values = []
+    y_values = []
+    z_values = []
+    for x, line_pos, surface_wcc in zip(
+        surface_positions, line_positions, volume_wcc
+    ):
+        for y, line_wcc in zip(line_pos, surface_wcc):
+            for z in line_wcc:
+                x_values.append(x)
+                y_values.append(y)
+                z_values.append(z)
+    axis.scatter(xs=x_values, ys=y_values, zs=z_values, **settings)

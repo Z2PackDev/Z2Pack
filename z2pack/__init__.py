@@ -17,6 +17,8 @@ from . import hm
 from . import tb
 from . import fp
 
+from . import io
+
 from . import _logging_format  # sets default logging levels / format
 
 __all__ = [

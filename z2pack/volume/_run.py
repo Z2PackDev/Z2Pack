@@ -12,7 +12,6 @@ from . import VolumeData
 from . import VolumeResult
 from ._control import _create_volume_controls, VolumeControlContainer
 
-from .. import io
 from .._async_handler import AsyncHandler
 from .._run_utils import _load_init_result, _check_save_dir
 from .._logging_tools import TagAdapter, TagFilter, filter_manager
@@ -154,6 +153,7 @@ def _run_volume_impl(
 
     The other parameters are the same as for :meth:`.run`.
     """
+    from .. import io
     ctrl_container = VolumeControlContainer(controls)
 
     # HELPER FUNCTIONS
@@ -168,7 +168,7 @@ def _run_volume_impl(
             surface=lambda t1, t2: volume(s, t1, t2),
             num_lines=num_lines,
             min_neighbour_dist=min_neighbour_dist,
-            init_result=init_surface_result,
+            init_result=init_surface_result
         )
 
     # setting up async handler

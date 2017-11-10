@@ -86,7 +86,7 @@ def run_surface(
     :param load_quiet:  Determines whether errors / inexistent files are ignored when loading from ``save_file``
     :type load_quiet:   bool
 
-    :param serializer:  Serializer which is used to save the result to file. Valid options are :py:mod:`msgpack`, :py:mod:`json` and :py:mod:`pickle`. By default (``serializer='auto'``), the serializer is inferred from the file ending. If this fails, :py:mod:`json` is used.
+    :param serializer:  Serializer which is used to save the result to file. Valid options are ``msgpack``, :py:mod:`json` and :py:mod:`pickle`. By default (``serializer='auto'``), the serializer is inferred from the file ending. If this fails, :py:mod:`json` is used.
     :type serializer:   module
 
     :returns:   :class:`SurfaceResult` instance.

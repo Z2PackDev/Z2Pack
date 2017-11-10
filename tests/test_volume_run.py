@@ -137,7 +137,7 @@ def test_file_restart(simple_system, simple_volume, serializer):
             serializer=serializer
         )
         result1 = z2pack.volume.run(**kwargs)
-        result2 = z2pack.volume.run(load=True, **kwargs)
+        result2 = z2pack.volume.run(load=True, load_quiet=False, **kwargs)
     assert_res_equal(result1, result2)
 
 

@@ -141,7 +141,7 @@ Depending on which first-principles code you use, there are a few things that yo
 
 Quantum Espresso
 ''''''''''''''''
-Of the first-principles codes which have been tested, Quantum Espresso currently has the best integration with Z2Pack. Starting with version **6.0** (with Wannier90 version 2.1 or higher) it supports calculating topological invariants on arbitrary surfaces. To enable this, use the new Wannier90 interface described above (:meth:`.wannier90_full`), and add the option ``regular_mesh = .false.`` to the ``pw2wannier90`` input.
+Of the first-principles codes which have been tested, Quantum Espresso currently has the best integration with Z2Pack. Starting with version **6.0** (with Wannier90 version 2.1 or higher) it supports calculating topological invariants on arbitrary surfaces. To enable this, use the new Wannier90 interface described above (:func:`.wannier90_full`), and add the option ``regular_mesh = .false.`` to the ``pw2wannier90`` input.
 
 VASP
 ''''

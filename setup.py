@@ -30,7 +30,7 @@ EXTRAS = {
     'doc': ['sphinx', 'sphinx_rtd_theme'],
     'dev': ['prospector', 'pytest', 'yapf', 'pre-commit'],
 }
-EXTRAS['dev'] += EXTRAS['plot'] + EXTRAS['tb']
+EXTRAS['dev'] += EXTRAS['plot'] + EXTRAS['tb'] + EXTRAS['doc']
 
 setup(
     name='z2pack',

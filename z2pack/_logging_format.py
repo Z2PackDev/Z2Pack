@@ -177,5 +177,5 @@ class DefaultFormatter(logging.Formatter):
 
 DEFAULT_HANDLER = logging.StreamHandler(sys.stdout)
 DEFAULT_HANDLER.setFormatter(DefaultFormatter())
-logging.getLogger('z2pack').setLevel(logging.WARNING)
+logging.getLogger('z2pack').setLevel(logging.INFO)
 logging.getLogger('z2pack').addHandler(DEFAULT_HANDLER)

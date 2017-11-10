@@ -3,6 +3,8 @@ Fixtures for hamiltonian matrix (hm) system tests.
 """
 # pylint: disable=redefined-outer-name,invalid-name
 
+import numbers
+
 import pytest
 import numpy as np
 
@@ -39,19 +41,32 @@ def simple_system(request):
     return res
 
 
+def _check_real(func):
+    """
+    Decorator that checks that the args passed to the function are reals.
+    """
+
+    def inner(*args):
+        for x in args:
+            assert isinstance(x, numbers.Real)
+        return func(*args)
+
+    return inner
+
+
 @pytest.fixture
 def simple_line():
-    return lambda t: [0, 0, 0]
+    return _check_real(lambda t: [0, 0, 0])
 
 
 @pytest.fixture
 def simple_surface():
-    return lambda s, t: [0, 0, 0]
+    return _check_real(lambda s, t: [0, 0, 0])
 
 
 @pytest.fixture
 def simple_volume():
-    return lambda t1, t2, t3: [0, 0, 0]
+    return _check_real(lambda t1, t2, t3: [0, 0, 0])
 
 
 @pytest.fixture(params=[False, True])

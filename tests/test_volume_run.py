@@ -88,7 +88,7 @@ def test_simple_save(num_lines, simple_system, simple_volume):
 
 # test restart
 def test_restart(simple_system, simple_volume):
-    """Test restarting a run from a savefile."""
+    """Test restarting a run from a result."""
     result1 = z2pack.volume.run(system=simple_system, volume=simple_volume)
     result2 = z2pack.volume.run(
         system=simple_system, volume=simple_volume, init_result=result1

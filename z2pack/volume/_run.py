@@ -257,7 +257,7 @@ def _run_volume_impl(
             _LOGGER.info('Re-running existing surfaces.')
             for surface in data.surfaces:
                 _LOGGER.info('Re-running surface for s = {}'.format(surface.s))
-                surface.result = get_surface(surface.t, surface.result)
+                surface.result = get_surface(surface.s, surface.result)
                 update_result()
 
         else:

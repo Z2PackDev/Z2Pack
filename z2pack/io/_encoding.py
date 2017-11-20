@@ -11,8 +11,10 @@ from fsc.export import export
 # This can create a circular import if it is imported by name (from ... import ...)
 # If this is ever an issue, consider splitting the encoding by surface / line
 from ..line import LineResult, WccLineData, OverlapLineData, EigenstateLineData
-from ..surface._data import SurfaceData, SurfaceLine
+from ..surface._data import SurfaceData, LinePosition
 from ..surface._result import SurfaceResult
+from ..volume._data import VolumeData, SurfacePosition
+from ..volume._result import VolumeResult
 
 
 @export
@@ -71,9 +73,9 @@ def _(obj):
     )
 
 
-@encode.register(SurfaceLine)
+@encode.register(LinePosition)
 def _(obj):
-    return dict(__surface_line__=True, t=obj.t, result=encode(obj.result))
+    return dict(__line_position__=True, t=obj.t, result=encode(obj.result))
 
 
 @encode.register(SurfaceData)
@@ -85,6 +87,26 @@ def _(obj):
 def _(obj):
     return dict(
         __surface_result__=True,
+        data=encode(obj.data),
+        ctrl_convergence=obj.ctrl_convergence,
+        ctrl_states=obj.ctrl_states
+    )
+
+
+@encode.register(SurfacePosition)
+def _(obj):
+    return dict(__surface_position__=True, s=obj.s, result=encode(obj.result))
+
+
+@encode.register(VolumeData)
+def _(obj):
+    return dict(__volume_data__=True, surfaces=encode(obj.surfaces))
+
+
+@encode.register(VolumeResult)
+def _(obj):
+    return dict(
+        __volume_result__=True,
         data=encode(obj.data),
         ctrl_convergence=obj.ctrl_convergence,
         ctrl_states=obj.ctrl_states
@@ -103,6 +125,22 @@ def decode(obj):
     return obj
 
 
+def decode_volume_result(obj):
+    # The states / convergence of the controls are set manually
+    res = VolumeResult(obj['data'], [], [])
+    res.ctrl_convergence = decode(obj['ctrl_convergence'])
+    res.ctrl_states = decode(obj['ctrl_states'])
+    return res
+
+
+def decode_volume_data(obj):
+    return VolumeData(decode(obj['surfaces']))
+
+
+def decode_surface_position(obj):
+    return SurfacePosition(s=obj['s'], result=decode(obj['result']))
+
+
 def decode_surface_result(obj):
     # The states / convergence of the controls are set manually
     res = SurfaceResult(obj['data'], [], [])
@@ -115,8 +153,13 @@ def decode_surface_data(obj):
     return SurfaceData(decode(obj['lines']))
 
 
+# Needed for legacy results.
 def decode_surface_line(obj):
-    return SurfaceLine(obj['t'], decode(obj['result']))
+    return LinePosition(obj['t'], decode(obj['result']))
+
+
+def decode_line_position(obj):
+    return LinePosition(obj['t'], decode(obj['result']))
 
 
 def decode_line_result(obj):

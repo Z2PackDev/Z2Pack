@@ -1,4 +1,4 @@
-.. surface:
+.. _surface:
 
 Surface Calculations
 ====================

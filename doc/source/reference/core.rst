@@ -10,6 +10,7 @@ The core of Z2Pack contains the following parts:
 
     line.rst
     surface.rst
+    volume.rst
     invariant.rst
     plot.rst
     helpers.rst

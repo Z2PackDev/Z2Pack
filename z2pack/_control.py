@@ -3,13 +3,43 @@
 """Abstract base classes for Control objects, which govern the iteration of Z2Pack runs."""
 
 import abc
+import types
+
+from fsc.export import export
 
 
+@export
+class ControlContainer(types.SimpleNamespace):
+    """
+    Container for controls, giving simple access to the different types of controls.
+    """
+
+    def __init__(self, *, controls, categories, valid_type):  # pylint: disable=missing-docstring
+        self.all = controls
+        for ctrl in self.all:
+            if not isinstance(ctrl, valid_type):
+                raise ValueError(
+                    "Invalid type '{}' of control, should be '{}'.".format(
+                        type(ctrl), valid_type
+                    )
+                )
+
+        for name, ctrl_types in categories.items():
+            setattr(
+                self, name, [
+                    ctrl for ctrl in controls
+                    if all(isinstance(ctrl, ctrl_t) for ctrl_t in ctrl_types)
+                ]
+            )
+
+
+@export
 class AbstractControl(metaclass=abc.ABCMeta):
     """ABC for all control objects. Instances must also have a 'state' attribute to work correctly, which is not enforced by the ABC."""
     pass
 
 
+@export
 class StatefulControl(AbstractControl):
     """
     ABC for control objects which have a state. The state must not depend on the given convergence parameters.
@@ -47,6 +77,7 @@ class StatefulControl(AbstractControl):
         pass
 
 
+@export
 class DataControl(AbstractControl):
     """ABC for control objects which can be updated with data."""
 
@@ -55,6 +86,7 @@ class DataControl(AbstractControl):
         pass
 
 
+@export
 class IterationControl(AbstractControl):
     """ABC for iteration control objects. Enforces the existence of ..."""
 
@@ -63,6 +95,7 @@ class IterationControl(AbstractControl):
         pass
 
 
+@export
 class ConvergenceControl(AbstractControl):
     """ABC for convergence tester objects. Enforces the existence of an update method, and the ``converged`` property.
     For LineControl objects, the converged property must be valid (False) also before the first update() call.
@@ -75,13 +108,20 @@ class ConvergenceControl(AbstractControl):
 
 
 # The only purpose of these subclasses is to distinguish between
-# ConvergenceControls which take a SurfaceData object and those which take
-# a LineData object.
+# ConvergenceControls which take a VolumeData, SurfaceData or LineData object.
+@export
+class VolumeControl(AbstractControl):
+    """Specializes AbstractControl for Volume objects"""
+    pass
+
+
+@export
 class SurfaceControl(AbstractControl):
     """Specializes AbstractControl for Surface objects"""
     pass
 
 
+@export
 class LineControl(AbstractControl):
     """Specializes AbstractControl for Line objects"""
     pass

@@ -4,7 +4,7 @@ The core module contains the routines that are shared between different speciali
 .. codeauthor:: Dominik Gresch <greschd@gmx.ch>
 """
 
-__version__ = '2.1.1a0'
+__version__ = '2.2.0a0'
 
 from . import line
 from . import surface
@@ -16,6 +16,8 @@ from . import invariant
 from . import hm
 from . import tb
 from . import fp
+
+from . import io
 
 from . import _logging_format  # sets default logging levels / format
 

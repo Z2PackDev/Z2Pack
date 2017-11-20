@@ -1,8 +1,6 @@
 """Defines functions to run a surface calculation."""
 
-import os
 import copy
-import time
 import logging
 import contextlib
 import re
@@ -11,26 +9,28 @@ import numpy as np
 from fsc.export import export
 
 from . import _LOGGER
-from . import SurfaceData
-from . import SurfaceResult
-from ._control import MoveCheck, GapCheck
+from . import SurfaceData, SurfaceResult
+from ._control import _create_surface_controls, SurfaceControlContainer
 
-from .._control import (
-    LineControl, SurfaceControl, DataControl, StatefulControl,
-    ConvergenceControl
-)
-from .. import io
+from .._run_utils import _load_init_result, _check_save_dir, _log_run
 from .._async_handler import AsyncHandler
 from .._logging_tools import TagAdapter, TagFilter, filter_manager
-_LOGGER = TagAdapter(_LOGGER, default_tags=('surface', ))
-
 from ..line import _run as _line_run
-from ..line._control import StepCounter, PosCheck, ForceFirstUpdate
+
+# tag which triggers filtering when called from the volume's run.
+_SURFACE_ONLY_LOGGER = TagAdapter(
+    _LOGGER, default_tags=(
+        'surface',
+        'surface_only',
+    )
+)
+_LOGGER = TagAdapter(_LOGGER, default_tags=('surface', ))
 
 from ._symm import *
 
 
 @export
+@_log_run(_SURFACE_ONLY_LOGGER)
 def run_surface(
     *,
     system,
@@ -93,7 +93,7 @@ def run_surface(
     :param load_quiet:  Determines whether errors / inexistent files are ignored when loading from ``save_file``
     :type load_quiet:   bool
 
-    :param serializer:  Serializer which is used to save the result to file. Valid options are :py:mod:`msgpack`, :py:mod:`json` and :py:mod:`pickle`. By default (``serializer='auto'``), the serializer is inferred from the file ending. If this fails, :py:mod:`json` is used.
+    :param serializer:  Serializer which is used to save the result to file. Valid options are ``msgpack``, :py:mod:`json` and :py:mod:`pickle`. By default (``serializer='auto'``), the serializer is inferred from the file ending. If this fails, :py:mod:`json` is used.
     :type serializer:   module
 
     :returns:   :class:`SurfaceResult` instance.
@@ -110,41 +110,21 @@ def run_surface(
         print(result.wcc) # Prints a nested list of WCC (a list of WCC for each line in the surface).
 
     """
-    _LOGGER.info(locals(), tags=('setup', 'box', 'skip'))
-
     # setting up controls
-    controls = []
-    controls.append(StepCounter(iterator=iterator))
-    if pos_tol is None:
-        controls.append(ForceFirstUpdate())
-    else:
-        controls.append(PosCheck(pos_tol=pos_tol))
-    if move_tol is not None:
-        controls.append(MoveCheck(move_tol=move_tol))
-    if gap_tol is not None:
-        controls.append(GapCheck(gap_tol=gap_tol))
+    controls = _create_surface_controls(
+        pos_tol=pos_tol, iterator=iterator, gap_tol=gap_tol, move_tol=move_tol
+    )
 
     # setting up init_result
-    if init_result is not None:
-        if load:
-            raise ValueError(
-                'Inconsistent input parameters "init_result != None" and "load == True". Cannot decide whether to load result from file or use given result.'
-            )
-    elif load:
-        if save_file is None:
-            raise ValueError(
-                'Cannot load result from file: No filename given in the "save_file" parameter.'
-            )
-        try:
-            init_result = io.load(save_file, serializer=serializer)
-        except IOError as exception:
-            if not load_quiet:
-                raise exception
-
-    if save_file is not None:
-        dirname = os.path.dirname(os.path.abspath(save_file))
-        if not os.path.isdir(dirname):
-            raise ValueError('Directory {} does not exist.'.format(dirname))
+    init_result = _load_init_result(
+        init_result=init_result,
+        save_file=save_file,
+        load=load,
+        load_quiet=load_quiet,
+        serializer=serializer,
+        valid_type=SurfaceResult,
+    )
+    _check_save_dir(save_file=save_file)
 
     return _run_surface_impl(
         *controls,
@@ -182,18 +162,9 @@ def _run_surface_impl(
 
     The other parameters are the same as for :meth:`.run`.
     """
-
-    start_time = time.time()
-
+    from .. import io
     # CONTROL SETUP
-    def filter_ctrl(ctrl_type):
-        return [ctrl for ctrl in controls if isinstance(ctrl, ctrl_type)]
-
-    line_ctrl = filter_ctrl(LineControl)
-    controls = filter_ctrl(SurfaceControl)
-    stateful_ctrl = filter_ctrl(StatefulControl)
-    data_ctrl = filter_ctrl(DataControl)
-    convergence_ctrl = filter_ctrl(ConvergenceControl)
+    ctrl_container = SurfaceControlContainer(controls)
 
     # HELPER FUNCTIONS
     def get_line(t, init_line_result=None):
@@ -202,7 +173,7 @@ def _run_surface_impl(
         """
         # pylint: disable=protected-access
         return _line_run._run_line_impl(
-            *copy.deepcopy(line_ctrl),
+            *copy.deepcopy(ctrl_container.line),
             system=system,
             line=lambda ky: surface(t, ky),
             init_result=init_line_result
@@ -251,7 +222,9 @@ def _run_surface_impl(
                         "'min_neighbour_dist' reached: cannot add line at t = {}".
                         format(t)
                     )
-                return SurfaceResult(data, stateful_ctrl, convergence_ctrl)
+                return SurfaceResult(
+                    data, ctrl_container.stateful, ctrl_container.convergence
+                )
 
             _LOGGER.info('Adding line at t = {}'.format(t))
             data.add_line(t, get_line(t))
@@ -264,10 +237,12 @@ def _run_surface_impl(
             """
 
             # update data controls
-            for d_ctrl in data_ctrl:
+            for d_ctrl in ctrl_container.data:
                 d_ctrl.update(data)
 
-            result = SurfaceResult(data, stateful_ctrl, convergence_ctrl)
+            result = SurfaceResult(
+                data, ctrl_container.stateful, ctrl_container.convergence
+            )
             save_thread.send(copy.deepcopy(result))
 
             return result
@@ -277,7 +252,7 @@ def _run_surface_impl(
             Calculates which neighbours are not converged
             """
             res = np.array([True] * (len(data.lines) - 1))
-            for c_ctrl in convergence_ctrl:
+            for c_ctrl in ctrl_container.convergence:
                 res &= c_ctrl.converged
             _LOGGER.info(
                 'Convergence criteria fulfilled for {} of {} neighbouring lines.'.
@@ -293,7 +268,7 @@ def _run_surface_impl(
             init_result = copy.deepcopy(init_result)
 
             # get states from pre-existing Controls
-            for s_ctrl in stateful_ctrl:
+            for s_ctrl in ctrl_container.stateful:
                 with contextlib.suppress(KeyError):
                     s_ctrl.state = init_result.ctrl_states[
                         s_ctrl.__class__.__name__
@@ -335,9 +310,4 @@ def _run_surface_impl(
             num_lines = num_lines_new
             conv = collect_convergence()
 
-    end_time = time.time()
-    _LOGGER.info(end_time - start_time, tags=('box', 'skip-before', 'timing'))
-    _LOGGER.info(
-        result.convergence_report, tags=('box', 'convergence_report', 'skip')
-    )
     return result

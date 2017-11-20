@@ -17,7 +17,7 @@ The previous version of Z2Pack contained a submodule for creating tight-binding 
 
 .. rubric :: Saving results: going away from pickle
 
-Saving results was previously done with the :py:mod:`pickle` module. As I've learned since writing the first version of Z2Pack, there are various reasons why this is not ideal. Most importantly, objects serialized with :py:mod:`pickle` might not be deserializable when one of the modules involved has changed. The full reasoning can be seen in a `PyCon 2014 talk by Alex Gaynor <https://www.youtube.com/watch?v=7KnfGDajDQw>`_ . By switching to :py:mod:`msgpack` as a default serializer, this problem is solved. 
+Saving results was previously done with the :py:mod:`pickle` module. As I've learned since writing the first version of Z2Pack, there are various reasons why this is not ideal. Most importantly, objects serialized with :py:mod:`pickle` might not be deserializable when one of the modules involved has changed. The full reasoning can be seen in a `PyCon 2014 talk by Alex Gaynor <https://www.youtube.com/watch?v=7KnfGDajDQw>`_ . By switching to ``msgpack`` as a default serializer, this problem is solved. 
 
 Another improvement in the saving process is that the calculation continues while the saving is done in a separate thread. This is particularly useful for smaller systems, where the cost of saving might be comparable or even higher than that of creating the results. 
 

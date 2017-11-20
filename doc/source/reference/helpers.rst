@@ -9,7 +9,7 @@ Saving and loading objects
 .. automodule:: z2pack.io
     :members:
     :imported-members:
-    
+
     .. autofunction:: z2pack.io.save
 
     .. autofunction:: z2pack.io.load

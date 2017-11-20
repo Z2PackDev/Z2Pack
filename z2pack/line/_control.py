@@ -4,9 +4,28 @@ from fsc.export import export
 
 from .._control import (
     DataControl, ConvergenceControl, IterationControl, LineControl,
-    StatefulControl
+    StatefulControl, ControlContainer
 )
 from .._utils import _get_max_move
+
+
+@export
+class LineControlContainer(ControlContainer):
+    """
+    Container for controls used in the line run.
+    """
+
+    def __init__(self, controls):
+        super().__init__(
+            controls=controls,
+            categories={
+                'stateful': [StatefulControl],
+                'data': [DataControl],
+                'convergence': [ConvergenceControl],
+                'iteration': [IterationControl],
+            },
+            valid_type=LineControl,
+        )
 
 
 @export
@@ -91,3 +110,16 @@ class PosCheck(
     def state(self, state):
         self.max_move = state['max_move']
         self.last_wcc = state['last_wcc']
+
+
+def _create_line_controls(*, pos_tol, iterator):
+    """
+    Helper function to create all controls needed by a Line calculation.
+    """
+    controls = []
+    controls.append(StepCounter(iterator=iterator))
+    if pos_tol is None:
+        controls.append(ForceFirstUpdate())
+    else:
+        controls.append(PosCheck(pos_tol=pos_tol))
+    return controls

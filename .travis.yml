@@ -2,21 +2,24 @@ language: python
 cache: pip
 
 python:
-  - "3.6"
   - "3.4"
   - "3.5"
+  - "3.6"
+
+env:
+  - TEST_TYPE="test"
+
+matrix:
+  include:
+    - python: 3.6
+      env: TEST_TYPE="compliance"
 
 install:
   - pip install .[dev]
 
 script:
-  - cd tests
-  - py.test --no-plot-compare
-
-jobs:
-  include:
-    - stage: compliance
-      script: pre-commit run --all-files
+  - if [ "$TEST_TYPE" == "compliance" ] ; then pre-commit run --all-files ; fi
+  - if [ "$TEST_TYPE" == "test" ] ; then cd tests; py.test --no-plot-compare ; fi
 
 stages:
   - compliance

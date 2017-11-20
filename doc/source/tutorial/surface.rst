@@ -49,7 +49,7 @@ Unless the calculation is really fast, you probably want to save your results to
         save_file='path_to_directory/savefile.msgpack'
     )
     
-This saves the result in 'path_to_directory/savefile.msgpack' in the :py:mod:`msgpack` format. By changing the file extension to ``.json`` or ``.pickle``, you can change the serializer to :py:mod:`json` or :py:mod:`pickle`. If the file extension is not recognized, :py:mod:`msgpack` will be used as a serializer.
+This saves the result in 'path_to_directory/savefile.msgpack' in the ``msgpack`` format. By changing the file extension to ``.json`` or ``.pickle``, you can change the serializer to :py:mod:`json` or :py:mod:`pickle`. If the file extension is not recognized, ``msgpack`` will be used as a serializer.
 
 .. note ::  The :py:mod:`pickle` format is probably not right for your purposes. If you want to see why, watch `this PyCon 2014 talk by Alex Gaynor <https://www.youtube.com/watch?v=7KnfGDajDQw>`_.
 

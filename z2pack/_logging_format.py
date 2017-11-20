@@ -61,19 +61,25 @@ class DefaultFormatter(logging.Formatter):
             'CONVERGENCE REPORT', '=', overline=True, modifier=self.term.bold
         )
 
-        # For Surface calculations
-        if 'surface' in record.tags:
-            # line convergence objects
-            line_msg = self._make_title('Line Convergence', '=')
+        def _make_kind_msg(kind):
+            """
+            Create the convergence report message for a particular kind of convergence control.
+            """
+            msg = self._make_title(
+                '{} Convergence'.format(kind.capitalize()), '='
+            )
+            for key, val in sorted(report[kind].items()):
+                msg += '\n\n' + self._make_report_entry(key, val)
+            return msg
 
-            for key, val in sorted(report['line'].items()):
-                line_msg += '\n\n' + self._make_report_entry(key, val)
+        if 'volume' in record.tags:
+            msg += '\n\n' + _make_kind_msg(kind='line')
+            msg += '\n\n' + _make_kind_msg(kind='surface')
+            msg += '\n\n' + _make_kind_msg(kind='volume')
+        elif 'surface' in record.tags:
+            msg += '\n\n' + _make_kind_msg(kind='line')
+            msg += '\n\n' + _make_kind_msg(kind='surface')
 
-            surface_msg = self._make_title('Surface Convergence', '=')
-            for key, val in sorted(report['surface'].items()):
-                surface_msg += '\n\n' + self._make_report_entry(key, val)
-            msg += '\n\n' + line_msg
-            msg += '\n\n' + surface_msg
         # For Line calculations
         elif 'line' in record.tags:
             for key, val in sorted(report.items()):
@@ -83,21 +89,16 @@ class DefaultFormatter(logging.Formatter):
     def _create_setup_message(self, record):
         """Create message from setup record."""
         kwargs = record.msg
-        if 'surface' in record.tags:
-            msg = self._make_title(
-                'SURFACE CALCULATION',
-                '=',
-                overline=True,
-                modifier=self.term.bold
-            )
 
-        if 'line' in record.tags:
-            msg = self._make_title(
-                'LINE CALCULATION',
-                '=',
-                overline=True,
-                modifier=self.term.bold
-            )
+        calc_type = (set(record.tags) & set(['volume', 'line', 'surface']
+                                            )).pop()
+        msg = self._make_title(
+            '{} CALCULATION'.format(calc_type.upper()),
+            '=',
+            overline=True,
+            modifier=self.term.bold
+        )
+
         msg += '\n' + 'starting at {}'.format(self.formatTime(record))
         msg += '\nrunning Z2Pack version {}\n\n'.format(__version__)
 
@@ -177,5 +178,5 @@ class DefaultFormatter(logging.Formatter):
 
 DEFAULT_HANDLER = logging.StreamHandler(sys.stdout)
 DEFAULT_HANDLER.setFormatter(DefaultFormatter())
-logging.getLogger('z2pack').setLevel(logging.WARNING)
+logging.getLogger('z2pack').setLevel(logging.INFO)
 logging.getLogger('z2pack').addHandler(DEFAULT_HANDLER)

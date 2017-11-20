@@ -6,6 +6,16 @@ import numpy as np
 import scipy.linalg as la
 from fsc.export import export
 
+@export
+def round_to_zero(sym, tol = 1e-10):
+    """
+    Round off values smaller than tol to zero.
+    """
+    for i in range(len(sym[0])):
+        for j in range(len(sym[:, 0])):
+            if(abs(sym[i, j]) < tol):
+                sym[i, j] = 0.
+    return sym
 
 def reduced_dist(k1, k2):
     """
@@ -39,7 +49,9 @@ def symm_from_scf(xml_path):
     tree = ET.parse(xml_path)
     symm_xml = tree.find('output').find('symmetries').findall('symmetry')
     symmetries = []
+    print("Order of symmetries:")
     for symm in symm_xml:
+        print(symm.find('info').attrib)
         s = np.fromstring(symm.find('rotation').text, sep=' ')
         n = int(round(np.sqrt(len(s))))
 

@@ -141,7 +141,7 @@ class OverlapLineData(WccLineData):
                     raise ValueError("dmn matrices have different eigenvalues.")
                 # find orthonormal basis in each symmetry eigenspace
                 for w in np.sort(np.unique(ew)):
-                    ev_lambda = ev[:, np.where(np.isclose(ew, w))][:,0,:]
+                    ev_lambda = ev[:, np.where(np.isclose(ew, w))[0]]
                     q, r = np.linalg.qr(ev_lambda)
                     p.append(q)
                 pp.append(np.hstack(p))
@@ -168,3 +168,16 @@ class EigenstateLineData(OverlapLineData):
         for eig1, eig2 in zip(self.eigenstates, self.eigenstates[1:]):
             overlaps.append(np.dot(np.conjugate(eig1), np.array(eig2).T))
         return overlaps
+
+    @_LazyProperty
+    def projectors(self):
+        # eigval: which symmetry eigenvalue (by numerical value, not index)
+        # k: index indicating which projector is returned. The k-th projector is the matrix that has to be multiplied
+        # to the left of the k-th overlap. k runs from 0 to (number of overlaps)
+        pp = []
+        P = np.dot(self.symm_eigvecs, self.symm_eigvecs.conj().T) 
+        for e in eigenstates:
+            e = np.array(e).T
+            A = np.dot(e.conj().T, la.lu(np.dot(P, e).T)[2].T)  
+            pp.append(A)
+        return eigvals, pp

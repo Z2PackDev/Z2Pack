@@ -92,10 +92,15 @@ class OverlapLineData(WccLineData):
     * ``overlaps`` : A list containing the overlap matrix for each step of k-points, as numpy array.
     * ``wilson`` : An array containing the Wilson loop (product of overlap matrices) for the line. The Wilson loop is given in the basis of the eigenstates at the start / end of the line.
     * ``wilson_eigenstates`` : Eigenstates of the Wilson loop, given as a list of 1D - arrays.
+    * ``projectors: List of eigenvalues of the dmn matrices (one list for all dmn, as all have the same eigenvalues) and list of projector matrices A_k for symmetry restricted calculations
     """
 
-    def __init__(self, overlaps):  # pylint: disable=super-init-not-called
+    def __init__(self, overlaps, dmn=None):  # pylint: disable=super-init-not-called
         self.overlaps = [np.array(o, dtype=complex) for o in overlaps]
+        if dmn is None:
+            self.dmn = None
+        else:
+            self.dmn = [np.array(d, dtype=complex) for d in dmn]
 
     def _calculate_wannier(self):
         wcc, wilson_eigenstates = self._calculate_wannier_from_wilson(
@@ -121,16 +126,41 @@ class OverlapLineData(WccLineData):
         self._calculate_wannier()
         return self.wilson_eigenstates
 
+    @_LazyProperty
+    def projectors(self):
+        if self.dmn is None:
+            return None
+        else:
+            # Calculate A_k
+            p = []
+            eigvals = np.sort(np.linalg.eig(dmn[0])[0])
+            for d in self.dmn:
+                ew, ev = np.linalg.eig(d)
+                p = []
+                if not np.allclose(eigvals, np.sort(ew)):
+                    raise ValueError("dmn matrices have different eigenvalues.")
+                # find orthonormal basis in each symmetry eigenspace
+                for w in np.sort(np.unique(ew)):
+                    ev_lambda = ev[:, np.where(np.isclose(ew, w))][:,0,:]
+                    q, r = np.linalg.qr(ev_lambda)
+                    p.append(q)
+                pp.append(np.hstack(p))
+        return eigvals, pp
+
 
 @export
 class EigenstateLineData(OverlapLineData):
     r"""Data container for a line constructed from periodic eigenstates :math:`|u_{n, \mathbf{k}} \rangle`. This has all attributes that :class:`OverlapLineData` has, and the following additional ones:
 
     * ``eigenstates`` : The eigenstates of the Hamiltonian, given as a list of arrays which contain the eigenstates as row vectors.
+    * ``symm_eigvals``: Array of symmetry eigenvalues
+    * ``symm_eigvecs``: Symmetry eigenvectors as columns, given in same order as symm_eigvals. It is possible to pass *np.linalg.eig(symmetry) as an argument for both symm_eigvals and symm_eigvecs.
     """
 
-    def __init__(self, eigenstates):  # pylint: disable=super-init-not-called
+    def __init__(self, eigenstates, symm_eigvals=None, symm_eigvecs=None):  # pylint: disable=super-init-not-called
         self.eigenstates = eigenstates
+        self.symm_eigvals = symm_eigvals
+        self.symm_eigvecs = symm_eigvecs
 
     @_LazyProperty
     def overlaps(self):  # pylint: disable=method-hidden

@@ -4,8 +4,6 @@
 This module contains a class for creating Systems which are described by a Hamiltonian matrix (hm), such as k•p models.
 """
 
-import copy
-
 import numpy as np
 import scipy.linalg as la
 from fsc.export import export
@@ -104,16 +102,18 @@ class System(EigenstateSystem):
             # is complex but the eigenvector itself is not.
             eigs.append(np.array(eigvec, dtype=complex))
 
-        assert len(eigs) == len(kpt) - 1
         for i, k in enumerate(kpt[:-1]):
             if self._convention == 2:
                 # normalize phases to get u instead of phi
-                for j in range(eigs[i].shape[0]):
-                    eigs[i][j, :] *= np.exp(
-                        -2j * np.pi * np.dot(k, self._pos[j])
-                    )
+                eigs[i] *= np.exp(-2j * np.pi * np.dot(self._pos, k))[:, None]
             eigs[i] = list(eigs[i].T)
-        # The last bloch functions are the same as the first.
-        eigs.append(copy.deepcopy(eigs[0]))
 
+        # The last bloch state is the same as the first up to a phase factor
+        eigs.append(
+            list(
+                eigs[0] * np.exp(
+                    -2j * np.pi * np.dot(self._pos, kpt[-1] - kpt[0])
+                )[None, :]
+            )
+        )
         return eigs

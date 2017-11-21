@@ -51,7 +51,9 @@ def test_tb_convention(pos_tol, tb_system, tb_model, tb_line):
     """
     result1 = z2pack.line.run(system=tb_system, line=tb_line, pos_tol=pos_tol)
     tb_system_convention1 = z2pack.hm.System(
-        hamilton=lambda k: tb_model.hamilton(k, convention=1), convention=1
+        hamilton=lambda k: tb_model.hamilton(k, convention=1),
+        pos=tb_model.pos,
+        convention=1
     )
     result2 = z2pack.line.run(
         system=tb_system_convention1, line=tb_line, pos_tol=pos_tol

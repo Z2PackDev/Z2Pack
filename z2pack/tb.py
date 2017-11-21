@@ -27,8 +27,9 @@ class System(_HmSystem):
     def __init__(self, tb_model, **kwargs):
         super().__init__(
             hamilton=tb_model.hamilton,
-            **ChainMap(
-                kwargs,
-                dict(pos=copy.deepcopy(tb_model.pos), bands=tb_model.occ)
-            )
+            convention=2,
+            **ChainMap(kwargs, dict(
+                pos=copy.deepcopy(tb_model.pos),
+                bands=tb_model.occ
+            ))
         )

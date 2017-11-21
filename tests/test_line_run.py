@@ -5,11 +5,13 @@ import os
 import json
 import tempfile
 
-import z2pack
 import pytest
 import numpy as np
+import z2pack
+from z2pack._utils import _get_max_move
 
 from hm_systems import *
+from tb_systems import *
 
 
 def normalize_convergence_report(report):
@@ -35,6 +37,31 @@ def test_weyl(weyl_system, weyl_line, compare_data):
     result = z2pack.line.run(system=weyl_system, line=weyl_line)
     compare_data(lambda r1, r2: all(np.isclose(r1, r1).flatten()), result.wcc)
 
+def test_tb(compare_wcc, compare_equal, pos_tol, tb_system, tb_line):
+    result = z2pack.line.run(
+        system=tb_system,
+        line=tb_line,
+        pos_tol=pos_tol
+    )
+    compare_wcc(result.wcc)
+    compare_equal(result.convergence_report, tag='_report')
+
+def test_tb_convention(pos_tol, tb_system, tb_model, tb_line):
+    result1 = z2pack.line.run(
+        system=tb_system,
+        line=tb_line,
+        pos_tol=pos_tol
+    )
+    tb_system_convention1 = z2pack.hm.System(
+        hamilton=lambda k: tb_model.hamilton(k, convention=1),
+        convention=1
+    )
+    result2 = z2pack.line.run(
+        system=tb_system_convention1,
+        line=tb_line,
+        pos_tol=pos_tol
+    )
+    assert _get_max_move(result1.wcc, result2.wcc) < 1e-8
 
 def test_no_pos_tol(simple_system, simple_line, compare_equal):
     """Test simple line run without pos_tol check."""

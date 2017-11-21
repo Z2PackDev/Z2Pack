@@ -9,10 +9,7 @@ import tbmodels
 
 
 @pytest.fixture
-def tb_system():
-    """
-    Creates a simple tight-binding system.
-    """
+def tb_model():
     t1, t2 = (0.2, 0.3)
 
     model = tbmodels.Model(
@@ -33,8 +30,11 @@ def tb_system():
         model.add_hop(t2, 1, 1, R)
         model.add_hop(-t2, 2, 2, R)
         model.add_hop(-t2, 3, 3, R)
+    return model
 
-    return z2pack.tb.System(model)
+@pytest.fixture
+def tb_system(tb_model):
+    return z2pack.tb.System(tb_model)
 
 
 @pytest.fixture
@@ -43,3 +43,7 @@ def tb_surface():
     Creates a simple 2D surface in 3D space.
     """
     return lambda s, t: [s, t, 0]
+
+@pytest.fixture
+def tb_line():
+    return lambda t: [0.3, t, 0]

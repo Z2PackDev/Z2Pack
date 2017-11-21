@@ -4,6 +4,8 @@
 This module contains a class for creating Systems which are described by a Hamiltonian matrix (hm), such as k•p models.
 """
 
+import copy
+
 import numpy as np
 import scipy.linalg as la
 from fsc.export import export
@@ -31,13 +33,26 @@ class System(EigenstateSystem):
 
     :param hermitian_tol:   Maximum absolute value in the difference between the Hamiltonian and its hermitian conjugate. Use ``hermitian_tol=None`` to deactivate the test entirely.
     :type hermitian_tol:    float
+
+    :param convention: The convention used for the Hamiltonian, following the `pythtb formalism <http://www.physics.rutgers.edu/pythtb/_downloads/pythtb-formalism.pdf>`_. Convention 1 means that the eigenvalues of :math:`\mathcal{H}(\mathbf{k})` are wave vectors :math:`\left|\psi_{n\mathbf{k}}\right>`. With convention 2, they are the cell-periodic Bloch functions :math:`\left|u_{n\mathbf{k}}\right>`.
+    :type convention: int
     """
 
     def __init__(
-        self, hamilton, *, dim=3, pos=None, bands=None, hermitian_tol=1e-6
+            self,
+            hamilton,
+            *,
+            dim=3,
+            pos=None,
+            bands=None,
+            hermitian_tol=1e-6,
+            convention=2
     ):
         self._hamilton = hamilton
         self._hermitian_tol = hermitian_tol
+        self._convention = int(convention)
+        if self._convention not in {1, 2}:
+            raise ValueError("Invalid value '{}' for 'convention', must be either 1 or 2.".format(self._convention))
 
         size = len(self._hamilton([0] * dim))  # assuming to be square...
         # add one atom for each orbital in the hamiltonian
@@ -85,12 +100,15 @@ class System(EigenstateSystem):
             # cast to complex explicitly to avoid casting error when the phase
             # is complex but the eigenvector itself is not.
             eigs.append(np.array(eigvec, dtype=complex))
-        eigs.append(eigs[0])
 
-        # normalize phases to get u instead of phi
-        for i, k in enumerate(kpt):
-            for j in range(eigs[i].shape[0]):
-                eigs[i][j, :] *= np.exp(-2j * np.pi * np.dot(k, self._pos[j]))
+        assert len(eigs) == len(kpt) - 1
+        for i, k in enumerate(kpt[:-1]):
+            if self._convention == 2:
+                # normalize phases to get u instead of phi
+                for j in range(eigs[i].shape[0]):
+                    eigs[i][j, :] *= np.exp(-2j * np.pi * np.dot(k, self._pos[j]))
             eigs[i] = list(eigs[i].T)
+        # The last bloch functions are the same as the first.
+        eigs.append(copy.deepcopy(eigs[0]))
 
         return eigs

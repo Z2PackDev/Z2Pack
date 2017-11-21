@@ -27,7 +27,7 @@ with open('./z2pack/_version.py', 'r') as f:
 
 extras = {
     'plot':  ['matplotlib'],
-    'tb': ['tbmodels'],
+    'tb': ['tbmodels>=1.1.1'],
     'test': ['pytest'],
     'doc': ['sphinx', 'sphinx_rtd_theme'],
 }

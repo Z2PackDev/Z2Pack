@@ -12,6 +12,7 @@ import numpy as np
 import z2pack
 
 from hm_systems import *
+from tb_systems import *
 
 def normalize_convergence_report(report):
     # np.bool_ cannot be put into json
@@ -29,6 +30,15 @@ def test_trivial_run(simple_system, simple_line, compare_equal):
 def test_weyl(weyl_system, weyl_line, compare_data):
     result = z2pack.line.run(system=weyl_system, line=weyl_line)
     compare_data(lambda r1, r2: all(np.isclose(r1, r1).flatten()), result.wcc)
+
+def test_tb(compare_wcc, compare_equal, pos_tol, tb_system, tb_line):
+    result = z2pack.line.run(
+        system=tb_system,
+        line=tb_line,
+        pos_tol=pos_tol
+    )
+    compare_wcc(result.wcc)
+    compare_equal(result.convergence_report, tag='_report')
 
 def test_no_pos_tol(simple_system, simple_line, compare_equal):
     result = z2pack.line.run(system=simple_system, line=simple_line, pos_tol=None)

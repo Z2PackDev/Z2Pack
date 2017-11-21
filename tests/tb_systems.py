@@ -37,3 +37,7 @@ def tb_system():
 @pytest.fixture
 def tb_surface():
     return lambda s, t: [s, t, 0]
+
+@pytest.fixture
+def tb_line():
+    return lambda t: [0, t, 0]

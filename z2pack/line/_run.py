@@ -192,7 +192,7 @@ def _run_line_impl(
                 return result
 
         data = data_type(
-            system_fct(
+            *system_fct(
                 list(
                     np.array(line(k))
                     for k in np.linspace(0., 1., run_options['num_steps'])

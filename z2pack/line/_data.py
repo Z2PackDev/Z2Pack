@@ -92,10 +92,16 @@ class OverlapLineData(WccLineData):
     * ``overlaps`` : A list containing the overlap matrix for each step of k-points, as numpy array.
     * ``wilson`` : An array containing the Wilson loop (product of overlap matrices) for the line. The Wilson loop is given in the basis of the eigenstates at the start / end of the line.
     * ``wilson_eigenstates`` : Eigenstates of the Wilson loop, given as a list of 1D - arrays.
-    * ``projectors: List of eigenvalues of the dmn matrices (one list for all dmn, as all have the same eigenvalues) and list of projector matrices A_k for symmetry restricted calculations
+    * ``symm_eigvals: List of symmetry eigenvalues
+    * ``projectors: All projector matrices A^k (as defined in paper) for a fixed symmetry eigenvalue passed as a parameter.
+
+
+    Input parameters:
+    :param data: data can be either a list containing 
     """
 
     def __init__(self, overlaps, dmn=None):  # pylint: disable=super-init-not-called
+
         self.overlaps = [np.array(o, dtype=complex) for o in overlaps]
         if dmn is None:
             self.dmn = None
@@ -127,25 +133,36 @@ class OverlapLineData(WccLineData):
         return self.wilson_eigenstates
 
     @_LazyProperty
-    def projectors(self):
+    def symm_eigvals():
+        return np.sort(np.linalg.eig(dmn[0])[0])
+
+    def projectors(self, eigval):
+        """Returns eigvals as defined in paper"""
+        print("Wrong")
         if self.dmn is None:
             return None
-        else:
-            # Calculate A_k
-            p = []
-            eigvals = np.sort(np.linalg.eig(dmn[0])[0])
-            for d in self.dmn:
-                ew, ev = np.linalg.eig(d)
-                p = []
-                if not np.allclose(eigvals, np.sort(ew)):
-                    raise ValueError("dmn matrices have different eigenvalues.")
-                # find orthonormal basis in each symmetry eigenspace
-                for w in np.sort(np.unique(ew)):
-                    ev_lambda = ev[:, np.where(np.isclose(ew, w))[0]]
-                    q, r = np.linalg.qr(ev_lambda)
-                    p.append(q)
-                pp.append(np.hstack(p))
-        return eigvals, pp
+
+        # Calculate A_k
+        pp = []
+        for d in self.dmn:
+            ew, ev = np.linalg.eig(d)
+            if not np.allclose(self.symm_eigvals, np.sort(ew)):
+                raise ValueError("dmn matrices have different eigenvalues.")
+            # find orthonormal basis in each symmetry eigenspace
+            ev_lambda = ev[:, np.where(np.isclose(ew, eigval))[0]]
+            q, r = np.linalg.qr(ev_lambda)
+            pp.append(q)
+        return pp
+
+    def symm_project(self, eigval):
+        """Returns a new OverlapLineData object with symmetry projected WCCs"""
+        print("Projecting to symmetry eigenvalue:", eigval)
+        A_k = self.projectors(eigval)
+        print("overlap:", self.overlaps[0])
+        print("eigenstates:", self.eigenstates)
+        overlaps_projected = [np.dot(np.dot(A_minus, o), A_plus) for o, A_minus, A_plus in zip(self.overlaps, A_k[:-1], A_k[1:])]
+        print("projected overlaps:", overlaps_projected[0])
+        return OverlapLineData(overlaps_projected)
 
 
 @export
@@ -153,7 +170,6 @@ class EigenstateLineData(OverlapLineData):
     r"""Data container for a line constructed from periodic eigenstates :math:`|u_{n, \mathbf{k}} \rangle`. This has all attributes that :class:`OverlapLineData` has, and the following additional ones:
 
     * ``eigenstates`` : The eigenstates of the Hamiltonian, given as a list of arrays which contain the eigenstates as row vectors.
-    * ``symm_eigvals``: Array of symmetry eigenvalues
     * ``symm_eigvecs``: Symmetry eigenvectors as columns, given in same order as symm_eigvals. It is possible to pass *np.linalg.eig(symmetry) as an argument for both symm_eigvals and symm_eigvecs.
     """
 
@@ -169,15 +185,18 @@ class EigenstateLineData(OverlapLineData):
             overlaps.append(np.dot(np.conjugate(eig1), np.array(eig2).T))
         return overlaps
 
-    @_LazyProperty
-    def projectors(self):
+    def projectors(self, eigval):
         # eigval: which symmetry eigenvalue (by numerical value, not index)
-        # k: index indicating which projector is returned. The k-th projector is the matrix that has to be multiplied
-        # to the left of the k-th overlap. k runs from 0 to (number of overlaps)
+        # returns: list of A^k as defined in paper
+        if self.symm_eigvals is None:
+            return None
+        ind = np.where(np.isclose(self.symm_eigvals, eigval))[0]
+        ev = self.symm_eigvecs[:, ind]
         pp = []
-        P = np.dot(self.symm_eigvecs, self.symm_eigvecs.conj().T) 
-        for e in eigenstates:
+        P = np.dot(ev, ev.conj().T)
+        for e in self.eigenstates:
             e = np.array(e).T
-            A = np.dot(e.conj().T, la.lu(np.dot(P, e).T)[2].T)  
+            A = np.dot(e.conj().T, la.lu(np.dot(P, e).T)[2].T)
             pp.append(A)
-        return eigvals, pp
+        print("Projector:", pp[0])
+        return pp

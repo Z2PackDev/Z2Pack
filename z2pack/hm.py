@@ -19,6 +19,8 @@ class System(EigenstateSystem):
     :param hamilton: A function taking the wavevector ``k`` (``list`` of length 3) as an input and returning the matrix Hamiltonian.
     :type hamilton: collections.abc.Callable
 
+    :param symm: Unitary symmetry matrix represented in the same basis as the Hamiltonian (i.e. the matrices passed to ``hamilton`` and ``symm`` must commute). 
+
     :param dim:     Dimension of the system.
     :type dim:      int
 
@@ -34,9 +36,10 @@ class System(EigenstateSystem):
     """
 
     def __init__(
-        self, hamilton, *, dim=3, pos=None, bands=None, hermitian_tol=1e-6
+        self, hamilton, *, symm=None, dim=3, pos=None, bands=None, hermitian_tol=1e-6
     ):
         self._hamilton = hamilton
+        self._symm = symm
         self._hermitian_tol = hermitian_tol
 
         size = len(self._hamilton([0] * dim))  # assuming to be square...
@@ -93,4 +96,13 @@ class System(EigenstateSystem):
                 eigs[i][j, :] *= np.exp(-2j * np.pi * np.dot(k, self._pos[j]))
             eigs[i] = list(eigs[i].T)
 
-        return eigs
+        if self._symm is None:
+            symm_eigvals = None
+            symm_eigvecs = None
+        else:
+            symm_eigvals, symm_eigvecs = la.eigh(self._symm)
+            ind = np.argsort(symm_eigvals)
+            symm_eigvals = symm_eigvals[ind]
+            symm_eigvecs = symm_eigvecs[:, ind]
+
+        return eigs, symm_eigvals, symm_eigvecs

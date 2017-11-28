@@ -49,9 +49,9 @@ def symm_from_scf(xml_path):
     tree = ET.parse(xml_path)
     symm_xml = tree.find('output').find('symmetries').findall('symmetry')
     symmetries = []
-    print("Order of symmetries:")
+    #print("Order of symmetries:")
     for symm in symm_xml:
-        print(symm.find('info').attrib)
+        #print(symm.find('info').attrib)
         s = np.fromstring(symm.find('rotation').text, sep=' ')
         n = int(round(np.sqrt(len(s))))
 
@@ -82,6 +82,7 @@ def pw_symm_file(symmetries, output_path):
     with open(output_path, 'w') as f:
         f.write(str(len(symmetries)) + '\n')
         for symm in symmetries:
+            symm = round_to_zero(symm)
             symm = np.vstack((symm, [0 for i in range(len(symm[0]))]))
             f.write('\n')
             f.write('\n'.join(map(lambda x: ' '.join(map('{:E}'.format, x)), symm)))
@@ -121,6 +122,9 @@ def find_local(symmetries, surface, precision=3, eps=1e-5):
                 break
         if(local):
             local_symmetries.append(symm)
+        else:
+            pass
+            #local_symmetries.append(np.eye(3))
     return local_symmetries
 
 

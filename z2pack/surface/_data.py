@@ -55,6 +55,19 @@ class SurfaceData(metaclass=ConstLocker):
             return 1
         return min(abs(t - tval) for tval in self.t)
 
+    def symm_project(self, eigval):
+        """
+        Returns a new surface data object with everything projected onto one symmetry eigenspace.
+        The lines of this surface data object are not LineResult objects, but OverlapLineData objects, i.e. they do not include convergence information.
+        """
+        lines = []
+        for l in self.lines:
+            #project the line onto the symmetry eigenspace
+            l_new = LinePosition(l.t, l.symm_project(eigval))
+            lines.append(l_new)
+        lines = SortedList(lines, key=self._sort_key)
+        return SurfaceData(lines)
+
 
 class LinePosition:
     """Wraps the line result and its position in the surface."""

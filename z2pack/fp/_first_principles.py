@@ -64,6 +64,7 @@ class System(OverlapSystem):
         scf_folder='scf',
         file_names=None,
         mmn_path='wannier90.mmn',
+        dmn_path='wannier90.dmn',
         xml_path='pwscf.xml',
         num_wcc=None
     ):
@@ -112,6 +113,7 @@ class System(OverlapSystem):
             )
         self._mmn_path = self._to_abspath(mmn_path)
         self._xml_path = self._to_abspath(xml_path, root_path = self._scf_folder)
+        self._dmn_path = self._to_abspath(dmn_path)
         self._calling_path = os.getcwd()
 
         self._num_wcc = num_wcc
@@ -142,6 +144,7 @@ class System(OverlapSystem):
                 f.write(self._kpt_fct[i](kpt))
 
     def get_mmn(self, kpt, use_symm=False):
+        """Parser for .mmn file (output from pw2wannier90)"""
         num_kpt = len(kpt) - 1
 
         # create input
@@ -178,9 +181,11 @@ class System(OverlapSystem):
         symm_projectors = None
         if use_symm:
             # if use_symm = True, we need to parse the .dmn file and write the result into symm_projectors
+            symm_projectors = get_dmn(self._dmn_path)
             pass
-
         return overlap_matrices, symm_projectors
+
+        
 
 
 def _copy(initial_paths, final_names):

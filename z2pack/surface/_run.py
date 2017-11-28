@@ -17,6 +17,8 @@ from .._async_handler import AsyncHandler
 from .._logging_tools import TagAdapter, TagFilter, filter_manager
 from ..line import _run as _line_run
 
+from ._symm import *
+
 # tag which triggers filtering when called from the volume's run.
 _SURFACE_ONLY_LOGGER = TagAdapter(
     _LOGGER, default_tags=(
@@ -26,7 +28,7 @@ _SURFACE_ONLY_LOGGER = TagAdapter(
 )
 _LOGGER = TagAdapter(_LOGGER, default_tags=('surface', ))
 
-from ._symm import *
+
 
 
 @export

@@ -138,7 +138,6 @@ class OverlapLineData(WccLineData):
 
     def projectors(self, eigval):
         """Returns eigvals as defined in paper"""
-        print("Wrong")
         if self.dmn is None:
             return None
 

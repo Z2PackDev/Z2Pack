@@ -47,7 +47,7 @@ def get_chern(m, t1, t2, phi, symm_eigval=None):
     )
     if symm_eigval is not None:
         result = result.symm_project(symm_eigval)
-    z2pack.plot.chern(result)
+    z2pack.plot.wcc(result)
     plt.show()
     return z2pack.invariant.chern(result)
 

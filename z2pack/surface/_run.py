@@ -304,12 +304,10 @@ def _run_surface_impl(
                      if not c]
             for t in new_t:
                 result = add_line(t)
-
             # check if new lines appeared
             num_lines_new = len(data.lines)
             if num_lines == num_lines_new:
                 break
             num_lines = num_lines_new
             conv = collect_convergence()
-
     return result

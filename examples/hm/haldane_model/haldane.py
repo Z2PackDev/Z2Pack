@@ -5,6 +5,7 @@ import logging
 
 import z2pack
 import numpy as np
+import matplotlib.pyplot as plt
 
 logging.getLogger('z2pack').setLevel(logging.WARNING)
 
@@ -36,6 +37,8 @@ def get_chern(m, t1, t2, phi):
         surface=lambda s, t: [t, s, 0.],
         min_neighbour_dist=1e-5
     )
+    z2pack.plot.chern(result)
+    plt.show()
     return z2pack.invariant.chern(result)
 
 

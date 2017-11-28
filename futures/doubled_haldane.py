@@ -36,8 +36,8 @@ def Hamilton(k, m, t1, t2, phi):
     )
 
 
-def get_chern(m, t1, t2, phi):
-    system = z2pack.hm.System(lambda k: Hamilton(k, m, t1, t2, phi), bands=2)
+def get_chern(m, t1, t2, phi, symm_eigval=None):
+    system = z2pack.hm.System(lambda k: Hamilton(k, m, t1, t2, phi), symm=np.diag([1, 1, -1, -1]), bands=2)
 
     result = z2pack.surface.run(
         system=system,
@@ -45,11 +45,17 @@ def get_chern(m, t1, t2, phi):
         min_neighbour_dist=1e-5,
         num_lines=101,
     )
+    if symm_eigval is not None:
+        result = result.symm_project(symm_eigval)
     z2pack.plot.chern(result)
     plt.show()
     return z2pack.invariant.chern(result)
 
 
 if __name__ == "__main__":
-    print(get_chern(0.5, 1., 1. / 3., 0.5 * np.pi))
+    #print(get_chern(0.5, 1., 1. / 3., 0.5 * np.pi))
+    print("Symmetry eigenspace of eigenvalue 1:")
+    print("Chern number:", get_chern(0.5, 1., 1. / 3., 0.5 * np.pi, symm_eigval=1))
+    print("Symmetry eigenspace of eigenvalue -1:")
+    print("Chern number:", get_chern(0.5, 1., 1. / 3., 0.5 * np.pi, symm_eigval=-1))
     # print(get_chern(0.5, 1., 1. / 3., -0.5 * np.pi))

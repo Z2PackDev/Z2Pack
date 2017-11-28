@@ -155,12 +155,8 @@ class OverlapLineData(WccLineData):
 
     def symm_project(self, eigval):
         """Returns a new OverlapLineData object with symmetry projected WCCs"""
-        print("Projecting to symmetry eigenvalue:", eigval)
         A_k = self.projectors(eigval)
-        print("overlap:", self.overlaps[0])
-        print("eigenstates:", self.eigenstates)
-        overlaps_projected = [np.dot(np.dot(A_minus, o), A_plus) for o, A_minus, A_plus in zip(self.overlaps, A_k[:-1], A_k[1:])]
-        print("projected overlaps:", overlaps_projected[0])
+        overlaps_projected = [np.dot(np.dot(A_minus.conj().T, o), A_plus) for o, A_minus, A_plus in zip(self.overlaps, A_k[:-1], A_k[1:])]
         return OverlapLineData(overlaps_projected)
 
 
@@ -197,5 +193,4 @@ class EigenstateLineData(OverlapLineData):
             e = np.array(e).T
             A = np.dot(e.conj().T, la.lu(np.dot(P, e).T)[2].T)
             pp.append(A)
-        print("Projector:", pp[0])
         return pp

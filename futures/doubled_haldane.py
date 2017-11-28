@@ -53,7 +53,8 @@ def get_chern(m, t1, t2, phi, symm_eigval=None):
 
 
 if __name__ == "__main__":
-    #print(get_chern(0.5, 1., 1. / 3., 0.5 * np.pi))
+    print("Doubled Haldane model:")
+    print("Chern number:", get_chern(0.5, 1., 1. / 3., 0.5 * np.pi))
     print("Symmetry eigenspace of eigenvalue 1:")
     print("Chern number:", get_chern(0.5, 1., 1. / 3., 0.5 * np.pi, symm_eigval=1))
     print("Symmetry eigenspace of eigenvalue -1:")

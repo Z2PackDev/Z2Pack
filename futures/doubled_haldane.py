@@ -37,13 +37,14 @@ def Hamilton(k, m, t1, t2, phi):
 
 
 def get_chern(m, t1, t2, phi, symm_eigval=None):
-    system = z2pack.hm.System(lambda k: Hamilton(k, m, t1, t2, phi), symm=np.diag([1, 1, -1, -1]), bands=2)
+    system = z2pack.hm.System(lambda k: Hamilton(k, m, t1, t2, phi), symm=np.diag([1, 1, 1, 1]), bands=2)
 
     result = z2pack.surface.run(
         system=system,
         surface=lambda s, t: [t, s, 0.],
         min_neighbour_dist=1e-5,
         num_lines=101,
+        use_symm=True
     )
     if symm_eigval is not None:
         result = result.symm_project(symm_eigval)

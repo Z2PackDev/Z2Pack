@@ -60,7 +60,7 @@ class System(EigenstateSystem):
         else:
             self._bands = bands
 
-    def get_eig(self, kpt):
+    def get_eig(self, kpt, use_symm=False):
         __doc__ = super().__doc__  # pylint: disable=redefined-builtin,no-member,unused-variable
         # create k-points for string
         k_points = kpt[:-1]
@@ -96,10 +96,12 @@ class System(EigenstateSystem):
                 eigs[i][j, :] *= np.exp(-2j * np.pi * np.dot(k, self._pos[j]))
             eigs[i] = list(eigs[i].T)
 
-        if self._symm is None:
+        if not use_symm:
             symm_eigvals = None
             symm_eigvecs = None
         else:
+            if self._symm is None:
+                raise ValueError("No symmetry set for system.")
             symm_eigvals, symm_eigvecs = la.eigh(self._symm)
             ind = np.argsort(symm_eigvals)
             symm_eigvals = symm_eigvals[ind]

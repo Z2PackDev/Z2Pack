@@ -14,6 +14,7 @@ class SurfaceData(metaclass=ConstLocker):
 
     * ``t`` : A tuple containing all current line positions.
     * ``lines`` : A sorted list of objects which have two attributes ``t`` (the position, which is the sorting key) and ``result`` (the line's result).
+    * ``symm_list``: A tuple containing all the symmetries of the surface as matrices in reduced coordinates.
 
     The attributes of the underlying :class:`.LineResult` instances can be directly accessed from the :class:`.SurfaceData` object. This will create a list of attributes for all lines, in the order of their position.
 
@@ -55,15 +56,24 @@ class SurfaceData(metaclass=ConstLocker):
             return 1
         return min(abs(t - tval) for tval in self.t)
 
-    def symm_project(self, eigval):
+    @property
+    def symm_list(self):
+        return self._symm_list
+
+    @symm_list.setter
+    def symm_list(self, s):
+        self._symm_list = s
+
+    def symm_project(self, eigval, isym=0):
         """
         Returns a new surface data object with everything projected onto one symmetry eigenspace.
         The lines of this surface data object are not LineResult objects, but OverlapLineData objects, i.e. they do not include convergence information.
+        :param isym:    Index of symmetry that should be used for fp systems. List of symmetries with indices may be obtained by running surface.symm_list
         """
         lines = []
         for l in self.lines:
             #project the line onto the symmetry eigenspace
-            l_new = LinePosition(l.t, l.symm_project(eigval))
+            l_new = LinePosition(l.t, l.symm_project(eigval, isym=isym))
             lines.append(l_new)
         lines = SortedList(lines, key=self._sort_key)
         return SurfaceData(lines)

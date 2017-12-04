@@ -29,8 +29,7 @@ def read_integer_block(block):
 
 def read_dmn_matrix(block, num_bands):
     """
-    Returns a nest list as follows:
-    [for each irred. k point: [for each symmetry: dmn matrix]]
+    read individual dmn matrix to numpy array
     """
     def to_complex(blockline):
         re_float = re.compile(r'[0-9.\-\+E]+')

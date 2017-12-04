@@ -36,7 +36,8 @@ def run_line(
     init_result=None,
     load=False,
     load_quiet=True,
-    serializer='auto'
+    serializer='auto',
+    use_symm=False
 ):
     r"""
     Calculates the Wannier charge centers for a given system and line, automatically converging w.r.t. the number of k-points along the line.
@@ -100,7 +101,8 @@ def run_line(
         system=system,
         line=line,
         save_file=save_file,
-        init_result=init_result
+        init_result=init_result,
+        use_symm=use_symm
     )
 
 
@@ -110,7 +112,8 @@ def _run_line_impl(
     line,
     save_file=None,
     init_result=None,
-    serializer='auto'
+    serializer='auto',
+    use_symm=False
 ):
     """
     Implementation of the line's run.
@@ -196,7 +199,8 @@ def _run_line_impl(
                 list(
                     np.array(line(k))
                     for k in np.linspace(0., 1., run_options['num_steps'])
-                )
+                ),
+                use_symm
             )
         )
 

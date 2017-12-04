@@ -5,11 +5,16 @@ import shutil
 import subprocess
 import contextlib
 import collections.abc
+import scipy.linalg as la
+import numpy as np
 
 from fsc.export import export
 
 from ..system import OverlapSystem
+from ..reduced_surface import ReducedSurface
+from .._symm_utils import symm_from_scf
 from . import _read_mmn as mmn
+from . import _read_dmn as dmn
 
 
 @export
@@ -42,6 +47,9 @@ class System(OverlapSystem):
 
     :param mmn_path:    Path to the ``.mmn`` output file of ``Wannier90``
     :type mmn_path:     str
+
+    :param dmn_path:    Path to the ``.dmn`` output file of ``pw2wannier90``
+    :type dmn_path:     str
 
     :param xml_path:    Relative path to the output xml file of the scf calculation in ``scf_folder``
     :type xml_path:     str
@@ -144,7 +152,7 @@ class System(OverlapSystem):
                 f.write(self._kpt_fct[i](kpt))
 
     def get_mmn(self, kpt, use_symm=False):
-        """Parser for .mmn file (output from pw2wannier90)"""
+        """Returns overlap matrices and dmn matrices if use_symm = True"""
         num_kpt = len(kpt) - 1
 
         # create input
@@ -178,12 +186,27 @@ class System(OverlapSystem):
                         format(i, overlaps.shape, shape)
                     )
 
-        symm_projectors = None
+        dmn_mat = None
         if use_symm:
             # if use_symm = True, we need to parse the .dmn file and write the result into symm_projectors
-            symm_projectors = get_dmn(self._dmn_path)
-            pass
-        return overlap_matrices, symm_projectors
+            dmn_mat = dmn.get_dmn(self._dmn_path)
+        return overlap_matrices, dmn_mat
+
+    def suggest_symmetry_surfaces(self):
+        """
+        Analyzes the symmetries of the system and suggests potentially interesting surfaces to calculate topological invariants on.
+        Surfaces are suggested if they have a local symmetry that is not the identity.
+        Returns: Tuple of ReducedSurface objects with potentially interesting surfaces
+        """
+        symms = symm_from_scf(self._xml_path)
+        for s in symms:
+            ew, ev = la.eig(s)
+            print("Eigenvalues:", ew)
+            ind = np.where(np.isclose(ew, -1))[0]
+            if(len(ind) == 1):
+                v = ev[ind]
+                
+        red_surf = ReducedSurface(vectors=[1, 0, 0])
 
         
 

@@ -17,7 +17,7 @@ from .._async_handler import AsyncHandler
 from .._logging_tools import TagAdapter, TagFilter, filter_manager
 from ..line import _run as _line_run
 
-from ._symm import *
+from .._symm_utils import *
 
 # tag which triggers filtering when called from the volume's run.
 _SURFACE_ONLY_LOGGER = TagAdapter(
@@ -37,7 +37,6 @@ def run_surface(
     *,
     system,
     surface,
-    use_symm = False,
     pos_tol=1e-2,
     gap_tol=0.3,
     move_tol=0.3,
@@ -48,7 +47,8 @@ def run_surface(
     save_file=None,
     load=False,
     load_quiet=True,
-    serializer='auto'
+    serializer='auto',
+    use_symm = False
 ):
     r"""
     Calculates the Wannier charge centers for a given system and surface.
@@ -132,12 +132,12 @@ def run_surface(
         *controls,
         system=system,
         surface=surface,
-        use_symm=use_symm,
         num_lines=num_lines,
         min_neighbour_dist=min_neighbour_dist,
         save_file=save_file,
         init_result=init_result,
-        serializer=serializer
+        serializer=serializer,
+        use_symm=use_symm
     )
 
 
@@ -150,12 +150,12 @@ def _run_surface_impl(
     *controls,
     system,
     surface,
-    use_symm,
     num_lines,
     min_neighbour_dist,
     save_file=None,
     init_result=None,
-    serializer='auto'
+    serializer='auto',
+    use_symm=False
 ):
     r"""Implementation of the surface's run.
 
@@ -178,7 +178,8 @@ def _run_surface_impl(
             *copy.deepcopy(ctrl_container.line),
             system=system,
             line=lambda ky: surface(t, ky),
-            init_result=init_line_result
+            init_result=init_line_result,
+            use_symm=use_symm
         )
 
     # create local.sym file for use in pw2wannier90 calculations
@@ -189,12 +190,13 @@ def _run_surface_impl(
         symms = find_local(symms, surface) #this selects the local symmetries
         #The .sym file has to be in cartesian coordinates
         basis_transform = reduced_from_wannier(xml_path)
+        symms_cart = []
         for i, s in enumerate(symms):
-            symms[i] = basis_transform.dot(s).dot(np.linalg.inv(basis_transform)) #transform to cartesian basis
+            symms_cart.append(basis_transform.dot(s).dot(np.linalg.inv(basis_transform))) #transform to cartesian basis
         symm_path = [p for p in system._input_files if re.search(".sym$", p)]
         if len(symm_path) != 1:
             raise Exception("There is no seedname.sym file included in the system's input files.")
-        pw_symm_file(symms, symm_path[0])
+        pw_symm_file(symms_cart, symm_path[0])
 
     # setting up async handler
     if save_file is not None:
@@ -310,4 +312,6 @@ def _run_surface_impl(
                 break
             num_lines = num_lines_new
             conv = collect_convergence()
+        if use_symm and not hasattr(system, 'get_eig'):
+            result.symm_list = symms
     return result

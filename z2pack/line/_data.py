@@ -106,7 +106,7 @@ class OverlapLineData(WccLineData):
         if dmn is None:
             self.dmn = None
         else:
-            self.dmn = [np.array(d, dtype=complex) for d in dmn]
+            self.dmn = np.array(dmn)
 
     def _calculate_wannier(self):
         wcc, wilson_eigenstates = self._calculate_wannier_from_wilson(
@@ -132,31 +132,43 @@ class OverlapLineData(WccLineData):
         self._calculate_wannier()
         return self.wilson_eigenstates
 
-    @_LazyProperty
-    def symm_eigvals():
-        return np.sort(np.linalg.eig(dmn[0])[0])
+    def symm_eigvals(self, isym):
+        return np.sort(la.eig(self.dmn[0][isym])[0])
 
-    def projectors(self, eigval):
-        """Returns eigvals as defined in paper"""
-        if self.dmn is None:
-            return None
-
+    def projectors(self, eigval, *, isym):
         # Calculate A_k
-        pp = []
-        for d in self.dmn:
-            ew, ev = np.linalg.eig(d)
-            if not np.allclose(self.symm_eigvals, np.sort(ew)):
+        if self.dmn is None:
+            raise ValueError("Symmetries were not included in fp calculation. Make sure to set ``write_dmn`` and ``read_sym`` to .true. in the pw2wannier90 input file and pass use_symm=True to the surface run.")
+        A_k = []
+        for d in self.dmn[:, isym]:
+            print(np.shape(d))
+            ew, ev = la.eig(d)
+            if not np.allclose(self.symm_eigvals(isym), np.sort(ew)):
                 raise ValueError("dmn matrices have different eigenvalues.")
             # find orthonormal basis in each symmetry eigenspace
             ev_lambda = ev[:, np.where(np.isclose(ew, eigval))[0]]
             q, r = np.linalg.qr(ev_lambda)
-            pp.append(q)
-        return pp
+            A_k.append(q)
+        A_k.append(A_k[0]) #last projector to close loop
+        return A_k
 
-    def symm_project(self, eigval):
-        """Returns a new OverlapLineData object with symmetry projected WCCs"""
-        A_k = self.projectors(eigval)
+    def symm_project(self, eigval, *, isym):
+        """
+        Returns a new OverlapLineData object with symmetry projected overlaps.
+        :param eigval:  eigenvalue of the eigenspace onto which the overlap matrices will be projected.
+        :param isym:    index (integer) of the symmetry that will be used. All symmetries in the correct order may be obtained from surface.symm_list
+        """
+        A_k = self.projectors(eigval, isym=isym)
         overlaps_projected = [np.dot(np.dot(A_minus.conj().T, o), A_plus) for o, A_minus, A_plus in zip(self.overlaps, A_k[:-1], A_k[1:])]
+        np.set_printoptions(precision=1)
+        # print("Oringinal Wilson Loop:")
+        # print(functools.reduce(np.dot, self.overlaps))
+        # print("New Wilson Loop")
+        # print(functools.reduce(np.dot, overlaps_projected))
+        # print("OO")
+        # print("Diff:")
+        # print(functools.reduce(np.dot, overlaps_projected) - functools.reduce(np.dot, self.overlaps))
+        print(np.dot(A_k[0], A_k[-1]))
         return OverlapLineData(overlaps_projected)
 
 
@@ -180,17 +192,17 @@ class EigenstateLineData(OverlapLineData):
             overlaps.append(np.dot(np.conjugate(eig1), np.array(eig2).T))
         return overlaps
 
-    def projectors(self, eigval):
+    def projectors(self, eigval, **kwargs):
         # eigval: which symmetry eigenvalue (by numerical value, not index)
         # returns: list of A^k as defined in paper
         if self.symm_eigvals is None:
-            return None
+            raise ValueError("No symmetry active in the system. Make sure to pass a symmetry to the symmetry and set use_symm=True for the surface run.")
         ind = np.where(np.isclose(self.symm_eigvals, eigval))[0]
         ev = self.symm_eigvecs[:, ind]
-        pp = []
+        A_k = []
         P = np.dot(ev, ev.conj().T)
         for e in self.eigenstates:
             e = np.array(e).T
             A = np.dot(e.conj().T, la.lu(np.dot(P, e).T)[2].T)
-            pp.append(A)
-        return pp
+            A_k.append(A)
+        return A_k

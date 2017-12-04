@@ -141,7 +141,6 @@ class OverlapLineData(WccLineData):
             raise ValueError("Symmetries were not included in fp calculation. Make sure to set ``write_dmn`` and ``read_sym`` to .true. in the pw2wannier90 input file and pass use_symm=True to the surface run.")
         A_k = []
         for d in self.dmn[:, isym]:
-            print(np.shape(d))
             ew, ev = la.eig(d)
             if not np.allclose(self.symm_eigvals(isym), np.sort(ew)):
                 raise ValueError("dmn matrices have different eigenvalues.")
@@ -160,15 +159,6 @@ class OverlapLineData(WccLineData):
         """
         A_k = self.projectors(eigval, isym=isym)
         overlaps_projected = [np.dot(np.dot(A_minus.conj().T, o), A_plus) for o, A_minus, A_plus in zip(self.overlaps, A_k[:-1], A_k[1:])]
-        np.set_printoptions(precision=1)
-        # print("Oringinal Wilson Loop:")
-        # print(functools.reduce(np.dot, self.overlaps))
-        # print("New Wilson Loop")
-        # print(functools.reduce(np.dot, overlaps_projected))
-        # print("OO")
-        # print("Diff:")
-        # print(functools.reduce(np.dot, overlaps_projected) - functools.reduce(np.dot, self.overlaps))
-        print(np.dot(A_k[0], A_k[-1]))
         return OverlapLineData(overlaps_projected)
 
 

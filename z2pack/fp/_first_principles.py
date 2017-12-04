@@ -201,7 +201,6 @@ class System(OverlapSystem):
         symms = symm_from_scf(self._xml_path)
         for s in symms:
             ew, ev = la.eig(s)
-            print("Eigenvalues:", ew)
             ind = np.where(np.isclose(ew, -1))[0]
             if(len(ind) == 1):
                 v = ev[ind]

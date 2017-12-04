@@ -49,9 +49,7 @@ def symm_from_scf(xml_path):
     tree = ET.parse(xml_path)
     symm_xml = tree.find('output').find('symmetries').findall('symmetry')
     symmetries = []
-    #print("Order of symmetries:")
     for symm in symm_xml:
-        #print(symm.find('info').attrib)
         s = np.fromstring(symm.find('rotation').text, sep=' ')
         n = int(round(np.sqrt(len(s))))
 

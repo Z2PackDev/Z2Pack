@@ -49,13 +49,13 @@ def _(obj):
 @encode.register(EigenstateLineData)
 def _(obj):
     return dict(
-        __eigenstate_line_data__=True, eigenstates=encode(obj.eigenstates)
+        __eigenstate_line_data__=True, eigenstates=encode(obj.eigenstates), symm_eigvals=encode(obj.symm_eigvals), symm_eigvecs=encode(obj.symm_eigvecs)
     )
 
 
 @encode.register(OverlapLineData)
 def _(obj):
-    return dict(__overlap_line_data__=True, overlaps=encode(obj.overlaps))
+    return dict(__overlap_line_data__=True, overlaps=encode(obj.overlaps), dmn=encode(obj.dmn))
 
 
 @encode.register(WccLineData)
@@ -175,11 +175,11 @@ def decode_wcc_line_data(obj):
 
 
 def decode_overlap_line_data(obj):
-    return OverlapLineData(obj['overlaps'])
+    return OverlapLineData(obj['overlaps'], obj.get('dmn', None))
 
 
 def decode_eigenstate_line_data(obj):
-    return EigenstateLineData(obj['eigenstates'])
+    return EigenstateLineData(obj['eigenstates'], obj.get('symm_eigvals', None), obj.get('symm_eigvecs', None))
 
 
 def decode_complex(obj):

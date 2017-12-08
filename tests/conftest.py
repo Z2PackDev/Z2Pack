@@ -103,7 +103,8 @@ def compare_wcc(compare_data):
             if len(wcc0) != len(wcc1):
                 return False
             return all(check_wcc(x, y) for x, y in zip(wcc0, wcc1))
-        return _get_max_move(wcc0, wcc1) < 1e-8
+        assert _get_max_move(wcc0, wcc1) < 1e-8
+        return True
 
     return lambda data, tag=None: compare_data(check_wcc, data, tag)
 

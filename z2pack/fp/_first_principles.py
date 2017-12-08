@@ -202,8 +202,16 @@ class System(OverlapSystem):
         for s in symms:
             ew, ev = la.eig(s)
             ind = np.where(np.isclose(ew, -1))[0]
-            if(len(ind) == 1):
+            if(len(ind) == 1): #check that nothing funny is going on
                 v = ev[ind]
+                #construct orthogonal vector
+                # v_orth = [1 - np.isclose(v, np.amax(v))]
+                # v_orth = v - np.dot(v, v_orth[0])*v_orth[0]
+                # v_orth.append(np.cross(v_orth[0], v))
+
+
+
+
                 
         red_surf = ReducedSurface(vectors=[1, 0, 0])
 

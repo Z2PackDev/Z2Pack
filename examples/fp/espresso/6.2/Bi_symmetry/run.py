@@ -11,12 +11,12 @@ import xml.etree.ElementTree as ET
 import z2pack
 
 # Edit the paths to your Quantum Espresso and Wannier90 here
-qedir = '/home/greschd/software/qe-6.2/bin'
-wandir = '/home/greschd/software/wannier90-2.1.0'
+qedir = '/home/tony/qe-6.2/bin'
+wandir = '/home/tony/wannier90-2.1.0'
 
 # Commands to run pw, pw2wannier90, wannier90
-mpirun = 'mpirun -np 4 '
-pwcmd = mpirun + qedir + '/pw.x '
+mpirun = ''
+pwcmd = 'pw.x '
 pw2wancmd = mpirun + qedir + '/pw2wannier90.x '
 wancmd = wandir + '/wannier90.x'
 
@@ -51,7 +51,7 @@ with open('input/bi.win', 'w') as f:
 # copied, but instead can be referenced in the .files file.
 # The k-points input is appended to the .in file
 input_files = [
-    'input/' + name for name in ["bi.nscf.in", "bi.pw2wan.in", "bi.win"]
+    'input/' + name for name in ["bi.nscf.in", "bi.pw2wan.in", "bi.win", "bi.sym"]
 ]
 system = z2pack.fp.System(
     input_files=input_files,
@@ -59,7 +59,9 @@ system = z2pack.fp.System(
     kpt_path=["bi.nscf.in", "bi.win"],
     command=z2cmd,
     executable='/bin/bash',
-    mmn_path='bi.mmn'
+    mmn_path='bi.mmn',
+    xml_path = 'bi.xml',
+    dmn_path = 'bi.dmn'
 )
 
 # Run the WCC calculations
@@ -67,7 +69,8 @@ result_0 = z2pack.surface.run(
     system=system,
     surface=lambda s, t: [0, s / 2, t],
     save_file='./results/res_0.json',
-    load=True
+    load=True,
+    use_symm = True
 )
 result_1 = z2pack.surface.run(
     system=system,

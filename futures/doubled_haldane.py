@@ -30,15 +30,15 @@ def Hamilton_part(k, m, t1, t2, phi):
     return H
 
 
-def Hamilton(k, m, t1, t2, phi):
+def Hamilton(k, m, t1, t2, phi, signs):
+    # signs = [sign for m, sign for phi]
     return la.block_diag(
-        Hamilton_part(k, m, t1, t2, phi), Hamilton_part(k, -m, t1, t2, -phi)
+        Hamilton_part(k, m, t1, t2, phi), Hamilton_part(k, signs[0] * m, t1, t2, signs[1] * phi)
     )
 
 
-def get_chern(m, t1, t2, phi, symm_eigval=None):
-    system = z2pack.hm.System(lambda k: Hamilton(k, m, t1, t2, phi), symm=np.diag([1, 1, 1, 1]), bands=2)
-
+def get_results(m, t1, t2, phi, signs):
+    system = z2pack.hm.System(lambda k: Hamilton(k, m, t1, t2, phi, signs), symm=np.diag([1, 1, -1, -1]), bands=2)
     result = z2pack.surface.run(
         system=system,
         surface=lambda s, t: [t, s, 0.],
@@ -46,18 +46,31 @@ def get_chern(m, t1, t2, phi, symm_eigval=None):
         num_lines=101,
         use_symm=True
     )
-    if symm_eigval is not None:
-        result = result.symm_project(symm_eigval)
-    z2pack.plot.wcc(result)
-    plt.show()
-    return z2pack.invariant.chern(result)
+    return [result, result.symm_project(1), result.symm_project(-1)]
 
+def sign_name(s):
+    d = ['-', '0', '+']
+    return [d[1+s[0]], d[1+s[1]]]
 
 if __name__ == "__main__":
-    print("Doubled Haldane model:")
-    print("Chern number:", get_chern(0.5, 1., 1. / 3., 0.5 * np.pi))
-    print("Symmetry eigenspace of eigenvalue 1:")
-    print("Chern number:", get_chern(0.5, 1., 1. / 3., 0.5 * np.pi, symm_eigval=1))
-    print("Symmetry eigenspace of eigenvalue -1:")
-    print("Chern number:", get_chern(0.5, 1., 1. / 3., 0.5 * np.pi, symm_eigval=-1))
-    # print(get_chern(0.5, 1., 1. / 3., -0.5 * np.pi))
+    fig, ax = plt.subplots(4, 3, sharey='row', figsize=(12, 18))
+    for i, s in enumerate(zip([1, 1, -1, -1], [1, -1, 1, -1])):
+        results = get_results(0.5, 1., 1. / 3., 0.5 * np.pi, signs=s)
+        z2pack.plot.wcc(results[0], axis=ax[i][0])
+        z2pack.plot.wcc(results[1], axis=ax[i][1])
+        z2pack.plot.wcc(results[2], axis=ax[i][2])
+        ax[i][0].set_title("WCCs of Double Haldane model ({}m, {}$\phi$)".format(*sign_name(s)))
+        ax[i][1].set_title("WCCs in +1 eigenspace ({}m, {}$\phi$)".format(*sign_name(s)))
+        ax[i][2].set_title("WCCs in -1 eigenspace ({}m, {}$\phi$)".format(*sign_name(s)))
+        chern_number = [z2pack.invariant.chern(results[j]) for j in [0, 1, 2]]
+        print("Doubled Haldane model with {}m and {}phi:".format(*sign_name(s)))
+        print("Chern number:", chern_number[0])
+        print("Symmetry eigenspace of eigenvalue 1:")
+        print("Chern number:", chern_number[1])
+        print("Symmetry eigenspace of eigenvalue -1:")
+        print("Chern number:", chern_number[2])
+
+
+
+    plt.tight_layout()
+    plt.savefig("double_haldane_model.pdf")

@@ -68,21 +68,21 @@ system = z2pack.fp.System(
 result_0 = z2pack.surface.run(
     system=system,
     surface=lambda s, t: [0, s / 2, t],
+    iterator=range(8, 11, 2),
     save_file='./results/res_0.json',
     load=True,
     use_symm = True
 )
-result_1 = z2pack.surface.run(
-    system=system,
-    surface=lambda s, t: [0.5, s / 2, t],
-    save_file='./results/res_1.json',
-    load=True
-)
+
+print("Symmetries:")
+print(result_0.symm_list)
+result_projected = result_0.symm_project(1, isym=0)
+
 
 # Combining the two plots
 fig, ax = plt.subplots(1, 2, sharey=True, figsize=(9, 5))
 z2pack.plot.wcc(result_0, axis=ax[0])
-z2pack.plot.wcc(result_1, axis=ax[1])
+z2pack.plot.wcc(result_projected, axis=ax[1])
 plt.savefig('plots/plot.pdf', bbox_inches='tight')
 
 print(
@@ -90,8 +90,9 @@ print(
         z2pack.invariant.z2(result_0)
     )
 )
+
 print(
-    'Z2 topological invariant at kx = 0.5: {0}'.format(
-        z2pack.invariant.z2(result_1)
+    'Z2 topological iof projected system: {0}'.format(
+        z2pack.invariant.z2(result_projected)
     )
 )

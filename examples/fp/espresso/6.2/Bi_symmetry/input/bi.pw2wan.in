@@ -5,5 +5,7 @@
   wan_mode='standalone'  
   write_amn =.false.
   write_mmn =.true.
+  write_dmn =.true.
+  read_sym =.true.
   regular_mesh = .false.
 /  

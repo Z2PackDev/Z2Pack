@@ -140,10 +140,13 @@ class OverlapLineData(WccLineData):
         if self.dmn is None:
             raise ValueError("Symmetries were not included in fp calculation. Make sure to set ``write_dmn`` and ``read_sym`` to .true. in the pw2wannier90 input file and pass use_symm=True to the surface run.")
         A_k = []
-        for d in self.dmn[:, isym]:
+        for i, d in enumerate(self.dmn[:, isym]):
+            np.set_printoptions(precision=2)
             ew, ev = la.eig(d)
-            if not np.allclose(self.symm_eigvals(isym), np.sort(ew)):
-                raise ValueError("dmn matrices have different eigenvalues.")
+            if not np.allclose(np.abs(ew), 1):
+                raise ValueError("{}-th dmn matrix not unitary. The eigenvalues are: \n {}".format(i, ew))
+            if not np.allclose(self.symm_eigvals(isym), np.sort(ew), atol=1e-14):
+                raise ValueError("dmn matrices have different eigenvalues: The first dmn matrix has eigenvalues \n {}, \n the{}-th dmn matrix has eigenvalues \n {}".format(self.symm_eigvals(isym), i, np.sort(ew)))
             # find orthonormal basis in each symmetry eigenspace
             ev_lambda = ev[:, np.where(np.isclose(ew, eigval))[0]]
             q, r = np.linalg.qr(ev_lambda)

@@ -120,9 +120,6 @@ def find_local(symmetries, surface, precision=3, eps=1e-5):
                 break
         if(local):
             local_symmetries.append(symm)
-        else:
-            pass
-            #local_symmetries.append(np.eye(3))
     return local_symmetries
 
 

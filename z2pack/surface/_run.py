@@ -98,6 +98,9 @@ def run_surface(
     :param serializer:  Serializer which is used to save the result to file. Valid options are ``msgpack``, :py:mod:`json` and :py:mod:`pickle`. By default (``serializer='auto'``), the serializer is inferred from the file ending. If this fails, :py:mod:`json` is used.
     :type serializer:   module
 
+    :param use_symm:    Determines whether symmetry data is stored in each :py:class:`LineResult` instance contained in the surface.
+    :type use_symm:     bool
+
     :returns:   :class:`SurfaceResult` instance.
 
     Example usage:

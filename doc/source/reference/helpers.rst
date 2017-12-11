@@ -19,3 +19,9 @@ Shapes
 
 .. automodule:: z2pack.shape
     :members:
+
+ReducedSurface
+--------------
+
+.. automodule:: z2pack.reduced_surface
+    :members:

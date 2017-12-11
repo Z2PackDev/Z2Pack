@@ -16,7 +16,11 @@ class EigenstateSystem(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def get_eig(self, kpt):
         r"""
-        Returns the periodic part of the eigenstates at each of the given k-points. The eigenstates are given as columns in a 2D array.
+        Returns a list of the following objects: 
+
+        * The periodic part of the eigenstates at each of the given k-points. The eigenstates are given as columns in a 2D array.
+        * The symmetry eigenvalues. If no symmetry is given, this is ``None``.
+        * The symmetry eigenvectors. If no symmetry is given, this is ``None``.
 
         :param kpt: The list of k-points for which the eigenstates are to be computed.
         :type kpt:  list
@@ -31,11 +35,14 @@ class OverlapSystem(metaclass=abc.ABCMeta):
     """
 
     @abc.abstractmethod
-    def get_mmn(self, kpt):
+    def get_mmn(self, kpt, use_symm=False):
         r"""
-        Returns a list of overlap matrices :math:`M_{m,n}` corresponding to the given k-points.
+        Returns a list of overlap matrices :math:`M_{m,n}` and a list of symmetry matrices :math:`\tilde{d}_{mn}` if use_symm=true corresponding to the given k-points.
 
         :param kpt: The list of k-points for which the overlap matrices are to be computed.
         :type kpt:  list
+
+        :param use_symm: (optional) If true, a list of symmetry matrices :math:`\tilde{d}_{mn}` is returned in addition to the overlap matrices.
+        :type use_symm: bool
         """
         pass

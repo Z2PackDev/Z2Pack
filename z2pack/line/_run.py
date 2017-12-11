@@ -67,7 +67,10 @@ def run_line(
     :param serializer:  Serializer which is used to save the result to file. Valid options are ``msgpack``, :py:mod:`json` and :py:mod:`pickle`. By default (``serializer='auto'``), the serializer is inferred from the file ending. If this fails, ``msgpack`` is used.
     :type serializer:   module
 
-    :returns:   :class:`LineResult` instance.
+    :param use_symm:    Determines whether symmetry data is stored in the :py:class:`LineResult` instance.
+    :type use_symm:     bool
+
+    :returns:   :py:class:`LineResult` instance.
 
     Example usage:
 

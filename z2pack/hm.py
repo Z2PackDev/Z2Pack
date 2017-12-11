@@ -20,6 +20,7 @@ class System(EigenstateSystem):
     :type hamilton: collections.abc.Callable
 
     :param symm: Unitary symmetry matrix represented in the same basis as the Hamiltonian (i.e. the matrices passed to ``hamilton`` and ``symm`` must commute). 
+    :type symm: :py:class:`numpy.ndarray`
 
     :param dim:     Dimension of the system.
     :type dim:      int

@@ -8,6 +8,8 @@ import subprocess
 import matplotlib.pyplot as plt
 import xml.etree.ElementTree as ET
 
+import scipy.linalg as la
+import numpy as np
 import z2pack
 
 # Edit the paths to your Quantum Espresso and Wannier90 here
@@ -60,39 +62,58 @@ system = z2pack.fp.System(
     command=z2cmd,
     executable='/bin/bash',
     mmn_path='bi.mmn',
-    xml_path = 'bi.xml',
-    dmn_path = 'bi.dmn'
+    xml_path='bi.xml',
+    dmn_path='bi.dmn'
 )
 
+
+symms = system.suggest_symmetry_surfaces()
+s = symms[3] #select one of the suggested symmetries as an example.
+print("Symmetry:")
+print(s.symm)
+print("Vectors spanning surface:")
+print(s.vectors[1:])
+
 # Run the WCC calculations
-result_0 = z2pack.surface.run(
+# The tolerances have to be turned of because this is not a physical system and the calculation does not converge
+result = z2pack.surface.run(
     system=system,
-    surface=lambda s, t: [0, s / 2, t],
+    surface=s.surface_lambda,
     iterator=range(8, 11, 2),
     save_file='./results/res_0.json',
     load=True,
-    use_symm = True
+    use_symm=True,
+    pos_tol=None,
+    gap_tol=None,
+    move_tol=None
 )
 
 print("Symmetries:")
-print(result_0.symm_list)
-result_projected = result_0.symm_project(1, isym=0)
+print(result.symm_list)
 
+#project to each eigenvalue of the symmetry for which we calculated the surface
+ew = np.unique(la.eig(result.symm_list[1])[0])
+fig, ax = plt.subplots(1, len(ew)+1, sharey=True, figsize=(12, 5))
+z2pack.plot.wcc(result, axis=ax[0])
+ax[0].set_title("Unprojected system")
 
-# Combining the two plots
-fig, ax = plt.subplots(1, 2, sharey=True, figsize=(9, 5))
-z2pack.plot.wcc(result_0, axis=ax[0])
-z2pack.plot.wcc(result_projected, axis=ax[1])
+print(
+    'Z2 invariant of unprojected system: {}'.format(
+        z2pack.invariant.z2(result)
+    )
+)
+
+for i, w in enumerate(ew):
+    result_projected = result.symm_project(w, isym=1)
+    z2pack.plot.wcc(result_projected, axis=ax[i+1])
+    ax[i+1].set_title("Projection on $Eig_{{{}}}(S)$".format(w))
+    print(
+        'Z2 invariant of projected system (eigenvalue: {}): {}'.format(
+            round(w, 2),
+            z2pack.invariant.z2(result_projected)
+        )
+    )
+
 plt.savefig('plots/plot.pdf', bbox_inches='tight')
 
-print(
-    'Z2 topological invariant at kx = 0: {0}'.format(
-        z2pack.invariant.z2(result_0)
-    )
-)
 
-print(
-    'Z2 topological iof projected system: {0}'.format(
-        z2pack.invariant.z2(result_projected)
-    )
-)

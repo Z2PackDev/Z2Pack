@@ -51,7 +51,7 @@ class System(OverlapSystem):
     :param dmn_path:    Path to the ``.dmn`` output file of ``pw2wannier90``
     :type dmn_path:     str
 
-    :param xml_path:    Relative path to the output xml file of the scf calculation in ``scf_folder``
+    :param xml_path:    Relative path to the .xml output file of the scf calculation in ``scf_folder``
     :type xml_path:     str
 
     :param num_wcc:     Number of WCC which should be produced by the system. This parameter can be used to check the consistency of the calculation. By default, no such check is done.
@@ -152,7 +152,7 @@ class System(OverlapSystem):
                 f.write(self._kpt_fct[i](kpt))
 
     def get_mmn(self, kpt, use_symm=False):
-        """Returns overlap matrices and dmn matrices if use_symm = True"""
+        """Returns overlap matrices and dmn matrices if ``use_symm = True``."""
         num_kpt = len(kpt) - 1
 
         # create input
@@ -194,26 +194,22 @@ class System(OverlapSystem):
 
     def suggest_symmetry_surfaces(self):
         """
-        Analyzes the symmetries of the system and suggests potentially interesting surfaces to calculate topological invariants on.
-        Surfaces are suggested if they have a local symmetry that is not the identity.
-        Returns: Tuple of ReducedSurface objects with potentially interesting surfaces
+        Returns a tuple of :py:class:`ReducedSurface` objects with surfaces that have a non-trivial local symmetry.
         """
+        surfaces = []
         symms = symm_from_scf(self._xml_path)
-        for s in symms:
-            ew, ev = la.eig(s)
+        for symm in symms:
+            ew, ev = la.eig(symm)
             ind = np.where(np.isclose(ew, -1))[0]
             if(len(ind) == 1): #check that nothing funny is going on
-                v = ev[ind]
-                #construct orthogonal vector
-                # v_orth = [1 - np.isclose(v, np.amax(v))]
-                # v_orth = v - np.dot(v, v_orth[0])*v_orth[0]
-                # v_orth.append(np.cross(v_orth[0], v))
-
-
-
-
-                
-        red_surf = ReducedSurface(vectors=[1, 0, 0])
+                v = ev[:,ind[0]]
+                #construct orthogonal vectors
+                i_max = np.argmax(v)
+                v_orth = np.eye(3)[np.where(np.logical_not(np.isclose([0, 1, 2], np.argmax(v))))[0]]
+                v_orth = [vo - np.dot(vo, v)/v[i_max]*np.eye(3)[i_max] for vo in v_orth]
+                #create surface
+                surfaces.append(ReducedSurface(vectors=[np.array([0, 0, 0]), v_orth[0], v_orth[1]], symm=symm))
+        return surfaces
 
         
 

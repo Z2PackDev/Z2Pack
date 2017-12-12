@@ -46,12 +46,13 @@ def get_results(m, t1, t2, phi, signs):
         surface=lambda s, t: [t, s, 0.],
         min_neighbour_dist=1e-5,
         num_lines=101,
+        move_tol=0.1,
         use_symm=True
     )
     return np.append([result], [result.symm_project(i) for i in range(1, n + 1)])
 
 
-def tit(i, c):
+def title(i, c):
     s = "Unprojected Hamiltonian" if i == 0 else "Projection on $Eig_{{{}}}(S)$".format(i)
     s += "\n Chern number: {}".format(c)
     return s
@@ -61,8 +62,8 @@ if __name__ == "__main__":
     fig, ax = plt.subplots(1, len(signs) + 1, sharey='row', figsize=(10, 4))
     results = get_results(0.5, 1., 1. / 3., 0.5 * np.pi, signs)
     for i, r in enumerate(results):
-        z2pack.plot.wcc(r, axis=ax[i])
-        ax[i].set_title(tit(i, int(round(z2pack.invariant.chern(r)))))
+        z2pack.plot.chern(r, axis=ax[i])
+        ax[i].set_title(title(i, int(round(z2pack.invariant.chern(r)))))
         ax[i].set_xlabel("$k_y$")
     ax[0].set_ylabel("WCC position")
     plt.tight_layout()

@@ -1,0 +1,19 @@
+num_wann 8
+num_bands 8
+exclude_bands 9 - 16
+spinors : false
+num_iter 0
+use_bloch_phases : true
+Begin projections
+Bi: s, px, py, dz2
+End projections
+begin unit_cell_cart
+Bohr
+ 4.295328085621208e0 -2.479908826490989e0 7.471943357036477e0
+0.000000000000000e0 4.959817652981312e0 7.471943357036477e0
+-4.295328085621208e0 -2.479908826490989e0 7.471943357036477e0
+end unit_cell_cart
+begin atoms_frac
+Bi  0.2338900  0.2338900  0.2338900
+Bi -0.2338900 -0.2338900 -0.2338900
+end atoms_frac

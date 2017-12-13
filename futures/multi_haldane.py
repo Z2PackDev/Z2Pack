@@ -62,7 +62,7 @@ if __name__ == "__main__":
     fig, ax = plt.subplots(1, len(signs) + 1, sharey='row', figsize=(10, 4))
     results = get_results(0.5, 1., 1. / 3., 0.5 * np.pi, signs)
     for i, r in enumerate(results):
-        z2pack.plot.chern(r, axis=ax[i])
+        z2pack.plot.wcc(r, axis=ax[i], gaps=False)
         ax[i].set_title(title(i, int(round(z2pack.invariant.chern(r)))))
         ax[i].set_xlabel("$k_y$")
     ax[0].set_ylabel("WCC position")

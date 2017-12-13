@@ -74,12 +74,11 @@ def test_bi_symm(bi_symm_system, compare_wcc):
             gap_tol=None,
             move_tol=None
         )
-        assert np.allclose(s.symm, result.symm_list).any()
         assert len(result.symm_list) > 1
+        assert any([np.allclose(s.symm, res_symm) for res_symm in result.symm_list])
         ew = np.unique(la.eig(result.symm_list[1])[0])
         for j, w in enumerate(ew):
             result_projected = result.symm_project(w, isym=1)
-            z2pack.plot.wcc(result_projected, axis=ax[i + 1])
             compare_wcc(result_projected.wcc, tag="{}_proj_{}".format(i, j))
     shutil.rmtree(build_dir)
 

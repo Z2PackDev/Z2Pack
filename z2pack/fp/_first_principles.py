@@ -199,21 +199,13 @@ class System(OverlapSystem):
         surfaces = []
         symms = symm_from_scf(self._xml_path)
         for symm in symms:
-            print("Symmetry:")
-            print(symm)
             if np.allclose(symm, np.eye(3)):
                 continue
             ew, ev = la.eig(symm)
-            print("Eigen:")
-            print(ew)
-            print(ev)
             ind = np.where(np.isclose(ew, -1))[0]
             if(np.isclose(ew, 1).any() and len(ind)==1): #check that this is a simple reflection
-                print("pass1")
                 v = ev[:,ind[0]]
-                print(v)
                 if np.isclose(np.angle(v) % np.pi, np.angle(v[0]) % np.pi).all():
-                    print("pass2")
                     v = np.real(v/np.exp(1j*np.angle(v[0])))
                     #construct orthogonal vectors
                     i_max = np.argmax(v)

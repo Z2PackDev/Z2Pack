@@ -68,11 +68,8 @@ system = z2pack.fp.System(
 
 
 symms = system.suggest_symmetry_surfaces()
-s = symms[3] #select one of the suggested symmetries as an example.
-print("Symmetry:")
-print(s.symm)
-print("Vectors spanning surface:")
-print(s.vectors[1:])
+s = symms[0] #select one of the suggested symmetries as an example.
+
 
 # Run the WCC calculations
 # The tolerances have to be turned of because this is not a physical system and the calculation does not converge

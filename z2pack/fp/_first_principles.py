@@ -199,16 +199,28 @@ class System(OverlapSystem):
         surfaces = []
         symms = symm_from_scf(self._xml_path)
         for symm in symms:
+            print("Symmetry:")
+            print(symm)
+            if np.allclose(symm, np.eye(3)):
+                continue
             ew, ev = la.eig(symm)
+            print("Eigen:")
+            print(ew)
+            print(ev)
             ind = np.where(np.isclose(ew, -1))[0]
-            if(len(ind) == 1): #check that nothing funny is going on
+            if(np.isclose(ew, 1).any() and len(ind)==1): #check that this is a simple reflection
+                print("pass1")
                 v = ev[:,ind[0]]
-                #construct orthogonal vectors
-                i_max = np.argmax(v)
-                v_orth = np.eye(3)[np.where(np.logical_not(np.isclose([0, 1, 2], np.argmax(v))))[0]]
-                v_orth = [vo - np.dot(vo, v)/v[i_max]*np.eye(3)[i_max] for vo in v_orth]
-                #create surface
-                surfaces.append(ReducedSurface(vectors=[np.array([0, 0, 0]), v_orth[0], v_orth[1]], symm=symm))
+                print(v)
+                if np.isclose(np.angle(v) % np.pi, np.angle(v[0]) % np.pi).all():
+                    print("pass2")
+                    v = np.real(v/np.exp(1j*np.angle(v[0])))
+                    #construct orthogonal vectors
+                    i_max = np.argmax(v)
+                    v_orth = np.eye(3)[np.where(np.logical_not(np.isclose([0, 1, 2], np.argmax(v))))[0]]
+                    v_orth = [vo - np.dot(vo, v)/v[i_max]*np.eye(3)[i_max] for vo in v_orth]
+                    #create surface
+                    surfaces.append(ReducedSurface(vectors=[np.array([0, 0, 0]), v_orth[0], v_orth[1]], symm=symm))
         return surfaces
 
         

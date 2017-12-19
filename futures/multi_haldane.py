@@ -31,7 +31,9 @@ def Hamilton_Haldane(k, m, t1, t2, phi):
 
 
 def Hamilton(k, m, t1, t2, phi, signs):
-    return la.block_diag(*[Hamilton_Haldane(k, m, t1, t2, s * phi) for s in signs])
+    return la.block_diag(
+        *[Hamilton_Haldane(k, m, t1, t2, s * phi) for s in signs]
+    )
 
 
 def symmetry(n):
@@ -40,7 +42,9 @@ def symmetry(n):
 
 def get_results(m, t1, t2, phi, signs):
     n = len(signs)
-    system = z2pack.hm.System(lambda k: Hamilton(k, m, t1, t2, phi, signs), symm=symmetry(n))
+    system = z2pack.hm.System(
+        lambda k: Hamilton(k, m, t1, t2, phi, signs), symm=symmetry(n)
+    )
     result = z2pack.surface.run(
         system=system,
         surface=lambda s, t: [t, s, 0.],
@@ -49,13 +53,17 @@ def get_results(m, t1, t2, phi, signs):
         move_tol=0.1,
         use_symm=True
     )
-    return np.append([result], [result.symm_project(i) for i in range(1, n + 1)])
+    return np.append([result],
+                     [result.symm_project(i) for i in range(1, n + 1)])
 
 
 def title(i, c):
-    s = "Unprojected Hamiltonian" if i == 0 else "Projection on $Eig_{{{}}}(S)$".format(i)
+    s = "Unprojected Hamiltonian" if i == 0 else "Projection on $Eig_{{{}}}(S)$".format(
+        i
+    )
     s += "\n Chern number: {}".format(c)
     return s
+
 
 if __name__ == "__main__":
     signs = [1, -1, -1]

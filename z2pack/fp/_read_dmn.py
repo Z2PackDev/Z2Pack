@@ -13,7 +13,7 @@ def make_blocks(lines):
             b = []
         else:
             b.append(line)
-            if(line == lines[-1]):
+            if (line == lines[-1]):
                 blocks.append(b)
     return blocks
 
@@ -31,10 +31,12 @@ def read_dmn_matrix(block, num_bands):
     """
     read individual dmn matrix to numpy array
     """
+
     def to_complex(blockline):
         re_float = re.compile(r'[0-9.\-\+E]+')
         real_part, imag_part = re.findall(re_float, blockline)
         return float(real_part) + 1j * float(imag_part)
+
     ret = []
     for line in block:
         ret.append(to_complex(line))
@@ -55,7 +57,9 @@ def get_dmn(dmn_path):
             blocks = make_blocks(lines)
 
             # Read line with parameters
-            num_bands, nsymmetry, nkptirr, num_kpts = read_integer_block(blocks[block_counter])
+            num_bands, nsymmetry, nkptirr, num_kpts = read_integer_block(
+                blocks[block_counter]
+            )
             block_counter += 1
 
             # read num_kps block
@@ -75,7 +79,9 @@ def get_dmn(dmn_path):
             for k in range(num_kpts):
                 dmn_k = []
                 k_irred = kpts_mapping[k] - 1
-                for isym in np.arange(nsymmetry) + block_counter + nsymmetry * k_irred:  # iterate over blocks belonging to the curent k point
+                for isym in np.arange(
+                    nsymmetry
+                ) + block_counter + nsymmetry * k_irred:  # iterate over blocks belonging to the curent k point
                     dmn_k.append(read_dmn_matrix(blocks[isym], num_bands))
                 dmn_matrices.append(dmn_k)
 

@@ -1,3 +1,5 @@
+"""Utilities to be used with quantum espresso calculations."""
+
 import xml.etree.ElementTree as ET
 import numpy as np
 import scipy.linalg as la
@@ -76,11 +78,9 @@ def suggest_symmetry_surfaces(xml_path):
             continue
         ew, ev = la.eig(symm)
         ind = np.where(np.isclose(ew, -1))[0]
-        if (np.isclose(ew, 1).any()
-                and len(ind) == 1):  # check that this is a simple reflection
+        if (np.isclose(ew, 1).any() and len(ind) == 1):  # check that this is a simple reflection
             v = ev[:, ind[0]]
-            if np.isclose(np.angle(v) % np.pi,
-                          np.angle(v[0]) % np.pi).all():
+            if np.isclose(np.angle(v) % np.pi, np.angle(v[0]) % np.pi).all():
                 v = np.real(v / np.exp(1j * np.angle(v[0])))
                 # construct orthogonal vectors
                 i_max = np.argmax(v)
@@ -94,13 +94,12 @@ def suggest_symmetry_surfaces(xml_path):
                 # create surface
                 surfaces.append(
                     ReducedSurface(
-                        vectors=[
-                            np.array([0, 0, 0]), v_orth[0], v_orth[1]
-                        ],
+                        vectors=[np.array([0, 0, 0]), v_orth[0], v_orth[1]],
                         symm=symm
                     )
                 )
     return surfaces
+
 
 @export
 def gen_qe_symm_file(surface, xml_path, symm_path):
@@ -117,12 +116,14 @@ def gen_qe_symm_file(surface, xml_path, symm_path):
     :type symm_path:    str
     """
     # get symmetries from scf file
-    symms = symm_from_scf(xml_path)  # this reads the symmetry matrices in the reduced basis
+    symms = symm_from_scf(
+        xml_path
+    )  # this reads the symmetry matrices in the reduced basis
     symms = find_local(symms, surface)  # this selects the local symmetries
     # The .sym file has to be in cartesian coordinates
     basis_transform = reduced_from_wannier(xml_path)
     symms_cart = []
-    for i, s in enumerate(symms):
+    for s in symms:
         symms_cart.append(
             basis_transform.dot(s).dot(np.linalg.inv(basis_transform))
         )  # transform to cartesian basis

@@ -202,8 +202,7 @@ def _run_line_impl(
                 list(
                     np.array(line(k))
                     for k in np.linspace(0., 1., run_options['num_steps'])
-                ),
-                use_symm
+                ), use_symm
             )
         )
 

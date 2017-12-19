@@ -6,16 +6,15 @@ import pytest
 import z2pack
 
 
-
-def Hamilton_Haldane(k, s):
-    #set fixed parameters
+def hamilton_haldane(k, s):
+    # set fixed parameters
     m, t1, t2, phi = 0.5, 1., 1. / 3., s * 0.5 * np.pi
     # defining pauli matrices
     identity = np.identity(2, dtype=complex)
     pauli_x = np.array([[0, 1], [1, 0]], dtype=complex)
     pauli_y = np.array([[0, -1j], [1j, 0]], dtype=complex)
     pauli_z = np.array([[1, 0], [0, -1]], dtype=complex)
-    
+
     k_a = 2 * np.pi / 3. * np.array([
         -k[0] - k[1], 2. * k[0] - k[1], -k[0] + 2. * k[1]
     ])
@@ -28,16 +27,17 @@ def Hamilton_Haldane(k, s):
     return H
 
 
-def Hamilton(k, signs):
-    return la.block_diag(*[Hamilton_Haldane(k, s) for s in signs])
+def hamilton(k, signs):
+    return la.block_diag(*[hamilton_haldane(k, s) for s in signs])
 
 
 def symmetry(n):
     return la.block_diag(*[np.diag([i, i]) for i in range(1, n + 1)])
 
+
 def get_results(signs):
     n = len(signs)
-    system = z2pack.hm.System(lambda k: Hamilton(k, signs), symm=symmetry(n))
+    system = z2pack.hm.System(lambda k: hamilton(k, signs), symm=symmetry(n))
     result = z2pack.surface.run(
         system=system,
         surface=lambda s, t: [t, s, 0.],
@@ -52,14 +52,14 @@ def get_results(signs):
     return chern_total, chern_projected
 
 
-@pytest.mark.parametrize('signs', [[1], [1, 1], [1, -1], [1, -1, -1], [1, 1, 1, 1]])
+@pytest.mark.parametrize(
+    'signs', [[1], [1, 1], [1, -1], [1, -1, -1], [1, 1, 1, 1]]
+)
 def test_multi_haldane(signs):
     chern_total, chern_projected = get_results(signs)
     print(chern_total, chern_projected)
     # check that chern numbers are whole numbers
     assert np.isclose(chern_total, round(chern_total))
     assert np.allclose(chern_projected, np.round(chern_projected))
-    assert np.isclose(np.sum(signs), -1*chern_total)
-    assert np.allclose(signs, -1*np.array(chern_projected))
-
-#test_multi_haldane([1, 1, 1, 1])
+    assert np.isclose(np.sum(signs), -1 * chern_total)
+    assert np.allclose(signs, -1 * np.array(chern_projected))

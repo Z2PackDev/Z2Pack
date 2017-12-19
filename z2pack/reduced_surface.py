@@ -5,6 +5,7 @@
 import numpy as np
 from fsc.export import export
 
+
 @export
 class ReducedSurface:
     """
@@ -16,7 +17,6 @@ class ReducedSurface:
     * ``symm``: Symmetry matrix under which every point on the surface is invariant.
 
     """
-
 
     def __init__(self, *, vectors=None, surface_lambda=None, symm=None):
         r"""
@@ -33,7 +33,9 @@ class ReducedSurface:
         if vectors is not None:
             #create surface based on vectors
             if len(vectors) != 3:
-                raise ValueError("Surface has to be specified by three vectors: one giving its origin and two for spanning the surface.")
+                raise ValueError(
+                    "Surface has to be specified by three vectors: one giving its origin and two for spanning the surface."
+                )
             self._vectors = vectors
             self._surf_lambda = self._lambda_from_vec()
 
@@ -58,7 +60,11 @@ class ReducedSurface:
         return self._symm
 
     def _lambda_from_vec(self):
-        return lambda s, t: self._vectors[0] + s*self._vectors[1] + t*self._vectors[2]
-        
+        return lambda s, t: self._vectors[0] + s * self._vectors[1] + t * self._vectors[2]
+
     def _vec_from_lambda(self):
-        return [self._surf_lambda(0, 0), self._surf_lambda(1, 0), self._surf_lambda(0, 1)]
+        return [
+            self._surf_lambda(0, 0),
+            self._surf_lambda(1, 0),
+            self._surf_lambda(0, 1)
+        ]

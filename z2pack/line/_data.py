@@ -128,7 +128,7 @@ class OverlapLineData(WccLineData):
 
     def symm_eigvals(self, isym):
         """
-        :param isym: Index of symmetry in list returned by ``surface.symm_list``
+        :param isym: Index of symmetry in symmetry input file.
         :type isym: int
         
         :returns: List of symmetry eigenvalues
@@ -139,23 +139,31 @@ class OverlapLineData(WccLineData):
         """
         :param eigval:  Eigenvalue of the eigenspace onto which the overlap matrices will be projected (by value, not index).
         :type eigval: float
-        :param isym:    index (integer) of the symmetry that will be used. All symmetries in the correct order may be obtained from surface.symm_list.
+        :param isym:    index (integer) of the symmetry that will be used. All symmetries in the correct order can be found in the symmetry input file.
         :type isym: int
         
         :returns: List of projectors A_k for symmetry projections.
         """
         if self.dmn is None:
             raise ValueError(
-                "Symmetries were not included in fp calculation. Make sure to set ``write_dmn`` and ``read_sym`` to .true. in the pw2wannier90 input file and pass use_symm=True to the surface run.")
+                "Symmetries were not included in fp calculation. Make sure to set ``write_dmn`` and ``read_sym`` to .true. in the pw2wannier90 input file and pass use_symm=True to the surface run."
+            )
         A_k = []
         for i, d in enumerate(self.dmn[:, isym]):
             np.set_printoptions(precision=2)
             ew, ev = la.eig(d)
             if not np.allclose(np.abs(ew), 1):
-                raise ValueError("{}-th dmn matrix not unitary. The eigenvalues are: \n {}".format(i, ew))
-            if not np.allclose(self.symm_eigvals(isym), np.sort(ew), atol=1e-14):
-                raise ValueError("dmn matrices have different eigenvalues: The first dmn matrix has eigenvalues \n {}, \n the{}-th dmn matrix has eigenvalues \n {}".format(
-                    self.symm_eigvals(isym), i, np.sort(ew)))
+                raise ValueError(
+                    "{}-th dmn matrix not unitary. The eigenvalues are: \n {}".
+                    format(i, ew)
+                )
+            if not np.allclose(
+                self.symm_eigvals(isym), np.sort(ew), atol=1e-14
+            ):
+                raise ValueError(
+                    "dmn matrices have different eigenvalues: The first dmn matrix has eigenvalues \n {}, \n the{}-th dmn matrix has eigenvalues \n {}".
+                    format(self.symm_eigvals(isym), i, np.sort(ew))
+                )
             # find orthonormal basis in each symmetry eigenspace
             ev_lambda = ev[:, np.where(np.isclose(ew, eigval))[0]]
             q, r = np.linalg.qr(ev_lambda)
@@ -167,13 +175,16 @@ class OverlapLineData(WccLineData):
         """
         :param eigval:  Eigenvalue of the eigenspace onto which the overlap matrices will be projected (by value, not index).
         :type eigval: float
-        :param isym:    index (integer) of the symmetry that will be used. All symmetries in the correct order may be obtained from surface.symm_list.
+        :param isym:    index (integer) of the symmetry that will be used. All symmetries in the correct order may found in the symmetry input file.
         :type isym: int
 
         :returns: New :py:class:`OverlapLineData` object with symmetry projected overlaps.
         """
         A_k = self.projectors(eigval, isym=isym)
-        overlaps_projected = [np.dot(np.dot(A_minus.conj().T, o), A_plus) for o, A_minus, A_plus in zip(self.overlaps, A_k[:-1], A_k[1:])]
+        overlaps_projected = [
+            np.dot(np.dot(A_minus.conj().T, o), A_plus)
+            for o, A_minus, A_plus in zip(self.overlaps, A_k[:-1], A_k[1:])
+        ]
         return OverlapLineData(overlaps_projected)
 
 
@@ -205,9 +216,11 @@ class EigenstateLineData(OverlapLineData):
 
         :returns: List of projectors :math:`A_k` for symmetry projections.
         """
-        
+
         if self.symm_eigvals is None:
-            raise ValueError("No symmetry active in the system. Make sure to pass a symmetry to the symmetry and set use_symm=True for the surface run.")
+            raise ValueError(
+                "No symmetry active in the system. Make sure to pass a symmetry to the symmetry and set use_symm=True for the surface run."
+            )
         ind = np.where(np.isclose(self.symm_eigvals, eigval))[0]
         ev = self.symm_eigvecs[:, ind]
         A_k = []

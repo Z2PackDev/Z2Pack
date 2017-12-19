@@ -121,7 +121,7 @@ class System(EigenstateSystem):
                 )[None, :]
             )
         )
-        
+
         if not use_symm:
             symm_eigvals = None
             symm_eigvecs = None

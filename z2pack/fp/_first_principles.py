@@ -5,14 +5,12 @@ import shutil
 import subprocess
 import contextlib
 import collections.abc
+
+from fsc.export import export
 import scipy.linalg as la
 import numpy as np
 
-from fsc.export import export
-
 from ..system import OverlapSystem
-from ..reduced_surface import ReducedSurface
-from .._symm_utils import symm_from_scf
 from . import _read_mmn as mmn
 from . import _read_dmn as dmn
 
@@ -39,9 +37,6 @@ class System(OverlapSystem):
     :param build_folder:    Folder where the calculation is executed.
     :type build_folder:     str
 
-    :param scf_folder:  Folder where the output of the scf calculation is stored.
-    :type xml_path:     str
-
     :param file_names:  Names the input files should get in the ``build_folder``. Default behaviour is taking the filenames from the input files.
     :type file_names:   :py:class:`list` of :py:class:`str`
 
@@ -51,13 +46,10 @@ class System(OverlapSystem):
     :param dmn_path:    Path to the ``.dmn`` output file of ``pw2wannier90``
     :type dmn_path:     str
 
-    :param xml_path:    Relative path to the .xml output file of the scf calculation in ``scf_folder``
-    :type xml_path:     str
-
     :param num_wcc:     Number of WCC which should be produced by the system. This parameter can be used to check the consistency of the calculation. By default, no such check is done.
     :type num_wcc:      int
 
-    .. note:: ``input_files``, ``build_folder`` and ``scf_folder`` can be absolute or relative paths; all other paths excpet ``xml_path`` are relative to ``build_folder``
+    .. note:: ``input_files`` and ``build_folder`` can be absolute or relative paths, the rest is relative to ``build_folder``.
     """
 
     def __init__(
@@ -69,17 +61,14 @@ class System(OverlapSystem):
         command,
         executable=None,
         build_folder='build',
-        scf_folder='scf',
         file_names=None,
         mmn_path='wannier90.mmn',
         dmn_path='wannier90.dmn',
-        xml_path='pwscf.xml',
         num_wcc=None
     ):
         # convert to lists (input_files)
         self._input_files = list(input_files)
         self._build_folder = os.path.abspath(build_folder)
-        self._scf_folder = os.path.abspath(scf_folder)
 
         # copy to file_names and split off the name
         if file_names is None:
@@ -120,10 +109,8 @@ class System(OverlapSystem):
                 format(len(self._kpt_path), len(self._kpt_fct))
             )
         self._mmn_path = self._to_abspath(mmn_path)
-        self._xml_path = self._to_abspath(xml_path, root_path = self._scf_folder)
         self._dmn_path = self._to_abspath(dmn_path)
         self._calling_path = os.getcwd()
-
         self._num_wcc = num_wcc
 
     def _to_abspath(self, path, root_path=None):
@@ -191,31 +178,6 @@ class System(OverlapSystem):
             # if use_symm = True, we need to parse the .dmn file and write the result into symm_projectors
             dmn_mat = dmn.get_dmn(self._dmn_path)
         return overlap_matrices, dmn_mat
-
-    def suggest_symmetry_surfaces(self):
-        """
-        Returns a tuple of :py:class:`ReducedSurface` objects with surfaces that have a non-trivial local symmetry.
-        """
-        surfaces = []
-        symms = symm_from_scf(self._xml_path)
-        for symm in symms:
-            if np.allclose(symm, np.eye(3)):
-                continue
-            ew, ev = la.eig(symm)
-            ind = np.where(np.isclose(ew, -1))[0]
-            if(np.isclose(ew, 1).any() and len(ind)==1): #check that this is a simple reflection
-                v = ev[:,ind[0]]
-                if np.isclose(np.angle(v) % np.pi, np.angle(v[0]) % np.pi).all():
-                    v = np.real(v/np.exp(1j*np.angle(v[0])))
-                    #construct orthogonal vectors
-                    i_max = np.argmax(v)
-                    v_orth = np.eye(3)[np.where(np.logical_not(np.isclose([0, 1, 2], np.argmax(v))))[0]]
-                    v_orth = [vo - np.dot(vo, v)/v[i_max]*np.eye(3)[i_max] for vo in v_orth]
-                    #create surface
-                    surfaces.append(ReducedSurface(vectors=[np.array([0, 0, 0]), v_orth[0], v_orth[1]], symm=symm))
-        return surfaces
-
-        
 
 
 def _copy(initial_paths, final_names):

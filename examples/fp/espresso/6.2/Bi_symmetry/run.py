@@ -11,6 +11,7 @@ import xml.etree.ElementTree as ET
 import scipy.linalg as la
 import numpy as np
 import z2pack
+from z2pack.espresso_symm_utils import *
 
 # Edit the paths to your Quantum Espresso and Wannier90 here
 qedir = '/home/tony/qe-6.2/bin'
@@ -53,7 +54,8 @@ with open('input/bi.win', 'w') as f:
 # copied, but instead can be referenced in the .files file.
 # The k-points input is appended to the .in file
 input_files = [
-    'input/' + name for name in ["bi.nscf.in", "bi.pw2wan.in", "bi.win", "bi.sym"]
+    'input/' + name 
+    for name in ["bi.nscf.in", "bi.pw2wan.in", "bi.win", "bi.sym"]
 ]
 system = z2pack.fp.System(
     input_files=input_files,
@@ -62,14 +64,16 @@ system = z2pack.fp.System(
     command=z2cmd,
     executable='/bin/bash',
     mmn_path='bi.mmn',
-    xml_path='bi.xml',
     dmn_path='bi.dmn'
 )
 
+xml_path = "scf/bi.xml"
 
-symms = system.suggest_symmetry_surfaces()
-s = symms[0] #select one of the suggested symmetries as an example.
+symm_surfs = suggest_symmetry_surfaces(xml_path)
+s = symm_surfs[0]  #select one of the suggested symmetries as an example.
 
+# Generate .sym file
+gen_qe_symm_file(s.surface_lambda, xml_path, "input/bi.sym")
 
 # Run the WCC calculations
 # The tolerances have to be turned of because this is not a physical system and the calculation does not converge
@@ -85,12 +89,9 @@ result = z2pack.surface.run(
     move_tol=None
 )
 
-print("Symmetries:")
-print(result.symm_list)
-
 #project to each eigenvalue of the symmetry for which we calculated the surface
-ew = np.unique(la.eig(result.symm_list[1])[0])
-fig, ax = plt.subplots(1, len(ew)+1, sharey=True, figsize=(12, 5))
+ew = np.unique(la.eig(s.symm)[0])
+fig, ax = plt.subplots(1, len(ew) + 1, sharey=True, figsize=(12, 5))
 z2pack.plot.wcc(result, axis=ax[0])
 ax[0].set_title("Unprojected system")
 
@@ -102,15 +103,12 @@ print(
 
 for i, w in enumerate(ew):
     result_projected = result.symm_project(w, isym=1)
-    z2pack.plot.wcc(result_projected, axis=ax[i+1])
-    ax[i+1].set_title("Projection on $Eig_{{{}}}(S)$".format(w))
+    z2pack.plot.wcc(result_projected, axis=ax[i + 1])
+    ax[i + 1].set_title("Projection on $Eig_{{{}}}(S)$".format(w))
     print(
         'Z2 invariant of projected system (eigenvalue: {}): {}'.format(
-            round(w, 2),
-            z2pack.invariant.z2(result_projected)
+            round(w, 2), z2pack.invariant.z2(result_projected)
         )
     )
 
 plt.savefig('plots/plot.pdf', bbox_inches='tight')
-
-

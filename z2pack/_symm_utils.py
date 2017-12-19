@@ -1,6 +1,5 @@
 """Utilitites to select the local symmetries of a surface from a list of all symmetries of the crystal"""
 
-import os
 import numpy as np
 import scipy.linalg as la
 from fsc.export import export
@@ -17,6 +16,7 @@ def round_to_zero(sym, tol=1e-10):
                 sym[i, j] = 0.
     return sym
 
+
 @export
 def reduced_dist(k1, k2):
     """
@@ -27,6 +27,7 @@ def reduced_dist(k1, k2):
     for x, y in zip(k1, k2):
         dist.append(min((x - y) % 1, (y - x) % 1))
     return dist
+
 
 @export
 def to_reciprocal(real_space):
@@ -45,6 +46,7 @@ def to_reciprocal(real_space):
         )
     return k_space
 
+
 @export
 def reduced_symm(symm, basis):
     """
@@ -54,9 +56,9 @@ def reduced_symm(symm, basis):
     """
     symm = symm.conj(
     )  # symmetry matrix in reciprocal space according to Sands, 1982
-    BtoE = basis  # basis trafo matrix from reduced to standard basis
-    EtoB = np.linalg.inv(BtoE)
-    symm = EtoB.dot(symm).dot(BtoE)
+    bToE = basis  # basis trafo matrix from reduced to standard basis
+    eToB = np.linalg.inv(bToE)
+    symm = eToB.dot(symm).dot(bToE)
     return symm
 
 

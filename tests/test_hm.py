@@ -1,9 +1,10 @@
 """Tests for systems with explicit Hamiltonian matrix (hm)."""
 # pylint: disable=redefined-outer-name
 
-import z2pack
 import pytest
 import numpy as np
+
+import z2pack
 
 from hm_systems import weyl_surface  # pylint: disable=unused-import
 

@@ -1,10 +1,10 @@
 """Tests of the StepCounter control."""
 # pylint: disable=redefined-outer-name
 
+import pytest
+
 from z2pack.line._control import StepCounter
 import z2pack
-
-import pytest
 
 
 def test_base(test_ctrl_base):

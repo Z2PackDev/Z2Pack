@@ -15,7 +15,7 @@ def _plot(proj_3d=False):
     """Decorator that sets up the figure axes and handles options common to all plots."""
 
     @decorator.decorator
-    def inner(func, data, *, axis=None, **kwargs):  # pylint: disable=missing-docstring
+    def inner(func, data, *, axis=None, **kwargs):  # pylint: disable=missing-docstring,inconsistent-return-statements
         # import is here s.t. the import of the package does not fail
         # if matplotlib is not present
         import matplotlib.pyplot as plt

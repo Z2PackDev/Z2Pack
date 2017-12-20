@@ -29,7 +29,7 @@ class _LazyProperty:
 
 @export
 class WccLineData(metaclass=ConstLocker):
-    """Data container for a line constructed directly from the WCC, or from the overlap matrices via the :meth:`from_overlaps` method. The following attributes and properties can be accessed:
+    """Data container for a line constructed directly from the WCC. The following attributes and properties can be accessed:
 
     * ``wcc`` : A list of Wannier charge centers.
     * ``pol`` : The total polarization (sum of WCC) along the line.
@@ -44,18 +44,6 @@ class WccLineData(metaclass=ConstLocker):
 
     def __init__(self, wcc):
         self.wcc = wcc
-
-    @classmethod
-    def from_overlaps(cls, overlaps):
-        r"""Creates a :class:`OverlapLineData` object from a list containing the overlap matrices :math:`M_{m,n}^{\mathbf{k}, \mathbf{k+b}} = \langle u_n^\mathbf{k} | u_m^\mathbf{k+b} \rangle`."""
-        return OverlapLineData(overlaps)
-
-    @staticmethod
-    def _calculate_wannier_from_wilson(wilson):
-        eigs, eigvec = la.eig(wilson)
-        wcc = np.array([np.angle(z) / (2 * np.pi) % 1 for z in eigs])
-        idx = np.argsort(wcc)
-        return list(wcc[idx]), list(eigvec.T[idx])
 
     @_LazyProperty
     def pol(self):
@@ -98,12 +86,25 @@ class OverlapLineData(WccLineData):
         self.overlaps = [np.array(o, dtype=complex) for o in overlaps]
 
     def _calculate_wannier(self):
+        """
+        Calculates and sets the Wannier charge centers and Wilson loop eigenstates.
+        """
         wcc, wilson_eigenstates = self._calculate_wannier_from_wilson(
             self.wilson
         )
         with change_lock(self, 'none'):
             self.wcc = wcc
             self.wilson_eigenstates = wilson_eigenstates
+
+    @staticmethod
+    def _calculate_wannier_from_wilson(wilson):
+        """
+        Calculates the Wannier charge centers and Wilson loop eigenstates from the Wilson loop.
+        """
+        eigs, eigvec = la.eig(wilson)
+        wcc = np.array([np.angle(z) / (2 * np.pi) % 1 for z in eigs])
+        idx = np.argsort(wcc)
+        return list(wcc[idx]), list(eigvec.T[idx])
 
     @_LazyProperty
     def wilson(self):
@@ -133,7 +134,7 @@ class EigenstateLineData(OverlapLineData):
         self.eigenstates = eigenstates
 
     @_LazyProperty
-    def overlaps(self):  # pylint: disable=method-hidden
+    def overlaps(self):  # pylint: disable=method-hidden,missing-docstring
         overlaps = []
         for eig1, eig2 in zip(self.eigenstates, self.eigenstates[1:]):
             overlaps.append(np.dot(np.conjugate(eig1), np.array(eig2).T))

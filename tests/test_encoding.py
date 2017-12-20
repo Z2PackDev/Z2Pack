@@ -3,9 +3,10 @@
 
 import json
 
-import z2pack
 import pytest
 import numpy as np
+
+import z2pack
 
 
 @pytest.mark.parametrize(

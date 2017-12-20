@@ -3,8 +3,9 @@
 
 import random
 
-import z2pack
 import pytest
+
+import z2pack
 
 from monkeypatch_data import *
 

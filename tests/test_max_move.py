@@ -7,11 +7,11 @@ import copy
 import random
 random.seed(2512351)
 
-import z2pack
-max_move = z2pack._utils._get_max_move  # pylint: disable=protected-access,invalid-name
-
 import pytest
 import numpy as np
+
+import z2pack
+max_move = z2pack._utils._get_max_move  # pylint: disable=protected-access,invalid-name
 
 
 @pytest.fixture(params=range(2, 300, 3))

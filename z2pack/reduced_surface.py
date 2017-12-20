@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """This module contains a class describing a surface in the reduced Brillouin zone."""
 
-import numpy as np
 from fsc.export import export
 
 

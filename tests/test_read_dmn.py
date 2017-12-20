@@ -1,3 +1,7 @@
+"""Tests for dmn parser"""
+
+# pylint: disable=protected-access
+
 import pytest
 import z2pack
 import numpy as np

@@ -5,7 +5,7 @@ import numpy as np
 import scipy.linalg as la
 from fsc.export import export
 
-from ._symm_utils import *
+from ._symm_utils import to_reciprocal, find_local, round_to_zero
 from .reduced_surface import ReducedSurface
 
 
@@ -30,7 +30,7 @@ def symm_from_scf(xml_path):
 @export
 def reduced_from_wannier(xml_path):
     """
-    Get the basis transformation matrix from the reduced reciprocal space to cartesian basis
+    Get the basis transformation matrix from the reduced reciprocal space to cartesian basis from xml file
     """
     real_space = []
     cell = ET.parse(xml_path).find('output').find('atomic_structure'
@@ -78,7 +78,8 @@ def suggest_symmetry_surfaces(xml_path):
             continue
         ew, ev = la.eig(symm)
         ind = np.where(np.isclose(ew, -1))[0]
-        if (np.isclose(ew, 1).any() and len(ind) == 1):  # check that this is a simple reflection
+        # check that this is a simple reflection
+        if np.isclose(ew, 1).any() and len(ind) == 1:
             v = ev[:, ind[0]]
             if np.isclose(np.angle(v) % np.pi, np.angle(v[0]) % np.pi).all():
                 v = np.real(v / np.exp(1j * np.angle(v[0])))

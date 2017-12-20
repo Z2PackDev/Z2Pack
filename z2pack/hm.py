@@ -19,7 +19,7 @@ class System(EigenstateSystem):
     :param hamilton: A function taking the wavevector ``k`` (``list`` of length 3) as an input and returning the matrix Hamiltonian.
     :type hamilton: collections.abc.Callable
 
-    :param symm: Unitary symmetry matrix represented in the same basis as the Hamiltonian (i.e. the matrices passed to ``hamilton`` and ``symm`` must commute). 
+    :param symm: Unitary symmetry matrix represented in the same basis as the Hamiltonian (i.e. the matrices passed to ``hamilton`` and ``symm`` must commute).
     :type symm: :py:class:`numpy.ndarray`
 
     :param dim:     Dimension of the system.

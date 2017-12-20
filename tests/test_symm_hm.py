@@ -1,5 +1,7 @@
 """Tests for calculating invariants in symmetry eigenspaces for hm systems"""
 
+# pylint: disable=missing-docstring
+
 import numpy as np
 import scipy.linalg as la
 import pytest

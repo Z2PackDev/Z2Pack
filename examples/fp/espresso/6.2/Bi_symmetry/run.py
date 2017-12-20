@@ -11,7 +11,7 @@ import xml.etree.ElementTree as ET
 import scipy.linalg as la
 import numpy as np
 import z2pack
-from z2pack.espresso_symm_utils import *
+from z2pack.espresso_symm_utils import suggest_symmetry_surfaces, gen_qe_symm_file
 
 # Edit the paths to your Quantum Espresso and Wannier90 here
 qedir = '/home/tony/qe-6.2/bin'
@@ -54,7 +54,7 @@ with open('input/bi.win', 'w') as f:
 # copied, but instead can be referenced in the .files file.
 # The k-points input is appended to the .in file
 input_files = [
-    'input/' + name 
+    'input/' + name
     for name in ["bi.nscf.in", "bi.pw2wan.in", "bi.win", "bi.sym"]
 ]
 system = z2pack.fp.System(

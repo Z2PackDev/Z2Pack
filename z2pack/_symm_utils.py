@@ -12,7 +12,7 @@ def round_to_zero(sym, tol=1e-10):
     """
     for i in range(len(sym[0])):
         for j in range(len(sym[:, 0])):
-            if (abs(sym[i, j]) < tol):
+            if abs(sym[i, j]) < tol:
                 sym[i, j] = 0.
     return sym
 
@@ -77,9 +77,9 @@ def find_local(symmetries, surface, precision=3, eps=1e-5):
         k_symm = symm.conj()
         local = True
         for kp in k_points:
-            if (la.norm(reduced_dist(kp, np.dot(k_symm, kp))) > eps):
+            if la.norm(reduced_dist(kp, np.dot(k_symm, kp))) > eps:
                 local = False
                 break
-        if (local):
+        if local:
             local_symmetries.append(symm)
     return local_symmetries

@@ -1,3 +1,7 @@
+"""Test for symmetry projection of first principles systems."""
+
+# pylint: disable=missing-docstring,redefined-outer-name
+
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
@@ -8,7 +12,7 @@ import tempfile
 import scipy.linalg as la
 import numpy as np
 import z2pack
-from z2pack.espresso_symm_utils import *
+from z2pack.espresso_symm_utils import gen_qe_symm_file, suggest_symmetry_surfaces
 import pytest
 
 
@@ -70,7 +74,10 @@ def test_bi_symm(bi_symm_system, compare_wcc, sample):
             # Run the WCC calculations
             # The tolerances have to be turned off because this is not a physical system and the calculation does not converge
             # Generate .sym file
-            gen_qe_symm_file(s.surface_lambda, xml_path, os.path.join(sample_dir, "input/bi.sym"))
+            gen_qe_symm_file(
+                s.surface_lambda, xml_path,
+                os.path.join(sample_dir, "input/bi.sym")
+            )
             result = z2pack.surface.run(
                 system=system,
                 surface=s.surface_lambda,
@@ -83,4 +90,6 @@ def test_bi_symm(bi_symm_system, compare_wcc, sample):
             ew = np.unique(la.eig(s.symm)[0])
             for j, w in enumerate(ew):
                 result_projected = result.symm_project(w, isym=1)
-                compare_wcc(result_projected.wcc, tag="{}_proj_{}".format(i, j))
+                compare_wcc(
+                    result_projected.wcc, tag="{}_proj_{}".format(i, j)
+                )

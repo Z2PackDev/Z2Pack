@@ -7,8 +7,6 @@ import contextlib
 import collections.abc
 
 from fsc.export import export
-import scipy.linalg as la
-import numpy as np
 
 from ..system import OverlapSystem
 from . import _read_mmn as mmn

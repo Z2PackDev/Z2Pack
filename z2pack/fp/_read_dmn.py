@@ -1,10 +1,11 @@
 """Parser for .dmn matrices (output from pw2wannier90)"""
 
-import numpy as np
 import re
+import numpy as np
 
 
-def make_blocks(lines):
+def _make_blocks(lines):
+    """Read blocks of dmn data into numpy array."""
     blocks = []
     b = []
     for line in lines:
@@ -13,12 +14,13 @@ def make_blocks(lines):
             b = []
         else:
             b.append(line)
-            if (line == lines[-1]):
+            if line == lines[-1]:
                 blocks.append(b)
     return blocks
 
 
-def read_integer_block(block):
+def _read_integer_block(block):
+    """Read first block of integers specifying the systems."""
     re_int = re.compile(r'[\d]+')
     ret = []
     for line in block:
@@ -27,9 +29,9 @@ def read_integer_block(block):
     return ret
 
 
-def read_dmn_matrix(block, num_bands):
+def _read_dmn_matrix(block, num_bands):
     """
-    read individual dmn matrix to numpy array
+    Read individual dmn matrix to numpy array.
     """
 
     def to_complex(blockline):
@@ -54,16 +56,16 @@ def get_dmn(dmn_path):
             dmn_matrices = []
             block_counter = 0
             lines = [line for line in f]
-            blocks = make_blocks(lines)
+            blocks = _make_blocks(lines)
 
             # Read line with parameters
-            num_bands, nsymmetry, nkptirr, num_kpts = read_integer_block(
+            num_bands, nsymmetry, nkptirr, num_kpts = _read_integer_block( #pylint: disable=unbalanced-tuple-unpacking
                 blocks[block_counter]
             )
             block_counter += 1
 
             # read num_kps block
-            kpts_mapping = read_integer_block(blocks[block_counter])
+            kpts_mapping = _read_integer_block(blocks[block_counter])
             block_counter += 1
 
             # nkptirr block can be skipped
@@ -82,7 +84,7 @@ def get_dmn(dmn_path):
                 for isym in np.arange(
                     nsymmetry
                 ) + block_counter + nsymmetry * k_irred:  # iterate over blocks belonging to the curent k point
-                    dmn_k.append(read_dmn_matrix(blocks[isym], num_bands))
+                    dmn_k.append(_read_dmn_matrix(blocks[isym], num_bands))
                 dmn_matrices.append(dmn_k)
 
     except IOError as err:

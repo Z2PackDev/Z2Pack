@@ -3,7 +3,6 @@
 import copy
 import logging
 import contextlib
-import re
 
 import numpy as np
 from fsc.export import export
@@ -16,8 +15,6 @@ from .._run_utils import _load_init_result, _check_save_dir, _log_run
 from .._async_handler import AsyncHandler
 from .._logging_tools import TagAdapter, TagFilter, filter_manager
 from ..line import _run as _line_run
-
-from .._symm_utils import *
 
 # tag which triggers filtering when called from the volume's run.
 _SURFACE_ONLY_LOGGER = TagAdapter(

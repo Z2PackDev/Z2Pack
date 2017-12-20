@@ -113,7 +113,6 @@ class OverlapLineData(WccLineData):
     @_LazyProperty
     def wilson(self):
         """Wilson loop along the line."""
-        # create overlaps
         return functools.reduce(np.dot, self.overlaps)
 
     @_LazyProperty
@@ -130,7 +129,7 @@ class OverlapLineData(WccLineData):
         """
         :param isym: Index of symmetry in symmetry input file.
         :type isym: int
-        
+
         :returns: List of symmetry eigenvalues
         """
         return np.sort(la.eig(self.dmn[0][isym])[0])
@@ -141,7 +140,7 @@ class OverlapLineData(WccLineData):
         :type eigval: float
         :param isym:    index (integer) of the symmetry that will be used. All symmetries in the correct order can be found in the symmetry input file.
         :type isym: int
-        
+
         :returns: List of projectors A_k for symmetry projections.
         """
         if self.dmn is None:
@@ -150,7 +149,6 @@ class OverlapLineData(WccLineData):
             )
         A_k = []
         for i, d in enumerate(self.dmn[:, isym]):
-            np.set_printoptions(precision=2)
             ew, ev = la.eig(d)
             if not np.allclose(np.abs(ew), 1):
                 raise ValueError(
@@ -166,7 +164,7 @@ class OverlapLineData(WccLineData):
                 )
             # find orthonormal basis in each symmetry eigenspace
             ev_lambda = ev[:, np.where(np.isclose(ew, eigval))[0]]
-            q, r = np.linalg.qr(ev_lambda)
+            q = np.linalg.qr(ev_lambda)[0]
             A_k.append(q)
         A_k.append(A_k[0])  # last projector to close loop
         return A_k
@@ -209,7 +207,7 @@ class EigenstateLineData(OverlapLineData):
             overlaps.append(np.dot(np.conjugate(eig1), np.array(eig2).T))
         return overlaps
 
-    def projectors(self, eigval, **kwargs):
+    def projectors(self, eigval, **kwargs):  #pylint: disable=unused-argument, arguments-differ
         """
         :param eigval:  Eigenvalue of the eigenspace onto which the overlap matrices will be projected (by value, not index).
         :type eigval: float

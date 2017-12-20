@@ -14,9 +14,9 @@ class EigenstateSystem(metaclass=abc.ABCMeta):
     """
 
     @abc.abstractmethod
-    def get_eig(self, kpt):
+    def get_eig(self, kpt, use_symm=False):
         r"""
-        Returns a list of the following objects: 
+        Returns a list of the following objects:
 
         * The periodic part of the eigenstates at each of the given k-points. The eigenstates are given as columns in a 2D array.
         * The symmetry eigenvalues. If no symmetry is given, this is ``None``.

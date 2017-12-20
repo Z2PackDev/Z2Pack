@@ -17,9 +17,9 @@ class OverlapMockSystem(z2pack.system.OverlapSystem):
 
     def get_mmn(self, kpt, use_symm=False):
         return [
-            z2pack.line.EigenstateLineData(
-                self.eigenstate_system.get_eig(kpt)
-            ).wilson
+            z2pack.line.
+            EigenstateLineData(*self.eigenstate_system.get_eig(kpt)).overlaps,
+            None
         ]
 
 
@@ -77,7 +77,7 @@ def weyl_system(request):
     res = z2pack.hm.System(
         lambda k: np.array(
             [
-                [k[2], k[0] -1j * k[1]],
+                [k[2], k[0] - 1j * k[1]],
                 [k[0] + 1j * k[1], -k[2]]
             ]
         )

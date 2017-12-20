@@ -48,21 +48,29 @@ def _(obj):
 
 @encode.register(EigenstateLineData)
 def _(obj):
-    return dict(
-        __eigenstate_line_data__=True,
-        eigenstates=encode(obj.eigenstates),
-        symm_eigvals=encode(obj.symm_eigvals),
-        symm_eigvecs=encode(obj.symm_eigvecs)
-    )
+    if obj.symm_eigvals is not None:
+        return dict(
+            __eigenstate_line_data__=True,
+            eigenstates=encode(obj.eigenstates),
+            symm_eigvals=encode(obj.symm_eigvals),
+            symm_eigvecs=encode(obj.symm_eigvecs)
+        )
+    else:
+        return dict(
+            __eigenstate_line_data__=True, eigenstates=encode(obj.eigenstates)
+        )
 
 
 @encode.register(OverlapLineData)
 def _(obj):
-    return dict(
-        __overlap_line_data__=True,
-        overlaps=encode(obj.overlaps),
-        dmn=encode(obj.dmn)
-    )
+    if obj.dmn is not None:
+        return dict(
+            __overlap_line_data__=True,
+            overlaps=encode(obj.overlaps),
+            dmn=encode(obj.dmn)
+        )
+    else:
+        return dict(__overlap_line_data__=True, overlaps=encode(obj.overlaps))
 
 
 @encode.register(WccLineData)

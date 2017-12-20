@@ -11,6 +11,9 @@ import z2pack
 
 @pytest.fixture
 def kpt(line):
+    """
+    Return a list of k-points for a given 'line' fixture.
+    """
     kpt = [np.array(line(tval)) for tval in np.linspace(0, 1, 11)]
     return kpt
 
@@ -95,6 +98,9 @@ VALID_LINES = {
 @pytest.mark.parametrize('fct', sorted(VALID_LINES.keys()))
 @pytest.mark.parametrize('line', ALL_LINES)
 def test_lines(kpt, fct, line, compare_equal):
+    """
+    For each k-point function, test that it works for the lines it can handle, and raises ValueError for those it cannot.
+    """
     if line in VALID_LINES[fct]['valid']:
         compare_equal(VALID_LINES[fct]['fct'](kpt))
     elif line in VALID_LINES[fct]['invalid']:

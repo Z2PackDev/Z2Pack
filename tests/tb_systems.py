@@ -4,8 +4,9 @@
 import itertools
 
 import pytest
-import z2pack
 import tbmodels
+
+import z2pack
 
 
 @pytest.fixture

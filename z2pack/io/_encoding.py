@@ -126,6 +126,9 @@ def decode(obj):
 
 
 def decode_volume_result(obj):
+    """
+    Decodes a dict into a VolumeResult instance.
+    """
     # The states / convergence of the controls are set manually
     res = VolumeResult(obj['data'], [], [])
     res.ctrl_convergence = decode(obj['ctrl_convergence'])
@@ -134,14 +137,23 @@ def decode_volume_result(obj):
 
 
 def decode_volume_data(obj):
+    """
+    Decodes a dict into a VolumeData instance.
+    """
     return VolumeData(decode(obj['surfaces']))
 
 
 def decode_surface_position(obj):
+    """
+    Decodes a dict into a SurfacePosition instance.
+    """
     return SurfacePosition(s=obj['s'], result=decode(obj['result']))
 
 
 def decode_surface_result(obj):
+    """
+    Decodes a dict into a SurfaceResult instance.
+    """
     # The states / convergence of the controls are set manually
     res = SurfaceResult(obj['data'], [], [])
     res.ctrl_convergence = decode(obj['ctrl_convergence'])
@@ -150,19 +162,31 @@ def decode_surface_result(obj):
 
 
 def decode_surface_data(obj):
+    """
+    Decodes a dict into a SurfaceData instance.
+    """
     return SurfaceData(decode(obj['lines']))
 
 
 # Needed for legacy results.
 def decode_surface_line(obj):
-    return LinePosition(obj['t'], decode(obj['result']))
+    """
+    Decodes a dict into a LinePosition instance.
+    """
+    return decode_line_position(obj)
 
 
 def decode_line_position(obj):
+    """
+    Decodes a dict into a LinePosition instance.
+    """
     return LinePosition(obj['t'], decode(obj['result']))
 
 
 def decode_line_result(obj):
+    """
+    Decodes a dict into a LineResult instance.
+    """
     # The states / convergence of the controls are set manually
     res = LineResult(obj['data'], [], [])
     res.ctrl_convergence = decode(obj['ctrl_convergence'])
@@ -171,18 +195,30 @@ def decode_line_result(obj):
 
 
 def decode_wcc_line_data(obj):
+    """
+    Decodes a dict into a WccLineData instance.
+    """
     return WccLineData(obj['wcc'])
 
 
 def decode_overlap_line_data(obj):
+    """
+    Decodes a dict into a OverlapLineData instance.
+    """
     return OverlapLineData(obj['overlaps'])
 
 
 def decode_eigenstate_line_data(obj):
+    """
+    Decodes a dict into a EigenstateLineData instance.
+    """
     return EigenstateLineData(obj['eigenstates'])
 
 
 def decode_complex(obj):
+    """
+    Decodes a dict into a complex number.
+    """
     return complex(obj['real'], obj['imag'])
 
 

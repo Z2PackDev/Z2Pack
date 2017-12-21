@@ -202,7 +202,7 @@ class EigenstateLineData(OverlapLineData):
         self.symm_eigvecs = symm_eigvecs
 
     @_LazyProperty
-    def overlaps(self):  # pylint: disable=method-hidden
+    def overlaps(self):  # pylint: disable=method-hidden,missing-docstring
         overlaps = []
         for eig1, eig2 in zip(self.eigenstates, self.eigenstates[1:]):
             overlaps.append(np.dot(np.conjugate(eig1), np.array(eig2).T))

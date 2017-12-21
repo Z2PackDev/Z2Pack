@@ -1,4 +1,5 @@
 """Defines functions for encoding and decoding Z2Pack objects."""
+# pylint: disable=useless-suppression, missing-docstring
 
 import numbers
 import contextlib

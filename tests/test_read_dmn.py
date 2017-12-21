@@ -3,8 +3,8 @@
 # pylint: disable=protected-access
 
 import pytest
-import z2pack
 import numpy as np
+import z2pack
 
 
 def test_read(compare_data):

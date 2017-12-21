@@ -8,12 +8,12 @@
 import os
 import shutil
 import tempfile
-
 import scipy.linalg as la
 import numpy as np
+import pytest
+
 import z2pack
 from z2pack.espresso_symm_utils import gen_qe_symm_file, suggest_symmetry_surfaces
-import pytest
 
 
 @pytest.fixture

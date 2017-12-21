@@ -69,8 +69,9 @@ system = z2pack.fp.System(
 
 xml_path = "scf/bi.xml"
 
+# suggest potentially intersting surfaces that have a non-trivial local symmetry
 symm_surfs = suggest_symmetry_surfaces(xml_path)
-s = symm_surfs[0]  #select one of the suggested symmetries as an example.
+s = symm_surfs[0]  # select one of the suggested symmetries as an example.
 
 # Generate .sym file
 gen_qe_symm_file(s.surface_lambda, xml_path, "input/bi.sym")
@@ -89,7 +90,7 @@ result = z2pack.surface.run(
     move_tol=None
 )
 
-#project to each eigenvalue of the symmetry for which we calculated the surface
+# project to each eigenvalue of the symmetry for which we calculated the surface
 ew = np.unique(la.eig(s.symm)[0])
 fig, ax = plt.subplots(1, len(ew) + 1, sharey=True, figsize=(12, 5))
 z2pack.plot.wcc(result, axis=ax[0])

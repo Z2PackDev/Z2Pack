@@ -229,8 +229,8 @@ def decode_eigenstate_line_data(obj):
     Decodes a dict into a EigenstateLineData instance.
     """
     return EigenstateLineData(
-        obj['eigenstates'],
-        obj.get('symm_eigvals', None), obj.get('symm_eigvecs', None)
+        obj['eigenstates'], obj.get('symm_eigvals', None),
+        obj.get('symm_eigvecs', None)
     )
 
 

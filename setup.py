@@ -28,7 +28,7 @@ EXTRAS = {
     'plot': ['matplotlib'],
     'tb': ['tbmodels>=1.1.1'],
     'doc': ['sphinx', 'sphinx_rtd_theme'],
-    'dev': ['prospector', 'pytest', 'yapf==0.19', 'pre-commit'],
+    'dev': ['prospector', 'pytest', 'pytest-cov', 'yapf==0.20', 'pre-commit'],
 }
 EXTRAS['dev'] += EXTRAS['plot'] + EXTRAS['tb'] + EXTRAS['doc']
 

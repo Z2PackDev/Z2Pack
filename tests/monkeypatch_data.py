@@ -16,6 +16,9 @@ from z2pack.line import LineResult
 
 @pytest.fixture
 def patch_max_move(monkeypatch):
+    """
+    Take the minimum of all WCC instead of actually computing the maximum movement.
+    """
     monkeypatch.setattr(z2pack.surface._control, '_get_max_move', min)  # pylint: disable=protected-access
 
 
@@ -25,7 +28,7 @@ def patch_surface_data(monkeypatch):
     Monkeypatch the SurfaceData class so that it can be set from a nested list of WCC and list of t-values.
     """
 
-    def __init__(self, wcc_list, t_list=None):
+    def __init__(self, wcc_list, t_list=None):  # pylint: disable=missing-docstring
         if t_list is None:
             t_list = np.linspace(0, 1, len(wcc_list))
         self.lines = SortedList(key=lambda x: x.t)

@@ -12,6 +12,10 @@ import z2pack
 
 
 class OverlapMockSystem(z2pack.system.OverlapSystem):
+    """
+    OverlapSystem which just wraps an EigenstateSystem and creates the overlap matrix.
+    """
+
     def __init__(self, eigenstate_system):
         self.eigenstate_system = eigenstate_system
 
@@ -35,6 +39,9 @@ def pos_tol(request):
 
 @pytest.fixture(params=[False, True])
 def simple_system(request):
+    """
+    Return a system where the Hamiltonian is the identity, either as eigenstates or overlap system.
+    """
     res = z2pack.hm.System(lambda k: np.eye(4))
     if request.param:
         res = OverlapMockSystem(res)

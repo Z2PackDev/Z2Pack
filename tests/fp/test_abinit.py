@@ -7,8 +7,9 @@ import os
 import shutil
 import tempfile
 
-import z2pack
 import pytest
+
+import z2pack
 
 
 @pytest.fixture

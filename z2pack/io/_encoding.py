@@ -1,4 +1,5 @@
 """Defines functions for encoding and decoding Z2Pack objects."""
+# pylint: disable=useless-suppression, missing-docstring
 
 import numbers
 import contextlib
@@ -48,14 +49,29 @@ def _(obj):
 
 @encode.register(EigenstateLineData)
 def _(obj):
-    return dict(
-        __eigenstate_line_data__=True, eigenstates=encode(obj.eigenstates)
-    )
+    if obj.symm_eigvals is not None:
+        return dict(
+            __eigenstate_line_data__=True,
+            eigenstates=encode(obj.eigenstates),
+            symm_eigvals=encode(obj.symm_eigvals),
+            symm_eigvecs=encode(obj.symm_eigvecs)
+        )
+    else:
+        return dict(
+            __eigenstate_line_data__=True, eigenstates=encode(obj.eigenstates)
+        )
 
 
 @encode.register(OverlapLineData)
 def _(obj):
-    return dict(__overlap_line_data__=True, overlaps=encode(obj.overlaps))
+    if obj.dmn is not None:
+        return dict(
+            __overlap_line_data__=True,
+            overlaps=encode(obj.overlaps),
+            dmn=encode(obj.dmn)
+        )
+    else:
+        return dict(__overlap_line_data__=True, overlaps=encode(obj.overlaps))
 
 
 @encode.register(WccLineData)
@@ -205,14 +221,17 @@ def decode_overlap_line_data(obj):
     """
     Decodes a dict into a OverlapLineData instance.
     """
-    return OverlapLineData(obj['overlaps'])
+    return OverlapLineData(obj['overlaps'], obj.get('dmn', None))
 
 
 def decode_eigenstate_line_data(obj):
     """
     Decodes a dict into a EigenstateLineData instance.
     """
-    return EigenstateLineData(obj['eigenstates'])
+    return EigenstateLineData(
+        obj['eigenstates'], obj.get('symm_eigvals', None),
+        obj.get('symm_eigvecs', None)
+    )
 
 
 def decode_complex(obj):

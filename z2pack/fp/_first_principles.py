@@ -10,6 +10,7 @@ from fsc.export import export
 
 from ..system import OverlapSystem
 from . import _read_mmn as mmn
+from . import _read_dmn as dmn
 
 
 @export
@@ -40,10 +41,13 @@ class System(OverlapSystem):
     :param mmn_path:    Path to the ``.mmn`` output file of ``Wannier90``
     :type mmn_path:     str
 
+    :param dmn_path:    Path to the ``.dmn`` output file of ``pw2wannier90``
+    :type dmn_path:     str
+
     :param num_wcc:     Number of WCC which should be produced by the system. This parameter can be used to check the consistency of the calculation. By default, no such check is done.
     :type num_wcc:      int
 
-    .. note:: ``input_files`` and ``build_folder`` can be absolute or relative paths, the rest is relative to ``build_folder``
+    .. note:: ``input_files`` and ``build_folder`` can be absolute or relative paths, the rest is relative to ``build_folder``.
     """
 
     def __init__(
@@ -57,6 +61,7 @@ class System(OverlapSystem):
         build_folder='build',
         file_names=None,
         mmn_path='wannier90.mmn',
+        dmn_path='wannier90.dmn',
         num_wcc=None
     ):
         # convert to lists (input_files)
@@ -102,16 +107,19 @@ class System(OverlapSystem):
                 format(len(self._kpt_path), len(self._kpt_fct))
             )
         self._mmn_path = self._to_abspath(mmn_path)
+        self._dmn_path = self._to_abspath(dmn_path)
         self._calling_path = os.getcwd()
-
         self._num_wcc = num_wcc
 
-    def _to_abspath(self, path):
+    def _to_abspath(self, path, root_path=None):
         """
-        Returns a list of absolute paths from a list of paths relative to the build folder, or a single absolute path from a single relative path.
+        Returns a list of absolute paths from a list of paths relative to the build folder (or root path folder is specified),
+        or a single absolute path from a single relative path.
         """
+        if root_path is None:
+            root_path = self._build_folder
         if isinstance(path, str):
-            return os.path.join(self._build_folder, path)
+            return os.path.join(root_path, path)
         return [self._to_abspath(p) for p in path]
 
     def _create_input(self, kpt):
@@ -128,7 +136,8 @@ class System(OverlapSystem):
             with open(f_path, k_mode) as f:
                 f.write(self._kpt_fct[i](kpt))
 
-    def get_mmn(self, kpt):
+    def get_mmn(self, kpt, use_symm=False):
+        """Returns overlap matrices and dmn matrices if ``use_symm = True``."""
         num_kpt = len(kpt) - 1
 
         # create input
@@ -162,7 +171,11 @@ class System(OverlapSystem):
                         format(i, overlaps.shape, shape)
                     )
 
-        return overlap_matrices
+        dmn_mat = None
+        if use_symm:
+            # if use_symm = True, we need to parse the .dmn file and write the result into symm_projectors
+            dmn_mat = dmn.get_dmn(self._dmn_path)
+        return overlap_matrices, dmn_mat
 
 
 def _copy(initial_paths, final_names):

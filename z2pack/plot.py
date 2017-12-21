@@ -47,8 +47,8 @@ def _plot_gaps(surface_result, *, axis, gaps, gap_settings):
         for offset in [-1, 0, 1]:
             axis.plot(
                 surface_result.t,
-                [gap_pos % 1 + offset
-                 for gap_pos in surface_result.gap_pos], **gap_settings
+                [gap_pos % 1 + offset for gap_pos in surface_result.gap_pos],
+                **gap_settings
             )
 
 

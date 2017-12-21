@@ -42,7 +42,8 @@ def run_surface(
     save_file=None,
     load=False,
     load_quiet=True,
-    serializer='auto'
+    serializer='auto',
+    use_symm=False
 ):
     r"""
     Calculates the Wannier charge centers for a given system and surface.
@@ -56,6 +57,9 @@ def run_surface(
     :type system:       :class:`z2pack.system.EigenstateSystem` or :class:`z2pack.system.OverlapSystem`.
 
     :param surface:     Surface on which the WCC / Wilson loops should be calculated. The argument should be a callable which parametrizes the surface :math:`\mathbf{k}(t_1, t_2)`, in reduced coordinates. It should take two arguments (``float``) and return a nested list of ``float`` describing the points in k-space. Note that the surface must be closed at least along the :math:`t_2` - direction, that is :math:`\mathbf{k}(t_1, 0) = \mathbf{k}(t_1, 1) + \mathbf{G}`, where :math:`\mathbf{G}` is an inverse lattice vector.
+
+    :param use_symm:    (Only applicable for fp calculations) If true, the local symmetries of the surface are calculated and written to /build_folder/local.sym
+    :type use_symm:     bool
 
     :param pos_tol:     The maximum movement of a WCC for the iteration w.r.t. the number of k-points in a single string to converge. The iteration can be turned off by setting ``pos_tol=None``.
     :type pos_tol:      float
@@ -88,6 +92,9 @@ def run_surface(
 
     :param serializer:  Serializer which is used to save the result to file. Valid options are ``msgpack``, :py:mod:`json` and :py:mod:`pickle`. By default (``serializer='auto'``), the serializer is inferred from the file ending. If this fails, :py:mod:`json` is used.
     :type serializer:   module
+
+    :param use_symm:    Determines whether symmetry data is stored in each :py:class:`LineResult` instance contained in the surface.
+    :type use_symm:     bool
 
     :returns:   :class:`SurfaceResult` instance.
 
@@ -127,7 +134,8 @@ def run_surface(
         min_neighbour_dist=min_neighbour_dist,
         save_file=save_file,
         init_result=init_result,
-        serializer=serializer
+        serializer=serializer,
+        use_symm=use_symm
     )
 
 
@@ -144,7 +152,8 @@ def _run_surface_impl(
     min_neighbour_dist,
     save_file=None,
     init_result=None,
-    serializer='auto'
+    serializer='auto',
+    use_symm=False
 ):
     r"""Implementation of the surface's run.
 
@@ -167,7 +176,8 @@ def _run_surface_impl(
             *copy.deepcopy(ctrl_container.line),
             system=system,
             line=lambda ky: surface(t, ky),
-            init_result=init_line_result
+            init_result=init_line_result,
+            use_symm=use_symm
         )
 
     # setting up async handler
@@ -278,12 +288,10 @@ def _run_surface_impl(
                      if not c]
             for t in new_t:
                 result = add_line(t)
-
             # check if new lines appeared
             num_lines_new = len(data.lines)
             if num_lines == num_lines_new:
                 break
             num_lines = num_lines_new
             conv = collect_convergence()
-
     return result

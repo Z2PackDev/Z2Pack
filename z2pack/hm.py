@@ -19,6 +19,9 @@ class System(EigenstateSystem):
     :param hamilton: A function taking the wavevector ``k`` (``list`` of length 3) as an input and returning the matrix Hamiltonian.
     :type hamilton: collections.abc.Callable
 
+    :param symm: Unitary symmetry matrix represented in the same basis as the Hamiltonian (i.e. the matrices passed to ``hamilton`` and ``symm`` must commute).
+    :type symm: :py:class:`numpy.ndarray`
+
     :param dim:     Dimension of the system.
     :type dim:      int
 
@@ -40,6 +43,7 @@ class System(EigenstateSystem):
         self,
         hamilton,
         *,
+        symm=None,
         dim=3,
         pos=None,
         bands=None,
@@ -47,6 +51,7 @@ class System(EigenstateSystem):
         convention=2
     ):
         self._hamilton = hamilton
+        self._symm = symm
         self._hermitian_tol = hermitian_tol
         self._convention = int(convention)
         if self._convention not in {1, 2}:
@@ -73,7 +78,7 @@ class System(EigenstateSystem):
         else:
             self._bands = bands
 
-    def get_eig(self, kpt):
+    def get_eig(self, kpt, use_symm=False):
         __doc__ = super().__doc__  # pylint: disable=redefined-builtin,no-member,unused-variable
         # create k-points for string
         k_points = kpt[:-1]
@@ -116,4 +121,16 @@ class System(EigenstateSystem):
                 )[None, :]
             )
         )
-        return eigs
+
+        if not use_symm:
+            symm_eigvals = None
+            symm_eigvecs = None
+        else:
+            if self._symm is None:
+                raise ValueError("No symmetry set for system.")
+            symm_eigvals, symm_eigvecs = la.eigh(self._symm)
+            ind = np.argsort(symm_eigvals)
+            symm_eigvals = symm_eigvals[ind]
+            symm_eigvecs = symm_eigvecs[:, ind]
+
+        return eigs, symm_eigvals, symm_eigvecs

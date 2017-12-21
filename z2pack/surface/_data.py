@@ -55,6 +55,23 @@ class SurfaceData(metaclass=ConstLocker):
             return 1
         return min(abs(t - tval) for tval in self.t)
 
+    def symm_project(self, eigval, isym=0):
+        """
+        :param eigval:  Symmetry eigenvalue specifying eigenspace for projection (by value, not index).
+        :type eigval:   float
+        :param isym:    Index of symmetry that should be used for fp systems. List of symmetries with indices may be looking at symmetry input file.
+        :type isym:     int
+
+        :returns: :py:class:`SurfaceData` object with every line projected onto one symmetry eigenspace. The lines of this :py:class:`SurfaceData` object are not :py:class:`LineResult` objects, but :py:class:`OverlapLineData` objects, i.e. they do not include convergence information.
+        """
+        lines = []
+        for l in self.lines:
+            #project the line onto the symmetry eigenspace
+            l_new = LinePosition(l.t, l.symm_project(eigval, isym=isym))
+            lines.append(l_new)
+        lines = SortedList(lines, key=self._sort_key)
+        return SurfaceData(lines)
+
 
 class LinePosition:
     """Wraps the line result and its position in the surface."""

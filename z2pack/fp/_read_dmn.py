@@ -59,7 +59,7 @@ def get_dmn(dmn_path):
             blocks = _make_blocks(lines)
 
             # Read line with parameters
-            num_bands, nsymmetry, nkptirr, num_kpts = _read_integer_block( #pylint: disable=unbalanced-tuple-unpacking
+            num_bands, nsymmetry, nkptirr, num_kpts = _read_integer_block(  # pylint: disable=unbalanced-tuple-unpacking
                 blocks[block_counter]
             )
             block_counter += 1

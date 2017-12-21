@@ -19,7 +19,7 @@ wandir = '/home/tony/wannier90-2.1.0'
 
 # Commands to run pw, pw2wannier90, wannier90
 mpirun = ''
-pwcmd = 'pw.x '
+pwcmd = qedir + '/pw.x '
 pw2wancmd = mpirun + qedir + '/pw2wannier90.x '
 wancmd = wandir + '/wannier90.x'
 

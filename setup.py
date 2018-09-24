@@ -7,8 +7,8 @@ except ImportError:
     from distutils.core import setup
 
 import sys
-if sys.version_info < (3, 4):
-    raise 'must use Python version 3.4 or higher'
+if sys.version_info < (3, 5):
+    raise 'must use Python version 3.5 or higher'
 
 README = r"""Z2Pack is a tool that computes topological invariants and illustrates non-trivial features of Berry curvature. It works as a post-processing tool with all major first-principles codes (z2pack.fp), as well as with tight-binding models (z2pack.tb) and explicit Hamiltonian matrices -- such as the ones obtained from a k.p model (z2pack.hm).
 
@@ -54,9 +54,9 @@ setup(
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Natural Language :: English', 'Operating System :: Unix',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Intended Audience :: Science/Research',
         'Topic :: Scientific/Engineering :: Physics',
         'Development Status :: 5 - Production/Stable'

@@ -1,5 +1,0 @@
-[
-  "tests/test_chern_plot.py::test_chern_plot",
-  "tests/test_chern_plot.py::test_chern_plot_no_axis",
-  "tests/test_chern_plot.py::test_chern_plot_2"
-]

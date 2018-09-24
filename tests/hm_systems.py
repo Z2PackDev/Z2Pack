@@ -27,7 +27,9 @@ class OverlapMockSystem(z2pack.system.OverlapSystem):
         ]
 
 
-@pytest.fixture(params=np.linspace(-1, 1, 11))
+@pytest.fixture(
+    params=[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 0.8, 1.]
+)
 def kz(request):
     return request.param
 

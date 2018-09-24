@@ -1,1 +1,1 @@
-"\nkptopt -1\nndivk 9\nkptbounds 0.0 1.0 0.0 \n0.0 0.09999999999999998 0.0 \n"
+"\nkptopt -1\nndivk 7\nkptbounds 0.0 1.0 0.0 \n0.0 0.125 0.0 \n"

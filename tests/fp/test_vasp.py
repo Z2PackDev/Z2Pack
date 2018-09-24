@@ -20,8 +20,7 @@ def vasp_system(sample):
     def inner(build_dir):  # pylint: disable=missing-docstring
         samples_dir = sample('vasp')
         input_files = [
-            os.path.join(samples_dir, name)
-            for name in
+            os.path.join(samples_dir, name) for name in
             ['CHGCAR', 'INCAR', 'POSCAR', 'POTCAR', 'wannier90.win']
         ]
         return z2pack.fp.System(

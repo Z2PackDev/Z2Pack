@@ -36,8 +36,8 @@ def qe_system_new(sample):
         pw2wancmd = mpirun + qedir + '/pw2wannier90.x '
         wancmd = wandir + '/wannier90.x'
         z2cmd = (
-            wancmd + ' bi -pp;' + pwcmd + '< bi.nscf.in >& pw.log;' +
-            pw2wancmd + '< bi.pw2wan.in >& pw2wan.log;'
+            wancmd + ' bi -pp;' + pwcmd + '< bi.nscf.in >& pw.log;' + pw2wancmd
+            + '< bi.pw2wan.in >& pw2wan.log;'
         )
 
         return z2pack.fp.System(

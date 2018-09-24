@@ -46,9 +46,8 @@ def test_linear(num_lines_nonzero, x, offset, patch_surface_data):
     """Test a linear offset"""
     wcc = np.array([np.linspace(x, offset + x, num_lines_nonzero)]).T
     data = SurfaceData(wcc)
-    assert (abs(offset) / (num_lines_nonzero - 1) >= 0.5) or np.isclose(
-        z2pack.invariant.chern(data), offset
-    )
+    assert (abs(offset) / (num_lines_nonzero - 1) >=
+            0.5) or np.isclose(z2pack.invariant.chern(data), offset)
 
 
 def test_linear_2(num_lines_nonzero, num_wcc, x, offset, patch_surface_data):
@@ -59,6 +58,5 @@ def test_linear_2(num_lines_nonzero, num_wcc, x, offset, patch_surface_data):
     wcc += [[random.random()] * num_lines_nonzero] * num_wcc
     wcc = np.array(wcc).T
     data = SurfaceData(wcc)
-    assert (abs(offset) / (num_lines_nonzero - 1) >= 0.5) or np.isclose(
-        z2pack.invariant.chern(data), offset
-    )
+    assert (abs(offset) / (num_lines_nonzero - 1) >=
+            0.5) or np.isclose(z2pack.invariant.chern(data), offset)

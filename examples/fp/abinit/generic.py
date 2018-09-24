@@ -11,17 +11,16 @@ import matplotlib.pyplot as plt
 SYSTEM_NAME = 'system'
 system = z2pack.fp.System(
     input_files=[
-        os.path.join('input', filename)
-        for filename in [
-            SYSTEM_NAME + '_nscf.files', SYSTEM_NAME + '_nscf.in',
-            'wannier90.win'
+        os.path.join('input', filename) for filename in [
+            SYSTEM_NAME + '_nscf.files', SYSTEM_NAME +
+            '_nscf.in', 'wannier90.win'
         ]
     ],
     kpt_fct=z2pack.fp.kpoint.abinit,
     kpt_path=SYSTEM_NAME + '_nscf.in',
     command=
-    'mpirun -np 7 ~/software/abinit-7.10.5/src/98_main/abinit < {}_nscf.files >& log'.
-    format(SYSTEM_NAME),
+    'mpirun -np 7 ~/software/abinit-7.10.5/src/98_main/abinit < {}_nscf.files >& log'
+    .format(SYSTEM_NAME),
     executable='/bin/bash'
 )
 

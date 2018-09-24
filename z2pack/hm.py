@@ -62,8 +62,8 @@ class System(EigenstateSystem):
         else:
             if len(pos) != size:
                 raise ValueError(
-                    'The number of positions ({0}) does not match the size of the Hamiltonian ({1}).'.
-                    format(len(pos), size)
+                    'The number of positions ({0}) does not match the size of the Hamiltonian ({1}).'
+                    .format(len(pos), size)
                 )
             self._pos = [np.array(p) for p in pos]
         if bands is None:
@@ -86,8 +86,8 @@ class System(EigenstateSystem):
                 diff = la.norm(ham - ham.conjugate().transpose(), ord=np.inf)
                 if diff > self._hermitian_tol:
                     raise ValueError(
-                        'The Hamiltonian you used is not hermitian, with the maximum difference between the Hamiltonian and its adjoint being {0}. Use the ``hamilton_tol`` input parameter (in the ``tb.Hamilton`` constructor; currently {1}) to set the sensitivity of this test or turn it off completely (``hamilton_tol=None``).'.
-                        format(diff, self._hermitian_tol)
+                        'The Hamiltonian you used is not hermitian, with the maximum difference between the Hamiltonian and its adjoint being {0}. Use the ``hamilton_tol`` input parameter (in the ``tb.Hamilton`` constructor; currently {1}) to set the sensitivity of this test or turn it off completely (``hamilton_tol=None``).'
+                        .format(diff, self._hermitian_tol)
                     )
             eigval, eigvec = la.eigh(ham)
             eigval = np.real(eigval)

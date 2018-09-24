@@ -19,16 +19,16 @@ def kpt(line):
 
 
 STRAIGHT_SIMPLE = [
-    lambda t, s1=s1, s2=s2: [s1, s2, t]
-    for s1 in np.linspace(0, 1, 5) for s2 in np.linspace(0, 1, 5)
+    lambda t, s1=s1, s2=s2: [s1, s2, t] for s1 in np.linspace(0, 1, 5)
+    for s2 in np.linspace(0, 1, 5)
 ]
 STRAIGHT_SIMPLE.extend([
-    lambda t, s1=s1, s2=s2: [s1, t, s2]
-    for s1 in np.linspace(0, 1, 5) for s2 in np.linspace(0, 1, 5)
+    lambda t, s1=s1, s2=s2: [s1, t, s2] for s1 in np.linspace(0, 1, 5)
+    for s2 in np.linspace(0, 1, 5)
 ])
 STRAIGHT_SIMPLE.extend([
-    lambda t, s1=s1, s2=s2: [t, s1, s2]
-    for s1 in np.linspace(0, 1, 5) for s2 in np.linspace(0, 1, 5)
+    lambda t, s1=s1, s2=s2: [t, s1, s2] for s1 in np.linspace(0, 1, 5)
+    for s2 in np.linspace(0, 1, 5)
 ])
 
 STRAIGHT_ANY_DIRECTION = [

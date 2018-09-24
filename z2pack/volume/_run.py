@@ -194,7 +194,7 @@ def _run_volume_impl(
                 if dist == 0:
                     _LOGGER.info("Surface at s = {} exists already.".format(s))
                 else:
-                    _LOGGER.warn(
+                    _LOGGER.warning(
                         "'min_neighbour_dist' reached: cannot add surface at s = {}"
                         .format(s)
                     )

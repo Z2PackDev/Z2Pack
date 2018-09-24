@@ -33,7 +33,7 @@ def assert_image_equal(disable_diff_save, pytestconfig):
     Save the current figure to a temporary file and check that it's the same as the reference image of the given name.
     """
 
-    def inner(name, tol=1e-6):  # pylint: disable=missing-docstring
+    def inner(name, tol=1e-6):
         path = './reference_plots/' + name + '.png'
         if not os.path.exists(path):
             plt.savefig(path)

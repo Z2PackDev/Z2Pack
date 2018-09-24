@@ -84,7 +84,7 @@ class PosCheck(
 
     def __init__(self, *, pos_tol):
         super().__init__()
-        if not (pos_tol > 0 and pos_tol <= 1):
+        if not 0 < pos_tol <= 1:
             raise ValueError('pos_tol must be in (0, 1]')
         self.pos_tol = pos_tol
         self.max_move = None

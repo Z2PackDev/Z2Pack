@@ -18,7 +18,7 @@ def abinit_system(sample):
     Create ABINIT system.
     """
 
-    def inner(build_dir):  # pylint: disable=missing-docstring
+    def inner(build_dir):
         sample_dir = sample('abinit')
         input_files = [
             os.path.join(sample_dir, name) for name in [

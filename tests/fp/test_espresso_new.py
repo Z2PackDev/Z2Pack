@@ -19,7 +19,7 @@ def qe_system_new(sample):
     Create QE system with explicit interface.
     """
 
-    def inner(build_dir, num_wcc=None):  # pylint: disable=missing-docstring
+    def inner(build_dir, num_wcc=None):
         sample_dir = sample('espresso_new')
         shutil.copytree(
             os.path.join(sample_dir, 'scf'), os.path.join(build_dir, 'scf')

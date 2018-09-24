@@ -20,7 +20,7 @@ def qe_system(request, sample):
     Creates a QE system.
     """
 
-    def inner(build_dir, num_wcc=None):  # pylint: disable=missing-docstring
+    def inner(build_dir, num_wcc=None):
         sample_dir = sample('espresso')
         shutil.copytree(
             os.path.join(sample_dir, 'scf'), os.path.join(build_dir, 'scf')

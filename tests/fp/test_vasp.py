@@ -17,7 +17,7 @@ def vasp_system(sample):
     Create a VASP system.
     """
 
-    def inner(build_dir):  # pylint: disable=missing-docstring
+    def inner(build_dir):
         samples_dir = sample('vasp')
         input_files = [
             os.path.join(samples_dir, name) for name in
@@ -40,7 +40,7 @@ def vasp_system_no_potcar():
     Create a VASP system without the POTCAR file.
     """
 
-    def inner(build_dir):  # pylint: disable=missing-docstring
+    def inner(build_dir):
         input_files = [
             'samples/vasp/' + name
             for name in ['CHGCAR', 'INCAR', 'POSCAR', 'wannier90.win']

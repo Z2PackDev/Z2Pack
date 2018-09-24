@@ -194,7 +194,7 @@ def _run_surface_impl(
                 if dist == 0:
                     _LOGGER.info("Line at t = {} exists already.".format(t))
                 else:
-                    _LOGGER.warn(
+                    _LOGGER.warning(
                         "'min_neighbour_dist' reached: cannot add line at t = {}"
                         .format(t)
                     )

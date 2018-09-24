@@ -25,7 +25,7 @@ def _sgng(z, zplus, x):
     """
     calculates the invariant between two WCC strings
     """
-    return -1 if (max(zplus, z) > x and min(zplus, z) < x) else 1
+    return -1 if (min(zplus, z) < x < max(zplus, z)) else 1
 
 
 def _gapfind(wcc):

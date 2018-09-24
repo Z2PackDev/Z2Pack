@@ -185,7 +185,7 @@ def _run_line_impl(
                     tags=('offset', )
                 )
             except StopIteration:
-                _LOGGER.warn(
+                _LOGGER.warning(
                     'Iterator stopped before the calculation could converge.'
                 )
                 return result

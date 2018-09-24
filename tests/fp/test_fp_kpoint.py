@@ -14,7 +14,10 @@ def kpt(line):
     """
     Return a list of k-points for a given 'line' fixture.
     """
-    kpt = [np.array(line(tval)) for tval in np.linspace(0, 1, 11)]
+    kpt = [
+        np.array(line(tval))
+        for tval in [0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.]
+    ]
     return kpt
 
 

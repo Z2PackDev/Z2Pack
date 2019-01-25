@@ -204,9 +204,9 @@ def _run_surface_impl(
                 if dist == 0:
                     _LOGGER.info("Line at t = {} exists already.".format(t))
                 else:
-                    _LOGGER.warn(
-                        "'min_neighbour_dist' reached: cannot add line at t = {}".
-                        format(t)
+                    _LOGGER.warning(
+                        "'min_neighbour_dist' reached: cannot add line at t = {}"
+                        .format(t)
                     )
                 return SurfaceResult(
                     data, ctrl_container.stateful, ctrl_container.convergence
@@ -241,8 +241,8 @@ def _run_surface_impl(
             for c_ctrl in ctrl_container.convergence:
                 res &= c_ctrl.converged
             _LOGGER.info(
-                'Convergence criteria fulfilled for {} of {} neighbouring lines.'.
-                format(sum(res), len(res))
+                'Convergence criteria fulfilled for {} of {} neighbouring lines.'
+                .format(sum(res), len(res))
             )
             return res
 
@@ -256,9 +256,8 @@ def _run_surface_impl(
             # get states from pre-existing Controls
             for s_ctrl in ctrl_container.stateful:
                 with contextlib.suppress(KeyError):
-                    s_ctrl.state = init_result.ctrl_states[
-                        s_ctrl.__class__.__name__
-                    ]
+                    s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__.
+                                                           __name__]
 
             data = init_result.data
 

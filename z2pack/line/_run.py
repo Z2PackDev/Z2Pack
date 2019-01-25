@@ -133,8 +133,8 @@ def _run_line_impl(
     delta = np.array(line(1)) - np.array(line(0))
     if not np.isclose(np.round_(delta), delta).all():
         raise ValueError(
-            'Start and end points of the line differ by {}, which is not an inverse lattice vector.'.
-            format(delta)
+            'Start and end points of the line differ by {}, which is not an inverse lattice vector.'
+            .format(delta)
         )
 
     ctrl_container = LineControlContainer(controls)
@@ -152,9 +152,8 @@ def _run_line_impl(
                 d_ctrl.update(init_result.data)
         for s_ctrl in ctrl_container.stateful:
             with contextlib.suppress(KeyError):
-                s_ctrl.state = init_result.ctrl_states[
-                    s_ctrl.__class__.__name__
-                ]
+                s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__.
+                                                       __name__]
         result = LineResult(
             init_result.data, ctrl_container.stateful,
             ctrl_container.convergence
@@ -192,7 +191,7 @@ def _run_line_impl(
                     tags=('offset', )
                 )
             except StopIteration:
-                _LOGGER.warn(
+                _LOGGER.warning(
                     'Iterator stopped before the calculation could converge.'
                 )
                 return result

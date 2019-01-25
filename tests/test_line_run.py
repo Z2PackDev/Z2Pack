@@ -99,7 +99,7 @@ def test_iterator_2(weyl_system, compare_equal):
     """Test simple line run with special iterator value."""
     result = z2pack.line.run(
         system=weyl_system,
-        line=weyl_line(0.1),
+        line=weyl_line_creator(0.1),
         iterator=[4, 12, 21],
         pos_tol=1e-12
     )

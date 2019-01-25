@@ -21,7 +21,7 @@ def num_lines(request):
     return request.param
 
 
-@pytest.fixture(params=np.linspace(0.1, 0.4, 5))
+@pytest.fixture(params=[0.1, 0.175, 0.25, 0.325, 0.4])
 def move_tol(request):
     return request.param
 

@@ -15,7 +15,7 @@ def _log_run(logger):
     Log the inputs, elapsed time and convergence report for a calculation run.
     """
 
-    def inner(fct, **kwargs):  # pylint: disable=missing-docstring
+    def inner(fct, **kwargs):
         logger.info(kwargs, tags=('setup', 'box', 'skip'))
         start_time = time.time()
 

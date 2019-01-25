@@ -159,16 +159,16 @@ class System(OverlapSystem):
             )
         if len(overlap_matrices) != num_kpt:
             raise ValueError(
-                'The number of overlap matrices found is {0}, but should be {1}. Maybe check search_shells in wannier90.win'.
-                format(len(overlap_matrices), num_kpt)
+                'The number of overlap matrices found is {0}, but should be {1}. Maybe check search_shells in wannier90.win'
+                .format(len(overlap_matrices), num_kpt)
             )
         if self._num_wcc is not None:
             shape = (self._num_wcc, self._num_wcc)
             for i, overlaps in enumerate(overlap_matrices):
                 if overlaps.shape != shape:
                     raise ValueError(
-                        'The shape of overlap matrix #{} is {}, but should be {}.'.
-                        format(i, overlaps.shape, shape)
+                        'The shape of overlap matrix #{} is {}, but should be {}.'
+                        .format(i, overlaps.shape, shape)
                     )
 
         dmn_mat = None

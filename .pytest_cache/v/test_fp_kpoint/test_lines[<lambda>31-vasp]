@@ -1,0 +1,1 @@
+"Automatic mesh\n0              ! number of k-points = 0 ->automatic generation scheme\nGamma          ! generate a Gamma centered grid\n1 8 1        ! subdivisions\n0.25 0.0 0.25          ! shift\n"

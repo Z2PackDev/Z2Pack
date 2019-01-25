@@ -20,7 +20,7 @@ def qe_system(request, sample):
     Creates a QE system.
     """
 
-    def inner(build_dir, num_wcc=None):  # pylint: disable=missing-docstring
+    def inner(build_dir, num_wcc=None):
         sample_dir = sample('espresso')
         shutil.copytree(
             os.path.join(sample_dir, 'scf'), os.path.join(build_dir, 'scf')
@@ -37,8 +37,8 @@ def qe_system(request, sample):
         pw2wancmd = mpirun + qedir + '/pw2wannier90.x '
         wancmd = wandir + '/wannier90.x'
         z2cmd = (
-            wancmd + ' bi -pp;' + pwcmd + '< bi.nscf.in >& pw.log;' +
-            pw2wancmd + '< bi.pw2wan.in >& pw2wan.log;'
+            wancmd + ' bi -pp;' + pwcmd + '< bi.nscf.in >& pw.log;' + pw2wancmd
+            + '< bi.pw2wan.in >& pw2wan.log;'
         )
 
         return z2pack.fp.System(

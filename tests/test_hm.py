@@ -37,6 +37,23 @@ def test_explicit_bands(bands, weyl_surface, compare_wcc):
     compare_wcc(res.wcc)
 
 
+def test_non_periodic_raises():
+    """
+    Test that the check for periodicity of Hamiltonians raises when given a
+    non-periodic value.
+    """
+    with pytest.raises(ValueError):
+        system = z2pack.hm.System(  # pylint: disable=unused-variable
+            lambda k: np.array(
+                [
+                    [k[2], k[0] -1j * k[1]],
+                    [k[0] + 1j * k[1], -k[2]]
+                ]
+            ),
+            check_periodic=True
+        )
+
+
 def test_invalid_pos():
     """
     Test that trying to set too many positions raises.

@@ -6,7 +6,7 @@ This submodule contains functions for calculating the topological invariants fro
 
 from fsc.export import export
 
-from ._utils import _pol_step, _sgng
+from ._utils import _pol_step, _sgng, _check_kramers_pairs
 
 
 @export
@@ -28,12 +28,15 @@ def chern(surface_result):
 
 
 @export
-def z2(surface_result):  # pylint: disable=invalid-name
+def z2(surface_result, check_kramers_pairs=True):  # pylint: disable=invalid-name
     r"""
     Computes the :math:`\mathbb{Z}_2` invariant corresponding to a given surface result.
 
     :param surface_result: Result of a WCC calculation on a Surface.
     :type surface_result: :class:`.SurfaceResult` or :class:`.SurfaceData`
+
+    :param check_kramers_pairs: Check whether the WCC at the edge of the surface come in degenerate pairs. This is a requirement for having a well-defined Z2 invariant.
+    :type check_kramers_pairs: bool
 
     Example code:
 
@@ -43,6 +46,14 @@ def z2(surface_result):  # pylint: disable=invalid-name
         print(z2pack.invariant.z2(result)) # Prints the Z2 invariant
     """
     wcc = surface_result.wcc
+    if check_kramers_pairs and wcc:
+        if not (
+            _check_kramers_pairs(list(wcc[0]))
+            and _check_kramers_pairs(list(wcc[-1]))
+        ):
+            raise ValueError(
+                'The given WCC are not degenerate Kramers pairs at the edges of the surface.'
+            )
     gap = surface_result.gap_pos
     inv = 1
     for gap_left, gap_right, wcc_right in zip(gap, gap[1:], wcc[1:]):

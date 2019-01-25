@@ -40,9 +40,14 @@ def pytest_configure(config):  # pylint: disable=missing-docstring
 
 
 def pytest_runtest_setup(item):  # pylint: disable=missing-docstring
-    abinit_marker = item.get_marker("abinit")
-    vasp_marker = item.get_marker("vasp")
-    qe_marker = item.get_marker("qe")
+    try:
+        abinit_marker = item.get_marker("abinit")
+        vasp_marker = item.get_marker("vasp")
+        qe_marker = item.get_marker("qe")
+    except AttributeError:  # for pytest>=4
+        abinit_marker = item.get_closest_marker("abinit")
+        vasp_marker = item.get_closest_marker("vasp")
+        qe_marker = item.get_closest_marker("qe")
     if abinit_marker is not None:
         if not item.config.getoption("-A"):
             pytest.skip("test runs only with ABINIT")

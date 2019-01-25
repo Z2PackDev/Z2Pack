@@ -14,7 +14,7 @@ def num_lines(request):
     return request.param
 
 
-@pytest.fixture(params=range(1, 20))
+@pytest.fixture(params=range(2, 20, 2))
 def num_wcc(request):
     return request.param
 

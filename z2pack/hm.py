@@ -64,7 +64,7 @@ class System(EigenstateSystem):
         if check_periodic:
             k_values = itertools.product([0, 1], repeat=dim)
             k_first = next(k_values)
-            ham_first = self._hamilton()
+            ham_first = self._hamilton(k_first)
             for k in k_values:
                 if not np.allclose(ham_first, self._hamilton(k)):
                     raise ValueError(

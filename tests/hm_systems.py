@@ -96,9 +96,11 @@ def weyl_system(request):
     return res
 
 
-@pytest.fixture
-def weyl_line(kz):
+def weyl_line_creator(kz):
     return lambda t: [np.cos(t * 2 * np.pi), np.sin(t * 2 * np.pi), kz]
+
+
+weyl_line = pytest.fixture(weyl_line_creator)
 
 
 @pytest.fixture

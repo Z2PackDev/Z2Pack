@@ -23,7 +23,7 @@ def symm_from_scf(xml_path):
 
         if np.abs(np.sqrt(len(s)) - n) > 0.001:
             raise ValueError('Symmetry matrix not square')
-        symmetries.append(s.reshape((n, n)))
+        symmetries.append(s.reshape((n, n)))  # pylint: disable=too-many-function-args,useless-suppression
     return symmetries
 
 

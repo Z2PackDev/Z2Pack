@@ -36,12 +36,11 @@ def bi_symm_system(sample):
         wancmd = wandir + '/wannier90.x'
 
         z2cmd = (
-            wancmd + ' bi -pp;' + pwcmd + '< bi.nscf.in >& pw.log;' +
-            pw2wancmd + '< bi.pw2wan.in'
+            wancmd + ' bi -pp;' + pwcmd + '< bi.nscf.in >& pw.log;' + pw2wancmd
+            + '< bi.pw2wan.in'
         )
         input_files = [
-            os.path.join(sample_dir, 'input/') + name
-            for name in [
+            os.path.join(sample_dir, 'input/') + name for name in [
                 'bi.nscf.in', 'bi.pw2wan.in', 'bi.win', 'bi.sym',
                 'Bi_MT_PBE.UPF'
             ]

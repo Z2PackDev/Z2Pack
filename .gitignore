@@ -54,8 +54,10 @@ test_log.txt
 decorator.py
 
 # pytest caches
-tests/.cache
-.cache/v/cache
+tests/.pytest_cache
+.pytest_cache/v/cache
+# "do not commit this to version control" -- don't tell me what to do :)
+!.pytest_cache/v/test_*
 .coverage
 .coverage*
 htmlcov

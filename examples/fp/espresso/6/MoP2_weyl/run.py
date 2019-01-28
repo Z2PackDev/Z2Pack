@@ -98,10 +98,9 @@ result_3 = z2pack.surface.run(
 
 # Combining the two plots
 fig, ax = plt.subplots(1, 3, sharey=True, figsize=(14, 4))
-for res, axis, title in zip(
-    [result_1, result_2, result_3], ax,
-    ['Sphere around WP1', 'Sphere around WP2', 'Sphere around both WPs']
-):
+for res, axis, title in zip([result_1, result_2, result_3], ax, [
+    'Sphere around WP1', 'Sphere around WP2', 'Sphere around both WPs'
+]):
     z2pack.plot.chern(res, axis=axis)
     axis.set_title(title)
     axis.set_xlabel(r'$\theta$')

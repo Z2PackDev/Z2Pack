@@ -27,7 +27,9 @@ class OverlapMockSystem(z2pack.system.OverlapSystem):
         ]
 
 
-@pytest.fixture(params=np.linspace(-1, 1, 11))
+@pytest.fixture(
+    params=[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 0.8, 1.]
+)
 def kz(request):
     return request.param
 
@@ -84,7 +86,7 @@ def weyl_system(request):
     res = z2pack.hm.System(
         lambda k: np.array(
             [
-                [k[2], k[0] - 1j * k[1]],
+                [k[2], k[0] -1j * k[1]],
                 [k[0] + 1j * k[1], -k[2]]
             ]
         )
@@ -94,9 +96,11 @@ def weyl_system(request):
     return res
 
 
-@pytest.fixture
-def weyl_line(kz):
+def weyl_line_creator(kz):
     return lambda t: [np.cos(t * 2 * np.pi), np.sin(t * 2 * np.pi), kz]
+
+
+weyl_line = pytest.fixture(weyl_line_creator)
 
 
 @pytest.fixture

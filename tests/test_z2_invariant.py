@@ -4,6 +4,8 @@
 import random
 
 import pytest
+import numpy as np
+
 import z2pack
 
 from monkeypatch_data import *  # pylint: disable=unused-wildcard-import
@@ -14,7 +16,7 @@ def num_lines(request):
     return request.param
 
 
-@pytest.fixture(params=range(1, 20))
+@pytest.fixture(params=range(2, 20, 2))
 def num_wcc(request):
     return request.param
 
@@ -35,7 +37,26 @@ def test_trivial(num_lines, num_wcc, patch_surface_data):
     """
     wcc = [np.linspace(0, 1, num_wcc) for j in range(num_lines)]
     data = SurfaceData(wcc)
-    assert z2pack.invariant.z2(data) == 0
+    assert z2pack.invariant.z2(data, check_kramers_pairs=False) == 0
+
+
+def test_not_even_number_wcc(num_lines, num_wcc, patch_surface_data):
+    """
+    Test that the Kramers pairs check raises when an odd number of WCC is present.
+    """
+    wcc = [np.linspace(0, 1, num_wcc + 1) for j in range(num_lines + 1)]
+    data = SurfaceData(wcc)
+    with pytest.raises(ValueError):
+        z2pack.invariant.z2(data)
+
+
+def test_not_kramers_pairs(patch_surface_data):
+    """
+    Test that the check for Kramers pairs raises when WCC are not pairs.
+    """
+    data = SurfaceData([[0., 0.], [0.5, 0.6]])
+    with pytest.raises(ValueError):
+        print(z2pack.invariant.z2(data))
 
 
 def test_linear(num_lines_nonzero, x, patch_surface_data):

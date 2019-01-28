@@ -1,13 +1,13 @@
 .. _z2pack_systems :
 
-System Classes 
+System Classes
 ==============
 
 The following systems or models are available to use with Z2Pack:
 
-.. toctree ::
+.. toctree::
     :maxdepth:  3
-    
+
     hm.rst
     tb.rst
     fp.rst

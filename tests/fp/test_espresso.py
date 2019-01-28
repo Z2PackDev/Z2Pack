@@ -4,6 +4,7 @@ Tests for QE DFT calculations.
 # pylint: disable=redefined-outer-name,unused-argument,protected-access
 
 import os
+from os.path import join
 import json
 import shutil
 import tempfile
@@ -15,12 +16,12 @@ import z2pack
 
 
 @pytest.fixture(params=[z2pack.fp.kpoint.qe, z2pack.fp.kpoint.qe_explicit])
-def qe_system(request, sample):
+def qe_system(request, sample, qe_5_4_dir, wannier_2_1_dir):
     """
     Creates a QE system.
     """
 
-    def inner(build_dir, num_wcc=None):  # pylint: disable=missing-docstring
+    def inner(build_dir, num_wcc=None):
         sample_dir = sample('espresso')
         shutil.copytree(
             os.path.join(sample_dir, 'scf'), os.path.join(build_dir, 'scf')
@@ -30,14 +31,12 @@ def qe_system(request, sample):
             for name in ['bi.nscf.in', 'bi.pw2wan.in', 'bi.win']
         ]
 
-        qedir = '/home/greschd/software/espresso-5.4.0/bin/'
-        wandir = '/home/greschd/software/wannier90-1.2'
         mpirun = 'mpirun -np 4 '
-        pwcmd = mpirun + qedir + '/pw.x '
-        pw2wancmd = mpirun + qedir + '/pw2wannier90.x '
-        wancmd = wandir + '/wannier90.x'
+        pwcmd = mpirun + join(qe_5_4_dir, 'pw.x') + ' '
+        pw2wancmd = mpirun + join(qe_5_4_dir, 'pw2wannier90.x') + ' '
+        wancmd = join(wannier_2_1_dir, 'wannier90.x')
         z2cmd = (
-            wancmd + ' bi -pp;' + pwcmd + '< bi.nscf.in >& pw.log;' +
+            wancmd + ' bi -pp >& pp.log;' + pwcmd + '< bi.nscf.in >& pw.log;' +
             pw2wancmd + '< bi.pw2wan.in >& pw2wan.log;'
         )
 

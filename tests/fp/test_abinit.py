@@ -18,11 +18,10 @@ def abinit_system(sample):
     Create ABINIT system.
     """
 
-    def inner(build_dir):  # pylint: disable=missing-docstring
+    def inner(build_dir):
         sample_dir = sample('abinit')
         input_files = [
-            os.path.join(sample_dir, name)
-            for name in [
+            os.path.join(sample_dir, name) for name in [
                 'Bi_nscf.files', 'Bi_nscf.in', 'wannier90.win', '83bi.5.hgh',
                 'Bi_scf_o_DEN'
             ]

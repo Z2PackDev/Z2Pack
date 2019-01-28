@@ -17,3 +17,4 @@ begin atoms_frac
 Bi  0.2338900  0.2338900  0.2338900 
 Bi -0.2338900 -0.2338900 -0.2338900 
 end atoms_frac
+skip_b1_tests : true

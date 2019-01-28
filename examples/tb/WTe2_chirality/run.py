@@ -30,9 +30,8 @@ def calculate_chirality(tag, center, radius, overwrite=False, **kwargs):
             model = pickle.load(f)
     except IOError:
         # The .xz compression is used to avoid the GitHub file size limit
-        with lzma.open(MODEL_SOURCE + '.xz') as fin, open(
-            MODEL_SOURCE, 'wb'
-        ) as fout:
+        with lzma.open(MODEL_SOURCE +
+                       '.xz') as fin, open(MODEL_SOURCE, 'wb') as fout:
             fout.write(fin.read())
 
         model = Model.from_json_file(MODEL_SOURCE)

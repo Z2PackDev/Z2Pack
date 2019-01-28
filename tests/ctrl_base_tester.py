@@ -15,7 +15,7 @@ def test_ctrl_base():
     Test that a control class is a subclass of the right abstract classes.
     """
 
-    def inner(ctrl):  # pylint: disable=missing-docstring
+    def inner(ctrl):
         assert issubclass(ctrl, AbstractControl)
         if hasattr(ctrl, 'converged'):
             assert issubclass(ctrl, ConvergenceControl)

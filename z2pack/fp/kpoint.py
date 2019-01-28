@@ -180,15 +180,15 @@ def vasp(kpt):
 
     if len(nonzero) != 1:
         raise ValueError(
-            'The k-points can change only in kx-, ky- or kz direction for VASP runs. The given k-points change in {} directions.'.
-            format(len(nonzero))
+            'The k-points can change only in kx-, ky- or kz direction for VASP runs. The given k-points change in {} directions.'
+            .format(len(nonzero))
         )
 
     start_point = kpt[0]
     if not np.isclose(start_point[nonzero[0]], 0):
         raise ValueError(
-            'The k-points must start at k{0} = 0 for VASP runs, since they change in k{0}-direction.'.
-            format(['x', 'y', 'z'][nonzero[0]])
+            'The k-points must start at k{0} = 0 for VASP runs, since they change in k{0}-direction.'
+            .format(['x', 'y', 'z'][nonzero[0]])
         )
 
     string = 'Automatic mesh\n0              ! number of k-points = 0 ->automatic generation scheme\nGamma          ! generate a Gamma centered grid\n'

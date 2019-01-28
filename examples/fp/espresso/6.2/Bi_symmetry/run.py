@@ -11,7 +11,7 @@ import xml.etree.ElementTree as ET
 import scipy.linalg as la
 import numpy as np
 import z2pack
-from z2pack.espresso_symm_utils import suggest_symmetry_surfaces, gen_qe_symm_file
+from z2pack.symm_utils.espresso import suggest_symmetry_surfaces, generate_qe_sym_file
 
 # Edit the paths to your Quantum Espresso and Wannier90 here
 qedir = '/home/tony/qe-6.2/bin'
@@ -71,16 +71,17 @@ xml_path = "scf/bi.xml"
 
 # suggest potentially intersting surfaces that have a non-trivial local symmetry
 symm_surfs = suggest_symmetry_surfaces(xml_path)
-s = symm_surfs[0]  # select one of the suggested symmetries as an example.
+surface, symm = symm_surfs[
+    0]  # select one of the suggested symmetries as an example.
 
 # Generate .sym file
-gen_qe_symm_file(s.surface_lambda, xml_path, "input/bi.sym")
+generate_qe_sym_file(surface, xml_path, "input/bi.sym")
 
 # Run the WCC calculations
 # The tolerances have to be turned of because this is not a physical system and the calculation does not converge
 result = z2pack.surface.run(
     system=system,
-    surface=s.surface_lambda,
+    surface=surface,
     iterator=range(8, 11, 2),
     save_file='./results/res_0.json',
     load=True,
@@ -91,7 +92,7 @@ result = z2pack.surface.run(
 )
 
 # project to each eigenvalue of the symmetry for which we calculated the surface
-ew = np.unique(la.eig(s.symm)[0])
+ew = np.unique(la.eig(symm)[0])
 fig, ax = plt.subplots(1, len(ew) + 1, sharey=True, figsize=(12, 5))
 z2pack.plot.wcc(result, axis=ax[0])
 ax[0].set_title("Unprojected system")

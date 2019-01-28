@@ -160,8 +160,8 @@ class OverlapLineData(WccLineData):
                 self.symm_eigvals(isym), np.sort(ew), atol=1e-14
             ):
                 raise ValueError(
-                    "dmn matrices have different eigenvalues: The first dmn matrix has eigenvalues \n {}, \n the{}-th dmn matrix has eigenvalues \n {}".
-                    format(self.symm_eigvals(isym), i, np.sort(ew))
+                    "dmn matrices have different eigenvalues: The first dmn matrix has eigenvalues \n {}, \n the{}-th dmn matrix has eigenvalues \n {}"
+                    .format(self.symm_eigvals(isym), i, np.sort(ew))
                 )
             # find orthonormal basis in each symmetry eigenspace
             ev_lambda = ev[:, np.where(np.isclose(ew, eigval))[0]]

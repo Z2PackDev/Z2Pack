@@ -9,6 +9,7 @@ from collections.abc import Iterable
 
 import pytest
 from ctrl_base_tester import test_ctrl_base  # pylint: disable=unused-import
+from local_config import *  # pylint: disable=unused-wildcard-import
 
 import z2pack
 logging.getLogger('z2pack').setLevel(logging.CRITICAL)
@@ -40,9 +41,14 @@ def pytest_configure(config):  # pylint: disable=missing-docstring
 
 
 def pytest_runtest_setup(item):  # pylint: disable=missing-docstring
-    abinit_marker = item.get_marker("abinit")
-    vasp_marker = item.get_marker("vasp")
-    qe_marker = item.get_marker("qe")
+    try:
+        abinit_marker = item.get_marker("abinit")
+        vasp_marker = item.get_marker("vasp")
+        qe_marker = item.get_marker("qe")
+    except AttributeError:  # for pytest>=4
+        abinit_marker = item.get_closest_marker("abinit")
+        vasp_marker = item.get_closest_marker("vasp")
+        qe_marker = item.get_closest_marker("qe")
     if abinit_marker is not None:
         if not item.config.getoption("-A"):
             pytest.skip("test runs only with ABINIT")
@@ -64,7 +70,7 @@ def test_name(request):
 def compare_data(request, test_name, scope="session"):
     """Returns a function which either saves some data to a file or (if that file exists already) compares it to pre-existing data using a given comparison function."""
 
-    def inner(compare_fct, data, tag=None):  # pylint: disable=missing-docstring
+    def inner(compare_fct, data, tag=None):
         full_name = test_name + (tag or '')
         val = request.config.cache.get(full_name, None)
         if val is None:

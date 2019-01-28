@@ -4,6 +4,8 @@
 This module contains a class for creating Systems which are described by a Hamiltonian matrix (hm), such as k•p models.
 """
 
+import itertools
+
 import numpy as np
 import scipy.linalg as la
 from fsc.export import export
@@ -37,6 +39,9 @@ class System(EigenstateSystem):
 
     :param convention: The convention used for the Hamiltonian, following the `pythtb formalism <http://www.physics.rutgers.edu/pythtb/_downloads/pythtb-formalism.pdf>`_. Convention 1 means that the eigenvalues of :math:`\mathcal{H}(\mathbf{k})` are wave vectors :math:`\left|\psi_{n\mathbf{k}}\right>`. With convention 2, they are the cell-periodic Bloch functions :math:`\left|u_{n\mathbf{k}}\right>`.
     :type convention: int
+
+    :param check_periodic: Evaluate the Hamiltonian at :math:`\{0, 1\}^d` as a simple check if it is periodic. Note that this does not work if the Hamiltonian is written such that the eigenstates acquire a phase when being translated by a lattice vector.
+    :type check_periodic: bool
     """
 
     def __init__(
@@ -48,7 +53,8 @@ class System(EigenstateSystem):
         pos=None,
         bands=None,
         hermitian_tol=1e-6,
-        convention=2
+        convention=2,
+        check_periodic=False
     ):
         self._hamilton = hamilton
         self._symm = symm
@@ -60,6 +66,17 @@ class System(EigenstateSystem):
                 format(self._convention)
             )
 
+        if check_periodic:
+            k_values = itertools.product([0, 1], repeat=dim)
+            k_first = next(k_values)
+            ham_first = self._hamilton(k_first)
+            for k in k_values:
+                if not np.allclose(ham_first, self._hamilton(k)):
+                    raise ValueError(
+                        'The given Hamiltonian is not periodic: H(k={}) != H(k={})'
+                        .format(k_first, k)
+                    )
+
         size = len(self._hamilton([0] * dim))  # assuming to be square...
         # add one atom for each orbital in the hamiltonian
         if pos is None:
@@ -67,8 +84,8 @@ class System(EigenstateSystem):
         else:
             if len(pos) != size:
                 raise ValueError(
-                    'The number of positions ({0}) does not match the size of the Hamiltonian ({1}).'.
-                    format(len(pos), size)
+                    'The number of positions ({0}) does not match the size of the Hamiltonian ({1}).'
+                    .format(len(pos), size)
                 )
             self._pos = [np.array(p) for p in pos]
         if bands is None:
@@ -91,8 +108,8 @@ class System(EigenstateSystem):
                 diff = la.norm(ham - ham.conjugate().transpose(), ord=np.inf)
                 if diff > self._hermitian_tol:
                     raise ValueError(
-                        'The Hamiltonian you used is not hermitian, with the maximum difference between the Hamiltonian and its adjoint being {0}. Use the ``hamilton_tol`` input parameter (in the ``tb.Hamilton`` constructor; currently {1}) to set the sensitivity of this test or turn it off completely (``hamilton_tol=None``).'.
-                        format(diff, self._hermitian_tol)
+                        'The Hamiltonian you used is not hermitian, with the maximum difference between the Hamiltonian and its adjoint being {0}. Use the ``hamilton_tol`` input parameter (in the ``tb.Hamilton`` constructor; currently {1}) to set the sensitivity of this test or turn it off completely (``hamilton_tol=None``).'
+                        .format(diff, self._hermitian_tol)
                     )
             eigval, eigvec = la.eigh(ham)
             eigval = np.real(eigval)

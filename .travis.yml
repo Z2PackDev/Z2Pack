@@ -2,7 +2,6 @@ language: python
 cache: pip
 
 python:
-  - "3.4"
   - "3.5"
   - "3.6"
 
@@ -19,4 +18,4 @@ install:
 
 script:
   - if [ "$TEST_TYPE" == "compliance" ] ; then pre-commit run --all-files ; fi
-  - if [ "$TEST_TYPE" == "test" ] ; then cd tests; py.test --no-plot-compare ; fi
+  - if [ "$TEST_TYPE" == "test" ] ; then cd tests; ln -s local_config.yml.example local_config.yml;  py.test --no-plot-compare ; fi

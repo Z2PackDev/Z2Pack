@@ -194,9 +194,9 @@ def _run_volume_impl(
                 if dist == 0:
                     _LOGGER.info("Surface at s = {} exists already.".format(s))
                 else:
-                    _LOGGER.warn(
-                        "'min_neighbour_dist' reached: cannot add surface at s = {}".
-                        format(s)
+                    _LOGGER.warning(
+                        "'min_neighbour_dist' reached: cannot add surface at s = {}"
+                        .format(s)
                     )
                 return VolumeResult(
                     data, ctrl_container.stateful, ctrl_container.convergence
@@ -231,8 +231,8 @@ def _run_volume_impl(
             for c_ctrl in ctrl_container.convergence:
                 res &= c_ctrl.converged
             _LOGGER.info(
-                'Convergence criteria fulfilled for {} of {} neighbouring surfaces.'.
-                format(sum(res), len(res))
+                'Convergence criteria fulfilled for {} of {} neighbouring surfaces.'
+                .format(sum(res), len(res))
             )
             return res
 
@@ -246,9 +246,8 @@ def _run_volume_impl(
             # get states from pre-existing Controls
             for s_ctrl in ctrl_container.stateful:
                 with contextlib.suppress(KeyError):
-                    s_ctrl.state = init_result.ctrl_states[
-                        s_ctrl.__class__.__name__
-                    ]
+                    s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__.
+                                                           __name__]
 
             data = init_result.data
 

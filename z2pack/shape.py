@@ -11,12 +11,12 @@ from fsc.export import export
 @export
 class Sphere:
     r"""
-    :param center:  Center of the sphere
-    :type center:   list
-
-    :param radius:  Radius of the sphere
-    :type radius:   float
-
+    Arguments
+    ---------
+    center : list
+        Center of the sphere
+    radius : float
+        Radius of the sphere
 
     Example usage:
 
@@ -45,3 +45,40 @@ class Sphere:
         y += self.radius * np.sin(2 * np.pi * k) * np.sin(np.pi * t)
         z -= self.radius * np.cos(np.pi * t)
         return [x, y, z]
+
+
+@export
+class Plane:
+    r"""
+    This class describes a plane in the Brillouin zone in reduced coordinates.
+    The plane defines a surface
+
+    .. math::
+
+        f(s, t) = ``origin`` + s \cdot ``spanning_vectors[0]`` + t \cdot ``spanning_vectors[1]``
+
+    Arguments
+    ---------
+    origin : numpy.ndarray
+        A vector defining the origin / offset of the plane.
+    spanning_vectors : list
+        List of two vectors which span the plane.
+    """
+
+    def __init__(self, *, origin, spanning_vectors):
+        #create surface based on vectors
+        self._origin = np.array(origin)
+        self._spanning_vectors = list(
+            np.array(vec) for vec in spanning_vectors
+        )
+        if len(self._spanning_vectors) != 2:
+            raise ValueError('Exactly two spanning vectors must be given.')
+
+    def __str__(self):
+        return 'Plane(origin={}, spanning_vectors={})'.format(
+            self._origin, self._spanning_vectors
+        )
+
+    def __call__(self, s, t):
+        return self._origin + s * self._spanning_vectors[
+            0] + t * self._spanning_vectors[1]

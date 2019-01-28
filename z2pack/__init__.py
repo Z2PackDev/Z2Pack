@@ -19,6 +19,8 @@ from . import fp
 
 from . import io
 
+from . import symm_utils
+
 from . import _logging_format  # sets default logging levels / format
 
 __all__ = [

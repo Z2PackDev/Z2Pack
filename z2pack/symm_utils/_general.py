@@ -2,10 +2,8 @@
 
 import numpy as np
 import scipy.linalg as la
-from fsc.export import export
 
 
-@export
 def round_to_zero(sym, tol=1e-10):
     """
     Round off values smaller than tol to zero.
@@ -17,7 +15,6 @@ def round_to_zero(sym, tol=1e-10):
     return sym
 
 
-@export
 def reduced_dist(k1, k2):
     """
     Calculates the distance between two vectors in reduced space.
@@ -29,7 +26,6 @@ def reduced_dist(k1, k2):
     return dist
 
 
-@export
 def to_reciprocal(real_space):
     """
     Return basis in k space given basis in x space
@@ -47,7 +43,6 @@ def to_reciprocal(real_space):
     return k_space
 
 
-@export
 def reduced_symm(symm, basis):
     """
     Get symmetry matrix in reciprocal space in reduced basis from symmetry matrix in real space in cartesian basis
@@ -62,7 +57,6 @@ def reduced_symm(symm, basis):
     return symm
 
 
-@export
 def find_local(symmetries, surface, precision=3, eps=1e-5):
     """
     Select those symmetries that leave all k-points on the surface invariant.

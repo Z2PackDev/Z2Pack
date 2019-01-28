@@ -86,7 +86,7 @@ def weyl_system(request):
     res = z2pack.hm.System(
         lambda k: np.array(
             [
-                [k[2], k[0] - 1j * k[1]],
+                [k[2], k[0] -1j * k[1]],
                 [k[0] + 1j * k[1], -k[2]]
             ]
         )

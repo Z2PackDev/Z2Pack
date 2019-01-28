@@ -73,6 +73,6 @@ setup(
     ],
     packages=[
         'z2pack', 'z2pack.io', 'z2pack.fp', 'z2pack.volume', 'z2pack.surface',
-        'z2pack.line'
+        'z2pack.line', 'z2pack.symm_utils'
     ]
 )

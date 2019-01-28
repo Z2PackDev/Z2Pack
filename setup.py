@@ -29,8 +29,13 @@ EXTRAS = {
     'tb': ['tbmodels>=1.1.1'],
     'doc': ['sphinx', 'sphinx_rtd_theme'],
     'dev': [
-        'prospector==1.1.2', 'pytest>=3.4', 'pytest-cov', 'yapf==0.24',
-        'pre-commit==1.11.1', 'pylint==2.1.1'
+        'prospector==1.1.2',
+        'pytest>=3.4',
+        'pytest-cov',
+        'yapf==0.24',
+        'pre-commit==1.11.1',
+        'pylint==2.1.1',
+        'pyyaml',
     ],
 }
 EXTRAS['dev'] += EXTRAS['plot'] + EXTRAS['tb'] + EXTRAS['doc']

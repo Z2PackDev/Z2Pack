@@ -9,6 +9,7 @@ from collections.abc import Iterable
 
 import pytest
 from ctrl_base_tester import test_ctrl_base  # pylint: disable=unused-import
+from local_config import *  # pylint: disable=unused-wildcard-import
 
 import z2pack
 logging.getLogger('z2pack').setLevel(logging.CRITICAL)

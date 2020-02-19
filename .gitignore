@@ -38,13 +38,6 @@ MANIFEST
 *.tar.gz
 files*.txt
 
-# ignoring the _ptools git
-z2pack/_ptools/.git
-z2pack/_ptools/.gitignore
-
-# selectively choose _ptools
-z2pack/_ptools/*
-
 # debug folder
 debug
 
@@ -59,3 +52,6 @@ tests/.pytest_cache
 .coverage
 .coverage*
 htmlcov
+
+# editors
+.vscode

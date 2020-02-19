@@ -13,14 +13,13 @@ from ._control import _create_line_controls, LineControlContainer
 
 from .._run_utils import _load_init_result, _check_save_dir, _log_run
 from .._logging_tools import TagAdapter
+from .. import io
 
 # tag which triggers filtering when called from the surface's run.
-_LINE_ONLY_LOGGER = TagAdapter(
-    _LOGGER, default_tags=(
-        'line',
-        'line_only',
-    )
-)
+_LINE_ONLY_LOGGER = TagAdapter(_LOGGER, default_tags=(
+    'line',
+    'line_only',
+))
 _LOGGER = TagAdapter(_LOGGER, default_tags=('line', ))
 
 
@@ -120,9 +119,6 @@ def _run_line_impl(
 
     The other parameters are the same as for :meth:`.run`.
     """
-    # This is here to avoid circular import with the Surface (is solved in Python 3.5 and higher)
-    from .. import io
-
     # check if the line function is closed (up to an inverse lattice vector)
     delta = np.array(line(1)) - np.array(line(0))
     if not np.isclose(np.round_(delta), delta).all():
@@ -146,8 +142,8 @@ def _run_line_impl(
                 d_ctrl.update(init_result.data)
         for s_ctrl in ctrl_container.stateful:
             with contextlib.suppress(KeyError):
-                s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__.
-                                                       __name__]
+                s_ctrl.state = init_result.ctrl_states[
+                    s_ctrl.__class__.__name__]
         result = LineResult(
             init_result.data, ctrl_container.stateful,
             ctrl_container.convergence

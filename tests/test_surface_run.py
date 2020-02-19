@@ -1,5 +1,5 @@
 """Test surface calculations."""
-# pylint: disable=unused-argument,redefined-outer-name,unused-wildcard-import,too-many-arguments
+# pylint: disable=redefined-outer-name,unused-wildcard-import,too-many-arguments
 
 import os
 import json
@@ -177,7 +177,6 @@ def test_restart_nocalc(simple_system, simple_surface):
     """
     Test that no additional calculations are performed when restarting from a (finished) saved calculation.
     """
-
     class Mock:
         @staticmethod
         def get_eig(*args, **kwargs):
@@ -285,9 +284,8 @@ def test_load_reference(simple_system, test_name, simple_surface, serializer):
     if not os.path.isfile(path):
         z2pack.io.save(result, path, serializer=serializer)
         raise ValueError('File {} did not exist!'.format(path))
-    else:
-        assert_res_equal(result, z2pack.io.load(path, serializer=serializer))
-        assert_res_equal(result, z2pack.io.load(path))
+    assert_res_equal(result, z2pack.io.load(path, serializer=serializer))
+    assert_res_equal(result, z2pack.io.load(path))
 
 
 def test_load_reference_legacy_v1(
@@ -305,16 +303,13 @@ def test_load_reference_legacy_v1(
     if not os.path.isfile(path):
         z2pack.io.save(result, path, serializer=serializer)
         raise ValueError('File {} did not exist!'.format(path))
-    else:
-        for saved_res in [
-            z2pack.io.load(path, serializer=serializer),
-            z2pack.io.load(path)
-        ]:
-            assert_res_equal(
-                result,
-                saved_res,
-                ignore_wilson=not hasattr(saved_res, 'wilson')
-            )
+    for saved_res in [
+        z2pack.io.load(path, serializer=serializer),
+        z2pack.io.load(path)
+    ]:
+        assert_res_equal(
+            result, saved_res, ignore_wilson=not hasattr(saved_res, 'wilson')
+        )
 
 
 def test_invalid_save_path(simple_system, simple_surface):

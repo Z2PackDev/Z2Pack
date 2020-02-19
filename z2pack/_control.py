@@ -13,8 +13,7 @@ class ControlContainer(types.SimpleNamespace):
     """
     Container for controls, giving simple access to the different types of controls.
     """
-
-    def __init__(self, *, controls, categories, valid_type):  # pylint: disable=missing-docstring
+    def __init__(self, *, controls, categories, valid_type):  # pylint: disable=missing-function-docstring
         self.all = controls
         for ctrl in self.all:
             if not isinstance(ctrl, valid_type):
@@ -36,7 +35,6 @@ class ControlContainer(types.SimpleNamespace):
 @export
 class AbstractControl(metaclass=abc.ABCMeta):
     """ABC for all control objects. Instances must also have a 'state' attribute to work correctly, which is not enforced by the ABC."""
-    pass
 
 
 @export
@@ -59,7 +57,6 @@ class StatefulControl(AbstractControl):
 
     ``sc1`` and ``sc2`` are again equivalent. In particular, it is not necessary to use ``update()`` on ``sc2`` in the case of a DataControl.
     """
-
     @abc.abstractmethod
     def __init__(self, *, state=None, **kwargs):
         super().__init__(**kwargs)
@@ -68,19 +65,16 @@ class StatefulControl(AbstractControl):
     @abc.abstractmethod
     def state(self):
         """Returns the state of the Control."""
-        pass
 
     @state.setter
     @abc.abstractmethod
     def state(self, value):
         """Sets the state of the Control."""
-        pass
 
 
 @export
 class DataControl(AbstractControl):
     """ABC for control objects which can be updated with data."""
-
     @abc.abstractmethod
     def update(self, data):
         pass
@@ -89,7 +83,6 @@ class DataControl(AbstractControl):
 @export
 class IterationControl(AbstractControl):
     """ABC for iteration control objects. Enforces the existence of ..."""
-
     @abc.abstractmethod
     def __next__(self):
         pass
@@ -100,7 +93,6 @@ class ConvergenceControl(AbstractControl):
     """ABC for convergence tester objects. Enforces the existence of an update method, and the ``converged`` property.
     For LineControl objects, the converged property must be valid (False) also before the first update() call.
     This is not required for SurfaceControl objects."""
-
     @property
     @abc.abstractmethod
     def converged(self):
@@ -112,16 +104,13 @@ class ConvergenceControl(AbstractControl):
 @export
 class VolumeControl(AbstractControl):
     """Specializes AbstractControl for Volume objects"""
-    pass
 
 
 @export
 class SurfaceControl(AbstractControl):
     """Specializes AbstractControl for Surface objects"""
-    pass
 
 
 @export
 class LineControl(AbstractControl):
     """Specializes AbstractControl for Line objects"""
-    pass

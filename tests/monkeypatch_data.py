@@ -27,7 +27,6 @@ def patch_surface_data(monkeypatch):
     """
     Monkeypatch the SurfaceData class so that it can be set from a nested list of WCC and list of t-values.
     """
-
     def __init__(self, wcc_list, t_list=None):  # noqa
         if t_list is None:
             t_list = np.linspace(0, 1, len(wcc_list))

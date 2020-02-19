@@ -27,7 +27,6 @@ class Sphere:
             surface=z2pack.shape.Sphere(center=[0, 0, 0], radius=0.1)
         )
     """
-
     def __init__(self, center, radius):
         self.center = center
         self.radius = radius

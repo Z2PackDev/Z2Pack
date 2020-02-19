@@ -16,7 +16,6 @@ class Result(metaclass=abc.ABCMeta):
 
     :param convergence_ctrl:    List of ConvergenceControl objects of the calculation.
     """
-
     def __init__(self, data, stateful_ctrl, convergence_ctrl):
         self.data = data
         ctrl_states = dict()
@@ -42,4 +41,3 @@ class Result(metaclass=abc.ABCMeta):
         r"""
         Returns a convergence report (as a string) for the result. This report shows whether the convergence options used for calculating this result were satisfied or not.
         """
-        pass

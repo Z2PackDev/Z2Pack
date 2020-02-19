@@ -14,7 +14,6 @@ def _log_run(logger):
     """
     Log the inputs, elapsed time and convergence report for a calculation run.
     """
-
     def inner(fct, **kwargs):
         logger.info(kwargs, tags=('setup', 'box', 'skip'))
         start_time = time.time()
@@ -57,8 +56,7 @@ def _load_init_result(
 
     :returns: :class:`Result` instance.
     """
-    # avoid circular import (solved in Python 3.5 and higher)
-    from . import io
+    from . import io  # pylint: disable=import-outside-toplevel
 
     if init_result is not None:
         if load:

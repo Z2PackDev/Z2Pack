@@ -1,10 +1,7 @@
 """Usage: pip install ."""
 
 import re
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from setuptools import setup, find_packages
 
 import sys
 if sys.version_info < (3, 5):
@@ -16,8 +13,7 @@ It tracks the charge centers of hybrid Wannier functions - as described `here <h
 
 The Wannier charge centers are computed from overlap matrices that are obtained either directly (for tb) or via the Wannier90 code package (fp).
 
-- `Documentation <http://z2pack.ethz.ch/doc>`_
-- `Online interface <http://z2pack.ethz.ch/online>`_ (tight-binding only)
+`Documentation: <http://z2pack.ethz.ch/doc>`_
 """
 
 with open('./z2pack/__init__.py', 'r') as f:
@@ -27,10 +23,10 @@ with open('./z2pack/__init__.py', 'r') as f:
 EXTRAS = {
     'plot': ['matplotlib'],
     'tb': ['tbmodels>=1.1.1'],
-    'doc': ['sphinx', 'sphinx_rtd_theme'],
+    'doc': ['sphinx', 'sphinx-rtd-theme', 'sphinx-pyreverse', 'pylint==2.4.4'],
     'dev': [
-        'prospector==1.1.2', 'pytest>=3.4', 'pytest-cov', 'yapf==0.24',
-        'pre-commit==1.11.1', 'pylint==2.1.1'
+        'prospector==1.2.0', 'pytest>=3.4', 'pytest-cov', 'yapf==0.29',
+        'pre-commit', 'pylint==2.4.4'
     ],
 }
 EXTRAS['dev'] += EXTRAS['plot'] + EXTRAS['tb'] + EXTRAS['doc']
@@ -57,6 +53,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Intended Audience :: Science/Research',
         'Topic :: Scientific/Engineering :: Physics',
         'Development Status :: 5 - Production/Stable'
@@ -66,8 +63,5 @@ setup(
         'topology', 'topological', 'invariant', 'bandstructure', 'chern', 'z2',
         'solid-state', 'tight-binding'
     ],
-    packages=[
-        'z2pack', 'z2pack.io', 'z2pack.fp', 'z2pack.volume', 'z2pack.surface',
-        'z2pack.line'
-    ]
+    packages=find_packages()
 )

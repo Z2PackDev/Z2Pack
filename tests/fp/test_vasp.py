@@ -16,7 +16,6 @@ def vasp_system(sample):
     """
     Create a VASP system.
     """
-
     def inner(build_dir):
         samples_dir = sample('vasp')
         input_files = [
@@ -39,7 +38,6 @@ def vasp_system_no_potcar():
     """
     Create a VASP system without the POTCAR file.
     """
-
     def inner(build_dir):
         input_files = [
             'samples/vasp/' + name

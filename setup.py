@@ -16,8 +16,7 @@ It tracks the charge centers of hybrid Wannier functions - as described `here <h
 
 The Wannier charge centers are computed from overlap matrices that are obtained either directly (for tb) or via the Wannier90 code package (fp).
 
-- `Documentation <http://z2pack.ethz.ch/doc>`_
-- `Online interface <http://z2pack.ethz.ch/online>`_ (tight-binding only)
+`Documentation: <http://z2pack.ethz.ch/doc>`_
 """
 
 with open('./z2pack/__init__.py', 'r') as f:

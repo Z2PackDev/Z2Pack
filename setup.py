@@ -25,7 +25,7 @@ EXTRAS = {
     'tb': ['tbmodels>=1.1.1'],
     'doc': ['sphinx', 'sphinx-rtd-theme', 'sphinx-pyreverse', 'pylint==2.4.4'],
     'dev': [
-        'prospector==1.2.0', 'pytest~=5.3', 'pytest-cov', 'yapf==0.29',
+        'prospector==1.2.0', 'pytest>=5.3', 'pytest-cov', 'yapf==0.29',
         'pre-commit', 'pylint==2.4.4'
     ],
 }

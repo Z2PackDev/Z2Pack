@@ -7,6 +7,8 @@ set -ev
 
 cd ${TRAVIS_BUILD_DIR}
 
+pip install -U pip
+
 case "$INSTALL_TYPE" in
     dev)
         pip install .[dev]

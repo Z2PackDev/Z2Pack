@@ -17,7 +17,6 @@ class SurfaceResult(Result):
         print(result.t) # prints the positions of the lines
         print(result.pol) # prints the sum of WCC for each line
     """
-
     @property
     def convergence_report(self):
         r"""

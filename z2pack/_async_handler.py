@@ -10,14 +10,12 @@ from threading import Thread
 
 class Sentinel:
     """Sentinel object to show that this is the last object to go into the queue. This triggers the termination of the asynchronous task."""
-
     def __init__(self, obj):
         self.obj = obj
 
 
 class AsyncHandler:
     """Context manager to handle asynchronous operations on some queue of 1 object. The asynchronous handler works on the latest object sent to it."""
-
     def __init__(self, handler):
         self.handler = handler
         if self.handler is not None:

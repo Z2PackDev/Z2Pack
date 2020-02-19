@@ -16,7 +16,6 @@ class VolumeResult(Result):
         result = z2pack.volume.run(...)
         print(result.s) # prints the positions of the surfaces
     """
-
     @property  # noqa
     def convergence_report(self):  # noqa
         r"""

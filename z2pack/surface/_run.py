@@ -15,6 +15,7 @@ from .._run_utils import _load_init_result, _check_save_dir, _log_run
 from .._async_handler import AsyncHandler
 from .._logging_tools import TagAdapter, TagFilter, filter_manager
 from ..line import _run as _line_run
+from .. import io
 
 # tag which triggers filtering when called from the volume's run.
 _SURFACE_ONLY_LOGGER = TagAdapter(
@@ -153,7 +154,6 @@ def _run_surface_impl(
 
     The other parameters are the same as for :meth:`.run`.
     """
-    from .. import io
     # CONTROL SETUP
     ctrl_container = SurfaceControlContainer(controls)
 
@@ -246,8 +246,8 @@ def _run_surface_impl(
             # get states from pre-existing Controls
             for s_ctrl in ctrl_container.stateful:
                 with contextlib.suppress(KeyError):
-                    s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__.
-                                                           __name__]
+                    s_ctrl.state = init_result.ctrl_states[
+                        s_ctrl.__class__.__name__]
 
             data = init_result.data
 

@@ -23,7 +23,6 @@ class System(_HmSystem):
 
     The ``pos``, ``bands`` and ``dim`` keywords of :class:`.hm.System` are determined from the ``tb_model`` unless otherwise specified.
     """
-
     def __init__(self, tb_model, **kwargs):
         super().__init__(
             hamilton=tb_model.hamilton,

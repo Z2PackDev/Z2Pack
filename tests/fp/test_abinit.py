@@ -17,7 +17,6 @@ def abinit_system(sample):
     """
     Create ABINIT system.
     """
-
     def inner(build_dir):
         sample_dir = sample('abinit')
         input_files = [

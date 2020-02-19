@@ -43,7 +43,8 @@ STRAIGHT_UNEQUAL_SPACING = [lambda t: [0, 0, t**2]]
 STRAIGHT_MULTIPLE_BZ = [lambda t: [0, 0, 2 * t]]
 
 NON_STRAIGHT = [
-    lambda t: [0, np.cos(2 * np.pi * t), np.sin(2 * np.pi * t)],
+    lambda t: [0, np.cos(2 * np.pi * t),
+               np.sin(2 * np.pi * t)],
     lambda t: [0, 0.2 * np.cos(2 * np.pi * t), 0.3 * np.sin(2 * np.pi * t)],
 ]
 
@@ -81,13 +82,11 @@ VALID_LINES = {
         'invalid': INVALID
     },
     z2pack.fp.kpoint.abinit.__name__: {
-        'fct':
-        z2pack.fp.kpoint.abinit,
+        'fct': z2pack.fp.kpoint.abinit,
         'valid_comparable':
         STRAIGHT_SIMPLE + STRAIGHT_ANY_DIRECTION + STRAIGHT_MULTIPLE_BZ,
         'valid_incomparable': [],
-        'invalid':
-        STRAIGHT_UNEQUAL_SPACING + NON_STRAIGHT + INVALID
+        'invalid': STRAIGHT_UNEQUAL_SPACING + NON_STRAIGHT + INVALID
     },
     z2pack.fp.kpoint.wannier90.__name__: {
         'fct': z2pack.fp.kpoint.wannier90,

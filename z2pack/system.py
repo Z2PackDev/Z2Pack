@@ -12,7 +12,6 @@ class EigenstateSystem(metaclass=abc.ABCMeta):
     r"""
     Abstract base class for Z2Pack System classes which can provide eigenstates (periodic part :math:`|u_\mathbf{k}\rangle`).
     """
-
     @abc.abstractmethod
     def get_eig(self, kpt):
         r"""
@@ -21,7 +20,6 @@ class EigenstateSystem(metaclass=abc.ABCMeta):
         :param kpt: The list of k-points for which the eigenstates are to be computed.
         :type kpt:  list
         """
-        pass
 
 
 @export
@@ -29,7 +27,6 @@ class OverlapSystem(metaclass=abc.ABCMeta):
     r"""
     Abstract base class for Z2Pack System classes which can only provide overlap matrices.
     """
-
     @abc.abstractmethod
     def get_mmn(self, kpt):
         r"""
@@ -38,4 +35,3 @@ class OverlapSystem(metaclass=abc.ABCMeta):
         :param kpt: The list of k-points for which the overlap matrices are to be computed.
         :type kpt:  list
         """
-        pass

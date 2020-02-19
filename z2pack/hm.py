@@ -40,7 +40,6 @@ class System(EigenstateSystem):
     :param check_periodic: Evaluate the Hamiltonian at :math:`\{0, 1\}^d` as a simple check if it is periodic. Note that this does not work if the Hamiltonian is written such that the eigenstates acquire a phase when being translated by a lattice vector.
     :type check_periodic: bool
     """
-
     def __init__(
         self,
         hamilton,
@@ -128,9 +127,9 @@ class System(EigenstateSystem):
         # The last bloch state is the same as the first up to a phase factor
         eigs.append(
             list(
-                eigs[0] * np.exp(
-                    -2j * np.pi * np.dot(self._pos, kpt[-1] - kpt[0])
-                )[None, :]
+                eigs[0] *
+                np.exp(-2j * np.pi * np.dot(self._pos, kpt[-1] - kpt[0])
+                       )[None, :]
             )
         )
         return eigs

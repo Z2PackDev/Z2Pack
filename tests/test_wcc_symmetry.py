@@ -15,10 +15,10 @@ def test_weyl(assert_image_equal):
     """
     Test WCC symmetry plot for a simple Weyl point system.
     """
-    system = z2pack.hm.System(lambda k: np.array([
-        [k[2], k[0] -1j * k[1]],
-        [k[0] + 1j * k[1], -k[2]]
-    ]))
+    system = z2pack.hm.System(
+        lambda k: np.array([[k[2], k[0] - 1j * k[1]],
+                            [k[0] + 1j * k[1], -k[2]]])
+    )
     result = z2pack.surface.run(
         system=system,
         surface=z2pack.shape.Sphere([0, 0, 0], 1.),
@@ -38,10 +38,10 @@ def test_weyl_no_axis(assert_image_equal):
     """
     Test WCC symmetry plot for a simple Weyl point system without passing a figure axis.
     """
-    system = z2pack.hm.System(lambda k: np.array([
-        [k[2], k[0] -1j * k[1]],
-        [k[0] + 1j * k[1], -k[2]]
-    ]))
+    system = z2pack.hm.System(
+        lambda k: np.array([[k[2], k[0] - 1j * k[1]],
+                            [k[0] + 1j * k[1], -k[2]]])
+    )
     result = z2pack.surface.run(
         system=system,
         surface=z2pack.shape.Sphere([0, 0, 0], 1.),

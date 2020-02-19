@@ -25,12 +25,8 @@ def test_explicit_bands(bands, weyl_surface, compare_wcc):
     Test setting the number of occupied bands explicitly.
     """
     system = z2pack.hm.System(
-        lambda k: np.array(
-            [
-                [k[2], k[0] -1j * k[1]],
-                [k[0] + 1j * k[1], -k[2]]
-            ]
-        ),
+        lambda k: np.array([[k[2], k[0] - 1j * k[1]],
+                            [k[0] + 1j * k[1], -k[2]]]),
         bands=bands
     )
     res = z2pack.surface.run(system=system, surface=weyl_surface)

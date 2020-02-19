@@ -1,5 +1,5 @@
 """Test volume calculations."""
-# pylint: disable=redefined-outer-name,unused-wildcard-import,unused-argument
+# pylint: disable=redefined-outer-name,unused-wildcard-import
 
 import os
 import json
@@ -100,7 +100,6 @@ def test_restart_nocalc(simple_system, simple_volume):
     """
     Test that no additional calculations are performed when restarting from a (finished) saved calculation.
     """
-
     class Mock:
         @staticmethod
         def get_eig(*args, **kwargs):
@@ -193,9 +192,8 @@ def test_load_reference(simple_system, test_name, simple_volume, serializer):
     if not os.path.isfile(path):
         z2pack.io.save(result, path, serializer=serializer)
         raise ValueError('File {} did not exist!'.format(path))
-    else:
-        assert_res_equal(result, z2pack.io.load(path, serializer=serializer))
-        assert_res_equal(result, z2pack.io.load(path))
+    assert_res_equal(result, z2pack.io.load(path, serializer=serializer))
+    assert_res_equal(result, z2pack.io.load(path))
 
 
 def test_invalid_save_path(simple_system, simple_volume):

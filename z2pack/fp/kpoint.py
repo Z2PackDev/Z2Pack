@@ -13,7 +13,7 @@ from fsc.export import export
 
 
 @export
-def prototype(kpt):  # pylint: disable=unused-argument
+def prototype(kpt):
     r"""
     Specifies the interface
 

@@ -1,10 +1,7 @@
 """Usage: pip install ."""
 
 import re
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from setuptools import setup, find_packages
 
 import sys
 if sys.version_info < (3, 5):
@@ -56,6 +53,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Intended Audience :: Science/Research',
         'Topic :: Scientific/Engineering :: Physics',
         'Development Status :: 5 - Production/Stable'
@@ -65,8 +63,5 @@ setup(
         'topology', 'topological', 'invariant', 'bandstructure', 'chern', 'z2',
         'solid-state', 'tight-binding'
     ],
-    packages=[
-        'z2pack', 'z2pack.io', 'z2pack.fp', 'z2pack.volume', 'z2pack.surface',
-        'z2pack.line'
-    ]
+    packages=find_packages()
 )

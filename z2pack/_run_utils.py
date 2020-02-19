@@ -7,8 +7,6 @@ import time
 
 from decorator import decorator
 
-from . import io
-
 __all__ = []
 
 
@@ -58,6 +56,7 @@ def _load_init_result(
 
     :returns: :class:`Result` instance.
     """
+    from . import io  # pylint: disable=import-outside-toplevel
 
     if init_result is not None:
         if load:

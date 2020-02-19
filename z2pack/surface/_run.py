@@ -11,11 +11,11 @@ from . import _LOGGER
 from . import SurfaceData, SurfaceResult
 from ._control import _create_surface_controls, SurfaceControlContainer
 
+from .. import io
 from .._run_utils import _load_init_result, _check_save_dir, _log_run
 from .._async_handler import AsyncHandler
 from .._logging_tools import TagAdapter, TagFilter, filter_manager
 from ..line import _run as _line_run
-from .. import io
 
 # tag which triggers filtering when called from the volume's run.
 _SURFACE_ONLY_LOGGER = TagAdapter(
@@ -154,6 +154,7 @@ def _run_surface_impl(
 
     The other parameters are the same as for :meth:`.run`.
     """
+
     # CONTROL SETUP
     ctrl_container = SurfaceControlContainer(controls)
 

@@ -27,7 +27,7 @@ with open('./z2pack/__init__.py', 'r') as f:
 EXTRAS = {
     'plot': ['matplotlib'],
     'tb': ['tbmodels>=1.1.1'],
-    'doc': ['sphinx', 'sphinx_rtd_theme'],
+    'doc': ['sphinx', 'sphinx_rtd_theme', 'sphinx-pyreverse'],
     'dev': [
         'prospector==1.1.2', 'pytest>=3.4', 'pytest-cov', 'yapf==0.24',
         'pre-commit==1.11.1', 'pylint==2.1.1'

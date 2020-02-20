@@ -29,7 +29,7 @@ extras = {
     'plot':  ['matplotlib'],
     'tb': ['tbmodels>=1.1.1'],
     'test': ['pytest'],
-    'doc': ['sphinx', 'sphinx_rtd_theme'],
+    'doc': ['sphinx', 'sphinx-rtd-theme', 'sphinx-pyreverse', 'pylint'],
 }
 extras['test'] += extras['plot'] + extras['tb']
 

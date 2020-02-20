@@ -56,6 +56,10 @@ decorator.py
 # pytest caches
 tests/.cache
 .cache/v/cache
+.pytest_cache/v/cache
 .coverage
 .coverage*
 htmlcov
+
+#editors
+.vscode

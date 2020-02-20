@@ -31,6 +31,6 @@ Of course, improvements to documents outside the documentation, such such as thi
 
 ## Contributing to the code
 
-If you would like to contribute to the code itself, please have a look at the [developer's guide](http://z2pack.ethz.ch/doc/2.1/devguide/index.html). Before you start working on something, it's usually a good idea to submit an issue describing what you're trying to do. That way, you can get feedback on how to solve the issue before starting to code.
+If you would like to contribute to the code itself, please have a look at the [developer's guide](https://z2pack.greschd.ch/en/latest/devguide/). Before you start working on something, it's usually a good idea to submit an issue describing what you're trying to do. That way, you can get feedback on how to solve the issue before starting to code.
 
 New features should be added by branching off from the latest development branch (``dev/current``). Once you've started working on something, you can create a pull request if you would like to have some feedback on the code. You can put ``[WIP]`` (work in progress) in the PR title to let us know if you're still working on the code. To simplify the review and merging of pull requests, it is good practice to add only one feature in each PR. This is not a strict rule however -- use your best judgment to determine whether a set of changes are a logical unit.

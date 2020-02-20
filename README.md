@@ -5,6 +5,6 @@ The topological numbers are computed from the evolution of Wannier charge center
 
 The WCC are calculated from overlap matrices which are calculated either directly (for tb and hm) or via the Wannier90 code package (fp).
 
-- Documentation: <http://z2pack.ethz.ch/doc>
+- Documentation: <https://z2pack.greschd.ch>
 
 [![Build Status](https://travis-ci.org/Z2PackDev/Z2Pack.svg?branch=dev%2Fcurrent)](https://travis-ci.org/Z2PackDev/Z2Pack)

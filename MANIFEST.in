@@ -9,7 +9,7 @@ prune dev_test
 prune TODO
 prune clear.sh
 
-# Documentation is provided on http://z2pack.ethz.ch/doc
+# Documentation is provided online
 prune doc
 
 # selectively include ptools

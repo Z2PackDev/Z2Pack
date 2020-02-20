@@ -1,21 +1,22 @@
 language: python
 cache: pip
-
 python:
   - "3.5"
   - "3.6"
-
+  - "3.7"
+  - "3.8"
 env:
-  - TEST_TYPE="test"
-
-matrix:
+  - TEST_TYPE="tests"
+    INSTALL_TYPE="dev"
+  - TEST_TYPE="tests"
+    INSTALL_TYPE="dev_sdist"
+jobs:
   include:
-    - python: 3.6
-      env: TEST_TYPE="compliance"
-
+    - python: "3.7"
+      env:
+        - TEST_TYPE="precommit"
+          INSTALL_TYPE="dev"
 install:
-  - pip install .[dev]
-
+  - ./.travis-data/install_script.sh
 script:
-  - if [ "$TEST_TYPE" == "compliance" ] ; then pre-commit run --all-files ; fi
-  - if [ "$TEST_TYPE" == "test" ] ; then cd tests; py.test --no-plot-compare ; fi
+  - ./.travis-data/test_script.sh

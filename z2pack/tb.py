@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-This module contains the class for creating systems based on `TBmodels <http://z2pack.ethz.ch/tbmodels>`_ tight-binding models.
+This module contains the class for creating systems based on `TBmodels <https://tbmodels.greschd.ch>`_ tight-binding models.
 """
 
 import copy

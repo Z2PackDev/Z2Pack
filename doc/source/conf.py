@@ -36,7 +36,7 @@ extensions = [
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
-    'tbmodels': ('http://z2pack.ethz.ch/tbmodels/', None),
+    'tbmodels': ('https://tbmodels.greschd.ch/en/latest', None),
     'numpy': ('http://docs.scipy.org/doc/numpy/', None),
     'matplotlib': ('http://matplotlib.org', None),
     'fsc.locker':
@@ -197,7 +197,7 @@ html_show_sourcelink = False
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the
 # base URL from which the finished HTML is served.
-html_use_opensearch = 'http://z2pack.ethz.ch/doc'
+html_use_opensearch = 'https://z2pack.greschd.ch'
 
 # This is the file name suffix for HTML files (e.g. ".xhtml").
 #html_file_suffix = None

@@ -55,3 +55,6 @@ htmlcov
 
 # editors
 .vscode
+
+# Jupyter
+.ipynb_checkpoints

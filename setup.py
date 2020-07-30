@@ -4,8 +4,8 @@ import re
 from setuptools import setup, find_packages
 
 import sys
-if sys.version_info < (3, 5):
-    raise 'must use Python version 3.5 or higher'
+if sys.version_info < (3, 6):
+    raise 'must use Python version 3.6 or higher'
 
 README = r"""Z2Pack is a tool that computes topological invariants and illustrates non-trivial features of Berry curvature. It works as a post-processing tool with all major first-principles codes (z2pack.fp), as well as with tight-binding models (z2pack.tb) and explicit Hamiltonian matrices -- such as the ones obtained from a k.p model (z2pack.hm).
 
@@ -25,7 +25,7 @@ EXTRAS = {
     'tb': ['tbmodels>=1.1.1'],
     'doc': ['sphinx', 'sphinx-rtd-theme', 'sphinx-pyreverse', 'pylint==2.4.4'],
     'dev': [
-        'prospector==1.2.0', 'pytest>=5.3', 'pytest-cov', 'yapf==0.29',
+        'prospector==1.2.0', 'pytest~=6.0', 'pytest-cov', 'yapf==0.29',
         'pre-commit', 'pylint==2.4.4'
     ],
 }
@@ -45,12 +45,12 @@ setup(
         'fsc.iohelper'
     ],
     extras_require=EXTRAS,
+    python_requires=">=3.6",
     long_description=README,
     classifiers=[
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Natural Language :: English', 'Operating System :: Unix',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',

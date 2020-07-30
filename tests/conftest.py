@@ -16,10 +16,12 @@ from z2pack._utils import _get_max_move
 
 
 def pytest_addoption(parser):  # pylint: disable=missing-function-docstring
-    parser.addoption('-A', action='store_true', help='run ABINIT tests')
-    parser.addoption('-V', action='store_true', help='run VASP tests')
+    parser.addoption('--abinit', action='store_true', help='run ABINIT tests')
+    parser.addoption('--vasp', action='store_true', help='run VASP tests')
     parser.addoption(
-        '-Q', action='store_true', help='run Quantum ESPRESSO tests'
+        '--quantumespresso',
+        action='store_true',
+        help='run Quantum ESPRESSO tests'
     )
     parser.addoption(
         '--no-plot-compare',
@@ -49,13 +51,13 @@ def pytest_runtest_setup(item):  # pylint: disable=missing-function-docstring
         vasp_marker = item.get_closest_marker("vasp")
         qe_marker = item.get_closest_marker("qe")
     if abinit_marker is not None:
-        if not item.config.getoption("-A"):
+        if not item.config.getoption("--abinit"):
             pytest.skip("test runs only with ABINIT")
     if vasp_marker is not None:
-        if not item.config.getoption("-V"):
+        if not item.config.getoption("--vasp"):
             pytest.skip("test runs only with VASP")
     if qe_marker is not None:
-        if not item.config.getoption("-Q"):
+        if not item.config.getoption("--quantumespresso"):
             pytest.skip("test runs only with Quantum ESPRESSO")
 
 

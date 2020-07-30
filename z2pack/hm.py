@@ -4,6 +4,7 @@
 This module contains a class for creating Systems which are described by a Hamiltonian matrix (hm), such as k•p models.
 """
 
+import numbers
 import itertools
 
 import numpy as np
@@ -84,7 +85,7 @@ class System(EigenstateSystem):
             self._pos = [np.array(p) for p in pos]
         if bands is None:
             bands = size // 2
-        if isinstance(bands, int):
+        if isinstance(bands, numbers.Integral):
             self._bands = list(range(bands))
         else:
             self._bands = bands

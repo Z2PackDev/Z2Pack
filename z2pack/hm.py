@@ -35,6 +35,9 @@ class System(EigenstateSystem):
     :param hermitian_tol:   Maximum absolute value in the difference between the Hamiltonian and its hermitian conjugate. Use ``hermitian_tol=None`` to deactivate the test entirely.
     :type hermitian_tol:    float
 
+    :param basis_overlaps: A function taking the wavevector ``k`` (``list`` of length 3) as an input and returning the overlap matrix.
+    :type overlap: collections.abc.Callable
+
     :param convention: The convention used for the Hamiltonian, following the `pythtb formalism <http://www.physics.rutgers.edu/pythtb/_downloads/pythtb-formalism.pdf>`_. Convention 1 means that the eigenvalues of :math:`\mathcal{H}(\mathbf{k})` are wave vectors :math:`\left|\psi_{n\mathbf{k}}\right>`. With convention 2, they are the cell-periodic Bloch functions :math:`\left|u_{n\mathbf{k}}\right>`.
     :type convention: int
 
@@ -49,17 +52,20 @@ class System(EigenstateSystem):
         pos=None,
         bands=None,
         hermitian_tol=1e-6,
+        basis_overlap=None,
         convention=2,
         check_periodic=False
     ):
         self._hamilton = hamilton
         self._hermitian_tol = hermitian_tol
+        self._basis_overlap = basis_overlap
         self._convention = int(convention)
         if self._convention not in {1, 2}:
             raise ValueError(
                 "Invalid value '{}' for 'convention', must be either 1 or 2.".
                 format(self._convention)
             )
+        self._hamilton_orthogonal = basis_overlap is None
 
         if check_periodic:
             k_values = itertools.product([0, 1], repeat=dim)
@@ -73,6 +79,14 @@ class System(EigenstateSystem):
                     )
 
         size = len(self._hamilton([0] * dim))  # assuming to be square...
+        if not self._hamilton_orthogonal:
+            size_S = len(self._basis_overlap([0] * dim))  # assuming to be square...
+            if size_S != size:
+                raise ValueError(
+                    'The dimensions of overlap matrix ({0}) and Hamilontonian ({1}) do not match.'.
+                    format(size_S, size)
+                )
+
         # add one atom for each orbital in the hamiltonian
         if pos is None:
             self._pos = [np.zeros(dim) for _ in range(size)]
@@ -106,6 +120,19 @@ class System(EigenstateSystem):
                         'The Hamiltonian you used is not hermitian, with the maximum difference between the Hamiltonian and its adjoint being {0}. Use the ``hamilton_tol`` input parameter (in the ``tb.Hamilton`` constructor; currently {1}) to set the sensitivity of this test or turn it off completely (``hamilton_tol=None``).'
                         .format(diff, self._hermitian_tol)
                     )
+            if not self._hamilton_orthogonal:
+                ovl = self._basis_overlap(k)
+                if self._hermitian_tol is not None:
+                    diff = la.norm(ovl - ovl.conjugate().transpose(), ord=np.inf)
+                    if diff > self._hermitian_tol:
+                        raise ValueError(
+                            'The overlap you used is not hermitian, with the maximum difference between the overlap matrix and its adjoint being {0}. Use the ``hermitian_tol`` input parameter (currently {1}) to set the sensitivity of this test or turn it off completely (``hermitian_tol=None``).'.
+                            format(diff, self._hermitian_tol)
+                        )
+                ovl2 = la.inv(la.sqrtm(ovl))
+                ortho_ham = np.dot(ovl2,ham.dot(ovl2))
+                ham = ortho_ham
+
             eigval, eigvec = la.eigh(ham)
             eigval = np.real(eigval)
             idx = eigval.argsort()

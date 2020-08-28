@@ -35,8 +35,8 @@ class System(EigenstateSystem):
     :param hermitian_tol:   Maximum absolute value in the difference between the Hamiltonian and its hermitian conjugate. Use ``hermitian_tol=None`` to deactivate the test entirely.
     :type hermitian_tol:    float
 
-    :param basis_overlaps: A function taking the wavevector ``k`` (``list`` of length 3) as an input and returning the overlap matrix.
-    :type overlap: collections.abc.Callable
+    :param basis_overlap: A function taking the wavevector ``k`` (``list`` of length 3) as an input and returning the overlap matrix between the basis vectors w.r.t which the Hamiltonian is defined. If no value is given, the basis is assumed to be orthonormal.
+    :type basis_overlap: collections.abc.Callable
 
     :param convention: The convention used for the Hamiltonian, following the `pythtb formalism <http://www.physics.rutgers.edu/pythtb/_downloads/pythtb-formalism.pdf>`_. Convention 1 means that the eigenvalues of :math:`\mathcal{H}(\mathbf{k})` are wave vectors :math:`\left|\psi_{n\mathbf{k}}\right>`. With convention 2, they are the cell-periodic Bloch functions :math:`\left|u_{n\mathbf{k}}\right>`.
     :type convention: int

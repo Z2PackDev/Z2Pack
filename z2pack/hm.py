@@ -80,11 +80,13 @@ class System(EigenstateSystem):
 
         size = len(self._hamilton([0] * dim))  # assuming to be square...
         if not self._hamilton_orthogonal:
-            size_S = len(self._basis_overlap([0] * dim))  # assuming to be square...
+            size_S = len(  # pylint: disable=invalid-name
+                self._basis_overlap([0] * dim)
+            )  # assuming to be square...
             if size_S != size:
                 raise ValueError(
-                    'The dimensions of overlap matrix ({0}) and Hamilontonian ({1}) do not match.'.
-                    format(size_S, size)
+                    'The dimensions of overlap matrix ({0}) and Hamilontonian ({1}) do not match.'
+                    .format(size_S, size)
                 )
 
         # add one atom for each orbital in the hamiltonian
@@ -123,14 +125,16 @@ class System(EigenstateSystem):
             if not self._hamilton_orthogonal:
                 ovl = self._basis_overlap(k)
                 if self._hermitian_tol is not None:
-                    diff = la.norm(ovl - ovl.conjugate().transpose(), ord=np.inf)
+                    diff = la.norm(
+                        ovl - ovl.conjugate().transpose(), ord=np.inf
+                    )
                     if diff > self._hermitian_tol:
                         raise ValueError(
-                            'The overlap you used is not hermitian, with the maximum difference between the overlap matrix and its adjoint being {0}. Use the ``hermitian_tol`` input parameter (currently {1}) to set the sensitivity of this test or turn it off completely (``hermitian_tol=None``).'.
-                            format(diff, self._hermitian_tol)
+                            'The overlap you used is not hermitian, with the maximum difference between the overlap matrix and its adjoint being {0}. Use the ``hermitian_tol`` input parameter (currently {1}) to set the sensitivity of this test or turn it off completely (``hermitian_tol=None``).'
+                            .format(diff, self._hermitian_tol)
                         )
                 ovl2 = la.inv(la.sqrtm(ovl))
-                ortho_ham = np.dot(ovl2,ham.dot(ovl2))
+                ortho_ham = np.dot(ovl2, ham.dot(ovl2))
                 ham = ortho_ham
 
             eigval, eigvec = la.eigh(ham)

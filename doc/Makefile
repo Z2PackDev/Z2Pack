@@ -1,6 +1,7 @@
 # Makefile for Sphinx documentation
 #
 
+include config_fallback.mk
 include config.mk
 
 # User-friendly check for sphinx-build

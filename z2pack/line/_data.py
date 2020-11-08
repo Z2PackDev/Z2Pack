@@ -12,11 +12,10 @@ from .._utils import _gapfind
 
 class _LazyProperty:
     """Descriptor that replaces itself with the return value of the method when accessed. The class is unlocked before setting the attribute, s.t. it can be used with a Locker type class."""
-
     def __init__(self, method):
         self.method = method
 
-    def __get__(self, instance, owner):  # pylint: disable=missing-docstring
+    def __get__(self, instance, owner):  # pylint: disable=missing-function-docstring
         if not instance:
             return None
 
@@ -41,7 +40,6 @@ class WccLineData(metaclass=ConstLocker):
         The WCC are given in reduced coordinates, which means the possible values range from 0 to 1. The same is true for all values derived from the WCC.
 
     """
-
     def __init__(self, wcc):
         self.wcc = wcc
 
@@ -81,7 +79,6 @@ class OverlapLineData(WccLineData):
     * ``wilson`` : An array containing the Wilson loop (product of overlap matrices) for the line. The Wilson loop is given in the basis of the eigenstates at the start / end of the line.
     * ``wilson_eigenstates`` : Eigenstates of the Wilson loop, given as a list of 1D - arrays.
     """
-
     def __init__(self, overlaps, dmn=None):  # pylint: disable=super-init-not-called
 
         self.overlaps = [np.array(o, dtype=complex) for o in overlaps]
@@ -195,14 +192,13 @@ class EigenstateLineData(OverlapLineData):
     * ``symm_eigvals``: List of eigenvalues of the symmetry.
     * ``symm_eigvecs``: Column matrix of symmetry eigenvectors.
     """
-
     def __init__(self, eigenstates, symm_eigvals=None, symm_eigvecs=None):  # pylint: disable=super-init-not-called
         self.eigenstates = eigenstates
         self.symm_eigvals = symm_eigvals
         self.symm_eigvecs = symm_eigvecs
 
     @_LazyProperty
-    def overlaps(self):  # pylint: disable=method-hidden,missing-docstring
+    def overlaps(self):  # pylint: disable=method-hidden,missing-function-docstring
         overlaps = []
         for eig1, eig2 in zip(self.eigenstates, self.eigenstates[1:]):
             overlaps.append(np.dot(np.conjugate(eig1), np.array(eig2).T))

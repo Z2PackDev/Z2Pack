@@ -13,13 +13,12 @@ from ._utils import _pol_step
 
 def _plot(proj_3d=False):
     """Decorator that sets up the figure axes and handles options common to all plots."""
-
     @decorator.decorator
     def inner(func, data, *, axis=None, **kwargs):  # pylint: disable=inconsistent-return-statements
         # import is here s.t. the import of the package does not fail
         # if matplotlib is not present
-        import matplotlib.pyplot as plt
-        from mpl_toolkits.mplot3d import Axes3D  # pylint: disable=unused-variable
+        import matplotlib.pyplot as plt  # pylint: disable=import-outside-toplevel
+        from mpl_toolkits.mplot3d import Axes3D  # pylint: disable=import-outside-toplevel,unused-import
 
         # create axis if it does not exist
         if axis is None:
@@ -55,18 +54,24 @@ def _plot_gaps(surface_result, *, axis, gaps, gap_settings):
 @export
 @_plot()
 def wcc_symmetry(
-        surface_result,
-        *,
-        axis=None,
-        symmetry_operator,
-        wcc_settings={'s': 50., 'lw': 1.},
-        gaps=True,
-        gap_settings={'marker': 'D', 'color': 'b', 'linestyle': 'none'},
-        color_fct=lambda x: colorsys.hsv_to_rgb(
-            np.imag(np.log(x)) / (2 * np.pi) % 1,
-            min(1, np.exp(-abs(x) + 1)),
-            min(1, abs(x))
-        )
+    surface_result,
+    *,
+    axis=None,
+    symmetry_operator,
+    wcc_settings={
+        's': 50.,
+        'lw': 1.
+    },
+    gaps=True,
+    gap_settings={
+        'marker': 'D',
+        'color': 'b',
+        'linestyle': 'none'
+    },
+    color_fct=lambda x: colorsys.hsv_to_rgb(
+        np.imag(np.log(x)) /
+        (2 * np.pi) % 1, min(1, np.exp(-abs(x) + 1)), min(1, abs(x))
+    )
 ):
     r"""
     Plots the WCCs and the largest gaps (y-axis) against the t-points

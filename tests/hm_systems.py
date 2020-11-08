@@ -15,15 +15,14 @@ class OverlapMockSystem(z2pack.system.OverlapSystem):
     """
     OverlapSystem which just wraps an EigenstateSystem and creates the overlap matrix.
     """
-
     def __init__(self, eigenstate_system):
         self.eigenstate_system = eigenstate_system
 
     def get_mmn(self, kpt, use_symm=False):
         return [
-            z2pack.line.
-            EigenstateLineData(*self.eigenstate_system.get_eig(kpt)).overlaps,
-            None
+            z2pack.line.EigenstateLineData(
+                *self.eigenstate_system.get_eig(kpt)
+            ).overlaps, None
         ]
 
 
@@ -54,7 +53,6 @@ def _check_real(func):
     """
     Decorator that checks that the args passed to the function are reals.
     """
-
     def inner(*args):
         for x in args:
             assert isinstance(x, numbers.Real)
@@ -84,12 +82,8 @@ def weyl_system(request):
     Creates a Weyl point system.
     """
     res = z2pack.hm.System(
-        lambda k: np.array(
-            [
-                [k[2], k[0] -1j * k[1]],
-                [k[0] + 1j * k[1], -k[2]]
-            ]
-        )
+        lambda k: np.array([[k[2], k[0] - 1j * k[1]],
+                            [k[0] + 1j * k[1], -k[2]]])
     )
     if request.param:
         res = OverlapMockSystem(res)

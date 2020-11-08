@@ -15,7 +15,6 @@ class TagAdapter(logging.LoggerAdapter):
 
     :param default_tags:    Tags which are added to all LogRecords.
     """
-
     def __init__(self, logger, default_tags=()):
         super().__init__(logger, extra={'tags': set(default_tags)})
 
@@ -30,7 +29,6 @@ class TagAdapter(logging.LoggerAdapter):
 
 class TagFilter:
     """Filter a message if it has a tag which is in ``filter_tags``."""
-
     def __init__(self, filter_tags):
         self.filter_tags = filter_tags
 

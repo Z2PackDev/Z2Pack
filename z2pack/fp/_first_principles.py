@@ -49,7 +49,6 @@ class System(OverlapSystem):
 
     .. note:: ``input_files`` and ``build_folder`` can be absolute or relative paths, the rest is relative to ``build_folder``.
     """
-
     def __init__(
         self,
         *,

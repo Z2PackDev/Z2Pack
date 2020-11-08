@@ -56,7 +56,7 @@ where ``path_to_z2pack`` should be the path to the top folder of the downloaded 
 Installing the tight-binding backend
 ------------------------------------
 
-For calculating tight-binding models, Z2Pack uses the `TBmodels <http://z2pack.ethz.ch/tbmodels>`_ package. It is installed in the same way as Z2Pack:
+For calculating tight-binding models, Z2Pack uses the `TBmodels <http://tbmodels.greschd.ch>`_ package. It is installed in the same way as Z2Pack:
 
 .. code :: bash
 

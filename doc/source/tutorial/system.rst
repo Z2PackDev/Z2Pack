@@ -53,7 +53,7 @@ includes only the upper band (because the index starts at 0).
 
 Tight-binding models - :mod:`z2pack.tb`
 ---------------------------------------
-For tight-binding models, the `TBmodels <http://z2pack.ethz.ch/tbmodels>`_ package (which started its life as a part of Z2Pack) is used. TBmodels uses its :py:class:`tbmodels.Model` class to describe a tight-binding model. There are several ways to create those, described in the `TBmodels tutorial <http://z2pack.ethz.ch/tbmodels/tutorial.html>`_ . Instances of  :py:class:`tbmodels.Model` can be used to construct Z2Pack systems, using the :class:`z2pack.tb.System` class.
+For tight-binding models, the `TBmodels <https://tbmodels.greschd.ch>`_ package (which started its life as a part of Z2Pack) is used. TBmodels uses its :py:class:`tbmodels.Model` class to describe a tight-binding model. There are several ways to create those, described in the `TBmodels tutorial <https://tbmodels.greschd.ch/en/latest/tutorial.html>`_ . Instances of  :py:class:`tbmodels.Model` can be used to construct Z2Pack systems, using the :class:`z2pack.tb.System` class.
 
 The following code shows how to create a Z2Pack system from a tight-binding model given in Wannier90's ``*_hr.dat`` format.
 

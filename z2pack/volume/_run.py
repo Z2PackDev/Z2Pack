@@ -18,6 +18,7 @@ from .._logging_tools import TagAdapter, TagFilter, filter_manager
 _LOGGER = TagAdapter(_LOGGER, default_tags=('volume', ))
 
 from ..surface import _run as _surface_run
+from .. import io
 
 
 @export
@@ -130,10 +131,9 @@ def run_volume(
 
 
 # filter out LogRecords tagged as 'surface_only' in the surface.
-@filter_manager(   # noqa
-    logging.getLogger('z2pack.surface'),
-    TagFilter(('surface_only', ))
-) # noqa
+@filter_manager(
+    logging.getLogger('z2pack.surface'), TagFilter(('surface_only', ))
+)  # pylint: disable=too-many-locals
 def _run_volume_impl(
     *controls,
     system,
@@ -152,7 +152,6 @@ def _run_volume_impl(
 
     The other parameters are the same as for :meth:`.run`.
     """
-    from .. import io
     ctrl_container = VolumeControlContainer(controls)
 
     # HELPER FUNCTIONS
@@ -246,8 +245,8 @@ def _run_volume_impl(
             # get states from pre-existing Controls
             for s_ctrl in ctrl_container.stateful:
                 with contextlib.suppress(KeyError):
-                    s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__.
-                                                           __name__]
+                    s_ctrl.state = init_result.ctrl_states[
+                        s_ctrl.__class__.__name__]
 
             data = init_result.data
 

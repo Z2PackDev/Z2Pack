@@ -16,11 +16,13 @@ logging.getLogger('z2pack').setLevel(logging.CRITICAL)
 from z2pack._utils import _get_max_move
 
 
-def pytest_addoption(parser):  # pylint: disable=missing-docstring
-    parser.addoption('-A', action='store_true', help='run ABINIT tests')
-    parser.addoption('-V', action='store_true', help='run VASP tests')
+def pytest_addoption(parser):  # pylint: disable=missing-function-docstring
+    parser.addoption('--abinit', action='store_true', help='run ABINIT tests')
+    parser.addoption('--vasp', action='store_true', help='run VASP tests')
     parser.addoption(
-        '-Q', action='store_true', help='run Quantum ESPRESSO tests'
+        '--quantumespresso',
+        action='store_true',
+        help='run Quantum ESPRESSO tests'
     )
     parser.addoption(
         '--no-plot-compare',
@@ -29,7 +31,7 @@ def pytest_addoption(parser):  # pylint: disable=missing-docstring
     )
 
 
-def pytest_configure(config):  # pylint: disable=missing-docstring
+def pytest_configure(config):  # pylint: disable=missing-function-docstring
     # register additional marker
     config.addinivalue_line(
         "markers", "abinit: mark tests which run with ABINIT"
@@ -40,7 +42,7 @@ def pytest_configure(config):  # pylint: disable=missing-docstring
     )
 
 
-def pytest_runtest_setup(item):  # pylint: disable=missing-docstring
+def pytest_runtest_setup(item):  # pylint: disable=missing-function-docstring
     try:
         abinit_marker = item.get_marker("abinit")
         vasp_marker = item.get_marker("vasp")
@@ -50,13 +52,13 @@ def pytest_runtest_setup(item):  # pylint: disable=missing-docstring
         vasp_marker = item.get_closest_marker("vasp")
         qe_marker = item.get_closest_marker("qe")
     if abinit_marker is not None:
-        if not item.config.getoption("-A"):
+        if not item.config.getoption("--abinit"):
             pytest.skip("test runs only with ABINIT")
     if vasp_marker is not None:
-        if not item.config.getoption("-V"):
+        if not item.config.getoption("--vasp"):
             pytest.skip("test runs only with VASP")
     if qe_marker is not None:
-        if not item.config.getoption("-Q"):
+        if not item.config.getoption("--quantumespresso"):
             pytest.skip("test runs only with Quantum ESPRESSO")
 
 
@@ -69,7 +71,6 @@ def test_name(request):
 @pytest.fixture
 def compare_data(request, test_name, scope="session"):
     """Returns a function which either saves some data to a file or (if that file exists already) compares it to pre-existing data using a given comparison function."""
-
     def inner(compare_fct, data, tag=None):
         full_name = test_name + (tag or '')
         val = request.config.cache.get(full_name, None)
@@ -81,13 +82,10 @@ def compare_data(request, test_name, scope="session"):
                 )
             )
             raise ValueError('Reference data does not exist.')
-        else:
-            assert compare_fct(
-                val,
-                json.loads(
-                    json.dumps(data, default=z2pack.io._encoding.encode)
-                )
-            )  # get rid of json-specific quirks
+        assert compare_fct(
+            val,
+            json.loads(json.dumps(data, default=z2pack.io._encoding.encode))
+        )  # get rid of json-specific quirks
 
     return inner
 
@@ -100,7 +98,6 @@ def compare_equal(compare_data):
 @pytest.fixture
 def compare_wcc(compare_data):
     """Checks whether two lists of WCC (or nested lists of WCC) are almost equal, up to a periodic shift."""
-
     def check_wcc(wcc0, wcc1):
         """
         Check that two sets of WCC are equal.
@@ -120,7 +117,6 @@ def sample():
     """
     Returns the path to the sample of the given name.
     """
-
     def inner(name):
         return os.path.join(
             os.path.join(

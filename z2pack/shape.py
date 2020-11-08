@@ -27,7 +27,6 @@ class Sphere:
             surface=z2pack.shape.Sphere(center=[0, 0, 0], radius=0.1)
         )
     """
-
     def __init__(self, center, radius):
         self.center = center
         self.radius = radius
@@ -64,7 +63,6 @@ class Plane:
     spanning_vectors : list
         List of two vectors which span the plane.
     """
-
     def __init__(self, *, origin, spanning_vectors):
         #create surface based on vectors
         self._origin = np.array(origin)

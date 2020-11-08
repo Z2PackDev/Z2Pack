@@ -45,7 +45,6 @@ def test_invalid():
     """
     Test that trying to encode an invalid type raises.
     """
-
     class Bla:
         def __init__(self, x):
             self.x = x

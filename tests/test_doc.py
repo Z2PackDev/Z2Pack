@@ -21,7 +21,7 @@ def test_all_doc():
             del sys.modules[key]
     fsc.export.test_doc()
     try:
-        import z2pack  # pylint: disable=unused-variable
+        import z2pack  # pylint: disable=import-outside-toplevel,unused-import
     finally:
         # reset to the previous z2pack -- just doing import breaks pickle
         for key in list(sys.modules.keys()):

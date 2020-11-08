@@ -19,7 +19,6 @@ def qe_system_new(sample, qe_6_0_dir, wannier_2_1_dir):
     """
     Create QE system with explicit interface.
     """
-
     def inner(build_dir, num_wcc=None):
         sample_dir = sample('espresso_new')
         shutil.copytree(

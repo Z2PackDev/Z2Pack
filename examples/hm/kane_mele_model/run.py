@@ -26,8 +26,8 @@ def get_kane_mele_hamiltonian(t, lambda_v, lambda_R, lambda_SO):
         y = (kx + ky) / 2
         return (
             t * (1 + 2 * cos(x) * cos(y)) * kron(pauli_x, identity) +
-            lambda_v * kron(pauli_z, identity) +
-            lambda_R * (1 - cos(x) * cos(y)) * kron(pauli_y, pauli_x) +
+            lambda_v * kron(pauli_z, identity) + lambda_R *
+            (1 - cos(x) * cos(y)) * kron(pauli_y, pauli_x) +
             -sqrt(3) * lambda_R * sin(x) * sin(y) * kron(pauli_y, pauli_y) +
             2 * t * cos(x) * sin(y) * kron(pauli_y, identity) + lambda_SO *
             (2 * sin(2 * x) - 4 * sin(x) * cos(y)) * kron(pauli_z, pauli_z) +

@@ -26,7 +26,7 @@ examples/fp/**/results
 examples/fp/Bi2Se3_qe/scf
 examples/fp/Bi2Se3_qe/input/bi2se3.win
 # VASP license
-POTCAR 
+POTCAR
 # to work with old git on Brutus
 tests/samples/vasp/POTCAR
 examples/fp/Bi_vasp/input/POTCAR
@@ -37,13 +37,6 @@ dist
 MANIFEST
 *.tar.gz
 files*.txt
-
-# ignoring the _ptools git
-z2pack/_ptools/.git
-z2pack/_ptools/.gitignore
-
-# selectively choose _ptools
-z2pack/_ptools/*
 
 # debug folder
 debug
@@ -59,5 +52,10 @@ tests/.pytest_cache
 # "do not commit this to version control" -- don't tell me what to do :)
 !.pytest_cache/v/test_*
 .coverage
-.coverage*
 htmlcov
+
+# editors
+.vscode
+
+# Jupyter
+.ipynb_checkpoints

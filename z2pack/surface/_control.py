@@ -15,7 +15,6 @@ class SurfaceControlContainer(ControlContainer):
     """
     Container for controls used in the surface run.
     """
-
     def __init__(self, controls):
         super().__init__(
             controls=controls,
@@ -35,7 +34,6 @@ class MoveCheck(DataControl, ConvergenceControl, SurfaceControl):
     """
     Performs the check whether the WCC in neighbouring lines have moved too much.
     """
-
     def __init__(self, *, move_tol):
         self.move_tol = move_tol
         self._converged = None
@@ -57,7 +55,6 @@ class GapCheck(DataControl, ConvergenceControl, SurfaceControl):
     """
     Performs the check whether the largest gap is too close to WCC in neighbouring lines.
     """
-
     def __init__(self, *, gap_tol):
         self.gap_tol = gap_tol
         self._converged = None

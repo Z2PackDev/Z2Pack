@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-This module contains the class for creating systems based on `TBmodels <http://z2pack.ethz.ch/tbmodels>`_ tight-binding models.
+This module contains the class for creating systems based on `TBmodels <https://tbmodels.greschd.ch>`_ tight-binding models.
 """
 
 import copy
@@ -23,7 +23,6 @@ class System(_HmSystem):
 
     The ``pos``, ``bands`` and ``dim`` keywords of :class:`.hm.System` are determined from the ``tb_model`` unless otherwise specified.
     """
-
     def __init__(self, tb_model, **kwargs):
         super().__init__(
             hamilton=tb_model.hamilton,

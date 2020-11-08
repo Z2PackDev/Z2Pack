@@ -14,7 +14,6 @@ class LineControlContainer(ControlContainer):
     """
     Container for controls used in the line run.
     """
-
     def __init__(self, controls):
         super().__init__(
             controls=controls,
@@ -31,7 +30,6 @@ class LineControlContainer(ControlContainer):
 @export
 class StepCounter(IterationControl, StatefulControl, LineControl):
     """Counts the number of k-points along the line."""
-
     def __init__(self, *, iterator):
         super().__init__()
         self._iterator = iter(iterator)
@@ -56,7 +54,6 @@ class StepCounter(IterationControl, StatefulControl, LineControl):
 @export
 class ForceFirstUpdate(DataControl, ConvergenceControl, LineControl):
     """Makes sure at least one update is done, even when the pos_tol argument is not used."""
-
     def __init__(self):
         self._converged = False
 
@@ -81,7 +78,6 @@ class PosCheck(
     :param pos_tol: Tolerance in the maximum movement of a single WCC position.
     :type pos_tol: float
     """
-
     def __init__(self, *, pos_tol):
         super().__init__()
         if not 0 < pos_tol <= 1:

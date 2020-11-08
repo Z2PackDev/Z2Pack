@@ -11,6 +11,7 @@ from . import _LOGGER
 from . import SurfaceData, SurfaceResult
 from ._control import _create_surface_controls, SurfaceControlContainer
 
+from .. import io
 from .._run_utils import _load_init_result, _check_save_dir, _log_run
 from .._async_handler import AsyncHandler
 from .._logging_tools import TagAdapter, TagFilter, filter_manager
@@ -140,11 +141,8 @@ def run_surface(
 
 
 # filter out LogRecords tagged as 'line_only' in the line.
-@filter_manager(   # noqa
-    logging.getLogger('z2pack.line'),
-    TagFilter(('line_only', ))
-) # noqa
-def _run_surface_impl(
+@filter_manager(logging.getLogger('z2pack.line'), TagFilter(('line_only', )))
+def _run_surface_impl(  # pylint: disable=too-many-locals
     *controls,
     system,
     surface,
@@ -162,7 +160,7 @@ def _run_surface_impl(
 
     The other parameters are the same as for :meth:`.run`.
     """
-    from .. import io
+
     # CONTROL SETUP
     ctrl_container = SurfaceControlContainer(controls)
 
@@ -256,8 +254,8 @@ def _run_surface_impl(
             # get states from pre-existing Controls
             for s_ctrl in ctrl_container.stateful:
                 with contextlib.suppress(KeyError):
-                    s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__.
-                                                           __name__]
+                    s_ctrl.state = init_result.ctrl_states[
+                        s_ctrl.__class__.__name__]
 
             data = init_result.data
 

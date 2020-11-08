@@ -20,7 +20,6 @@ def qe_system(request, sample, qe_5_4_dir, wannier_2_1_dir):
     """
     Creates a QE system.
     """
-
     def inner(build_dir, num_wcc=None):
         sample_dir = sample('espresso')
         shutil.copytree(

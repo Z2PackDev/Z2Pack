@@ -17,7 +17,6 @@ from . import __version__
 
 class DefaultFormatter(logging.Formatter):
     """Formatter used for z2pack logs"""
-
     def __init__(self):
         self.term = blessings.Terminal()
         super().__init__(style='{')
@@ -90,8 +89,8 @@ class DefaultFormatter(logging.Formatter):
         """Create message from setup record."""
         kwargs = record.msg
 
-        calc_type = (set(record.tags) & set(['volume', 'line', 'surface']
-                                            )).pop()
+        calc_type = (set(record.tags)
+                     & set(['volume', 'line', 'surface'])).pop()
         msg = self._make_title(
             '{} CALCULATION'.format(calc_type.upper()),
             '=',

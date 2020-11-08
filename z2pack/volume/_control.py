@@ -20,7 +20,6 @@ class VolumeControlContainer(ControlContainer):
     """
     Container for controls used in the surface run.
     """
-
     def __init__(self, controls):
         super().__init__(
             controls=controls,

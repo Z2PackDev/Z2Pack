@@ -16,9 +16,8 @@ class VolumeResult(Result):
         result = z2pack.volume.run(...)
         print(result.s) # prints the positions of the surfaces
     """
-
-    @property  # noqa
-    def convergence_report(self):  # noqa
+    @property
+    def convergence_report(self):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
         r"""
         Convergence report (as a dict) for the result. The keys of the dictionary indicate the type of convergence test. For each of the tests, a dictionary with keys 'PASSED', 'FAILED' and (optionally) 'MISSING' shows the number of tests of this kind which either passed, failed, or were not performed.
         """

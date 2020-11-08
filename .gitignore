@@ -26,7 +26,7 @@ examples/fp/**/results
 examples/fp/Bi2Se3_qe/scf
 examples/fp/Bi2Se3_qe/input/bi2se3.win
 # VASP license
-POTCAR 
+POTCAR
 # to work with old git on Brutus
 tests/samples/vasp/POTCAR
 examples/fp/Bi_vasp/input/POTCAR
@@ -50,8 +50,6 @@ decorator.py
 tests/.pytest_cache
 .pytest_cache/v/cache
 .coverage
-.coverage*
-!.coveragerc
 htmlcov
 
 # editors

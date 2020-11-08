@@ -185,9 +185,10 @@ def test_load_reference(simple_system, test_name, simple_volume, serializer):
     Compare surface result to a reference from a file.
     """
     tag = test_name.split('/')[1]
-    path = 'reference_results/volume_result_{}.'.format(
-        tag
-    ) + serializer.__name__
+    path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'reference_results',
+        'volume_result_{}.'.format(tag) + serializer.__name__
+    )
     result = z2pack.volume.run(system=simple_system, volume=simple_volume)
     if not os.path.isfile(path):
         z2pack.io.save(result, path, serializer=serializer)

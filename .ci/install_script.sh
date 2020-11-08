@@ -5,6 +5,7 @@
 # Be verbose, and stop with error as soon there's one
 set -ev
 
+pip install codecov
 pip install -U pip setuptools wheel
 
 case "$INSTALL_TYPE" in

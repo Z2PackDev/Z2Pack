@@ -1,0 +1,121 @@
+name: Continuous Integration
+
+on: [push, pull_request]
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8]
+        install-type: [dev]
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install apt dependencies
+      run: |
+        sudo apt update -qq
+        sudo apt install -qq graphviz
+
+    - uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: pip-${{ matrix.python-version }}-${{ matrix.install-type }}-${{ hashFiles('**/setup.json')
+          }}
+        restore-keys: pip-${{ matrix.python-version }}-${{ matrix.install-type }}
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install the python project
+      env:
+        INSTALL_TYPE: ${{ matrix.install-type }}
+      run: .ci/install_script.sh
+
+    - name: Build documentation
+      env:
+        READTHEDOCS: 'True'
+      run: SPHINXOPTS='-nW' make -C doc html
+    - uses: actions/upload-artifact@v2
+      with:
+        name: doc-build
+        path: doc/build/html
+
+  pre-commit:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8]
+        install-type: [dev]
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install apt dependencies
+      run: |
+        sudo apt update -qq
+        sudo apt install -qq graphviz
+
+    - uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: pip-${{ matrix.python-version }}-${{ matrix.install-type }}-${{ hashFiles('**/setup.json')
+          }}
+        restore-keys: pip-${{ matrix.python-version }}-${{ matrix.install-type }}
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install the python project
+      env:
+        INSTALL_TYPE: ${{ matrix.install-type }}
+      run: .ci/install_script.sh
+
+    - name: Run pre-commit
+      run: pre-commit run --all-files || ( git status --short ; git diff ; exit 1
+        )
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8]
+        install-type: [dev]
+        include:
+        - python-version: 3.8
+          install-type: dev_sdist
+        - python-version: 3.8
+          install-type: dev_bdist_wheel
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install apt dependencies
+      run: |
+        sudo apt update -qq
+        sudo apt install -qq graphviz
+
+    - uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: pip-${{ matrix.python-version }}-${{ matrix.install-type }}-${{ hashFiles('**/setup.json')
+          }}
+        restore-keys: pip-${{ matrix.python-version }}-${{ matrix.install-type }}
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install the python project
+      env:
+        INSTALL_TYPE: ${{ matrix.install-type }}
+      run: .ci/install_script.sh
+
+    - name: Run pytest
+      run: pytest --cov=z2pack --cov-config=.coveragerc
+    - name: Run codecov
+      run: codecov

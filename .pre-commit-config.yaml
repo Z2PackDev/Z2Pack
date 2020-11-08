@@ -5,9 +5,22 @@ repos:
   - id: yapf
     language: system
 
-- repo: git://github.com/guykisel/prospector-mirror
-  rev: 7ff847e779347033ebbd9e3b88279e7f3a998b45
+- repo: local
   hooks:
-  - id: prospector
+  - id: pylint
+    name: pylint
+    entry: pylint
     language: system
-    exclude: '^(doc/)|(examples/)|(futures/)'
+    types: [python]
+    exclude: '^(doc/)|(examples/)|(futures/)|(utils/)'
+
+  - id: interpolate-workflows
+    name: Interpolate Github workflows
+    entry: python ./utils/interpolate_yaml_anchors.py
+    language: system
+    files: |
+      (?x)^(
+        .github/(.)*|
+        utils/interpolate_yaml_anchors.py
+      )$
+    pass_filenames: false

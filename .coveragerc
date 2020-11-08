@@ -1,0 +1,7 @@
+[run]
+source = z2pack
+
+[report]
+exclude_lines =
+    # Ignore lines used only for mypy runs
+    if ty\.TYPE_CHECKING:

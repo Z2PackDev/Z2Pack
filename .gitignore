@@ -51,6 +51,7 @@ tests/.pytest_cache
 .pytest_cache/v/cache
 .coverage
 .coverage*
+!.coveragerc
 htmlcov
 
 # editors

@@ -5,9 +5,7 @@
 # Be verbose, and stop with error as soon there's one
 set -ev
 
-cd ${TRAVIS_BUILD_DIR}
-
-pip install -U pip
+pip install -U pip setuptools wheel
 
 case "$INSTALL_TYPE" in
     dev)
@@ -15,6 +13,10 @@ case "$INSTALL_TYPE" in
         ;;
     dev_sdist)
         python setup.py sdist
+        ls -1 dist/ | xargs -I % pip install dist/%[dev]
+        ;;
+    dev_bdist_wheel)
+        python setup.py bdist_wheel
         ls -1 dist/ | xargs -I % pip install dist/%[dev]
         ;;
 esac

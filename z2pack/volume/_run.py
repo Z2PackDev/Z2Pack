@@ -131,10 +131,9 @@ def run_volume(
 
 
 # filter out LogRecords tagged as 'surface_only' in the surface.
-@filter_manager(   # noqa
-    logging.getLogger('z2pack.surface'),
-    TagFilter(('surface_only', ))
-) # noqa
+@filter_manager(
+    logging.getLogger('z2pack.surface'), TagFilter(('surface_only', ))
+)  # pylint: disable=too-many-locals
 def _run_volume_impl(
     *controls,
     system,

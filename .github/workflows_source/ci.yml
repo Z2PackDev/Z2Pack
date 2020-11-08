@@ -1,0 +1,91 @@
+name: Continuous Integration
+
+on: [push, pull_request]
+
+_anchors:
+  checkout: &CHECKOUT
+    name: Checkout code
+    uses: actions/checkout@v2
+
+  apt-dependencies: &APT_DEPENDENCIES
+    name: Install apt dependencies
+    run: |
+      sudo apt update -qq
+      sudo apt install -qq graphviz
+
+  pip-cache: &PIP_CACHE
+    uses: actions/cache@v2
+    with:
+      path: ~/.cache/pip
+      key: pip-${{ matrix.python-version }}-${{ matrix.install-type }}-${{ hashFiles('**/setup.json') }}
+      restore-keys: pip-${{ matrix.python-version }}-${{ matrix.install-type }}
+
+  python-setup: &PYTHON_SETUP
+    name: Set up Python
+    uses: actions/setup-python@v2
+    with:
+      python-version: ${{ matrix.python-version }}
+
+  install-project: &INSTALL_PROJECT
+    name: Install the python project
+    env:
+      INSTALL_TYPE: ${{ matrix.install-type }}
+    run: .ci/install_script.sh
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8]
+        install-type: [dev]
+    steps:
+      - *CHECKOUT
+      - *APT_DEPENDENCIES
+      - *PIP_CACHE
+      - *PYTHON_SETUP
+      - *INSTALL_PROJECT
+      - name: Build documentation
+        env:
+          READTHEDOCS: "True"
+        run: SPHINXOPTS='-nW' make -C doc html
+      - uses: actions/upload-artifact@v2
+        with:
+          name: doc-build
+          path: doc/build/html
+
+  pre-commit:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8]
+        install-type: [dev]
+    steps:
+      - *CHECKOUT
+      - *APT_DEPENDENCIES
+      - *PIP_CACHE
+      - *PYTHON_SETUP
+      - *INSTALL_PROJECT
+      - name: Run pre-commit
+        run: pre-commit run --all-files || ( git status --short ; git diff ; exit 1 )
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8]
+        install-type: [dev]
+        include:
+          - python-version: 3.8
+            install-type: dev_sdist
+          - python-version: 3.8
+            install-type: dev_bdist_wheel
+    steps:
+      - *CHECKOUT
+      - *APT_DEPENDENCIES
+      - *PIP_CACHE
+      - *PYTHON_SETUP
+      - *INSTALL_PROJECT
+      - name: Run pytest
+        run: pytest --cov=z2pack --cov-config=.coveragerc
+      - name: Run codecov
+        run: codecov

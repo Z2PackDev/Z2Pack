@@ -21,7 +21,7 @@ An important way in which new users can contribute is by writing or improving th
 
 To build the documentation locally, you first need to pull the Z2Pack source, and install it (preferrably in a virtualenv) with
 
-    pip install -e path_to_z2pack_source[doc]
+    pip install -e path_to_z2pack_source[dev]
 
 where ``path_to_z2pack_source`` needs to be replaced with the top-level path of the Z2Pack source. In the ``doc`` subfolder, copy the configuration template ``config.mk.tpl`` to ``config.mk``. After that, you can simply call ``make`` to build and ``make view`` to open the documentation.
 

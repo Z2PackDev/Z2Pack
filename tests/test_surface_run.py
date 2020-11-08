@@ -279,7 +279,10 @@ def test_load_reference(simple_system, test_name, simple_surface, serializer):
     Compare surface result to a reference from a file.
     """
     tag = test_name.split('/')[1]
-    path = 'reference_results/result_{}.'.format(tag) + serializer.__name__
+    path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'reference_results',
+        'result_{}.'.format(tag) + serializer.__name__
+    )
     result = z2pack.surface.run(system=simple_system, surface=simple_surface)
     if not os.path.isfile(path):
         z2pack.io.save(result, path, serializer=serializer)
@@ -298,7 +301,10 @@ def test_load_reference_legacy_v1(
     if serializer is pickle:
         return
     tag = test_name.split('/')[1]
-    path = 'reference_results/result_{}.'.format(tag) + serializer.__name__
+    path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'reference_results',
+        'result_{}.'.format(tag) + serializer.__name__
+    )
     result = z2pack.surface.run(system=simple_system, surface=simple_surface)
     if not os.path.isfile(path):
         z2pack.io.save(result, path, serializer=serializer)

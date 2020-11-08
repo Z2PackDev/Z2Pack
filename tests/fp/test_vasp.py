@@ -34,13 +34,14 @@ def vasp_system(sample):
 
 
 @pytest.fixture
-def vasp_system_no_potcar():
+def vasp_system_no_potcar(sample):
     """
     Create a VASP system without the POTCAR file.
     """
     def inner(build_dir):
+        samples_dir = sample('vasp')
         input_files = [
-            'samples/vasp/' + name
+            os.path.join(samples_dir, name)
             for name in ['CHGCAR', 'INCAR', 'POSCAR', 'wannier90.win']
         ]
         return z2pack.fp.System(

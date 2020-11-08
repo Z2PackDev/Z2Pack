@@ -7,10 +7,10 @@ import numpy as np
 import z2pack
 
 
-def test_read(compare_data):
+def test_read(compare_data, sample):
     compare_data(
         lambda x, y: np.equal(x, y).all(),
-        z2pack.fp._read_mmn.get_m('samples/mmn/bi.mmn')
+        z2pack.fp._read_mmn.get_m(sample('mmn/bi.mmn'))
     )
 
 

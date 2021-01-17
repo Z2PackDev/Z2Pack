@@ -11,8 +11,8 @@ import xml.etree.ElementTree as ET
 import z2pack
 
 # Edit the paths to your Quantum Espresso and Wannier90 here
-qedir = '/home/greschd/software/qe-6.2/bin'
-wandir = '/home/greschd/software/wannier90-2.1.0'
+qedir = '/home/greschd/software/spack/opt/spack/linux-ubuntu20.04-skylake/gcc-9.3.0/quantum-espresso-6.6-hzv46p4wdlvw6rrgq3cqnz7fwwzd7um6/bin'
+wandir = '/home/greschd/software/spack/opt/spack/linux-ubuntu20.04-skylake/gcc-9.3.0/wannier90-3.1.0-ldgbc7e5fmfkvjiyf2xiyzfopyr5haqa/bin'
 
 # Commands to run pw, pw2wannier90, wannier90
 mpirun = 'mpirun -np 4 '
@@ -21,7 +21,7 @@ pw2wancmd = mpirun + qedir + '/pw2wannier90.x '
 wancmd = wandir + '/wannier90.x'
 
 z2cmd = (
-    wancmd + ' bi -pp;' + pwcmd + '< bi.nscf.in >& pw.log;' + pw2wancmd +
+    wancmd + ' -pp bi;' + pwcmd + '< bi.nscf.in >& pw.log;' + pw2wancmd +
     '< bi.pw2wan.in >& pw2wan.log;'
 )
 
@@ -55,7 +55,7 @@ input_files = [
 ]
 system = z2pack.fp.System(
     input_files=input_files,
-    kpt_fct=[z2pack.fp.kpoint.qe, z2pack.fp.kpoint.wannier90_full],
+    kpt_fct=[z2pack.fp.kpoint.qe_explicit, z2pack.fp.kpoint.wannier90_full],
     kpt_path=["bi.nscf.in", "bi.win"],
     command=z2cmd,
     executable='/bin/bash',
@@ -67,12 +67,14 @@ result_0 = z2pack.surface.run(
     system=system,
     surface=lambda s, t: [0, s / 2, t],
     save_file='./results/res_0.json',
+    min_neighbour_dist=1e-3,
     load=True
 )
 result_1 = z2pack.surface.run(
     system=system,
     surface=lambda s, t: [0.5, s / 2, t],
     save_file='./results/res_1.json',
+    min_neighbour_dist=1e-3,
     load=True
 )
 

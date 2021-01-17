@@ -1,6 +1,6 @@
-num_wann 10
-num_bands 10
-exclude_bands 11 - 16
+num_wann 30
+num_bands 30
+exclude_bands 31 - 36
 spinors : false
 num_iter 0
 use_bloch_phases : true

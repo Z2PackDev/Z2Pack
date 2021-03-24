@@ -76,14 +76,6 @@ def kpt_elk(kpt):
 elkdir = '$HOME/Z2pack/elk-6.8.4/src/elk'
 
 
-
-#I started only with elk.in in the inputs. In the QE tutorial, it started with tpl_bi.win also, copying the units and lattice to them, as well as the number of wannier bands
-
-#first Wannierize data, next run nscf/bands calculation, next convert to Wannier
-#in elk.in have both the bands calculation (20) and elk2wannier 550
-
-
-
 # creating the results folder, running the SCF calculation if needed
 if not os.path.exists('./plots'):
     os.mkdir('./plots')
@@ -93,7 +85,7 @@ if not os.path.exists('./ground'):
     os.makedirs('./ground')
     print("Running the ground state calculation")    
     #copy all scf calc *.OUT files to wannBands folder, generate initial wannier90 files (*.win, *.mmn, 
-    shutil.copyfile('input/elkSCFwann.in', 'ground/elk.in')
+    shutil.copyfile('input/elk.in', 'ground/elk.in')
     subprocess.call(elkdir + ' >& elkWannier.log', shell=True, cwd='./ground')
 
 #%%Initial SCF calculation has run in the *.input directory
@@ -111,7 +103,7 @@ system = z2pack.fp.System(
     input_files=input_files,
     kpt_fct=kpt_elk,
     kpt_path="elk.in",
-    command='/home-2/epogue1@jhu.edu/Z2pack/elk-6.8.4/src/elk >& elk.log',
+    command=elkdir+' >& elk.log',
     mmn_path='wannier.mmn'
 )
 

@@ -7,9 +7,9 @@ import subprocess
 import matplotlib.pyplot as plt
 import xml.etree.ElementTree as ET
 import numpy as np
-import z2pack2 as z2pack
+import z2pack
 
-# Edit the paths to your Elk  here
+# Edit the paths to your Elk here
 elkdir = '$HOME/Z2pack/elk-6.8.4/src/elk'
 
 
@@ -23,18 +23,23 @@ if not os.path.exists('./ground'):
     print("Running the ground state calculation")    
     #do initial ground-state calculation in the ground folder using elk.in in the input folder 
     shutil.copyfile('input/elk.in', 'ground/elk.in')
-    subprocess.call(elkdir + ' >& elkWannier.log', shell=True, cwd='./ground')
+    out = subprocess.call(
+        elkdir + ' >& elkWannier.log', shell=True, cwd='./ground'
+    )
+    if out != 0:
+        raise RuntimeError(
+            'Error in Ground state call. Inspect ground folder for details, and delete it to re-run the ground-state (task 0) calculation.'
+        )
 
-#%%Initial SCF calculation has run in the *.input directory
 
 
-# Creating the System. Note that the SCF charge file does not need to be
-# copied, but instead can be referenced in the .files file.
-# The k-points input is appended to the .in file. I am not entirely sure which files are absolutely necessary so this is an exhaustive list.
+# Collecting the files for the surface calculation
+# The k-point nearest neighbors list/kpoints string is appended to the .in file, starting on the last line, and there can be no extra lines in between the shell_list and the nnkpts lines. The nnkpts line should be added directly to the end of elkWannBands.in automatically by Z2pack during the surface calculation (becomes build/elk.in).  
 input_files = [    'ground/' + name for name in ["elk.in","STATE.OUT", "INFO.OUT", "GEOMETRY.OUT", "LINENGY.OUT", "DTOTENERGY.OUT", "EFERMI.OUT","EIGVAL.OUT", "EQATOMS.OUT", "EVALCORE.OUT", "EVALFV.OUT", "EVALSV.OUT","EVECFV.OUT","EVECSV.OUT", "FERMIDOS.OUT", "GAP.OUT", "GEOMETRY.OUT", "IADIST.OUT", "LATTICE.OUT","KPOINTS.OUT", "MOMENT.OUT", "MOMENTM.OUT","OCCSV.OUT","RMSDVS.OUT","SYMCRYS.OUT", "SYMLAT.OUT", "SYMSITE.OUT","TOTENERGY.OUT"]]
-
-#note that this ensures that elkWannBands.in is used rather than what was used for the Ground state calculation. These all end up showing up in the Build directory
+#note that this ensures that elkWannBands.in is used rather than what was used for the Ground state calculation. These all end up showing up in the build directory
 shutil.copyfile('input/elkWannBands.in', 'ground/elk.in')
+
+# Create the Z2Pack system.
 system = z2pack.fp.System(
     input_files=input_files,
     kpt_fct=z2pack.fp.kpoint.elk,

@@ -204,8 +204,7 @@ def vasp(kpt):
 @_check_closed
 def elk(kpt):
     """
-    Creates a k-point input for  **ELK**. It uses the automatic generation scheme with a Gamma centered grid. Note that VASP does **not** support any kind of k-point line **unless** 
-they are exactly along one of the reciprocal lattice vectors, and the k-points are evenly spaced.
+    Creates a k-point input for  **ELK**. It uses the automatic generation scheme with a Gamma centered grid. Note that VASP does **not** support any kind of k-point line **unless** they are exactly along one of the reciprocal lattice vectors, and the k-points are evenly spaced.
     """
     # VALIDITY CHECKS
     # check if the points are equally-spaced

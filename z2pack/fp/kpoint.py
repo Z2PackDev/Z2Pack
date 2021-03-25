@@ -78,7 +78,7 @@ def qe(kpt):  # pylint: disable=invalid-name
     string = "\nK_POINTS crystal_b\n 2 \n"
     for coord in start_point:
         string += str(coord).replace('e', 'd') + ' '
-    string += str(num_kpt - 1)+'\n'
+    string += str(num_kpt - 1) +'\n'
     for coord in last_point:
         string += str(coord).replace('e', 'd') + ' '
     string += str(1) + '\n'

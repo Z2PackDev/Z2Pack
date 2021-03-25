@@ -221,7 +221,6 @@ they are exactly along one of the reciprocal lattice vectors, and the k-points a
     string+='\n'
     return string
 
-
 def _check_equal_spacing(kpt, run_type):
     """Checks if the k-points are equally spaced, and throws an error if not. run_type is added in the error message."""
     deltas = [(k2 - k1) % 1 for k2, k1 in zip(kpt[1:], kpt[:-1])]

@@ -224,7 +224,6 @@ def elk(kpt):
             raise ValueError(
                 'The k-points must be aligned in (positive) kx-, ky- or kz-direction for ELK runs.'
             )
-    mesh_str = ' '.join(mesh)
 
     if len(nonzero) != 1:
         raise ValueError(

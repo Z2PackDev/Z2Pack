@@ -252,8 +252,8 @@ they are exactly along one of the reciprocal lattice vectors, and the k-points a
 def _check_equal_spacing(kpt, run_type):
     """Checks if the k-points are equally spaced, and throws an error if not. run_type is added in the error message."""
     deltas = [(k2 - k1) % 1 for k2, k1 in zip(kpt[1:], kpt[:-1])]
-    for d in deltas[1:]:
-        if not np.isclose(d, deltas[0]).all():
+    for spacing in deltas[1:]:
+        if not np.isclose(spacing, deltas[0]).all():
             raise ValueError(
                 'The k-points must be equally spaced for {} runs.'.
                 format(run_type)

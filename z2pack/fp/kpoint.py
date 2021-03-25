@@ -230,7 +230,6 @@ def elk(kpt):
             'The k-points can change only in kx-, ky- or kz direction for ELK runs. The given k-points change in {} directions.'
             .format(len(nonzero))
         )
-    
 
     start_point = kpt[0]
     if not np.isclose(start_point[nonzero[0]], 0):
@@ -238,12 +237,12 @@ def elk(kpt):
             'The k-points must start at k{0} = 0 for ELK runs, since they change in k{0}-direction.'
             .format(['x', 'y', 'z'][nonzero[0]])
         )
-    s=wannier90_nnkpts(kpt)
-    string=s+'\n\nngridk\n'+'1 1 '+str(num_kpt)+'\n\n'
-    string+='vkloff\n'
+    s = wannier90_nnkpts(kpt)
+    string = s + '\n\nngridk\n' + '1 1 ' + str(num_kpt) + '\n\n'
+    string += 'vkloff\n'
     for coord in start_point:
-        string+=str(coord).replace('e', 'd')+' '
-    string+='\n'
+        string += str(coord).replace('e', 'd') + ' '
+    string += '\n'
     return string
 
 

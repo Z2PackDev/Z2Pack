@@ -1,2 +1,2 @@
 #!/bin/bash
-rm -rf ground build results plots;
+rm -rf ground build results plots

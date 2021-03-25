@@ -9,11 +9,11 @@ import xml.etree.ElementTree as ET
 import numpy as np
 import z2pack2 as z2pack
 
-# Edit the paths to your Elk and Wannier90 here
+# Edit the paths to your Elk  here
 elkdir = '$HOME/Z2pack/elk-6.8.4/src/elk'
 
 
-# creating the results folder, running the SCF calculation if needed
+# creating the results folder, running the ground state calculation if needed
 if not os.path.exists('./plots'):
     os.mkdir('./plots')
 if not os.path.exists('./results'):
@@ -21,7 +21,7 @@ if not os.path.exists('./results'):
 if not os.path.exists('./ground'):
     os.makedirs('./ground')
     print("Running the ground state calculation")    
-    #copy all scf calc *.OUT files to wannBands folder, generate initial wannier90 files (*.win, *.mmn, etc.) 
+    #do initial ground-state calculation in the ground folder using elk.in in the input folder 
     shutil.copyfile('input/elk.in', 'ground/elk.in')
     subprocess.call(elkdir + ' >& elkWannier.log', shell=True, cwd='./ground')
 

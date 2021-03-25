@@ -67,7 +67,7 @@ def abinit(kpt):
 @export
 @_check_dim
 @_check_closed
-def qe(kpt):
+def qe(kpt):  # pylint: disable=invalid-name
     """
     Creates a k-point input for  **Quantum Espresso**.
     """
@@ -78,10 +78,10 @@ def qe(kpt):
     string = "\nK_POINTS crystal_b\n 2 \n"
     for coord in start_point:
         string += str(coord).replace('e', 'd') + ' '
-    string += str(num_kpt-1)+'\n'
+    string += str(num_kpt - 1)+'\n'
     for coord in last_point:
         string += str(coord).replace('e', 'd') + ' '
-    string += str(1)+'\n'
+    string += str(1) + '\n'
     return string
 
 
@@ -166,12 +166,12 @@ def vasp(kpt):
     # check if it's positive x, y or z direction
     nonzero = []
     mesh = []
-    for i, d in enumerate(delta):
-        if np.isclose(d, 0):
+    for i, spacing in enumerate(delta):
+        if np.isclose(spacing, 0):
             mesh.append('1')
-        elif np.isclose(d, 1 / N):
+        elif np.isclose(spacing, 1 / num_kpt):
             nonzero.append(i)
-            mesh.append(str(N))
+            mesh.append(str(num_kpt))
         else:
             raise ValueError(
                 'The k-points must be aligned in (positive) kx-, ky- or kz-direction for VASP runs.'
@@ -215,12 +215,12 @@ they are exactly along one of the reciprocal lattice vectors, and the k-points a
     # check if it's positive x, y or z direction
     nonzero = []
     mesh = []
-    for i, d in enumerate(delta):
-        if np.isclose(d, 0):
+    for i, spacing in enumerate(delta):
+        if np.isclose(spacing, 0):
             mesh.append('1')
-        elif np.isclose(d, 1 / N):
+        elif np.isclose(spacing, 1 / num_kpt):
             nonzero.append(i)
-            mesh.append(str(N))
+            mesh.append(str(num_kpt))
         else:
             raise ValueError(
                 'The k-points must be aligned in (positive) kx-, ky- or kz-direction for ELK runs.'
@@ -233,14 +233,14 @@ they are exactly along one of the reciprocal lattice vectors, and the k-points a
             .format(len(nonzero))
         )
     
-    s=wannier90_nnkpts(kpt)
-    
+
     start_point = kpt[0]
     if not np.isclose(start_point[nonzero[0]], 0):
         raise ValueError(
             'The k-points must start at k{0} = 0 for ELK runs, since they change in k{0}-direction.'
             .format(['x', 'y', 'z'][nonzero[0]])
         )
+    s=wannier90_nnkpts(kpt)
     string=s+'\n\nngridk\n'+'1 1 '+str(num_kpt)+'\n\n'
     string+='vkloff\n'
     for coord in start_point:

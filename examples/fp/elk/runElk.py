@@ -12,7 +12,6 @@ import z2pack
 # Edit the paths to your Elk here
 elkdir = '$HOME/Z2pack/elk-6.8.4/src/elk'
 
-
 # creating the results folder, running the ground state calculation if needed
 if not os.path.exists('./plots'):
     os.mkdir('./plots')
@@ -20,8 +19,8 @@ if not os.path.exists('./results'):
     os.mkdir('./results')
 if not os.path.exists('./ground'):
     os.makedirs('./ground')
-    print("Running the ground state calculation")    
-    #do initial ground-state calculation in the ground folder using elk.in in the input folder 
+    print("Running the ground state calculation")
+    #do initial ground-state calculation in the ground folder using elk.in in the input folder
     shutil.copyfile('input/elk.in', 'ground/elk.in')
     out = subprocess.call(
         elkdir + ' >& elkWannier.log', shell=True, cwd='./ground'
@@ -31,11 +30,18 @@ if not os.path.exists('./ground'):
             'Error in Ground state call. Inspect ground folder for details, and delete it to re-run the ground-state (task 0) calculation.'
         )
 
-
-
 # Collecting the files for the surface calculation
-# The k-point nearest neighbors list/kpoints string is appended to the .in file, starting on the last line, and there can be no extra lines in between the shell_list and the nnkpts lines. The nnkpts line should be added directly to the end of elkWannBands.in automatically by Z2pack during the surface calculation (becomes build/elk.in).  
-input_files = [    'ground/' + name for name in ["elk.in","STATE.OUT", "INFO.OUT", "GEOMETRY.OUT", "LINENGY.OUT", "DTOTENERGY.OUT", "EFERMI.OUT","EIGVAL.OUT", "EQATOMS.OUT", "EVALCORE.OUT", "EVALFV.OUT", "EVALSV.OUT","EVECFV.OUT","EVECSV.OUT", "FERMIDOS.OUT", "GAP.OUT", "GEOMETRY.OUT", "IADIST.OUT", "LATTICE.OUT","KPOINTS.OUT", "MOMENT.OUT", "MOMENTM.OUT","OCCSV.OUT","RMSDVS.OUT","SYMCRYS.OUT", "SYMLAT.OUT", "SYMSITE.OUT","TOTENERGY.OUT"]]
+# The k-point nearest neighbors list/kpoints string is appended to the .in file, starting on the last line, and there can be no extra lines in between the shell_list and the nnkpts lines. The nnkpts line should be added directly to the end of elkWannBands.in automatically by Z2pack during the surface calculation (becomes build/elk.in).
+input_files = [
+    'ground/' + name for name in [
+        "elk.in", "STATE.OUT", "INFO.OUT", "GEOMETRY.OUT", "LINENGY.OUT",
+        "DTOTENERGY.OUT", "EFERMI.OUT", "EIGVAL.OUT", "EQATOMS.OUT",
+        "EVALCORE.OUT", "EVALFV.OUT", "EVALSV.OUT", "EVECFV.OUT", "EVECSV.OUT",
+        "FERMIDOS.OUT", "GAP.OUT", "GEOMETRY.OUT", "IADIST.OUT", "LATTICE.OUT",
+        "KPOINTS.OUT", "MOMENT.OUT", "MOMENTM.OUT", "OCCSV.OUT", "RMSDVS.OUT",
+        "SYMCRYS.OUT", "SYMLAT.OUT", "SYMSITE.OUT", "TOTENERGY.OUT"
+    ]
+]
 #note that this ensures that elkWannBands.in is used rather than what was used for the Ground state calculation. These all end up showing up in the build directory
 shutil.copyfile('input/elkWannBands.in', 'ground/elk.in')
 
@@ -44,7 +50,7 @@ system = z2pack.fp.System(
     input_files=input_files,
     kpt_fct=z2pack.fp.kpoint.elk,
     kpt_path="elk.in",
-    command=elkdir+' >& elk.log',
+    command=elkdir + ' >& elk.log',
     mmn_path='wannier.mmn'
 )
 
@@ -66,5 +72,3 @@ print(
 fig, ax = plt.subplots(1, 1, sharey=True, figsize=(9, 5))
 z2pack.plot.wcc(result_0, axis=ax)
 plt.savefig('plots/plot.pdf', bbox_inches='tight')
-
-

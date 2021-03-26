@@ -59,16 +59,6 @@ INVALID = [lambda t: [0, 0, 0.9 * t], lambda t: [0, t]]
 ALL_LINES = ALL_VALID + INVALID
 
 VALID_LINES = {
-        z2pack.fp.kpoint.elk.__name__: {
-        'fct':
-        z2pack.fp.kpoint.elk,
-        'valid_comparable':
-        STRAIGHT_SIMPLE,
-        'valid_incomparable': [],
-        'invalid':
-        STRAIGHT_ANY_DIRECTION + STRAIGHT_UNEQUAL_SPACING +
-        STRAIGHT_MULTIPLE_BZ + NON_STRAIGHT + INVALID
-    },
     z2pack.fp.kpoint.vasp.__name__: {
         'fct':
         z2pack.fp.kpoint.vasp,

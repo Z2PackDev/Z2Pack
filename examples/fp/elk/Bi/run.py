@@ -66,7 +66,7 @@ result_0 = z2pack.surface.run(
 print(
     'Z2 topological invariant at kx = 0: {0}'.format(
         z2pack.invariant.z2(result_0)
-	)
+    )
 )
 
 # Plot the WCC

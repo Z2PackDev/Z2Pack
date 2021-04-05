@@ -69,7 +69,7 @@ VALID_LINES = {
         STRAIGHT_ANY_DIRECTION + STRAIGHT_UNEQUAL_SPACING +
         STRAIGHT_MULTIPLE_BZ + NON_STRAIGHT + INVALID
     },
-	z2pack.fp.kpoint.elk.__name__: {
+    z2pack.fp.kpoint.elk.__name__: {
         'fct':
         z2pack.fp.kpoint.elk,
         'valid_comparable':

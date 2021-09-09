@@ -1,0 +1,70 @@
+############### System info ###############
+SystemName        Bi2D_BHex
+SystemLabel       Bi2D_BHex
+
+########### Geometrical info ##############
+LatticeConstant 1.0 Ang
+%block LatticeVectors
+ 4.60000000 0.00000000 0.00000000
+ -2.30000000 3.98371686 0.00000000
+ 0.00000000 0.00000000 40.00000000
+%endblock LatticeVectors
+
+NumberOfAtoms 2
+AtomicCoordinatesFormat Ang
+%block AtomicCoordinatesAndAtomicSpecies
+ 0.00000000 0.00000000 0.00000000 1 # 1: Bi
+ 2.30000000 1.32790562 1.62000000 1 # 2: Bi
+%endblock AtomicCoordinatesAndAtomicSpecies
+
+NumberOfSpecies 1
+%block ChemicalSpeciesLabel
+ 1 83 Bi
+%endblock ChemicalSpeciesLabel
+
+################ Basis set ##################
+%block PAO.Basis
+Bi                    3                    # Species label, number of l-shells
+ n=6   0   1                         # n, l, Nzeta
+   4.861
+   1.000
+ n=6   1   1 P   1                   # n, l, Nzeta, Polarization, NzetaPol
+   6.399
+   1.000
+ n=5   2   1                         # n, l, Nzeta
+   3.258
+   1.000
+%endblock PAO.Basis
+
+
+#### Exchange-Correlation functional ########
+xc.functional         GGA   
+xc.authors            PBE  
+
+########### Magnetic option #############
+Spin            spin-orbit           # (default)
+
+################ SCF options #############
+SCF.Mix                 Hamiltonian  # (default) Hamiltonian
+SCF.Mix.First           F            # (default) true
+SCF.Mixer.Method        Pulay        # (default) Pulay
+SCF.Mixer.Weight        0.25         # (default) 0.25
+SCF.Mixer.History       5            # (default) 2
+SCF.Mixer.Kick          0            # (default) 0
+
+SCF.DM.Converge         T            # (default) true
+SCF.DM.Tolerance        1.0d-3       # (default) 1.0d-4
+
+############# Reciprocal grid #############
+%block kgrid.MonkhorstPack
+  9   0  0  0.5
+  0   9  0  0.5
+  0   0  1  0.5
+%endblock kgrid.MonkhorstPack
+
+############ MISCELLANEOUS ##############
+ElectronicTemperature   10 meV
+MeshCutoff             400 Ry
+################ MD options #############
+MD.UseSaveXV         T               # (default) false
+SaveHS T

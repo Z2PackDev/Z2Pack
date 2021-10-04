@@ -18,18 +18,19 @@ pos = geom.fxyz[list(map(geom.o2a, np.arange(H.no)))]
 pos = np.repeat(pos, 2, axis=0)
 
 # Create system in z2pack
+nEl = 0 # number of electrons (grep 'number of electrons' out.fdf)
 system = z2pack.hm.System(
     hamilton=Hk,
     basis_overlap=Sk,
     pos=pos,
-    bands=..., # number of electrons (grep 'number of electrons' out.fdf)
+    bands=nEl, 
 )
 
 surface = lambda s, t: [t, s / 2, 0]
 
 # Run the WCC calculations
 settings = {
-    ...
+# ...
 }
 
 result = z2pack.surface.run(

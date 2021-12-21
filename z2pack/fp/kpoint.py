@@ -199,6 +199,53 @@ def vasp(kpt):
     return string
 
 
+@export
+@_check_dim
+@_check_closed
+def elk(kpt):
+    """
+    Creates a k-point input for  **ELK**. It uses the automatic generation scheme with a Gamma centered grid. Note that VASP does **not** support any kind of k-point line **unless** they are exactly along one of the reciprocal lattice vectors, and the k-points are evenly spaced.
+    """
+    # VALIDITY CHECKS
+    # check if the points are equally-spaced
+    delta = _check_equal_spacing(kpt, 'ELK')
+
+    num_kpt = len(kpt) - 1
+    # check if it's positive x, y or z direction
+    nonzero = []
+    mesh = []
+    for i, spacing in enumerate(delta):
+        if np.isclose(spacing, 0):
+            mesh.append('1')
+        elif np.isclose(spacing, 1 / num_kpt):
+            nonzero.append(i)
+            mesh.append(str(num_kpt))
+        else:
+            raise ValueError(
+                'The k-points must be aligned in (positive) kx-, ky- or kz-direction for ELK runs.'
+            )
+
+    if len(nonzero) != 1:
+        raise ValueError(
+            'The k-points can change only in kx-, ky- or kz direction for ELK runs. The given k-points change in {} directions.'
+            .format(len(nonzero))
+        )
+
+    start_point = kpt[0]
+    if not np.isclose(start_point[nonzero[0]], 0):
+        raise ValueError(
+            'The k-points must start at k{0} = 0 for ELK runs, since they change in k{0}-direction.'
+            .format(['x', 'y', 'z'][nonzero[0]])
+        )
+    s = wannier90_nnkpts(kpt)
+    string = s + '\n\nngridk\n' + '1 1 ' + str(num_kpt) + '\n\n'
+    string += 'vkloff\n'
+    for coord in start_point:
+        string += str(coord).replace('e', 'd') + ' '
+    string += '\n'
+    return string
+
+
 def _check_equal_spacing(kpt, run_type):
     """Checks if the k-points are equally spaced, and throws an error if not. run_type is added in the error message."""
     deltas = [(k2 - k1) % 1 for k2, k1 in zip(kpt[1:], kpt[:-1])]

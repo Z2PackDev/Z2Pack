@@ -4,3 +4,4 @@
 - Added fp.kpoint.wannier90_nnkpts and fp.kpoint.wannier90_full
 - In fp.System's input_files, and file_names, it is now required that the input is a list of strings (previously, a single string was also allowed).
 - Default saving is now JSON (change due to fsc.iohelper). Quiet loading doesn't ignore when the file ending is absent or serializer is not set.
+- Elk first principles (http://elk.sourceforge.net/) example files are included, and an additional function in kpoints.py was added to allow Z2pack to interface with Elk

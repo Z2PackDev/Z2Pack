@@ -2,11 +2,24 @@
 # -*- coding: utf-8 -*-
 
 import os
+import shutil
+import subprocess
 
 import z2pack
 """
 Bismuth example
 """
+
+ABINIT_PATH = "/home/greschd/software/abinit-9.8.1/src/98_main/abinit"
+
+if not os.path.exists('./scf_files'):
+    shutil.copytree('./scf_input', './scf_files')
+    subprocess.check_call(
+        f"{ABINIT_PATH} < Bi_scf.files >& log",
+        shell=True,
+        cwd="./scf_files",
+        executable="/bin/bash"
+    )
 
 if not os.path.exists('./results'):
     os.makedirs('./results')
@@ -19,8 +32,7 @@ Bi = z2pack.fp.System(
     ],
     kpt_fct=z2pack.fp.kpoint.abinit,
     kpt_path='Bi_nscf.in',
-    command=
-    'mpirun -np 4 ~/software/abinit-7.10.5/src/98_main/abinit < Bi_nscf.files >& log',
+    command=f'{ABINIT_PATH} < Bi_nscf.files >& log',
     executable='/bin/bash'
 )
 

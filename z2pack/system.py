@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 r"""Z2Pack can easily be extended to work with different models / systems. The base classes defined here provide the interface to Z2Pack. Of the two classes, :class:`EigenstateSystem` is the more general one and should be preferred if possible."""
 
 import abc
@@ -12,6 +11,7 @@ class EigenstateSystem(metaclass=abc.ABCMeta):
     r"""
     Abstract base class for Z2Pack System classes which can provide eigenstates (periodic part :math:`|u_\mathbf{k}\rangle`).
     """
+
     @abc.abstractmethod
     def get_eig(self, kpt):
         r"""
@@ -27,6 +27,7 @@ class OverlapSystem(metaclass=abc.ABCMeta):
     r"""
     Abstract base class for Z2Pack System classes which can only provide overlap matrices.
     """
+
     @abc.abstractmethod
     def get_mmn(self, kpt):
         r"""

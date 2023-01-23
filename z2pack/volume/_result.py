@@ -16,8 +16,11 @@ class VolumeResult(Result):
         result = z2pack.volume.run(...)
         print(result.s) # prints the positions of the surfaces
     """
+
     @property
-    def convergence_report(self):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
+    def convergence_report(
+        self,
+    ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
         r"""
         Convergence report (as a dict) for the result. The keys of the dictionary indicate the type of convergence test. For each of the tests, a dictionary with keys 'PASSED', 'FAILED' and (optionally) 'MISSING' shows the number of tests of this kind which either passed, failed, or were not performed.
         """
@@ -42,11 +45,11 @@ class VolumeResult(Result):
                             failed_s_t.append((s, line.t))
                     except KeyError:
                         missing_s_t.append((s, line.t))
-            ctrl_report['PASSED'] = passed_s_t
-            ctrl_report['FAILED'] = failed_s_t
-            ctrl_report['MISSING'] = missing_s_t
+            ctrl_report["PASSED"] = passed_s_t
+            ctrl_report["FAILED"] = failed_s_t
+            ctrl_report["MISSING"] = missing_s_t
             line_report[c_ctrl] = ctrl_report
-        report['line'] = line_report
+        report["line"] = line_report
 
         surface_report = dict()
         surface_c_ctrl = set()
@@ -65,11 +68,11 @@ class VolumeResult(Result):
                         failed_s.append(surface.s)
                 except KeyError:
                     missing_s.append(surface.s)
-            ctrl_report['PASSED'] = passed_s
-            ctrl_report['FAILED'] = failed_s
-            ctrl_report['MISSING'] = missing_s
+            ctrl_report["PASSED"] = passed_s
+            ctrl_report["FAILED"] = failed_s
+            ctrl_report["MISSING"] = missing_s
             surface_report[c_ctrl] = ctrl_report
-        report['surface'] = surface_report
+        report["surface"] = surface_report
 
         volume_report = dict()
         for c_ctrl, converged in sorted(self.ctrl_convergence.items()):
@@ -77,16 +80,14 @@ class VolumeResult(Result):
                 ctrl_report = None
             else:
                 ctrl_report = dict()
-                ctrl_report['PASSED'] = []
-                ctrl_report['FAILED'] = []
-                for t_pair, conv in zip(
-                    zip(self.t[:-1], self.t[1:]), converged
-                ):
+                ctrl_report["PASSED"] = []
+                ctrl_report["FAILED"] = []
+                for t_pair, conv in zip(zip(self.t[:-1], self.t[1:]), converged):
                     if conv:
-                        ctrl_report['PASSED'].append(t_pair)
+                        ctrl_report["PASSED"].append(t_pair)
                     else:
-                        ctrl_report['FAILED'].append(t_pair)
+                        ctrl_report["FAILED"].append(t_pair)
             volume_report[c_ctrl] = ctrl_report
-        report['volume'] = volume_report
+        report["volume"] = volume_report
 
         return report

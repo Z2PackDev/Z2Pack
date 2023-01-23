@@ -2,16 +2,17 @@
 
 import functools
 
-import numpy as np
-import scipy.linalg as la
 from fsc.export import export
 from fsc.locker import ConstLocker, change_lock
+import numpy as np
+import scipy.linalg as la
 
 from .._utils import _gapfind
 
 
 class _LazyProperty:
     """Descriptor that replaces itself with the return value of the method when accessed. The class is unlocked before setting the attribute, s.t. it can be used with a Locker type class."""
+
     def __init__(self, method):
         self.method = method
 
@@ -21,7 +22,7 @@ class _LazyProperty:
 
         value = self.method(instance)
 
-        with change_lock(instance, 'none'):
+        with change_lock(instance, "none"):
             setattr(instance, self.method.__name__, value)
         return value
 
@@ -40,6 +41,7 @@ class WccLineData(metaclass=ConstLocker):
         The WCC are given in reduced coordinates, which means the possible values range from 0 to 1. The same is true for all values derived from the WCC.
 
     """
+
     def __init__(self, wcc):
         self.wcc = wcc
 
@@ -58,12 +60,12 @@ class WccLineData(metaclass=ConstLocker):
         return self.gap_size
 
     def _calculate_gap(self):
-        with change_lock(self, 'none'):
+        with change_lock(self, "none"):
             self.gap_pos, self.gap_size = _gapfind(self.wcc)
 
     def __getattr__(self, name):
         """Forward to parent class unless for the 'eigenstates' attribute, in which case an AttributError is raised."""
-        if name == 'eigenstates':
+        if name == "eigenstates":
             raise AttributeError(
                 "This data does not have the 'eigenstates' attribute. This is because the system used does not provide eigenstates, but only overlap matrices. The functionality which resulted in this error can be used only for systems providing eigenstates."
             )
@@ -79,6 +81,7 @@ class OverlapLineData(WccLineData):
     * ``wilson`` : An array containing the Wilson loop (product of overlap matrices) for the line. The Wilson loop is given in the basis of the eigenstates at the start / end of the line.
     * ``wilson_eigenstates`` : Eigenstates of the Wilson loop, given as a list of 1D - arrays.
     """
+
     def __init__(self, overlaps):  # pylint: disable=super-init-not-called
         self.overlaps = [np.array(o, dtype=complex) for o in overlaps]
 
@@ -86,10 +89,8 @@ class OverlapLineData(WccLineData):
         """
         Calculates and sets the Wannier charge centers and Wilson loop eigenstates.
         """
-        wcc, wilson_eigenstates = self._calculate_wannier_from_wilson(
-            self.wilson
-        )
-        with change_lock(self, 'none'):
+        wcc, wilson_eigenstates = self._calculate_wannier_from_wilson(self.wilson)
+        with change_lock(self, "none"):
             self.wcc = wcc
             self.wilson_eigenstates = wilson_eigenstates
 
@@ -126,6 +127,7 @@ class EigenstateLineData(OverlapLineData):
 
     * ``eigenstates`` : The eigenstates of the Hamiltonian, given as a list of arrays which contain the eigenstates as row vectors.
     """
+
     def __init__(self, eigenstates):  # pylint: disable=super-init-not-called
         self.eigenstates = eigenstates
 

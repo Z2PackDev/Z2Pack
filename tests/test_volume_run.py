@@ -1,19 +1,18 @@
 """Test volume calculations."""
 # pylint: disable=redefined-outer-name,unused-wildcard-import
 
-import os
 import json
+import os
 import pickle
 import tempfile
 
-import pytest
 import msgpack
 import numpy as np
-
-import z2pack
+import pytest
 
 from hm_systems import *
 from tb_systems import *
+import z2pack
 
 
 @pytest.fixture(params=[2, 5, 11])
@@ -47,7 +46,7 @@ def assert_res_equal(result1, result2, ignore_wilson=False):
     """
     assert result1.wcc == result2.wcc
     if not ignore_wilson:
-        if hasattr(result1, 'wilson') or hasattr(result2, 'wilson'):
+        if hasattr(result1, "wilson") or hasattr(result2, "wilson"):
             assert all(np.isclose(result1.wilson, result2.wilson).flatten())
     assert result1.gap_size == result2.gap_size
     assert result1.gap_pos == result2.gap_pos
@@ -61,7 +60,7 @@ def test_simple(simple_system, simple_volume, num_surfaces, num_lines):
         system=simple_system,
         volume=simple_volume,
         num_surfaces=num_surfaces,
-        num_lines=num_lines
+        num_lines=num_lines,
     )
     assert result.wcc == [[[0, 0]] * num_lines] * num_surfaces
     assert result.gap_size == [[1] * num_lines] * num_surfaces
@@ -79,7 +78,7 @@ def test_simple_save(num_lines, simple_system, simple_volume):
         system=simple_system,
         volume=simple_volume,
         num_lines=num_lines,
-        save_file=temp_file.name
+        save_file=temp_file.name,
     )
     result2 = z2pack.io.load(temp_file.name, serializer=json)
     os.remove(temp_file.name)
@@ -90,9 +89,7 @@ def test_simple_save(num_lines, simple_system, simple_volume):
 def test_restart(simple_system, simple_volume):
     """Test restarting a run from a result."""
     result1 = z2pack.volume.run(system=simple_system, volume=simple_volume)
-    result2 = z2pack.volume.run(
-        system=simple_system, volume=simple_volume, init_result=result1
-    )
+    result2 = z2pack.volume.run(system=simple_system, volume=simple_volume, init_result=result1)
     assert_res_equal(result1, result2)
 
 
@@ -100,15 +97,14 @@ def test_restart_nocalc(simple_system, simple_volume):
     """
     Test that no additional calculations are performed when restarting from a (finished) saved calculation.
     """
+
     class Mock:
         @staticmethod
         def get_eig(*args, **kwargs):
-            raise ValueError('This restart should not re-compute anything!')
+            raise ValueError("This restart should not re-compute anything!")
 
     result1 = z2pack.volume.run(system=simple_system, volume=simple_volume)
-    result2 = z2pack.volume.run(
-        system=Mock(), volume=simple_volume, init_result=result1
-    )
+    result2 = z2pack.volume.run(system=Mock(), volume=simple_volume, init_result=result1)
     assert_res_equal(result1, result2)
 
 
@@ -118,12 +114,7 @@ def test_invalid_restart(simple_system, simple_volume):
     """
     result = z2pack.volume.run(system=simple_system, volume=simple_volume)
     with pytest.raises(ValueError):
-        z2pack.volume.run(
-            system=simple_system,
-            volume=simple_volume,
-            init_result=result,
-            load=True
-        )
+        z2pack.volume.run(system=simple_system, volume=simple_volume, init_result=result, load=True)
 
 
 def test_file_restart(simple_system, simple_volume, serializer):
@@ -133,7 +124,7 @@ def test_file_restart(simple_system, simple_volume, serializer):
             system=simple_system,
             volume=simple_volume,
             save_file=temp_file.name,
-            serializer=serializer
+            serializer=serializer,
         )
         result1 = z2pack.volume.run(**kwargs)
         result2 = z2pack.volume.run(load=True, load_quiet=False, **kwargs)
@@ -146,10 +137,10 @@ def test_load_inexisting(simple_system, simple_volume):
         z2pack.volume.run(
             system=simple_system,
             volume=simple_volume,
-            save_file='invalid_name',
+            save_file="invalid_name",
             load_quiet=False,
             load=True,
-            serializer=json
+            serializer=json,
         )
 
 
@@ -161,9 +152,9 @@ def test_load_no_serializer(simple_system, simple_volume):
         z2pack.volume.run(
             system=simple_system,
             volume=simple_volume,
-            save_file='invalid_name',
+            save_file="invalid_name",
             load_quiet=False,
-            load=True
+            load=True,
         )
 
 
@@ -173,10 +164,7 @@ def test_load_no_filename(simple_system, simple_volume, serializer):
     """
     with pytest.raises(ValueError):
         z2pack.volume.run(
-            system=simple_system,
-            volume=simple_volume,
-            load=True,
-            serializer=serializer
+            system=simple_system, volume=simple_volume, load=True, serializer=serializer
         )
 
 
@@ -184,15 +172,16 @@ def test_load_reference(simple_system, test_name, simple_volume, serializer):
     """
     Compare surface result to a reference from a file.
     """
-    tag = test_name.split('/')[1]
+    tag = test_name.split("/")[1]
     path = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), 'reference_results',
-        'volume_result_{}.'.format(tag) + serializer.__name__
+        os.path.dirname(os.path.abspath(__file__)),
+        "reference_results",
+        f"volume_result_{tag}." + serializer.__name__,
     )
     result = z2pack.volume.run(system=simple_system, volume=simple_volume)
     if not os.path.isfile(path):
         z2pack.io.save(result, path, serializer=serializer)
-        raise ValueError('File {} did not exist!'.format(path))
+        raise ValueError(f"File {path} did not exist!")
     assert_res_equal(result, z2pack.io.load(path, serializer=serializer))
     assert_res_equal(result, z2pack.io.load(path))
 
@@ -209,5 +198,5 @@ def test_invalid_save_path(simple_system, simple_volume):
         z2pack.volume.run(
             system=simple_system,
             volume=surface,
-            save_file='some/invalid/path/file.json'
+            save_file="some/invalid/path/file.json",
         )

@@ -2,7 +2,7 @@
 
 import copy
 
-__all__ = ['_get_max_move', '_sgng', '_gapfind', '_dist']
+__all__ = ["_get_max_move", "_sgng", "_gapfind", "_dist"]
 
 
 def _get_max_move(list_a, list_b):
@@ -14,7 +14,7 @@ def _get_max_move(list_a, list_b):
     gap = _gapfind(full_list)[0]
     a_mod = sorted([(x + 1 - gap) % 1 for x in list_a])
     b_mod = sorted([(x + 1 - gap) % 1 for x in list_b])
-    max_move = 0.
+    max_move = 0.0
     for a_pos, b_pos in zip(a_mod, b_mod):
         max_move = max(_dist(a_pos, b_pos), max_move)
 
@@ -80,5 +80,5 @@ def _get_degenerate_dist(wcc):
     Get the maximum distance between pairs of approximately degenerate WCC.
     """
     if len(wcc) % 2 != 0:
-        raise ValueError('The number of WCC must be even!')
+        raise ValueError("The number of WCC must be even!")
     return _get_max_move(wcc[::2], wcc[1::2])

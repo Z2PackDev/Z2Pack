@@ -1,30 +1,29 @@
 """Defines functions to run a surface calculation."""
 
+import contextlib
 import copy
 import logging
-import contextlib
 
-import numpy as np
 from fsc.export import export
+import numpy as np
 
-from . import _LOGGER
-from . import SurfaceData, SurfaceResult
-from ._control import _create_surface_controls, SurfaceControlContainer
-
+from . import _LOGGER, SurfaceData, SurfaceResult
 from .. import io
-from .._run_utils import _load_init_result, _check_save_dir, _log_run
 from .._async_handler import AsyncHandler
 from .._logging_tools import TagAdapter, TagFilter, filter_manager
+from .._run_utils import _check_save_dir, _load_init_result, _log_run
 from ..line import _run as _line_run
+from ._control import SurfaceControlContainer, _create_surface_controls
 
 # tag which triggers filtering when called from the volume's run.
 _SURFACE_ONLY_LOGGER = TagAdapter(
-    _LOGGER, default_tags=(
-        'surface',
-        'surface_only',
-    )
+    _LOGGER,
+    default_tags=(
+        "surface",
+        "surface_only",
+    ),
 )
-_LOGGER = TagAdapter(_LOGGER, default_tags=('surface', ))
+_LOGGER = TagAdapter(_LOGGER, default_tags=("surface",))
 
 
 @export
@@ -43,7 +42,7 @@ def run_surface(
     save_file=None,
     load=False,
     load_quiet=True,
-    serializer='auto'
+    serializer="auto",
 ):
     r"""
     Calculates the Wannier charge centers for a given system and surface.
@@ -128,12 +127,12 @@ def run_surface(
         min_neighbour_dist=min_neighbour_dist,
         save_file=save_file,
         init_result=init_result,
-        serializer=serializer
+        serializer=serializer,
     )
 
 
 # filter out LogRecords tagged as 'line_only' in the line.
-@filter_manager(logging.getLogger('z2pack.line'), TagFilter(('line_only', )))
+@filter_manager(logging.getLogger("z2pack.line"), TagFilter(("line_only",)))
 def _run_surface_impl(  # pylint: disable=too-many-locals
     *controls,
     system,
@@ -142,7 +141,7 @@ def _run_surface_impl(  # pylint: disable=too-many-locals
     min_neighbour_dist,
     save_file=None,
     init_result=None,
-    serializer='auto'
+    serializer="auto",
 ):
     r"""Implementation of the surface's run.
 
@@ -165,17 +164,16 @@ def _run_surface_impl(  # pylint: disable=too-many-locals
             *copy.deepcopy(ctrl_container.line),
             system=system,
             line=lambda ky: surface(t, ky),
-            init_result=init_line_result
+            init_result=init_line_result,
         )
 
     # setting up async handler
     if save_file is not None:
 
         def handler(res):
-            _LOGGER.info(
-                'Saving surface result to file {} (ASYNC)'.format(save_file)
-            )
+            _LOGGER.info(f"Saving surface result to file {save_file} (ASYNC)")
             io.save(res, save_file, serializer=serializer)
+
     else:
         handler = None
 
@@ -190,17 +188,12 @@ def _run_surface_impl(  # pylint: disable=too-many-locals
             dist = data.nearest_neighbour_dist(t)
             if dist < min_neighbour_dist:
                 if dist == 0:
-                    _LOGGER.info("Line at t = {} exists already.".format(t))
+                    _LOGGER.info(f"Line at t = {t} exists already.")
                 else:
-                    _LOGGER.warning(
-                        "'min_neighbour_dist' reached: cannot add line at t = {}"
-                        .format(t)
-                    )
-                return SurfaceResult(
-                    data, ctrl_container.stateful, ctrl_container.convergence
-                )
+                    _LOGGER.warning(f"'min_neighbour_dist' reached: cannot add line at t = {t}")
+                return SurfaceResult(data, ctrl_container.stateful, ctrl_container.convergence)
 
-            _LOGGER.info('Adding line at t = {}'.format(t))
+            _LOGGER.info(f"Adding line at t = {t}")
             data.add_line(t, get_line(t))
 
             return update_result()
@@ -214,9 +207,7 @@ def _run_surface_impl(  # pylint: disable=too-many-locals
             for d_ctrl in ctrl_container.data:
                 d_ctrl.update(data)
 
-            result = SurfaceResult(
-                data, ctrl_container.stateful, ctrl_container.convergence
-            )
+            result = SurfaceResult(data, ctrl_container.stateful, ctrl_container.convergence)
             save_thread.send(copy.deepcopy(result))
 
             return result
@@ -229,8 +220,9 @@ def _run_surface_impl(  # pylint: disable=too-many-locals
             for c_ctrl in ctrl_container.convergence:
                 res &= c_ctrl.converged
             _LOGGER.info(
-                'Convergence criteria fulfilled for {} of {} neighbouring lines.'
-                .format(sum(res), len(res))
+                "Convergence criteria fulfilled for {} of {} neighbouring lines.".format(
+                    sum(res), len(res)
+                )
             )
             return res
 
@@ -244,15 +236,14 @@ def _run_surface_impl(  # pylint: disable=too-many-locals
             # get states from pre-existing Controls
             for s_ctrl in ctrl_container.stateful:
                 with contextlib.suppress(KeyError):
-                    s_ctrl.state = init_result.ctrl_states[
-                        s_ctrl.__class__.__name__]
+                    s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__.__name__]
 
             data = init_result.data
 
             # re-run lines with existing result as input
-            _LOGGER.info('Re-running existing lines.')
+            _LOGGER.info("Re-running existing lines.")
             for line in data.lines:
-                _LOGGER.info('Re-running line for t = {}'.format(line.t))
+                _LOGGER.info(f"Re-running line for t = {line.t}")
                 line.result = get_line(line.t, line.result)
                 update_result()
 
@@ -270,9 +261,7 @@ def _run_surface_impl(  # pylint: disable=too-many-locals
         conv = collect_convergence()
         while not all(conv):
             # add lines for all non-converged values
-            new_t = [(t1 + t2) / 2
-                     for (t1, t2), c in zip(zip(data.t, data.t[1:]), conv)
-                     if not c]
+            new_t = [(t1 + t2) / 2 for (t1, t2), c in zip(zip(data.t, data.t[1:]), conv) if not c]
             for t in new_t:
                 result = add_line(t)
 

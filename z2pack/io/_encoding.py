@@ -1,19 +1,19 @@
 """Defines functions for encoding and decoding Z2Pack objects."""
 
-import numbers
+from collections.abc import Iterable
 import contextlib
 from functools import singledispatch
-from collections.abc import Iterable
+import numbers
 
-import numpy as np
 from fsc.export import export
+import numpy as np
 
 # This can create a circular import if it is imported by name (from ... import ...)
 # If this is ever an issue, consider splitting the encoding by surface / line
-from ..line import LineResult, WccLineData, OverlapLineData, EigenstateLineData
-from ..surface._data import SurfaceData, LinePosition
+from ..line import EigenstateLineData, LineResult, OverlapLineData, WccLineData
+from ..surface._data import LinePosition, SurfaceData
 from ..surface._result import SurfaceResult
-from ..volume._data import VolumeData, SurfacePosition
+from ..volume._data import SurfacePosition, VolumeData
 from ..volume._result import VolumeResult
 
 
@@ -23,7 +23,7 @@ def encode(obj):
     """
     Encodes Z2Pack types into JSON / msgpack - compatible types.
     """
-    raise TypeError('cannot JSONify {} object {}'.format(type(obj), obj))
+    raise TypeError(f"cannot JSONify {type(obj)} object {obj}")
 
 
 @encode.register(np.bool_)
@@ -48,9 +48,7 @@ def _(obj):
 
 @encode.register(EigenstateLineData)
 def _(obj):
-    return dict(
-        __eigenstate_line_data__=True, eigenstates=encode(obj.eigenstates)
-    )
+    return dict(__eigenstate_line_data__=True, eigenstates=encode(obj.eigenstates))
 
 
 @encode.register(OverlapLineData)
@@ -69,7 +67,7 @@ def _(obj):
         __line_result__=True,
         data=encode(obj.data),
         ctrl_convergence=obj.ctrl_convergence,
-        ctrl_states=obj.ctrl_states
+        ctrl_states=obj.ctrl_states,
     )
 
 
@@ -89,7 +87,7 @@ def _(obj):
         __surface_result__=True,
         data=encode(obj.data),
         ctrl_convergence=obj.ctrl_convergence,
-        ctrl_states=obj.ctrl_states
+        ctrl_states=obj.ctrl_states,
     )
 
 
@@ -109,7 +107,7 @@ def _(obj):
         __volume_result__=True,
         data=encode(obj.data),
         ctrl_convergence=obj.ctrl_convergence,
-        ctrl_states=obj.ctrl_states
+        ctrl_states=obj.ctrl_states,
     )
 
 
@@ -130,9 +128,9 @@ def decode_volume_result(obj):
     Decodes a dict into a VolumeResult instance.
     """
     # The states / convergence of the controls are set manually
-    res = VolumeResult(obj['data'], [], [])
-    res.ctrl_convergence = decode(obj['ctrl_convergence'])
-    res.ctrl_states = decode(obj['ctrl_states'])
+    res = VolumeResult(obj["data"], [], [])
+    res.ctrl_convergence = decode(obj["ctrl_convergence"])
+    res.ctrl_states = decode(obj["ctrl_states"])
     return res
 
 
@@ -140,14 +138,14 @@ def decode_volume_data(obj):
     """
     Decodes a dict into a VolumeData instance.
     """
-    return VolumeData(decode(obj['surfaces']))
+    return VolumeData(decode(obj["surfaces"]))
 
 
 def decode_surface_position(obj):
     """
     Decodes a dict into a SurfacePosition instance.
     """
-    return SurfacePosition(s=obj['s'], result=decode(obj['result']))
+    return SurfacePosition(s=obj["s"], result=decode(obj["result"]))
 
 
 def decode_surface_result(obj):
@@ -155,9 +153,9 @@ def decode_surface_result(obj):
     Decodes a dict into a SurfaceResult instance.
     """
     # The states / convergence of the controls are set manually
-    res = SurfaceResult(obj['data'], [], [])
-    res.ctrl_convergence = decode(obj['ctrl_convergence'])
-    res.ctrl_states = decode(obj['ctrl_states'])
+    res = SurfaceResult(obj["data"], [], [])
+    res.ctrl_convergence = decode(obj["ctrl_convergence"])
+    res.ctrl_states = decode(obj["ctrl_states"])
     return res
 
 
@@ -165,7 +163,7 @@ def decode_surface_data(obj):
     """
     Decodes a dict into a SurfaceData instance.
     """
-    return SurfaceData(decode(obj['lines']))
+    return SurfaceData(decode(obj["lines"]))
 
 
 # Needed for legacy results.
@@ -180,7 +178,7 @@ def decode_line_position(obj):
     """
     Decodes a dict into a LinePosition instance.
     """
-    return LinePosition(obj['t'], decode(obj['result']))
+    return LinePosition(obj["t"], decode(obj["result"]))
 
 
 def decode_line_result(obj):
@@ -188,9 +186,9 @@ def decode_line_result(obj):
     Decodes a dict into a LineResult instance.
     """
     # The states / convergence of the controls are set manually
-    res = LineResult(obj['data'], [], [])
-    res.ctrl_convergence = decode(obj['ctrl_convergence'])
-    res.ctrl_states = decode(obj['ctrl_states'])
+    res = LineResult(obj["data"], [], [])
+    res.ctrl_convergence = decode(obj["ctrl_convergence"])
+    res.ctrl_states = decode(obj["ctrl_states"])
     return res
 
 
@@ -198,36 +196,36 @@ def decode_wcc_line_data(obj):
     """
     Decodes a dict into a WccLineData instance.
     """
-    return WccLineData(obj['wcc'])
+    return WccLineData(obj["wcc"])
 
 
 def decode_overlap_line_data(obj):
     """
     Decodes a dict into a OverlapLineData instance.
     """
-    return OverlapLineData(obj['overlaps'])
+    return OverlapLineData(obj["overlaps"])
 
 
 def decode_eigenstate_line_data(obj):
     """
     Decodes a dict into a EigenstateLineData instance.
     """
-    return EigenstateLineData(obj['eigenstates'])
+    return EigenstateLineData(obj["eigenstates"])
 
 
 def decode_complex(obj):
     """
     Decodes a dict into a complex number.
     """
-    return complex(obj['real'], obj['imag'])
+    return complex(obj["real"], obj["imag"])
 
 
 @decode.register(dict)
 def _(obj):  # pylint: disable=missing-function-docstring
     with contextlib.suppress(AttributeError):
-        obj = {k.decode('utf-8'): v for k, v in obj.items()}
-    special_markers = [key for key in obj.keys() if key.startswith('__')]
+        obj = {k.decode("utf-8"): v for k, v in obj.items()}
+    special_markers = [key for key in obj.keys() if key.startswith("__")]
     if len(special_markers) == 1:
-        name = special_markers[0].strip('__')
-        return globals()['decode_' + name](obj)
+        name = special_markers[0].strip("__")
+        return globals()["decode_" + name](obj)
     return obj

@@ -1,24 +1,22 @@
 """Defines functions to run a surface calculation."""
 
+import contextlib
 import copy
 import logging
-import contextlib
 
-import numpy as np
 from fsc.export import export
+import numpy as np
 
-from . import _LOGGER
-from . import VolumeData
-from . import VolumeResult
-from ._control import _create_volume_controls, VolumeControlContainer
-
+from . import _LOGGER, VolumeData, VolumeResult
 from .._async_handler import AsyncHandler
-from .._run_utils import _load_init_result, _check_save_dir, _log_run
 from .._logging_tools import TagAdapter, TagFilter, filter_manager
-_LOGGER = TagAdapter(_LOGGER, default_tags=('volume', ))
+from .._run_utils import _check_save_dir, _load_init_result, _log_run
+from ._control import VolumeControlContainer, _create_volume_controls
 
-from ..surface import _run as _surface_run
+_LOGGER = TagAdapter(_LOGGER, default_tags=("volume",))
+
 from .. import io
+from ..surface import _run as _surface_run
 
 
 @export
@@ -38,7 +36,7 @@ def run_volume(
     save_file=None,
     load=False,
     load_quiet=True,
-    serializer='auto'
+    serializer="auto",
 ):
     r"""
     Calculates the Wannier charge centers for a given system and volume.
@@ -126,13 +124,13 @@ def run_volume(
         min_neighbour_dist=min_neighbour_dist,
         save_file=save_file,
         init_result=init_result,
-        serializer=serializer
+        serializer=serializer,
     )
 
 
 # filter out LogRecords tagged as 'surface_only' in the surface.
 @filter_manager(
-    logging.getLogger('z2pack.surface'), TagFilter(('surface_only', ))
+    logging.getLogger("z2pack.surface"), TagFilter(("surface_only",))
 )  # pylint: disable=too-many-locals
 def _run_volume_impl(
     *controls,
@@ -143,7 +141,7 @@ def _run_volume_impl(
     min_neighbour_dist,
     save_file=None,
     init_result=None,
-    serializer='auto'
+    serializer="auto",
 ):
     r"""Implementation of the volume's run.
 
@@ -166,17 +164,16 @@ def _run_volume_impl(
             surface=lambda t1, t2: volume(s, t1, t2),
             num_lines=num_lines,
             min_neighbour_dist=min_neighbour_dist,
-            init_result=init_surface_result
+            init_result=init_surface_result,
         )
 
     # setting up async handler
     if save_file is not None:
 
         def handler(res):
-            _LOGGER.info(
-                'Saving volume result to file {} (ASYNC)'.format(save_file)
-            )
+            _LOGGER.info(f"Saving volume result to file {save_file} (ASYNC)")
             io.save(res, save_file, serializer=serializer)
+
     else:
         handler = None
 
@@ -191,17 +188,12 @@ def _run_volume_impl(
             dist = data.nearest_neighbour_dist(s)
             if dist < min_neighbour_dist:
                 if dist == 0:
-                    _LOGGER.info("Surface at s = {} exists already.".format(s))
+                    _LOGGER.info(f"Surface at s = {s} exists already.")
                 else:
-                    _LOGGER.warning(
-                        "'min_neighbour_dist' reached: cannot add surface at s = {}"
-                        .format(s)
-                    )
-                return VolumeResult(
-                    data, ctrl_container.stateful, ctrl_container.convergence
-                )
+                    _LOGGER.warning(f"'min_neighbour_dist' reached: cannot add surface at s = {s}")
+                return VolumeResult(data, ctrl_container.stateful, ctrl_container.convergence)
 
-            _LOGGER.info('Adding surface at s = {}'.format(s))
+            _LOGGER.info(f"Adding surface at s = {s}")
             data.add_surface(s, get_surface(s))
 
             return update_result()
@@ -215,9 +207,7 @@ def _run_volume_impl(
             for d_ctrl in ctrl_container.data:
                 d_ctrl.update(data)
 
-            result = VolumeResult(
-                data, ctrl_container.stateful, ctrl_container.convergence
-            )
+            result = VolumeResult(data, ctrl_container.stateful, ctrl_container.convergence)
             save_thread.send(copy.deepcopy(result))
 
             return result
@@ -230,8 +220,9 @@ def _run_volume_impl(
             for c_ctrl in ctrl_container.convergence:
                 res &= c_ctrl.converged
             _LOGGER.info(
-                'Convergence criteria fulfilled for {} of {} neighbouring surfaces.'
-                .format(sum(res), len(res))
+                "Convergence criteria fulfilled for {} of {} neighbouring surfaces.".format(
+                    sum(res), len(res)
+                )
             )
             return res
 
@@ -245,15 +236,14 @@ def _run_volume_impl(
             # get states from pre-existing Controls
             for s_ctrl in ctrl_container.stateful:
                 with contextlib.suppress(KeyError):
-                    s_ctrl.state = init_result.ctrl_states[
-                        s_ctrl.__class__.__name__]
+                    s_ctrl.state = init_result.ctrl_states[s_ctrl.__class__.__name__]
 
             data = init_result.data
 
             # re-run lines with existing result as input
-            _LOGGER.info('Re-running existing surfaces.')
+            _LOGGER.info("Re-running existing surfaces.")
             for surface in data.surfaces:
-                _LOGGER.info('Re-running surface for s = {}'.format(surface.s))
+                _LOGGER.info(f"Re-running surface for s = {surface.s}")
                 surface.result = get_surface(surface.s, surface.result)
                 update_result()
 
@@ -271,9 +261,7 @@ def _run_volume_impl(
         conv = collect_convergence()
         while not all(conv):
             # add lines for all non-converged values
-            new_s = [(s1 + s2) / 2
-                     for (s1, s2), c in zip(zip(data.s, data.s[1:]), conv)
-                     if not c]
+            new_s = [(s1 + s2) / 2 for (s1, s2), c in zip(zip(data.s, data.s[1:]), conv) if not c]
             for s in new_s:
                 result = add_surface(s)
 

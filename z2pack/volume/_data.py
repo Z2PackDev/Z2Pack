@@ -17,6 +17,7 @@ class VolumeData(metaclass=ConstLocker):
 
     The attributes of the underlying :class:`.SurfaceResult` instances can be directly accessed from the :class:`.VolumeData` object. This will create a list of attributes for all surfaces, in the order of their position.
     """
+
     # cannot be pickled if it is a local method (lambda) in __init__
     # when python3.4 support is dropped, operator.attrgetter can be used
     @staticmethod
@@ -38,7 +39,7 @@ class VolumeData(metaclass=ConstLocker):
         self.surfaces.add(SurfacePosition(s, result))
 
     def __getattr__(self, key):
-        if key != 'surfaces':
+        if key != "surfaces":
             return [getattr(surface, key) for surface in self.surfaces]
         raise AttributeError
 
@@ -57,13 +58,14 @@ class VolumeData(metaclass=ConstLocker):
 
 class SurfacePosition:
     """Wraps the surface result and its position in the volume."""
-    __slots__ = ['s', 'result']
+
+    __slots__ = ["s", "result"]
 
     def __init__(self, s, result):
         self.s = s
         self.result = result
 
     def __getattr__(self, key):
-        if key not in ['s', 'result']:
+        if key not in ["s", "result"]:
             return getattr(self.result, key)
         return super().__getattribute__(key)

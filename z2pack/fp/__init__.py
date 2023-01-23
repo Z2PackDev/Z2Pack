@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 r"""
 This specialisation of Z2Pack can handle systems computed with ab initio
 codes interfacing to Wannier90.
@@ -8,7 +7,7 @@ codes interfacing to Wannier90.
     consult the :ref:`Tutorial<setup_first_principles>` for details.
 """
 
-from ._first_principles import *
 from . import kpoint
+from ._first_principles import *
 
-__all__ = ['kpoint'] + _first_principles.__all__  # pylint: disable=undefined-variable
+__all__ = ["kpoint"] + _first_principles.__all__  # pylint: disable=undefined-variable

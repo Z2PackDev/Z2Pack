@@ -3,12 +3,11 @@
 
 import random
 
-import pytest
 import numpy as np
-
-import z2pack
+import pytest
 
 from monkeypatch_data import *  # pylint: disable=unused-wildcard-import
+import z2pack
 
 
 @pytest.fixture(params=range(10))
@@ -54,7 +53,7 @@ def test_not_kramers_pairs(patch_surface_data):
     """
     Test that the check for Kramers pairs raises when WCC are not pairs.
     """
-    data = SurfaceData([[0., 0.], [0.5, 0.6]])
+    data = SurfaceData([[0.0, 0.0], [0.5, 0.6]])
     with pytest.raises(ValueError):
         print(z2pack.invariant.z2(data))
 
@@ -63,10 +62,7 @@ def test_linear(num_lines_nonzero, x, patch_surface_data):
     """
     Test non-zero Z2 invariant with linear WCC evolution.
     """
-    wcc = np.array([
-        np.linspace(0, x, num_lines_nonzero),
-        np.linspace(1, x, num_lines_nonzero)
-    ]).T
+    wcc = np.array([np.linspace(0, x, num_lines_nonzero), np.linspace(1, x, num_lines_nonzero)]).T
     data = SurfaceData(wcc)
     assert z2pack.invariant.z2(data) == 1
 
@@ -78,7 +74,7 @@ def test_linear_2(num_wcc, num_lines_nonzero, patch_surface_data):
     wcc = list(
         zip(
             np.linspace(0, 0.6, num_lines_nonzero),
-            np.linspace(1, 0.6, num_lines_nonzero)
+            np.linspace(1, 0.6, num_lines_nonzero),
         )
     )
     rand = list(sorted([random.random() for _ in range(num_wcc)] * 2))

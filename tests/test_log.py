@@ -1,17 +1,14 @@
 """Test logging output."""
 # pylint: disable=unused-import,redefined-outer-name
 
-import logging
-from io import StringIO  # pylint: disable=no-name-in-module
 from contextlib import contextmanager
+from io import StringIO  # pylint: disable=no-name-in-module
+import logging
 
+from hm_systems import simple_line, simple_surface, simple_system, simple_volume
 import z2pack
 
-from hm_systems import simple_system, simple_volume, simple_surface, simple_line
-
-IGNORE_LINES = [
-    'Calculation finished', 'starting at', 'Z2Pack version', ' at 0x'
-]
+IGNORE_LINES = ["Calculation finished", "starting at", "Z2Pack version", " at 0x"]
 
 
 def compare_lines(x, y):
@@ -21,7 +18,7 @@ def compare_lines(x, y):
     for i, (xline, yline) in enumerate(zip(x.splitlines(), y.splitlines())):
         if any((part in xline) and (part in yline) for part in IGNORE_LINES):
             continue
-        assert xline == yline, 'Line {} does not match.'.format(i)
+        assert xline == yline, f"Line {i} does not match."
     return True
 
 
@@ -32,8 +29,10 @@ def capture_logging_output(compare_data):
     """
     out = StringIO()
     handler = logging.StreamHandler(stream=out)
-    handler.setFormatter(z2pack._logging_format.DefaultFormatter())  # pylint: disable=protected-access
-    logger = logging.getLogger('z2pack')
+    handler.setFormatter(
+        z2pack._logging_format.DefaultFormatter()  # pylint: disable=protected-access
+    )
+    logger = logging.getLogger("z2pack")
     logger.setLevel(logging.INFO)
     logger.addHandler(handler)
     yield

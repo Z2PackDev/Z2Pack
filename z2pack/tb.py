@@ -1,13 +1,13 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 This module contains the class for creating systems based on `TBmodels <https://tbmodels.greschd.ch>`_ tight-binding models.
 """
 
-import copy
 from collections import ChainMap
+import copy
 
 from fsc.export import export
+
 from .hm import System as _HmSystem
 
 
@@ -23,6 +23,7 @@ class System(_HmSystem):
 
     The ``pos``, ``bands`` and ``dim`` keywords of :class:`.hm.System` are determined from the ``tb_model`` unless otherwise specified.
     """
+
     def __init__(self, tb_model, **kwargs):
         super().__init__(
             hamilton=tb_model.hamilton,
@@ -32,7 +33,7 @@ class System(_HmSystem):
                 dict(
                     pos=copy.deepcopy(tb_model.pos),
                     bands=tb_model.occ,
-                    dim=tb_model.dim
-                )
-            )
+                    dim=tb_model.dim,
+                ),
+            ),
         )

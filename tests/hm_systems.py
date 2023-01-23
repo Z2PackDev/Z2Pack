@@ -5,8 +5,8 @@ Fixtures for hamiltonian matrix (hm) system tests.
 
 import numbers
 
-import pytest
 import numpy as np
+import pytest
 
 import z2pack
 
@@ -15,20 +15,15 @@ class OverlapMockSystem(z2pack.system.OverlapSystem):
     """
     OverlapSystem which just wraps an EigenstateSystem and creates the overlap matrix.
     """
+
     def __init__(self, eigenstate_system):
         self.eigenstate_system = eigenstate_system
 
     def get_mmn(self, kpt):
-        return [
-            z2pack.line.EigenstateLineData(
-                self.eigenstate_system.get_eig(kpt)
-            ).wilson
-        ]
+        return [z2pack.line.EigenstateLineData(self.eigenstate_system.get_eig(kpt)).wilson]
 
 
-@pytest.fixture(
-    params=[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 0.8, 1.]
-)
+@pytest.fixture(params=[-1.0, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
 def kz(request):
     return request.param
 
@@ -53,6 +48,7 @@ def _check_real(func):
     """
     Decorator that checks that the args passed to the function are reals.
     """
+
     def inner(*args):
         for x in args:
             assert isinstance(x, numbers.Real)
@@ -82,8 +78,7 @@ def weyl_system(request):
     Creates a Weyl point system.
     """
     res = z2pack.hm.System(
-        lambda k: np.array([[k[2], k[0] - 1j * k[1]],
-                            [k[0] + 1j * k[1], -k[2]]])
+        lambda k: np.array([[k[2], k[0] - 1j * k[1]], [k[0] + 1j * k[1], -k[2]]])
     )
     if request.param:
         res = OverlapMockSystem(res)
@@ -99,4 +94,4 @@ weyl_line = pytest.fixture(weyl_line_creator)
 
 @pytest.fixture
 def weyl_surface():
-    return z2pack.shape.Sphere([0, 0, 0], 1.)
+    return z2pack.shape.Sphere([0, 0, 0], 1.0)

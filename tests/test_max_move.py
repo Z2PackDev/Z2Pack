@@ -5,12 +5,14 @@ Test the function that computes the maximum move between two sets of WCC.
 
 import copy
 import random
+
 random.seed(2512351)
 
-import pytest
 import numpy as np
+import pytest
 
 import z2pack
+
 max_move = z2pack._utils._get_max_move  # pylint: disable=protected-access,invalid-name
 
 
@@ -54,9 +56,7 @@ def test_single_move_equal_spacing(num_wcc):
     idx = random.randint(0, num_wcc - 1)
     wcc_2[idx] += move
     wcc_2[idx] %= 1
-    assert (
-        abs(move) - EPSILON <= max_move(wcc_1, wcc_2) <= abs(move) + EPSILON
-    )
+    assert abs(move) - EPSILON <= max_move(wcc_1, wcc_2) <= abs(move) + EPSILON
 
 
 def test_move_all(num_wcc):

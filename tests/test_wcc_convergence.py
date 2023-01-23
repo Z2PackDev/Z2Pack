@@ -1,12 +1,12 @@
 """Test LineData controls implementing WCC convergence criteria."""
 # pylint: disable=unused-argument,redefined-outer-name,unused-wildcard-import
 
-import pytest
 import numpy as np
+import pytest
 
+from monkeypatch_data import *
 import z2pack
 from z2pack.line._control import PosCheck
-from monkeypatch_data import *
 
 
 def test_base(test_ctrl_base):
@@ -17,7 +17,9 @@ def test_base(test_ctrl_base):
 # Monkeypatching s.t. the data.wcc is just a float, and _get_max_move is just min(wcc1, wcc2)
 @pytest.fixture
 def patch_line_max_move(monkeypatch):
-    monkeypatch.setattr(z2pack.line._control, '_get_max_move', min)  # pylint: disable=protected-access
+    monkeypatch.setattr(
+        z2pack.line._control, "_get_max_move", min  # pylint: disable=protected-access
+    )
 
 
 @pytest.fixture(params=np.linspace(0.01, 0.99, 21))

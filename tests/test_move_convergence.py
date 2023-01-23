@@ -1,13 +1,12 @@
 """Test MoveCheck convergence test."""
 # pylint: disable=unused-argument,unused-wildcard-import,redefined-outer-name
 
-import pytest
 import numpy as np
-
-from z2pack._control import SurfaceControl
-from z2pack.surface._control import MoveCheck
+import pytest
 
 from monkeypatch_data import *
+from z2pack._control import SurfaceControl
+from z2pack.surface._control import MoveCheck
 
 
 def test_base(test_ctrl_base):

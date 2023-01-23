@@ -1,8 +1,7 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 import z2pack
 
@@ -35,7 +34,7 @@ system0 = z2pack.hm.System(hamilton0, bands=1)
 system1 = z2pack.hm.System(hamilton1)  # bands=1 is default (#orbitals / 2)
 
 # the surface is a sphere around the Weyl point
-surface = z2pack.shape.Sphere([0., 0., 0.], 0.01)
+surface = z2pack.shape.Sphere([0.0, 0.0, 0.0], 0.01)
 res0 = z2pack.surface.run(system=system0, surface=surface)
 res1 = z2pack.surface.run(system=system1, surface=surface)
 
@@ -44,18 +43,18 @@ fig, ax = plt.subplots(1, 2)
 
 # plot styling
 fs = 15
-ax[0].set_xlabel(r'$\theta$', fontsize=fs)
-ax[0].set_ylabel(r'$\bar{x}$', rotation='horizontal', fontsize=fs)
-ax[1].set_xlabel(r'$\theta$', fontsize=fs)
+ax[0].set_xlabel(r"$\theta$", fontsize=fs)
+ax[0].set_ylabel(r"$\bar{x}$", rotation="horizontal", fontsize=fs)
+ax[1].set_xlabel(r"$\theta$", fontsize=fs)
 ax[0].set_xticks([0, 1])
 ax[1].set_xticks([0, 1])
-ax[0].set_xticklabels([r'$0$', r'$\pi$'])
-ax[1].set_xticklabels([r'$0$', r'$\pi$'])
-ax[0].set_title(r'$\vec{k}.\vec{\sigma}$', fontsize=fs)
-ax[1].set_title(r'$(k_x, -k_y, k_z).\vec{\sigma}$', fontsize=fs)
+ax[0].set_xticklabels([r"$0$", r"$\pi$"])
+ax[1].set_xticklabels([r"$0$", r"$\pi$"])
+ax[0].set_title(r"$\vec{k}.\vec{\sigma}$", fontsize=fs)
+ax[1].set_title(r"$(k_x, -k_y, k_z).\vec{\sigma}$", fontsize=fs)
 
 # plotting the evolution of polarization
 z2pack.plot.chern(res0, axis=ax[0])
 z2pack.plot.chern(res1, axis=ax[1])
 
-plt.savefig('plot.pdf', bbox_inches='tight')
+plt.savefig("plot.pdf", bbox_inches="tight")

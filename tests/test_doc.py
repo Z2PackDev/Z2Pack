@@ -11,8 +11,8 @@ def test_all_doc():
     """
     Test that all exported objects are documented.
     """
-    old_name = 'z2pack'
-    new_name = 'hoopy_z2pack'
+    old_name = "z2pack"
+    new_name = "hoopy_z2pack"
     for key in list(sys.modules.keys()):
         # move previous z2pack to hoopy_z2pack
         if key.startswith(old_name):

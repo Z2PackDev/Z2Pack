@@ -3,8 +3,12 @@
 from fsc.export import export
 
 from .._control import (
-    DataControl, ConvergenceControl, IterationControl, LineControl,
-    StatefulControl, ControlContainer
+    ControlContainer,
+    ConvergenceControl,
+    DataControl,
+    IterationControl,
+    LineControl,
+    StatefulControl,
 )
 from .._utils import _get_max_move
 
@@ -14,14 +18,15 @@ class LineControlContainer(ControlContainer):
     """
     Container for controls used in the line run.
     """
+
     def __init__(self, controls):
         super().__init__(
             controls=controls,
             categories={
-                'stateful': [StatefulControl],
-                'data': [DataControl],
-                'convergence': [ConvergenceControl],
-                'iteration': [IterationControl],
+                "stateful": [StatefulControl],
+                "data": [DataControl],
+                "convergence": [ConvergenceControl],
+                "iteration": [IterationControl],
             },
             valid_type=LineControl,
         )
@@ -30,6 +35,7 @@ class LineControlContainer(ControlContainer):
 @export
 class StepCounter(IterationControl, StatefulControl, LineControl):
     """Counts the number of k-points along the line."""
+
     def __init__(self, *, iterator):
         super().__init__()
         self._iterator = iter(iterator)
@@ -54,6 +60,7 @@ class StepCounter(IterationControl, StatefulControl, LineControl):
 @export
 class ForceFirstUpdate(DataControl, ConvergenceControl, LineControl):
     """Makes sure at least one update is done, even when the pos_tol argument is not used."""
+
     def __init__(self):
         self._converged = False
 
@@ -78,10 +85,11 @@ class PosCheck(
     :param pos_tol: Tolerance in the maximum movement of a single WCC position.
     :type pos_tol: float
     """
+
     def __init__(self, *, pos_tol):
         super().__init__()
         if not 0 < pos_tol <= 1:
-            raise ValueError('pos_tol must be in (0, 1]')
+            raise ValueError("pos_tol must be in (0, 1]")
         self.pos_tol = pos_tol
         self.max_move = None
         self.last_wcc = None
@@ -104,8 +112,8 @@ class PosCheck(
 
     @state.setter
     def state(self, state):
-        self.max_move = state['max_move']
-        self.last_wcc = state['last_wcc']
+        self.max_move = state["max_move"]
+        self.last_wcc = state["last_wcc"]
 
 
 def _create_line_controls(*, pos_tol, iterator):

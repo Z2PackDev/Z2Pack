@@ -8,9 +8,9 @@ import operator
 import os
 
 import pytest
+import z2pack
 
 from ctrl_base_tester import test_ctrl_base  # pylint: disable=unused-import
-import z2pack
 
 logging.getLogger("z2pack").setLevel(logging.CRITICAL)
 from z2pack._utils import _get_max_move

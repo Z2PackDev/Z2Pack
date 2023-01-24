@@ -3,7 +3,6 @@
 import os
 
 import matplotlib.pyplot as plt
-
 import z2pack
 
 result_0 = z2pack.io.load("results/Bi_0.msgpack")

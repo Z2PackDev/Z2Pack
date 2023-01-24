@@ -6,7 +6,6 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-
 import z2pack
 
 # Creating the System. Note that the SCF charge file does not need to be

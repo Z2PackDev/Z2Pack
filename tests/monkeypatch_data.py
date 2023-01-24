@@ -5,7 +5,6 @@ Fixtures that monkeypatch Data classes so that they can simply be set to the des
 import numpy as np
 import pytest
 from sortedcontainers import SortedList
-
 import z2pack
 from z2pack.line import LineResult
 from z2pack.line import WccLineData as LineData

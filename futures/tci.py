@@ -16,7 +16,6 @@ import numpy as np
 from numpy import cos, exp, pi, sin
 from ptools.plot_setup import *
 import scipy.linalg as la
-
 import z2pack.tb as tb
 
 plot_style(cmbright=True)

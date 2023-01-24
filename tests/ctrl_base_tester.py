@@ -3,7 +3,6 @@ Fixtures for testing Control classes.
 """
 
 import pytest
-
 from z2pack._control import (
     AbstractControl,
     ConvergenceControl,

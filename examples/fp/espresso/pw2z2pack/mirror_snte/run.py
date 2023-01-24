@@ -5,7 +5,6 @@ import shutil
 import subprocess
 
 import matplotlib.pyplot as plt
-
 import z2pack
 
 qedir = "/home/greschd/software/espresso-5.3.0/bin"

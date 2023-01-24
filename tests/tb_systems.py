@@ -5,7 +5,6 @@ import itertools
 
 import pytest
 import tbmodels
-
 import z2pack
 
 

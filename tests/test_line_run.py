@@ -7,11 +7,11 @@ import tempfile
 
 import numpy as np
 import pytest
+import z2pack
+from z2pack._utils import _get_max_move
 
 from hm_systems import *
 from tb_systems import *
-import z2pack
-from z2pack._utils import _get_max_move
 
 
 def normalize_convergence_report(report):

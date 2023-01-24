@@ -5,10 +5,10 @@ Test GapCheck control.
 
 import numpy as np
 import pytest
-
-from monkeypatch_data import *
 from z2pack._control import SurfaceControl
 from z2pack.surface._control import GapCheck
+
+from monkeypatch_data import *
 
 
 def test_base(test_ctrl_base):

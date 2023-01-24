@@ -94,9 +94,7 @@ class System(OverlapSystem):
         # check if the number of functions matches the number of paths
         if len(self._kpt_path) != len(self._kpt_fct):
             raise ValueError(
-                "kpt_fct ({}) and kpt_path({}) must have the same length".format(
-                    len(self._kpt_path), len(self._kpt_fct)
-                )
+                f"kpt_fct ({len(self._kpt_path)}) and kpt_path({len(self._kpt_fct)}) must have the same length"
             )
         self._mmn_path = self._to_abspath(mmn_path)
         self._calling_path = os.getcwd()
@@ -121,7 +119,7 @@ class System(OverlapSystem):
         _copy(self._input_files, self._file_names)
 
         for i, (k_mode, f_path) in enumerate(zip(self._k_mode, self._kpt_path)):
-            with open(f_path, k_mode) as f:
+            with open(f_path, k_mode, encoding="utf-8") as f:
                 f.write(self._kpt_fct[i](kpt))
 
     def get_mmn(self, kpt):
@@ -146,18 +144,14 @@ class System(OverlapSystem):
             )
         if len(overlap_matrices) != num_kpt:
             raise ValueError(
-                "The number of overlap matrices found is {}, but should be {}. Maybe check search_shells in wannier90.win".format(
-                    len(overlap_matrices), num_kpt
-                )
+                f"The number of overlap matrices found is {len(overlap_matrices)}, but should be {num_kpt}. Maybe check search_shells in wannier90.win"
             )
         if self._num_wcc is not None:
             shape = (self._num_wcc, self._num_wcc)
             for i, overlaps in enumerate(overlap_matrices):
                 if overlaps.shape != shape:
                     raise ValueError(
-                        "The shape of overlap matrix #{} is {}, but should be {}.".format(
-                            i, overlaps.shape, shape
-                        )
+                        f"The shape of overlap matrix #{i} is {overlaps.shape}, but should be {shape}."
                     )
 
         return overlap_matrices

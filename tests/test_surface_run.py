@@ -55,7 +55,7 @@ def test_simple(simple_system, simple_surface, num_lines):
     assert result.wcc == [[0, 0]] * num_lines
     assert result.gap_size == [1] * num_lines
     assert result.gap_pos == [0.5] * num_lines
-    assert result.ctrl_states == {}
+    assert not result.ctrl_states
 
 
 def test_neighbour_dist(weyl_system, weyl_surface):
@@ -124,49 +124,46 @@ def test_simple_save(num_lines, simple_system, simple_surface):
     """
     Test saving to a file during a simple surface calculation.
     """
-    temp_file = tempfile.NamedTemporaryFile(delete=False)
-    result1 = z2pack.surface.run(
-        system=simple_system,
-        surface=simple_surface,
-        num_lines=num_lines,
-        save_file=temp_file.name,
-    )
-    result2 = z2pack.io.load(temp_file.name, serializer=json)
-    os.remove(temp_file.name)
+    with tempfile.NamedTemporaryFile() as temp_file:
+        result1 = z2pack.surface.run(
+            system=simple_system,
+            surface=simple_surface,
+            num_lines=num_lines,
+            save_file=temp_file.name,
+        )
+        result2 = z2pack.io.load(temp_file.name, serializer=json)
     assert_res_equal(result1, result2)
 
 
 def test_weyl_save(pos_tol, gap_tol, move_tol, num_lines, weyl_system, weyl_surface):
     """Test saving to a file with the Weyl system."""
-    temp_file = tempfile.NamedTemporaryFile(delete=False)
-    result1 = z2pack.surface.run(
-        system=weyl_system,
-        surface=weyl_surface,
-        num_lines=num_lines,
-        move_tol=move_tol,
-        gap_tol=gap_tol,
-        pos_tol=pos_tol,
-        save_file=temp_file.name,
-    )
-    result2 = z2pack.io.load(temp_file.name, serializer=json)
-    os.remove(temp_file.name)
+    with tempfile.NamedTemporaryFile() as temp_file:
+        result1 = z2pack.surface.run(
+            system=weyl_system,
+            surface=weyl_surface,
+            num_lines=num_lines,
+            move_tol=move_tol,
+            gap_tol=gap_tol,
+            pos_tol=pos_tol,
+            save_file=temp_file.name,
+        )
+        result2 = z2pack.io.load(temp_file.name, serializer=json)
     assert_res_equal(result1, result2)
 
 
 def test_tb_save(pos_tol, gap_tol, move_tol, num_lines, tb_system, tb_surface):
     """Test saving to a file with the tight-binding system."""
-    temp_file = tempfile.NamedTemporaryFile(delete=False)
-    result1 = z2pack.surface.run(
-        system=tb_system,
-        surface=tb_surface,
-        num_lines=num_lines,
-        move_tol=move_tol,
-        gap_tol=gap_tol,
-        pos_tol=pos_tol,
-        save_file=temp_file.name,
-    )
-    result2 = z2pack.io.load(temp_file.name, serializer=json)
-    os.remove(temp_file.name)
+    with tempfile.NamedTemporaryFile() as temp_file:
+        result1 = z2pack.surface.run(
+            system=tb_system,
+            surface=tb_surface,
+            num_lines=num_lines,
+            move_tol=move_tol,
+            gap_tol=gap_tol,
+            pos_tol=pos_tol,
+            save_file=temp_file.name,
+        )
+        result2 = z2pack.io.load(temp_file.name, serializer=json)
     assert_res_equal(result1, result2)
 
 
@@ -315,7 +312,7 @@ def test_load_reference_legacy_v1(simple_system, test_name, simple_surface, seri
         assert_res_equal(result, saved_res, ignore_wilson=not hasattr(saved_res, "wilson"))
 
 
-def test_invalid_save_path(simple_system, simple_surface):
+def test_invalid_save_path(simple_system, simple_surface):  # pylint: disable=unused-argument
     """
     Test that trying to save to an invalid path raises an error.
     """

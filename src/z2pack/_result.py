@@ -19,12 +19,12 @@ class Result(metaclass=abc.ABCMeta):
 
     def __init__(self, data, stateful_ctrl, convergence_ctrl):
         self.data = data
-        ctrl_states = dict()
+        ctrl_states = {}
         # save states
         for s_ctrl in stateful_ctrl:
             ctrl_states[s_ctrl.__class__.__name__] = s_ctrl.state
         self.ctrl_states = ctrl_states
-        ctrl_convergence = dict()
+        ctrl_convergence = {}
         # save convergence
         for c_ctrl in convergence_ctrl:
             ctrl_convergence[c_ctrl.__class__.__name__] = c_ctrl.converged

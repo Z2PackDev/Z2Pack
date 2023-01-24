@@ -2,7 +2,6 @@
 # pylint: disable=unused-wildcard-import,redefined-outer-name
 
 import json
-import os
 import tempfile
 
 import numpy as np
@@ -125,10 +124,9 @@ def test_simple_save(simple_system, simple_line):
     """
     Test saving during a line run.
     """
-    temp_file = tempfile.NamedTemporaryFile(delete=False)
-    result = z2pack.line.run(system=simple_system, line=simple_line, save_file=temp_file.name)
-    result2 = z2pack.io.load(temp_file.name, serializer=json)
-    os.remove(temp_file.name)
+    with tempfile.NamedTemporaryFile() as temp_file:
+        result = z2pack.line.run(system=simple_system, line=simple_line, save_file=temp_file.name)
+        result2 = z2pack.io.load(temp_file.name, serializer=json)
     assert_res_equal(result, result2)
 
 
@@ -136,10 +134,9 @@ def test_weyl_save(weyl_system, weyl_line):
     """
     Test saving during a Weyl system line run.
     """
-    temp_file = tempfile.NamedTemporaryFile(delete=False)
-    result = z2pack.line.run(system=weyl_system, line=weyl_line, save_file=temp_file.name)
-    result2 = z2pack.io.load(temp_file.name, serializer=json)
-    os.remove(temp_file.name)
+    with tempfile.NamedTemporaryFile() as temp_file:
+        result = z2pack.line.run(system=weyl_system, line=weyl_line, save_file=temp_file.name)
+        result2 = z2pack.io.load(temp_file.name, serializer=json)
     assert_res_equal(result, result2)
 
 

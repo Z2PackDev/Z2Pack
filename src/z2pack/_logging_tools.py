@@ -23,7 +23,7 @@ class TagAdapter(logging.LoggerAdapter):
         # check for "manual" tags
         tags.update(kwargs.pop("tags", []))  # don't pass on tags kwargs
         # "extra" kwarg must exist, add tags
-        kwargs.setdefault("extra", dict())["tags"] = tags
+        kwargs.setdefault("extra", {})["tags"] = tags
         return msg, kwargs
 
 

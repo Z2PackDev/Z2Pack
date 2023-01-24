@@ -156,12 +156,12 @@ def _run_line_impl(*controls, system, line, save_file=None, init_result=None, se
 
     # main loop
     while not all(collect_convergence()):
-        run_options = dict()
+        run_options = {}
         for it_ctrl in ctrl_container.iteration:
             try:
                 run_options.update(next(it_ctrl))
                 _LOGGER.info(
-                    "Calculating line for N = {}".format(run_options["num_steps"]),
+                    f"Calculating line for N = {run_options['num_steps']}",
                     tags=("offset",),
                 )
             except StopIteration:

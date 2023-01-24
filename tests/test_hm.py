@@ -3,9 +3,9 @@
 
 import numpy as np
 import pytest
+import z2pack
 
 from hm_systems import weyl_surface  # pylint: disable=unused-import
-import z2pack
 
 
 def test_non_hermitian():

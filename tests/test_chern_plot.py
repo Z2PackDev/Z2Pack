@@ -5,10 +5,10 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import z2pack
 
 from monkeypatch_data import *
 from plottest_helpers import *
-import z2pack
 
 
 def test_chern_plot(assert_image_equal, patch_surface_data):

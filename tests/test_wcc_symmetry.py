@@ -6,9 +6,9 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+import z2pack
 
 from plottest_helpers import *  # pylint: disable=unused-wildcard-import
-import z2pack
 
 
 def test_weyl(assert_image_equal):

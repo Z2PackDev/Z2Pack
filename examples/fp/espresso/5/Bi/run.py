@@ -6,7 +6,6 @@ import subprocess
 import xml.etree.ElementTree as ET
 
 import matplotlib.pyplot as plt
-
 import z2pack
 
 # Edit the paths to your Quantum Espresso and Wannier90 here

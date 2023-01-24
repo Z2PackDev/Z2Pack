@@ -2,7 +2,6 @@
 # pylint: disable=redefined-outer-name
 
 import pytest
-
 import z2pack
 from z2pack.line._control import StepCounter
 

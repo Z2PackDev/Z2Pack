@@ -5,8 +5,9 @@ from contextlib import contextmanager
 from io import StringIO  # pylint: disable=no-name-in-module
 import logging
 
-from hm_systems import simple_line, simple_surface, simple_system, simple_volume
 import z2pack
+
+from hm_systems import simple_line, simple_surface, simple_system, simple_volume
 
 IGNORE_LINES = ["Calculation finished", "starting at", "Z2Pack version", " at 0x"]
 

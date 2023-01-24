@@ -9,10 +9,10 @@ import tempfile
 import msgpack
 import numpy as np
 import pytest
+import z2pack
 
 from hm_systems import *
 from tb_systems import *
-import z2pack
 
 
 @pytest.fixture(params=[2, 5, 11])

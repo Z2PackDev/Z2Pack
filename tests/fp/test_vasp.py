@@ -8,7 +8,6 @@ import shutil
 import tempfile
 
 import pytest
-
 import z2pack
 
 

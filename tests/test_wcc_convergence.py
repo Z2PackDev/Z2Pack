@@ -3,10 +3,10 @@
 
 import numpy as np
 import pytest
-
-from monkeypatch_data import *
 import z2pack
 from z2pack.line._control import PosCheck
+
+from monkeypatch_data import *
 
 
 def test_base(test_ctrl_base):

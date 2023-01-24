@@ -4,9 +4,9 @@
 import random
 
 import pytest
+import z2pack
 
 from monkeypatch_data import *
-import z2pack
 
 
 @pytest.fixture(params=range(6))

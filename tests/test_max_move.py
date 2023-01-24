@@ -10,7 +10,6 @@ random.seed(2512351)
 
 import numpy as np
 import pytest
-
 import z2pack
 
 max_move = z2pack._utils._get_max_move  # pylint: disable=protected-access,invalid-name

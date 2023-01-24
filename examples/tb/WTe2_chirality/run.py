@@ -7,7 +7,6 @@ import pickle
 
 import matplotlib.pyplot as plt
 from tbmodels import Model
-
 import z2pack
 
 MODEL_NAME = "wte2_soc"

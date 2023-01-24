@@ -3,7 +3,6 @@
 import logging
 
 import numpy as np
-
 import z2pack
 
 logging.getLogger("z2pack").setLevel(logging.WARNING)

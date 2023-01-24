@@ -6,18 +6,21 @@
 set -ev
 
 pip install codecov
-pip install -U pip setuptools wheel
+pip install -U pip setuptools wheel poetry
+poetry config virtualenvs.create false
 
 case "$INSTALL_TYPE" in
     dev)
-        pip install -e .[dev]
+        poetry install -E tb -E plot
         ;;
     dev_sdist)
-        python setup.py sdist
-        ls -1 dist/ | xargs -I % pip install dist/%[dev]
+        poetry build
+        poetry install --only dev --no-root
+        ls -1 dist/*.gz | xargs -I % pip install %[plot,tb]
         ;;
     dev_bdist_wheel)
-        python setup.py bdist_wheel
-        ls -1 dist/ | xargs -I % pip install dist/%[dev]
+        poetry build
+        poetry install --only dev --no-root
+        ls -1 dist/*.whl | xargs -I % pip install %[plot,tb]
         ;;
 esac

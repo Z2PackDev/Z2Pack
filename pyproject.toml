@@ -1,6 +1,69 @@
 [build-system]
-requires = ["setuptools >= 46.4.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "z2pack"
+version = "2.2.0"
+description = "Automating the computation of topological numbers of band-structures.."
+authors = ["Dominik Gresch <mail@greschd.ch>"]
+license = "GPL"
+readme = "README.md"
+documentation = "https://z2pack.greschd.ch"
+repository = "https://github.com/Z2PackDev/Z2Pack"
+classifiers = [
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Natural Language :: English",
+    "Operating System :: Unix",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Development Status :: 5 - Production/Stable",
+]
+keywords = [
+    "topology",
+    "topological",
+    "invariant",
+    "bandstructure",
+    "chern",
+    "z2",
+    "solid-state",
+    "tight-binding",
+]
+packages = [
+    { include = "z2pack", from = "src" },
+]
+
+[tool.poetry.dependencies]
+python = ">=3.8,<3.12"
+numpy = "^1.20"
+scipy = "^1.7"
+decorator = "^5.0"
+blessings = "^1.7"
+sortedcontainers = "^2.4.0"
+msgpack-python = "^0.5.6"
+"fsc.locker" = "^1.1.0"
+"fsc.export" = "^1.2.0"
+"fsc.formatting" = "^1.0.0"
+"fsc.iohelper" = "^1.0.3"
+matplotlib = { version = "^3", optional = true }
+tbmodels = { version =  "^1.1.1", optional = true }
+
+[tool.poetry.group.dev.dependencies]
+sphinx = "^5"
+sphinx-rtd-theme = "^1.1.1"
+pytest = "^6"
+pytest-cov = "^4.0.0"
+pre-commit = "^3.0.0"
+pylint = "==2.4.4"
+"ruamel.yaml" = "==0.17.16"
+
+[tool.poetry.extras]
+plot = ["matplotlib"]
+tb = ["tbmodels"]
 
 [tool.black]
 line-length = 100

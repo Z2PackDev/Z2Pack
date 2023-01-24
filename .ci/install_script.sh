@@ -15,12 +15,12 @@ case "$INSTALL_TYPE" in
         ;;
     dev_sdist)
         poetry build
-        pip install dist/*.gz
-        poetry install --only dev
+        poetry install --only dev --no-root
+        ls -1 dist/*.gz | xargs -I % pip install %[plot,tb]
         ;;
     dev_bdist_wheel)
         poetry build
-        pip install dist/*.whl
-        poetry install --only dev
+        poetry install --only dev --no-root
+        ls -1 dist/*.whl | xargs -I % pip install %[plot,tb]
         ;;
 esac

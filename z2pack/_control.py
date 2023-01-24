@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """Abstract base classes for Control objects, which govern the iteration of Z2Pack runs."""
 
 import abc
@@ -13,22 +12,26 @@ class ControlContainer(types.SimpleNamespace):
     """
     Container for controls, giving simple access to the different types of controls.
     """
-    def __init__(self, *, controls, categories, valid_type):  # pylint: disable=missing-function-docstring
+
+    def __init__(
+        self, *, controls, categories, valid_type
+    ):  # pylint: disable=missing-function-docstring
         self.all = controls
         for ctrl in self.all:
             if not isinstance(ctrl, valid_type):
                 raise ValueError(
-                    "Invalid type '{}' of control, should be '{}'.".format(
-                        type(ctrl), valid_type
-                    )
+                    f"Invalid type '{type(ctrl)}' of control, should be '{valid_type}'."
                 )
 
         for name, ctrl_types in categories.items():
             setattr(
-                self, name, [
-                    ctrl for ctrl in controls
+                self,
+                name,
+                [
+                    ctrl
+                    for ctrl in controls
                     if all(isinstance(ctrl, ctrl_t) for ctrl_t in ctrl_types)
-                ]
+                ],
             )
 
 
@@ -57,6 +60,7 @@ class StatefulControl(AbstractControl):
 
     ``sc1`` and ``sc2`` are again equivalent. In particular, it is not necessary to use ``update()`` on ``sc2`` in the case of a DataControl.
     """
+
     @abc.abstractmethod
     def __init__(self, *, state=None, **kwargs):
         super().__init__(**kwargs)
@@ -75,6 +79,7 @@ class StatefulControl(AbstractControl):
 @export
 class DataControl(AbstractControl):
     """ABC for control objects which can be updated with data."""
+
     @abc.abstractmethod
     def update(self, data):
         pass
@@ -83,6 +88,7 @@ class DataControl(AbstractControl):
 @export
 class IterationControl(AbstractControl):
     """ABC for iteration control objects. Enforces the existence of ..."""
+
     @abc.abstractmethod
     def __next__(self):
         pass
@@ -93,6 +99,7 @@ class ConvergenceControl(AbstractControl):
     """ABC for convergence tester objects. Enforces the existence of an update method, and the ``converged`` property.
     For LineControl objects, the converged property must be valid (False) also before the first update() call.
     This is not required for SurfaceControl objects."""
+
     @property
     @abc.abstractmethod
     def converged(self):

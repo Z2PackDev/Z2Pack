@@ -3,13 +3,12 @@ Test GapCheck control.
 """
 # pylint: disable=unused-wildcard-import,unused-argument,redefined-outer-name
 
-import pytest
 import numpy as np
-
-from z2pack.surface._control import GapCheck
-from z2pack._control import SurfaceControl
+import pytest
 
 from monkeypatch_data import *
+from z2pack._control import SurfaceControl
+from z2pack.surface._control import GapCheck
 
 
 def test_base(test_ctrl_base):

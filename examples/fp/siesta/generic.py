@@ -1,16 +1,17 @@
-import z2pack
-import sisl
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import sisl
+
+import z2pack
 
 # Read geometry, Hamiltonian and overlap matrix from SIESTA output using sisl
-sile = sisl.get_sile('in.fdf')
+sile = sisl.get_sile("in.fdf")
 geom = sile.read_geometry()
 H = sile.read_hamiltonian(geometry=geom)
 
 # Create two helper functions to retrieve Hamiltonian and overlap for arbitrary k points
-Hk = lambda k: H.Hk(k=k, dtype=np.complex64, format='array')
-Sk = lambda k: H.Sk(k=k, dtype=np.complex64, format='array')
+Hk = lambda k: H.Hk(k=k, dtype=np.complex64, format="array")
+Sk = lambda k: H.Sk(k=k, dtype=np.complex64, format="array")
 
 # Create array with the position of all orbitals
 pos = geom.fxyz[list(map(geom.o2a, np.arange(H.no)))]

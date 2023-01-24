@@ -1,15 +1,15 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """Defines the default formatter class, and sets up the default handlers."""
 
-import sys
 import logging
+import sys
 
 try:
     import blessings
 # for Windows
 except ImportError:
     from . import _blessings_fallback as blessings
+
 from fsc.formatting import shorten, to_box
 
 from . import __version__
@@ -17,99 +17,95 @@ from . import __version__
 
 class DefaultFormatter(logging.Formatter):
     """Formatter used for z2pack logs"""
+
     def __init__(self):
         self.term = blessings.Terminal()
-        super().__init__(style='{')
+        super().__init__(style="{")
 
     def format(self, record):
         msg = record.msg
-        if hasattr(record, 'tags'):
+        if hasattr(record, "tags"):
             # Creating the Convergence Report string from its dictionary.
-            if 'convergence_report' in record.tags:
+            if "convergence_report" in record.tags:
                 msg = self._create_convergence_report(record)
 
-            elif 'setup' in record.tags:
+            elif "setup" in record.tags:
                 msg = self._create_setup_message(record)
 
-            elif 'timing' in record.tags:
+            elif "timing" in record.tags:
                 msg = self._create_timing_message(record)
 
-            if 'offset' in record.tags:
+            if "offset" in record.tags:
                 msg = self._offset(msg, 6)
 
-            if 'box' in record.tags:
+            if "box" in record.tags:
                 msg = to_box(msg)
             else:
-                msg = '{}: {}'.format(record.levelname, msg)
+                msg = f"{record.levelname}: {msg}"
                 if record.levelno > 25:
                     msg = self.term.bold_red(msg)
 
-            if 'skip' in record.tags:
-                msg = '\n' + msg + '\n'
-            if 'skip-before' in record.tags:
-                msg = '\n' + msg
-            if 'skip-after' in record.tags:
-                msg += '\n'
+            if "skip" in record.tags:
+                msg = "\n" + msg + "\n"
+            if "skip-before" in record.tags:
+                msg = "\n" + msg
+            if "skip-after" in record.tags:
+                msg += "\n"
 
         return msg
 
     def _create_convergence_report(self, record):
         """Format the convergence report message."""
         report = record.msg
-        msg = self._make_title(
-            'CONVERGENCE REPORT', '=', overline=True, modifier=self.term.bold
-        )
+        msg = self._make_title("CONVERGENCE REPORT", "=", overline=True, modifier=self.term.bold)
 
         def _make_kind_msg(kind):
             """
             Create the convergence report message for a particular kind of convergence control.
             """
-            msg = self._make_title(
-                '{} Convergence'.format(kind.capitalize()), '='
-            )
+            msg = self._make_title(f"{kind.capitalize()} Convergence", "=")
             for key, val in sorted(report[kind].items()):
-                msg += '\n\n' + self._make_report_entry(key, val)
+                msg += "\n\n" + self._make_report_entry(key, val)
             return msg
 
-        if 'volume' in record.tags:
-            msg += '\n\n' + _make_kind_msg(kind='line')
-            msg += '\n\n' + _make_kind_msg(kind='surface')
-            msg += '\n\n' + _make_kind_msg(kind='volume')
-        elif 'surface' in record.tags:
-            msg += '\n\n' + _make_kind_msg(kind='line')
-            msg += '\n\n' + _make_kind_msg(kind='surface')
+        if "volume" in record.tags:
+            msg += "\n\n" + _make_kind_msg(kind="line")
+            msg += "\n\n" + _make_kind_msg(kind="surface")
+            msg += "\n\n" + _make_kind_msg(kind="volume")
+        elif "surface" in record.tags:
+            msg += "\n\n" + _make_kind_msg(kind="line")
+            msg += "\n\n" + _make_kind_msg(kind="surface")
 
         # For Line calculations
-        elif 'line' in record.tags:
+        elif "line" in record.tags:
             for key, val in sorted(report.items()):
-                msg += '\n\n{}: {}'.format(key, 'PASSED' if val else 'FAILED')
+                msg += "\n\n{}: {}".format(key, "PASSED" if val else "FAILED")
         return msg
 
     def _create_setup_message(self, record):
         """Create message from setup record."""
         kwargs = record.msg
 
-        calc_type = (set(record.tags)
-                     & set(['volume', 'line', 'surface'])).pop()
+        calc_type = (set(record.tags) & {"volume", "line", "surface"}).pop()
         msg = self._make_title(
-            '{} CALCULATION'.format(calc_type.upper()),
-            '=',
+            f"{calc_type.upper()} CALCULATION",
+            "=",
             overline=True,
-            modifier=self.term.bold
+            modifier=self.term.bold,
         )
 
-        msg += '\n' + 'starting at {}'.format(self.formatTime(record))
-        msg += '\nrunning Z2Pack version {}\n\n'.format(__version__)
+        msg += "\n" + f"starting at {self.formatTime(record)}"
+        msg += f"\nrunning Z2Pack version {__version__}\n\n"
 
         dist = max(len(key) for key in kwargs.keys()) + 2
-        format_string = '{:<' + str(dist) + '}{}'
+        format_string = "{:<" + str(dist) + "}{}"
         for key, value in sorted(kwargs.items()):
             val_str = str(value)
             max_width = 70 - dist
             if len(val_str) > max_width:
                 val_str = shorten(val_str, max_width, show_number=False)
-            msg += format_string.format(key + ':', val_str)
-            msg += '\n'
+            msg += format_string.format(key + ":", val_str)
+            msg += "\n"
         msg = msg[:-1]
         return msg
 
@@ -120,10 +116,10 @@ class DefaultFormatter(logging.Formatter):
         minutes, seconds = seconds // 60, seconds % 60
         hours, minutes = minutes // 60, minutes % 60
         days, hours = hours // 24, hours % 24
-        time_str = '{}h {}m {}s'.format(hours, minutes, seconds)
+        time_str = f"{hours}h {minutes}m {seconds}s"
         if days != 0:
-            time_str = '{}d '.format(days) + time_str
-        msg = 'Calculation finished in {}'.format(time_str)
+            time_str = f"{days}d " + time_str
+        msg = f"Calculation finished in {time_str}"
         return msg
 
     @staticmethod
@@ -138,44 +134,36 @@ class DefaultFormatter(logging.Formatter):
         else:
             res = []
         res.extend([title, delimiter])
-        return '\n'.join(res)
+        return "\n".join(res)
 
     @staticmethod
     def _offset(string, num_offset=4):
         """Add a given offset (whitespace) to each line in the string"""
-        return '\n'.join(' ' * num_offset + s for s in string.split('\n'))
+        return "\n".join(" " * num_offset + s for s in string.split("\n"))
 
     def _make_report_entry(self, key, val):
         """Format an entry in the convergence report."""
-        title = self._make_title(key, '-')
+        title = self._make_title(key, "-")
         if val is None:
-            return self._offset(
-                title + '\nFAILED: Convergence check has not run!'
-            )
-        passed = len(val['PASSED'])
-        failed = len(val['FAILED'])
+            return self._offset(title + "\nFAILED: Convergence check has not run!")
+        passed = len(val["PASSED"])
+        failed = len(val["FAILED"])
         try:
-            missing = len(val['MISSING'])
+            missing = len(val["MISSING"])
         except KeyError:
             missing = 0
         total = sum([passed, failed, missing])
-        report = ''
+        report = ""
         if passed:
-            report += '\n' + self.term.bold_green(
-                'PASSED: {0} of {1}'.format(passed, total)
-            )
+            report += "\n" + self.term.bold_green(f"PASSED: {passed} of {total}")
         if failed:
-            report += '\n' + self.term.bold_red(
-                'FAILED: {0} of {1}'.format(failed, total)
-            )
+            report += "\n" + self.term.bold_red(f"FAILED: {failed} of {total}")
         if missing:
-            report += '\n' + self.term.bold_yellow(
-                'MISSING: {0} of {1}'.format(missing, total)
-            )
+            report += "\n" + self.term.bold_yellow(f"MISSING: {missing} of {total}")
         return self._offset(title + report)
 
 
 DEFAULT_HANDLER = logging.StreamHandler(sys.stdout)
 DEFAULT_HANDLER.setFormatter(DefaultFormatter())
-logging.getLogger('z2pack').setLevel(logging.INFO)
-logging.getLogger('z2pack').addHandler(DEFAULT_HANDLER)
+logging.getLogger("z2pack").setLevel(logging.INFO)
+logging.getLogger("z2pack").addHandler(DEFAULT_HANDLER)

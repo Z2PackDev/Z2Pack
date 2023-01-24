@@ -18,16 +18,13 @@ def tb_model():
 
     model = tbmodels.Model(
         on_site=(1, 1, -1, -1),
-        pos=[[0., 0., 0.], [0., 0., 0.], [0.5, 0.5, 0.], [0.5, 0.5, 0.]],
-        occ=2
+        pos=[[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.5, 0.5, 0.0], [0.5, 0.5, 0.0]],
+        occ=2,
     )
 
-    for p, R in zip([1, 1j, -1j, -1], itertools.product([0, -1], [0, -1],
-                                                        [0])):
+    for p, R in zip([1, 1j, -1j, -1], itertools.product([0, -1], [0, -1], [0])):
         model.add_hop(overlap=p * t1, orbital_1=0, orbital_2=2, R=R)
-        model.add_hop(
-            overlap=p.conjugate() * t1, orbital_1=1, orbital_2=3, R=R
-        )
+        model.add_hop(overlap=p.conjugate() * t1, orbital_1=1, orbital_2=3, R=R)
 
     for R in ((r[0], r[1], 0) for r in itertools.permutations([0, 1])):
         model.add_hop(t2, 0, 0, R)

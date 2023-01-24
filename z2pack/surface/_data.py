@@ -18,6 +18,7 @@ class SurfaceData(metaclass=ConstLocker):
     The attributes of the underlying :class:`.LineResult` instances can be directly accessed from the :class:`.SurfaceData` object. This will create a list of attributes for all lines, in the order of their position.
 
     """
+
     # cannot be pickled if it is a local method (lambda) in __init__
     # when python3.4 support is dropped, operator.attrgetter can be used
     @staticmethod
@@ -39,7 +40,7 @@ class SurfaceData(metaclass=ConstLocker):
         self.lines.add(LinePosition(t, result))
 
     def __getattr__(self, key):
-        if key != 'lines':
+        if key != "lines":
             return [getattr(line, key) for line in self.lines]
         raise AttributeError
 
@@ -58,13 +59,14 @@ class SurfaceData(metaclass=ConstLocker):
 
 class LinePosition:
     """Wraps the line result and its position in the surface."""
-    __slots__ = ['t', 'result']
+
+    __slots__ = ["t", "result"]
 
     def __init__(self, t, result):
         self.t = t
         self.result = result
 
     def __getattr__(self, key):
-        if key not in ['t', 'result']:
+        if key not in ["t", "result"]:
             return getattr(self.result, key)
         return super().__getattribute__(key)

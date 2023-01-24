@@ -3,8 +3,8 @@
 
 import pytest
 
-from z2pack.line._control import StepCounter
 import z2pack
+from z2pack.line._control import StepCounter
 
 
 def test_base(test_ctrl_base):
@@ -23,7 +23,7 @@ def test_step():
     """
     step_counter = StepCounter(iterator=range(0, 100, 2))
     for step_number in range(1, 50):
-        i = next(step_counter)['num_steps']
+        i = next(step_counter)["num_steps"]
         assert step_counter.state == i
         assert i == 2 * step_number
     with pytest.raises(StopIteration):
@@ -38,7 +38,7 @@ def test_nonzero_start(num_steps):
     step_counter.state = num_steps
     assert step_counter.state == num_steps
     for step_number in range(1, 20):
-        i = next(step_counter)['num_steps']
+        i = next(step_counter)["num_steps"]
         assert step_counter.state == i
         assert i == 3 * (step_number + int(num_steps / 3))
 
@@ -50,6 +50,6 @@ def test_stopiteration(num_steps):
     step_counter = StepCounter(iterator=range(0, 3 * num_steps, 2))
     with pytest.raises(StopIteration):
         while True:
-            i = next(step_counter)['num_steps']
+            i = next(step_counter)["num_steps"]
             assert step_counter.state == i
     assert i == int((3 * num_steps - 1) / 2) * 2

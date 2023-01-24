@@ -17,6 +17,7 @@ class SurfaceResult(Result):
         print(result.t) # prints the positions of the lines
         print(result.pol) # prints the sum of WCC for each line
     """
+
     @property
     def convergence_report(self):
         r"""
@@ -41,11 +42,11 @@ class SurfaceResult(Result):
                         failed_t.append(line.t)
                 except KeyError:
                     missing_t.append(line.t)
-            ctrl_report['PASSED'] = passed_t
-            ctrl_report['FAILED'] = failed_t
-            ctrl_report['MISSING'] = missing_t
+            ctrl_report["PASSED"] = passed_t
+            ctrl_report["FAILED"] = failed_t
+            ctrl_report["MISSING"] = missing_t
             line_report[c_ctrl] = ctrl_report
-        report['line'] = line_report
+        report["line"] = line_report
 
         surface_report = dict()
         for c_ctrl, converged in sorted(self.ctrl_convergence.items()):
@@ -53,16 +54,14 @@ class SurfaceResult(Result):
                 ctrl_report = None
             else:
                 ctrl_report = dict()
-                ctrl_report['PASSED'] = []
-                ctrl_report['FAILED'] = []
-                for t_pair, conv in zip(
-                    zip(self.t[:-1], self.t[1:]), converged
-                ):
+                ctrl_report["PASSED"] = []
+                ctrl_report["FAILED"] = []
+                for t_pair, conv in zip(zip(self.t[:-1], self.t[1:]), converged):
                     if conv:
-                        ctrl_report['PASSED'].append(t_pair)
+                        ctrl_report["PASSED"].append(t_pair)
                     else:
-                        ctrl_report['FAILED'].append(t_pair)
+                        ctrl_report["FAILED"].append(t_pair)
             surface_report[c_ctrl] = ctrl_report
-        report['surface'] = surface_report
+        report["surface"] = surface_report
 
         return report

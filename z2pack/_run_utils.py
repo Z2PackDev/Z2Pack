@@ -14,28 +14,23 @@ def _log_run(logger):
     """
     Log the inputs, elapsed time and convergence report for a calculation run.
     """
+
     def inner(fct, **kwargs):
-        logger.info(kwargs, tags=('setup', 'box', 'skip'))
+        logger.info(kwargs, tags=("setup", "box", "skip"))
         start_time = time.time()
 
         result = fct(**kwargs)
 
         end_time = time.time()
-        logger.info(
-            end_time - start_time, tags=('box', 'skip-before', 'timing')
-        )
-        logger.info(
-            result.convergence_report, tags=('convergence_report', 'box')
-        )
+        logger.info(end_time - start_time, tags=("box", "skip-before", "timing"))
+        logger.info(result.convergence_report, tags=("convergence_report", "box"))
 
         return result
 
     return decorator(inner)
 
 
-def _load_init_result(
-    *, init_result, save_file, load, load_quiet, serializer, valid_type
-):
+def _load_init_result(*, init_result, save_file, load, load_quiet, serializer, valid_type):
     """
     Load the initial result from a given save file.
 
@@ -70,15 +65,16 @@ def _load_init_result(
             )
         try:
             init_result = io.load(save_file, serializer=serializer)
-        except IOError as exception:
+        except OSError as exception:
             if not load_quiet:
                 raise exception
 
     if init_result is not None:
         if not isinstance(init_result, valid_type):
             raise ValueError(
-                "The initial result has invalid type '{}': should be '{}'".
-                format(type(init_result), valid_type)
+                "The initial result has invalid type '{}': should be '{}'".format(
+                    type(init_result), valid_type
+                )
             )
 
     return init_result
@@ -91,4 +87,4 @@ def _check_save_dir(*, save_file):
     if save_file is not None:
         dirname = os.path.dirname(os.path.abspath(save_file))
         if not os.path.isdir(dirname):
-            raise ValueError('Directory {} does not exist.'.format(dirname))
+            raise ValueError(f"Directory {dirname} does not exist.")

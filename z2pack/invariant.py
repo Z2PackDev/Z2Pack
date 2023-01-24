@@ -1,12 +1,11 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 This submodule contains functions for calculating the topological invariants from the result of a WCC / Wilson loop calculation.
 """
 
 from fsc.export import export
 
-from ._utils import _pol_step, _sgng, _check_kramers_pairs
+from ._utils import _check_kramers_pairs, _pol_step, _sgng
 
 
 @export
@@ -47,12 +46,9 @@ def z2(surface_result, check_kramers_pairs=True):  # pylint: disable=invalid-nam
     """
     wcc = surface_result.wcc
     if check_kramers_pairs and wcc:
-        if not (
-            _check_kramers_pairs(list(wcc[0]))
-            and _check_kramers_pairs(list(wcc[-1]))
-        ):
+        if not (_check_kramers_pairs(list(wcc[0])) and _check_kramers_pairs(list(wcc[-1]))):
             raise ValueError(
-                'The given WCC are not degenerate Kramers pairs at the edges of the surface.'
+                "The given WCC are not degenerate Kramers pairs at the edges of the surface."
             )
     gap = surface_result.gap_pos
     inv = 1

@@ -1,6 +1,7 @@
 """Defines a function to parse the overlap (mmn) matrices from the Wannier90 *.mmn file."""
 
 import re
+
 import numpy as np
 
 
@@ -13,15 +14,13 @@ def get_m(mmn_file):
     mmn_file:           path to .mmn file
     """
     try:
-        with open(mmn_file, "r") as f:
+        with open(mmn_file) as f:
             f.readline()
 
-            re_int = re.compile(r'[\d]+')
+            re_int = re.compile(r"[\d]+")
 
             # read the first line
-            num_bands, num_kpts, _ = (
-                int(i) for i in re.findall(re_int, f.readline())
-            )
+            num_bands, num_kpts, _ = (int(i) for i in re.findall(re_int, f.readline()))
 
             # read the rest of the file
             lines = (line for line in f if line)
@@ -35,7 +34,7 @@ def get_m(mmn_file):
 
             blocks = grouper(lines, step)
             overlap_matrices = []
-            re_float = re.compile(r'[0-9.\-E]+')
+            re_float = re.compile(r"[0-9.\-E]+")
             for block in blocks:
                 block = iter(block)
                 idx = [int(el) for el in re.findall(re_int, next(block))]
@@ -47,14 +46,17 @@ def get_m(mmn_file):
                     return float(real_part) + 1j * float(imag_part)
 
                 overlap_matrices.append(
-                    np.array([[
-                        to_complex(next(block)) for _ in range(num_bands)
-                    ] for _ in range(num_bands)]).T
+                    np.array(
+                        [
+                            [to_complex(next(block)) for _ in range(num_bands)]
+                            for _ in range(num_bands)
+                        ]
+                    ).T
                 )
 
-    except IOError as err:
+    except OSError as err:
         msg = str(err)
-        msg += '. Check that the path of the .mmn file is correct (mmn_path input variable). If that is the case, an error occured during the call to the first-principles code and Wannier90. Check the corresponding log/error files.'
-        raise type(err)((msg)) from err
+        msg += ". Check that the path of the .mmn file is correct (mmn_path input variable). If that is the case, an error occured during the call to the first-principles code and Wannier90. Check the corresponding log/error files."
+        raise type(err)(msg) from err
 
     return overlap_matrices

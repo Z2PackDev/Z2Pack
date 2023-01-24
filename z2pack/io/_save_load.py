@@ -4,7 +4,7 @@ from fsc.iohelper import SerializerDispatch
 
 from . import _encoding
 
-__all__ = ['save', 'load']
+__all__ = ["save", "load"]
 
 IO_HANDLER = SerializerDispatch(_encoding)
 

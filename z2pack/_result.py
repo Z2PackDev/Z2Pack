@@ -16,6 +16,7 @@ class Result(metaclass=abc.ABCMeta):
 
     :param convergence_ctrl:    List of ConvergenceControl objects of the calculation.
     """
+
     def __init__(self, data, stateful_ctrl, convergence_ctrl):
         self.data = data
         ctrl_states = dict()
@@ -31,7 +32,7 @@ class Result(metaclass=abc.ABCMeta):
 
     def __getattr__(self, name):
         """Forwards the attribute access to the ``.data`` attribute if attribute lookup fails on this instance (except for the ``data`` and ``convergence_report`` attributes)."""
-        if name not in ['data', 'convergence_report']:
+        if name not in ["data", "convergence_report"]:
             return getattr(self.data, name)
         return super().__getattribute__(name)
 

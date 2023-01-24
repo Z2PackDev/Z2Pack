@@ -1,8 +1,14 @@
 """Control objects for volume calculations."""
 
 from .._control import (
-    ControlContainer, VolumeControl, SurfaceControl, LineControl,
-    StatefulControl, DataControl, ConvergenceControl, IterationControl
+    ControlContainer,
+    ConvergenceControl,
+    DataControl,
+    IterationControl,
+    LineControl,
+    StatefulControl,
+    SurfaceControl,
+    VolumeControl,
 )
 from ..surface._control import _create_surface_controls
 
@@ -20,15 +26,16 @@ class VolumeControlContainer(ControlContainer):
     """
     Container for controls used in the surface run.
     """
+
     def __init__(self, controls):
         super().__init__(
             controls=controls,
             categories={
-                'surface': [(SurfaceControl, LineControl)],
-                'stateful': [StatefulControl, VolumeControl],
-                'data': [DataControl, VolumeControl],
-                'convergence': [ConvergenceControl, VolumeControl],
-                'iteration': [IterationControl, VolumeControl],
+                "surface": [(SurfaceControl, LineControl)],
+                "stateful": [StatefulControl, VolumeControl],
+                "data": [DataControl, VolumeControl],
+                "convergence": [ConvergenceControl, VolumeControl],
+                "iteration": [IterationControl, VolumeControl],
             },
-            valid_type=(VolumeControl, SurfaceControl, LineControl)
+            valid_type=(VolumeControl, SurfaceControl, LineControl),
         )

@@ -5,9 +5,9 @@ import random
 
 import numpy as np
 import pytest
+import z2pack
 
 from monkeypatch_data import *  # pylint: disable=unused-wildcard-import
-import z2pack
 
 
 @pytest.fixture(params=range(10))
@@ -77,8 +77,9 @@ def test_linear_2(num_wcc, num_lines_nonzero, patch_surface_data):
             np.linspace(1, 0.6, num_lines_nonzero),
         )
     )
+
     rand = list(sorted([random.random() for _ in range(num_wcc)] * 2))
     wcc += [rand] * num_lines_nonzero
-    wcc = np.array(wcc)
+    wcc = np.array(wcc, dtype=object)
     data = SurfaceData(wcc)
     assert z2pack.invariant.z2(data) == 1

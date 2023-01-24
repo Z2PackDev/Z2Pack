@@ -47,13 +47,5 @@ result_1 = z2pack.surface.run(
     save_file="./results/Bi_1.msgpack",
     load=True,
 )
-print(
-    'Z2 topological invariant at kx = 0: {0}'.format(
-        z2pack.invariant.z2(result_0)
-    )
-)
-print(
-    'Z2 topological invariant at kx = 0.5: {0}'.format(
-        z2pack.invariant.z2(result_1)
-    )
-)
+print(f"Z2 topological invariant at kx = 0: {z2pack.invariant.z2(result_0)}")
+print(f"Z2 topological invariant at kx = 0.5: {z2pack.invariant.z2(result_1)}")

@@ -23,14 +23,14 @@ class SurfaceResult(Result):
         r"""
         Convergence report (as a dict) for the result. The keys of the dictionary indicate the type of convergence test. For each of the tests, a dictionary with keys 'PASSED', 'FAILED' and (optionally) 'MISSING' shows the number of tests of this kind which either passed, failed, or were not performed."""
 
-        report = dict()
+        report = {}
 
-        line_report = dict()
+        line_report = {}
         line_c_ctrl = set()
         for line in self.lines:
             line_c_ctrl.update(line.ctrl_convergence.keys())
         for c_ctrl in sorted(list(line_c_ctrl)):
-            ctrl_report = dict()
+            ctrl_report = {}
             passed_t = []
             failed_t = []
             missing_t = []
@@ -48,12 +48,12 @@ class SurfaceResult(Result):
             line_report[c_ctrl] = ctrl_report
         report["line"] = line_report
 
-        surface_report = dict()
+        surface_report = {}
         for c_ctrl, converged in sorted(self.ctrl_convergence.items()):
             if converged is None:
                 ctrl_report = None
             else:
-                ctrl_report = dict()
+                ctrl_report = {}
                 ctrl_report["PASSED"] = []
                 ctrl_report["FAILED"] = []
                 for t_pair, conv in zip(zip(self.t[:-1], self.t[1:]), converged):

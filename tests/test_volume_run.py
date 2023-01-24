@@ -65,7 +65,7 @@ def test_simple(simple_system, simple_volume, num_surfaces, num_lines):
     assert result.wcc == [[[0, 0]] * num_lines] * num_surfaces
     assert result.gap_size == [[1] * num_lines] * num_surfaces
     assert result.gap_pos == [[0.5] * num_lines] * num_surfaces
-    assert result.ctrl_states == {}
+    assert not result.ctrl_states
 
 
 # saving tests
@@ -73,15 +73,14 @@ def test_simple_save(num_lines, simple_system, simple_volume):
     """
     Test saving to a file during a simple volume calculation.
     """
-    temp_file = tempfile.NamedTemporaryFile(delete=False)
-    result1 = z2pack.volume.run(
-        system=simple_system,
-        volume=simple_volume,
-        num_lines=num_lines,
-        save_file=temp_file.name,
-    )
-    result2 = z2pack.io.load(temp_file.name, serializer=json)
-    os.remove(temp_file.name)
+    with tempfile.NamedTemporaryFile() as temp_file:
+        result1 = z2pack.volume.run(
+            system=simple_system,
+            volume=simple_volume,
+            num_lines=num_lines,
+            save_file=temp_file.name,
+        )
+        result2 = z2pack.io.load(temp_file.name, serializer=json)
     assert_res_equal(result1, result2)
 
 
@@ -186,7 +185,7 @@ def test_load_reference(simple_system, test_name, simple_volume, serializer):
     assert_res_equal(result, z2pack.io.load(path))
 
 
-def test_invalid_save_path(simple_system, simple_volume):
+def test_invalid_save_path(simple_system, simple_volume):  # pylint: disable=unused-argument
     """
     Test that trying to save to an invalid path raises an error.
     """

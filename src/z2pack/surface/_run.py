@@ -220,9 +220,7 @@ def _run_surface_impl(  # pylint: disable=too-many-locals
             for c_ctrl in ctrl_container.convergence:
                 res &= c_ctrl.converged
             _LOGGER.info(
-                "Convergence criteria fulfilled for {} of {} neighbouring lines.".format(
-                    sum(res), len(res)
-                )
+                f"Convergence criteria fulfilled for {sum(res)} of {len(res)} neighbouring lines."
             )
             return res
 

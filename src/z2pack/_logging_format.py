@@ -79,7 +79,7 @@ class DefaultFormatter(logging.Formatter):
         # For Line calculations
         elif "line" in record.tags:
             for key, val in sorted(report.items()):
-                msg += "\n\n{}: {}".format(key, "PASSED" if val else "FAILED")
+                msg += f"\n\n{key}: {'PASSED' if val else 'FAILED'}"
         return msg
 
     def _create_setup_message(self, record):

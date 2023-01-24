@@ -2,6 +2,7 @@
 """This submodule contains all functions for plotting Z2Pack results."""
 
 import colorsys
+from types import MappingProxyType
 
 import decorator
 from fsc.export import export
@@ -60,9 +61,9 @@ def wcc_symmetry(
     *,
     axis=None,
     symmetry_operator,
-    wcc_settings={"s": 50.0, "lw": 1.0},
+    wcc_settings=MappingProxyType({"s": 50.0, "lw": 1.0}),
     gaps=True,
-    gap_settings={"marker": "D", "color": "b", "linestyle": "none"},
+    gap_settings=MappingProxyType({"marker": "D", "color": "b", "linestyle": "none"}),
     color_fct=lambda x: colorsys.hsv_to_rgb(
         np.imag(np.log(x)) / (2 * np.pi) % 1,
         min(1, np.exp(-abs(x) + 1)),
@@ -131,9 +132,9 @@ def wcc(
     surface_result,
     *,
     axis=None,
-    wcc_settings={"s": 50.0, "lw": 1.0, "facecolor": "none", "edgecolors": "k"},
+    wcc_settings=MappingProxyType({"s": 50.0, "lw": 1.0, "facecolor": "none", "edgecolors": "k"}),
     gaps=True,
-    gap_settings={"marker": "D", "color": "b", "linestyle": "none"},
+    gap_settings=MappingProxyType({"marker": "D", "color": "b", "linestyle": "none"}),
 ):
     r"""
     Plots the WCCs and the largest gaps (y-axis) against the t-points (x-axis).
@@ -167,7 +168,10 @@ def wcc(
 @export
 @_plot()
 def chern(
-    surface_result, *, axis=None, settings={"marker": "o", "markerfacecolor": "r", "color": "r"}
+    surface_result,
+    *,
+    axis=None,
+    settings=MappingProxyType({"marker": "o", "markerfacecolor": "r", "color": "r"}),
 ):
     r"""
     Plots the sum of WCCs (polarization) (y-axis) against the t-points (x-axis).
@@ -195,7 +199,7 @@ def chern(
 
 @export
 @_plot(proj_3d=True)
-def wcc_3d(volume_result, *, axis=None, settings={}):
+def wcc_3d(volume_result, *, axis=None, settings=MappingProxyType({})):
     """
     Plots the WCCs (z-axis) for a volume calculation against their reciprocal space coordinates.
 

@@ -14,7 +14,7 @@ def get_m(mmn_file):
     mmn_file:           path to .mmn file
     """
     try:
-        with open(mmn_file) as f:
+        with open(mmn_file, encoding="utf-8") as f:
             f.readline()
 
             re_int = re.compile(r"[\d]+")

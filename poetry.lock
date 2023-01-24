@@ -1167,17 +1167,6 @@ files = [
 ]
 
 [[package]]
-name = "msgpack-python"
-version = "0.5.6"
-description = "MessagePack (de)serializer."
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "msgpack-python-0.5.6.tar.gz", hash = "sha256:378cc8a6d3545b532dfd149da715abae4fda2a3adb6d74e525d0d5e51f46909b"},
-]
-
-[[package]]
 name = "networkx"
 version = "3.0"
 description = "Python package for creating and manipulating graphs and networks"
@@ -2497,4 +2486,4 @@ tb = ["tbmodels"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "684388532b8847ef088dce04ee0b8d2a2e23b391b981aad6a0a0f20bb037fd54"
+content-hash = "cc83e2b254ebb7b791961973e0ed8863957f56f04f6ac380e790f3eb0db8da73"

@@ -1,6 +1,14 @@
 name: Continuous Integration
 
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    tags:
+      - "*"
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
 
 _anchors:
   checkout: &CHECKOUT
@@ -37,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10"]
+        python-version: ["3.11"]
         install-type: [dev]
     steps:
       - *CHECKOUT
@@ -58,7 +66,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10"]
+        python-version: ["3.11"]
         install-type: [dev]
     steps:
       - *CHECKOUT
@@ -72,12 +80,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
         install-type: [dev]
         include:
-          - python-version: "3.10"
+          - python-version: "3.11"
             install-type: dev_sdist
-          - python-version: "3.10"
+          - python-version: "3.11"
             install-type: dev_bdist_wheel
     steps:
       - *CHECKOUT

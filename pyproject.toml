@@ -19,6 +19,7 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: Physics",
     "Development Status :: 5 - Production/Stable",
@@ -58,8 +59,8 @@ sphinx-rtd-theme = "^1.1.1"
 pytest = "^6"
 pytest-cov = "^4.0.0"
 pre-commit = "^3.0.0"
-pylint = "==2.4.4"
-"ruamel.yaml" = "==0.17.16"
+pylint = "^2.15"
+"ruamel.yaml" = "^0.17"
 
 [tool.poetry.extras]
 plot = ["matplotlib"]

@@ -3,11 +3,11 @@
 This module contains pre-defined shapes to use as the ``surface`` argument of :func:`.surface.run` or ``line`` argument for :func:`.line.run`, defining the shape of the surface or line.
 """
 
-from fsc.export import export
 import numpy as np
 
+__all__ = ["Sphere"]
 
-@export
+
 class Sphere:
     r"""
     :param center:  Center of the sphere

@@ -19,7 +19,7 @@ def compare_lines(x, y):
     for i, (xline, yline) in enumerate(zip(x.splitlines(), y.splitlines())):
         if any((part in xline) and (part in yline) for part in IGNORE_LINES):
             continue
-        assert xline == yline, f"Line {i} does not match."
+        assert xline == yline, f"Line {i} does not match:\n\n{xline}\n!=\n{yline}"
     return True
 
 

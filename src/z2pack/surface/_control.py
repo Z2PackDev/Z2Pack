@@ -1,7 +1,5 @@
 """Control objects for surface calculations."""
 
-from fsc.export import export
-
 from .._control import (
     ControlContainer,
     ConvergenceControl,
@@ -14,8 +12,13 @@ from .._control import (
 from .._utils import _get_max_move
 from ..line._control import _create_line_controls
 
+__all__ = [
+    "SurfaceControlContainer",
+    "MoveCheck",
+    "GapCheck",
+]
 
-@export
+
 class SurfaceControlContainer(ControlContainer):
     """
     Container for controls used in the surface run.
@@ -35,7 +38,6 @@ class SurfaceControlContainer(ControlContainer):
         )
 
 
-@export
 class MoveCheck(DataControl, ConvergenceControl, SurfaceControl):
     """
     Performs the check whether the WCC in neighbouring lines have moved too much.
@@ -56,7 +58,6 @@ class MoveCheck(DataControl, ConvergenceControl, SurfaceControl):
         ]
 
 
-@export
 class GapCheck(DataControl, ConvergenceControl, SurfaceControl):
     """
     Performs the check whether the largest gap is too close to WCC in neighbouring lines.

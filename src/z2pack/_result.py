@@ -2,10 +2,9 @@
 
 import abc
 
-from fsc.export import export
+__all__ = ["Result"]
 
 
-@export
 class Result(metaclass=abc.ABCMeta):
     """
     Base class for Z2Pack results. Additionally to the data of the calculation, this object also saves the last state and convergence status of the calculation.

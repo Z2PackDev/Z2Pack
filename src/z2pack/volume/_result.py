@@ -1,11 +1,11 @@
 """"Defines the result (data + convergence information) object for volume calculations."""
 
-from fsc.export import export
 
 from .._result import Result
 
+__all__ = ["VolumeResult"]
 
-@export
+
 class VolumeResult(Result):
     """Container for the data, state and convergence status of a volume calculation. The attributes / properties of the data object (:class:`VolumeData`) can be accessed directly from the :class:`VolumeResult` object.
 

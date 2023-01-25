@@ -4,7 +4,6 @@ import contextlib
 import copy
 import logging
 
-from fsc.export import export
 import numpy as np
 
 from . import _LOGGER, SurfaceData, SurfaceResult
@@ -14,6 +13,8 @@ from .._logging_tools import TagAdapter, TagFilter, filter_manager
 from .._run_utils import _check_save_dir, _load_init_result, _log_run
 from ..line import _run as _line_run
 from ._control import SurfaceControlContainer, _create_surface_controls
+
+__all__ = ["run_surface"]
 
 # tag which triggers filtering when called from the volume's run.
 _SURFACE_ONLY_LOGGER = TagAdapter(
@@ -26,7 +27,6 @@ _SURFACE_ONLY_LOGGER = TagAdapter(
 _LOGGER = TagAdapter(_LOGGER, default_tags=("surface",))
 
 
-@export
 @_log_run(_SURFACE_ONLY_LOGGER)
 def run_surface(
     *,

@@ -5,10 +5,16 @@ import colorsys
 from types import MappingProxyType
 
 import decorator
-from fsc.export import export
 import numpy as np
 
 from ._utils import _pol_step
+
+__all__ = [
+    "wcc_symmetry",
+    "wcc",
+    "chern",
+    "wcc_3d",
+]
 
 
 def _plot(proj_3d=False):
@@ -54,7 +60,6 @@ def _plot_gaps(surface_result, *, axis, gaps, gap_settings):
             )
 
 
-@export
 @_plot()
 def wcc_symmetry(
     surface_result,
@@ -126,7 +131,6 @@ def wcc_symmetry(
             )
 
 
-@export
 @_plot()
 def wcc(
     surface_result,
@@ -165,7 +169,6 @@ def wcc(
             )
 
 
-@export
 @_plot()
 def chern(
     surface_result,
@@ -197,7 +200,6 @@ def chern(
             axis.plot(t, [p_value - p_step + offset, p_value + offset], **settings)
 
 
-@export
 @_plot(proj_3d=True)
 def wcc_3d(volume_result, *, axis=None, settings=MappingProxyType({})):
     """

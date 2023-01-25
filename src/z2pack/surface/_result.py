@@ -1,11 +1,11 @@
 """"Defines the result (data + convergence information) object for surface calculations."""
 
-from fsc.export import export
 
 from .._result import Result
 
+__all__ = ["SurfaceResult"]
 
-@export
+
 class SurfaceResult(Result):
     """Container for the data, state and convergence status of a surface calculation. The attributes / properties of the data object (:class:`SurfaceData`) can be accessed directly from the :class:`SurfaceResult` object.
 

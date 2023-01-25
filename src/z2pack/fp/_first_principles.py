@@ -6,13 +6,12 @@ import os
 import shutil
 import subprocess
 
-from fsc.export import export
-
 from . import _read_mmn as mmn
 from ..system import OverlapSystem
 
+__all__ = ["System"]
 
-@export
+
 class System(OverlapSystem):
     r"""
     System class for systems which are calculated from first principles.

@@ -1,11 +1,11 @@
 """Defines the data containers for surface calculations."""
 
-from fsc.export import export
 from fsc.locker import ConstLocker
 from sortedcontainers import SortedList
 
+__all__ = ["VolumeData"]
 
-@export
+
 class VolumeData(metaclass=ConstLocker):
     """
     Data container for a volume calculation. It contains the :class:`.SurfaceResult` instances of all the surfaces in the volume which have been calculated.

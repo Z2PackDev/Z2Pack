@@ -47,7 +47,6 @@ blessings = "^1.7"
 sortedcontainers = "^2.4.0"
 msgpack = "^1.0"
 "fsc.locker" = "^1.1.0"
-"fsc.export" = "^1.2.0"
 "fsc.formatting" = "^1.0.0"
 "fsc.iohelper" = "^1.0.3"
 matplotlib = { version = "^3", optional = true }

@@ -2486,4 +2486,4 @@ tb = ["tbmodels"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "cc83e2b254ebb7b791961973e0ed8863957f56f04f6ac380e790f3eb0db8da73"
+content-hash = "527c42981b7baef8d3c9241a241d6148c70b6770cda6fe689c5e2781c7b5e521"

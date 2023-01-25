@@ -7,7 +7,7 @@ import time
 
 from decorator import decorator
 
-__all__ = []
+__all__ = tuple()
 
 
 def _log_run(logger):

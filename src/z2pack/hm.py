@@ -6,14 +6,14 @@ This module contains a class for creating Systems which are described by a Hamil
 import itertools
 import numbers
 
-from fsc.export import export
 import numpy as np
 import scipy.linalg as la
 
 from .system import EigenstateSystem
 
+__all__ = ["System"]
 
-@export
+
 class System(EigenstateSystem):
     r"""
     This class is used when the system can be explicitly described as a matrix Hamiltonian :math:`\mathcal{H}(\mathbf{k})`.

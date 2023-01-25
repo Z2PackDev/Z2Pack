@@ -7,11 +7,20 @@ All functions have the same calling structure as :func:`prototype`.
 """
 
 import decorator
-from fsc.export import export
 import numpy as np
 
+__all__ = [
+    "prototype",
+    "abinit",
+    "qe",
+    "qe_explicit",
+    "wannier90",
+    "wannier90_nnkpts",
+    "wannier90_full",
+    "vasp",
+]
 
-@export
+
 def prototype(kpt):
     r"""
     Specifies the interface
@@ -41,7 +50,6 @@ def _check_closed(fct, kpt):
     return fct(kpt)
 
 
-@export
 @_check_dim
 @_check_closed
 def abinit(kpt):
@@ -63,7 +71,6 @@ def abinit(kpt):
     return string
 
 
-@export
 @_check_dim
 @_check_closed
 def qe(kpt):  # pylint: disable=invalid-name
@@ -84,7 +91,6 @@ def qe(kpt):  # pylint: disable=invalid-name
     return string
 
 
-@export
 @_check_dim
 @_check_closed
 def qe_explicit(kpt):
@@ -102,7 +108,6 @@ def qe_explicit(kpt):
     return string
 
 
-@export
 @_check_dim
 @_check_closed
 def wannier90(kpt):
@@ -119,7 +124,6 @@ def wannier90(kpt):
     return string
 
 
-@export
 @_check_dim
 @_check_closed
 def wannier90_nnkpts(kpt):
@@ -138,7 +142,6 @@ def wannier90_nnkpts(kpt):
     return string
 
 
-@export
 @_check_dim
 @_check_closed
 def wannier90_full(kpt):
@@ -148,7 +151,6 @@ def wannier90_full(kpt):
     return wannier90(kpt) + "\n" + wannier90_nnkpts(kpt)
 
 
-@export
 @_check_dim
 @_check_closed
 def vasp(kpt):

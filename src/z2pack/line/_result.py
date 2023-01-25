@@ -1,11 +1,11 @@
 """"Defines the result (data + convergence information) object for line calculations."""
 
-from fsc.export import export
 
 from .._result import Result
 
+__all__ = ["LineResult"]
 
-@export
+
 class LineResult(Result):
     """Container for the data, state and convergence status of a line calculation.
 

@@ -6,12 +6,11 @@ This module contains the class for creating systems based on `TBmodels <https://
 from collections import ChainMap
 import copy
 
-from fsc.export import export
-
 from .hm import System as _HmSystem
 
+__all__ = ["System"]
 
-@export
+
 class System(_HmSystem):
     r"""
     System class for tight-binding models.

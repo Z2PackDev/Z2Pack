@@ -3,7 +3,6 @@
 
 import contextlib
 
-from fsc.export import export
 import numpy as np
 
 from . import _LOGGER, EigenstateLineData, LineResult, OverlapLineData
@@ -11,6 +10,8 @@ from .. import io
 from .._logging_tools import TagAdapter
 from .._run_utils import _check_save_dir, _load_init_result, _log_run
 from ._control import LineControlContainer, _create_line_controls
+
+__all__ = ["run_line"]
 
 # tag which triggers filtering when called from the surface's run.
 _LINE_ONLY_LOGGER = TagAdapter(
@@ -23,7 +24,6 @@ _LINE_ONLY_LOGGER = TagAdapter(
 _LOGGER = TagAdapter(_LOGGER, default_tags=("line",))
 
 
-@export
 @_log_run(_LINE_ONLY_LOGGER)
 def run_line(
     *,

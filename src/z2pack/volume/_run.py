@@ -4,7 +4,6 @@ import contextlib
 import copy
 import logging
 
-from fsc.export import export
 import numpy as np
 
 from . import _LOGGER, VolumeData, VolumeResult
@@ -18,8 +17,10 @@ _LOGGER = TagAdapter(_LOGGER, default_tags=("volume",))
 from .. import io
 from ..surface import _run as _surface_run
 
+__all__ = ["run_volume"]
 
-@export
+
+@_log_run(_LOGGER)
 @_log_run(_LOGGER)
 def run_volume(
     *,

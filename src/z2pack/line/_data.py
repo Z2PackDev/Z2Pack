@@ -2,12 +2,17 @@
 
 import functools
 
-from fsc.export import export
 from fsc.locker import ConstLocker, change_lock
 import numpy as np
 import scipy.linalg as la
 
 from .._utils import _gapfind
+
+__all__ = [
+    "WccLineData",
+    "OverlapLineData",
+    "EigenstateLineData",
+]
 
 
 class _LazyProperty:
@@ -27,7 +32,6 @@ class _LazyProperty:
         return value
 
 
-@export
 class WccLineData(metaclass=ConstLocker):
     """Data container for a line constructed directly from the WCC. The following attributes and properties can be accessed:
 
@@ -72,7 +76,6 @@ class WccLineData(metaclass=ConstLocker):
         return super().__getattribute__(name)
 
 
-@export
 class OverlapLineData(WccLineData):
     r"""
     Data container for Line Data constructred from overlap matrices. This has all attributes that :class:`WccLineData` has, and the following additional ones:
@@ -121,7 +124,6 @@ class OverlapLineData(WccLineData):
         return self.wilson_eigenstates
 
 
-@export
 class EigenstateLineData(OverlapLineData):
     r"""Data container for a line constructed from periodic eigenstates :math:`|u_{n, \mathbf{k}} \rangle`. This has all attributes that :class:`OverlapLineData` has, and the following additional ones:
 

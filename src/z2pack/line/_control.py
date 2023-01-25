@@ -1,6 +1,5 @@
 """Control objects for line calculations."""
 
-from fsc.export import export
 
 from .._control import (
     ControlContainer,
@@ -12,8 +11,14 @@ from .._control import (
 )
 from .._utils import _get_max_move
 
+__all__ = [
+    "LineControlContainer",
+    "StepCounter",
+    "ForceFirstUpdate",
+    "PosCheck",
+]
 
-@export
+
 class LineControlContainer(ControlContainer):
     """
     Container for controls used in the line run.
@@ -32,7 +37,6 @@ class LineControlContainer(ControlContainer):
         )
 
 
-@export
 class StepCounter(IterationControl, StatefulControl, LineControl):
     """Counts the number of k-points along the line."""
 
@@ -57,7 +61,6 @@ class StepCounter(IterationControl, StatefulControl, LineControl):
         return dict(num_steps=self._state)
 
 
-@export
 class ForceFirstUpdate(DataControl, ConvergenceControl, LineControl):
     """Makes sure at least one update is done, even when the pos_tol argument is not used."""
 
@@ -72,7 +75,6 @@ class ForceFirstUpdate(DataControl, ConvergenceControl, LineControl):
         self._converged = True
 
 
-@export
 class PosCheck(
     DataControl,
     ConvergenceControl,

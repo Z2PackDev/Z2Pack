@@ -5,7 +5,6 @@ import contextlib
 from functools import singledispatch
 import numbers
 
-from fsc.export import export
 import numpy as np
 
 # This can create a circular import if it is imported by name (from ... import ...)
@@ -16,8 +15,9 @@ from ..surface._result import SurfaceResult
 from ..volume._data import SurfacePosition, VolumeData
 from ..volume._result import VolumeResult
 
+__all__ = ["encode", "decode"]
 
-@export
+
 @singledispatch
 def encode(obj):
     """
@@ -114,7 +114,6 @@ def _(obj):
 # --------------------------------------------------------------------- #
 
 
-@export
 @singledispatch
 def decode(obj):
     """

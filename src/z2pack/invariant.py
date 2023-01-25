@@ -3,12 +3,15 @@
 This submodule contains functions for calculating the topological invariants from the result of a WCC / Wilson loop calculation.
 """
 
-from fsc.export import export
 
 from ._utils import _check_kramers_pairs, _pol_step, _sgng
 
+__all__ = [
+    "chern",
+    "z2",
+]
 
-@export
+
 def chern(surface_result):
     r"""
     Computes the Chern number corresponding to a given surface result.
@@ -26,7 +29,6 @@ def chern(surface_result):
     return sum(_pol_step(surface_result.pol))
 
 
-@export
 def z2(surface_result, check_kramers_pairs=True):  # pylint: disable=invalid-name
     r"""
     Computes the :math:`\mathbb{Z}_2` invariant corresponding to a given surface result.

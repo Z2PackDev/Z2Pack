@@ -21,7 +21,6 @@ __all__ = ["run_volume"]
 
 
 @_log_run(_LOGGER)
-@_log_run(_LOGGER)
 def run_volume(
     *,
     system,

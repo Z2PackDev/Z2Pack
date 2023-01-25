@@ -6,6 +6,7 @@ import json
 import logging
 import operator
 import os
+import pathlib
 
 import pytest
 import z2pack
@@ -14,6 +15,9 @@ from ctrl_base_tester import test_ctrl_base  # pylint: disable=unused-import
 
 logging.getLogger("z2pack").setLevel(logging.CRITICAL)
 from z2pack._utils import _get_max_move
+
+TEST_DATA_DIR = pathlib.Path(__file__).parent / "data"
+REGRESSIONS_DATA_DIR = TEST_DATA_DIR / "regressions"
 
 
 def pytest_addoption(parser):  # pylint: disable=missing-function-docstring
@@ -65,14 +69,17 @@ def compare_data(request, test_name, scope="session"):
     """Returns a function which either saves some data to a file or (if that file exists already) compares it to pre-existing data using a given comparison function."""
 
     def inner(compare_fct, data, tag=None):
+
         full_name = test_name + (tag or "")
-        val = request.config.cache.get(full_name, None)
-        if val is None:
-            request.config.cache.set(
-                full_name,
-                json.loads(json.dumps(data, default=z2pack.io._encoding.encode)),
-            )
+        test_file = REGRESSIONS_DATA_DIR / full_name
+
+        if not test_file.exists():
+            test_file.parent.mkdir(exist_ok=True)
+            with open(test_file, "w", encoding="utf-8") as out_f:
+                json.dump(data, out_f, default=z2pack.io._encoding.encode)
             raise ValueError("Reference data does not exist.")
+        with open(test_file, encoding="utf-8") as in_f:
+            val = json.load(in_f)
         assert compare_fct(
             val, json.loads(json.dumps(data, default=z2pack.io._encoding.encode))
         )  # get rid of json-specific quirks

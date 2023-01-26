@@ -14,6 +14,22 @@ repos:
   - id: isort
 - repo: local
   hooks:
+  - id: poetry-pyproject-check
+    name: "poetry: pyproject.toml check"
+    language: system
+    entry: poetry
+    args: ["check"]
+    files: '^(pyproject\.toml)$'
+    pass_filenames: false
+
+  - id: poetry-lockfile-consistency
+    name: "poetry: lockfile consistency check"
+    language: system
+    entry: poetry
+    args: ['lock', '--check']
+    files: '^(pyproject\.toml)|(poetry\.lock)$'
+    pass_filenames: false
+
   - id: pylint
     name: pylint
     entry: pylint

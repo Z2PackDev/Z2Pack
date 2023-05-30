@@ -1843,14 +1843,14 @@ use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
 name = "ruamel-yaml"
-version = "0.17.28"
+version = "0.17.29"
 description = "ruamel.yaml is a YAML parser/emitter that supports roundtrip preservation of comments, seq/map flow style, and map key order"
 category = "main"
 optional = false
 python-versions = ">=3"
 files = [
-    {file = "ruamel.yaml-0.17.28-py3-none-any.whl", hash = "sha256:823aff68f88260805049d6a4825e36cb7f1e273a7dd8f391e7b35a16a67a30ea"},
-    {file = "ruamel.yaml-0.17.28.tar.gz", hash = "sha256:3bf6df1c481d2463a633be6ee86e8aece941bb3298a9a0cd6d0865f47b1ddce6"},
+    {file = "ruamel.yaml-0.17.29-py3-none-any.whl", hash = "sha256:33bd515e01f0b0ed3dd511a42195140d1c8ca95249188272bb880adb15b2e2ee"},
+    {file = "ruamel.yaml-0.17.29.tar.gz", hash = "sha256:695fc25595b0e03128e73093837aaed7e4cae4488ecd3173f8f6993da30d89d5"},
 ]
 
 [package.dependencies]

@@ -9,3 +9,7 @@ updates:
       dependencies:
         patterns:
           - "*" # Update all packages together
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"

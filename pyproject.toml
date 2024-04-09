@@ -58,7 +58,7 @@ sphinx-rtd-theme = "^1.1.1"
 pytest = "^6"
 pytest-cov = "^4.0.0"
 pre-commit = "^3.0.0"
-pylint = "^2.15"
+pylint = "^3"
 "ruamel.yaml" = "^0.17"
 
 [tool.poetry.extras]

@@ -1,6 +1,5 @@
 """Control objects for line calculations."""
 
-
 from .._control import (
     ControlContainer,
     ConvergenceControl,

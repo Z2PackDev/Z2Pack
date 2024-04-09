@@ -1,6 +1,7 @@
 """
 Tests for QE DFT calculations.
 """
+
 # pylint: disable=redefined-outer-name,unused-argument,protected-access
 
 import json

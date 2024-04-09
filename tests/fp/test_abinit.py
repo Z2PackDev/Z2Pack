@@ -1,6 +1,7 @@
 """
 Tests for ABINIT DFT calculations.
 """
+
 # pylint: disable=redefined-outer-name
 
 import os

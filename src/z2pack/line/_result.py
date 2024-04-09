@@ -1,6 +1,5 @@
 """"Defines the result (data + convergence information) object for line calculations."""
 
-
 from .._result import Result
 
 __all__ = ["LineResult"]

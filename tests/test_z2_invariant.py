@@ -1,4 +1,5 @@
 """Tests for the function that computes the Z2 invariant."""
+
 # pylint: disable=unused-argument,redefined-outer-name
 
 import random

@@ -1,4 +1,5 @@
 """Tests for line calculations."""
+
 # pylint: disable=unused-wildcard-import,redefined-outer-name
 
 import json

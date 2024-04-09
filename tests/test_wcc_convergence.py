@@ -1,4 +1,5 @@
 """Test LineData controls implementing WCC convergence criteria."""
+
 # pylint: disable=unused-argument,redefined-outer-name,unused-wildcard-import
 
 import numpy as np

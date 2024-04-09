@@ -1,6 +1,7 @@
 """
 Test GapCheck control.
 """
+
 # pylint: disable=unused-wildcard-import,unused-argument,redefined-outer-name
 
 import numpy as np

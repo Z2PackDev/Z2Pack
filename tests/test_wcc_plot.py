@@ -1,4 +1,5 @@
 """Tests for the WCC plot function."""
+
 # pylint: disable=redefined-outer-name,unused-argument,unused-wildcard-import,unexpected-keyword-arg
 
 import matplotlib

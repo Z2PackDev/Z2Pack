@@ -1,6 +1,7 @@
 """
 Helper fixtures for plot tests.
 """
+
 # pylint: disable=unused-argument,redefined-outer-name
 
 import os

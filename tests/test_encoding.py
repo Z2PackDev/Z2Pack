@@ -1,4 +1,5 @@
 """Test the functions that encode and decode Z2Pack objects."""
+
 # pylint: disable=protected-access
 
 import json

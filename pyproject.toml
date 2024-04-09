@@ -16,10 +16,10 @@ classifiers = [
     "Natural Language :: English",
     "Operating System :: Unix",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: Physics",
     "Development Status :: 5 - Production/Stable",
@@ -39,7 +39,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.12"
+python = ">=3.9,<3.13"
 numpy = "^1.20"
 scipy = "^1.7"
 decorator = "^5.0"
@@ -50,7 +50,7 @@ msgpack = "^1.0"
 "fsc.formatting" = "^1.0.0"
 "fsc.iohelper" = "^1.0.3"
 matplotlib = { version = "^3", optional = true }
-tbmodels = { version =  "^1.1.1", optional = true }
+tbmodels = { version =  "^1.1", optional = true }
 
 [tool.poetry.group.dev.dependencies]
 sphinx = "^5"
@@ -58,7 +58,7 @@ sphinx-rtd-theme = "^1.1.1"
 pytest = "^6"
 pytest-cov = "^4.0.0"
 pre-commit = "^3.0.0"
-pylint = "^2.15"
+pylint = "^3"
 "ruamel.yaml" = "^0.17"
 
 [tool.poetry.extras]
@@ -67,7 +67,7 @@ tb = ["tbmodels"]
 
 [tool.black]
 line-length = 100
-target-version = ['py37']
+target-version = ['py39']
 
 [tool.isort]
 profile = "black"
@@ -107,6 +107,7 @@ disable = [
     "unnecessary-lambda-assignment",
     "consider-using-f-string",
     "use-dict-literal",
+    "too-many-arguments",
 ]
 
 [tool.pylint.design]

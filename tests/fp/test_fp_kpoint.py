@@ -1,6 +1,7 @@
 """
 Tests for kpoint functions.
 """
+
 # pylint: disable=redefined-outer-name
 
 import numpy as np

@@ -107,6 +107,7 @@ disable = [
     "unnecessary-lambda-assignment",
     "consider-using-f-string",
     "use-dict-literal",
+    "too-many-arguments",
 ]
 
 [tool.pylint.design]

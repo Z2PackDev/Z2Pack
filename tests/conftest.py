@@ -1,4 +1,5 @@
 """pytest configuration file for Z2Pack tests."""
+
 # pylint: disable=protected-access,redefined-outer-name,unused-argument
 
 from collections.abc import Iterable

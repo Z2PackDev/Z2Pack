@@ -1,4 +1,5 @@
 """Tests of the StepCounter control."""
+
 # pylint: disable=redefined-outer-name
 
 import pytest

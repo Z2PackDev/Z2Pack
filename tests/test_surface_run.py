@@ -1,4 +1,5 @@
 """Test surface calculations."""
+
 # pylint: disable=redefined-outer-name,unused-wildcard-import,too-many-arguments
 
 import json

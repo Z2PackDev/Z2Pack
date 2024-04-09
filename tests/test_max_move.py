@@ -1,6 +1,7 @@
 """
 Test the function that computes the maximum move between two sets of WCC.
 """
+
 # pylint: disable=redefined-outer-name
 
 import copy

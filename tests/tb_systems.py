@@ -1,4 +1,5 @@
 """Fixtures for testing tight-binding systems."""
+
 # pylint: disable=invalid-name,redefined-outer-name
 
 import itertools

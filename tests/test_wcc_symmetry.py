@@ -1,4 +1,5 @@
 """Tests for the wcc_symmetry plot function."""
+
 # pylint: disable=redefined-outer-name
 
 import matplotlib

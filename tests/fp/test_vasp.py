@@ -1,6 +1,7 @@
 """
 Tests for VASP DFT calculations.
 """
+
 # pylint: disable=redefined-outer-name
 
 import os

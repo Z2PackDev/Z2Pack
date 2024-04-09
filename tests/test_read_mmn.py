@@ -1,4 +1,5 @@
 """Test the function that parses Wannier90 *.mmn files."""
+
 # pylint: disable=protected-access
 
 import numpy as np

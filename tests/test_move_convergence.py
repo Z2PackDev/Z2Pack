@@ -1,4 +1,5 @@
 """Test MoveCheck convergence test."""
+
 # pylint: disable=unused-argument,unused-wildcard-import,redefined-outer-name
 
 import numpy as np

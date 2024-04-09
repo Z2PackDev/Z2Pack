@@ -1,4 +1,5 @@
 """Test logging output."""
+
 # pylint: disable=unused-import,redefined-outer-name
 
 from contextlib import contextmanager

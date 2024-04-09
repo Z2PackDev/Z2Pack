@@ -1,6 +1,5 @@
 """"Defines the result (data + convergence information) object for surface calculations."""
 
-
 from .._result import Result
 
 __all__ = ["SurfaceResult"]
@@ -21,7 +20,8 @@ class SurfaceResult(Result):
     @property
     def convergence_report(self):
         r"""
-        Convergence report (as a dict) for the result. The keys of the dictionary indicate the type of convergence test. For each of the tests, a dictionary with keys 'PASSED', 'FAILED' and (optionally) 'MISSING' shows the number of tests of this kind which either passed, failed, or were not performed."""
+        Convergence report (as a dict) for the result. The keys of the dictionary indicate the type of convergence test. For each of the tests, a dictionary with keys 'PASSED', 'FAILED' and (optionally) 'MISSING' shows the number of tests of this kind which either passed, failed, or were not performed.
+        """
 
         report = {}
 

@@ -1,4 +1,5 @@
 """Tests for systems with explicit Hamiltonian matrix (hm)."""
+
 # pylint: disable=redefined-outer-name
 
 import numpy as np

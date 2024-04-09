@@ -1,4 +1,5 @@
 """Test the function that computes the Chern invariant."""
+
 # pylint: disable=unused-argument,redefined-outer-name,unused-wildcard-import
 
 import random

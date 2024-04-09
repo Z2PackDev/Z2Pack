@@ -1,6 +1,7 @@
 """
 Fixtures for hamiltonian matrix (hm) system tests.
 """
+
 # pylint: disable=redefined-outer-name,invalid-name
 
 import numbers

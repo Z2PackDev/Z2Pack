@@ -1,6 +1,7 @@
 """
 Tests for QE DFT calculations using the explicit interface.
 """
+
 # pylint: disable=redefined-outer-name,unused-argument,protected-access
 
 import os

@@ -2,6 +2,13 @@
 
 A first-principles calculation with VASP
 ========================================
+
+.. warning:
+
+    The Z2Pack to VASP interface is unsupported. Since VASP is a proprietary program that the Z2Pack developers do not have access to, any problems regarding this interface should be directed at VASP support.
+
+    Pull requests which update the example files are welcome.
+
 The following is a very basic calculation of Z2 invariants using **VASP** for Bismuth. The complete example (including input files)
 can be found on `GitHub <https://github.com/Z2PackDev/Z2Pack/tree/master/2.1.x/examples/fp/Bi_vasp>`_.
 

@@ -8,6 +8,15 @@
 
 .. container:: section
 
+    .. note::
+
+        The following features of Z2Pack are **unsupported**:
+
+        - the interface to VASP
+        - the ``pw2z2pack`` program for advanced symmetry-protected invariants
+
+        Pull requests related to these features are still welcome.
+
     is a tool for calculating topological invariants. The method is based on tracking the evolution of hybrid Wannier functions, which is equivalent to the computation of the Wilson loop. Originally developed for calculating :math:`\mathbb{Z}_2` invariants, it is now also capable of calculating Chern numbers. Moreover, through the use of individual Chern numbers it can be used to identify **any kind** of topological phase.
 
     A key feature of Z2Pack is its **flexibility**: It can be used with various kinds of calculations and models. Currently, interfaces to **first-principles codes**, **tight-binding** models and :math:`\mathbf{k \cdot p}` models are implemented. However, it can in principle be extended to any kind of system.

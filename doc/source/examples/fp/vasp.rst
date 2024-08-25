@@ -3,7 +3,7 @@
 A first-principles calculation with VASP
 ========================================
 
-.. warning:
+.. warning::
 
     The Z2Pack to VASP interface is unsupported. Since VASP is a proprietary program that the Z2Pack developers do not have access to, any problems regarding this interface should be directed at VASP support.
 

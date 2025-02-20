@@ -1,49 +1,31 @@
 repos:
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.15.2
+  rev: v3.19.1
   hooks:
     - id: pyupgrade
       args: [--py39-plus]
 - repo: https://github.com/psf/black
-  rev: 24.3.0
+  rev: 25.1.0
   hooks:
     - id: black
 - repo: https://github.com/pycqa/isort
-  rev: 5.13.2
+  rev: 6.0.0
   hooks:
   - id: isort
+- repo: https://github.com/python-poetry/poetry/
+  rev: "2.1.1"
+  hooks:
+    - id: poetry-check
+      name: "poetry: check pyproject.toml syntax"
+    - id: poetry-check
+      name: "poetry: check poetry.lock consistency"
+      args: ["--lock"]
+      files: '^(pyproject\.toml|poetry\.lock)$'
 - repo: local
   hooks:
-  - id: poetry-pyproject-check
-    name: "poetry: pyproject.toml check"
-    language: system
-    entry: poetry
-    args: ["check"]
-    files: '^(pyproject\.toml)$'
-    pass_filenames: false
-
-  - id: poetry-lockfile-consistency
-    name: "poetry: lockfile consistency check"
-    language: system
-    entry: poetry
-    args: ['lock', '--check']
-    files: '^(pyproject\.toml)|(poetry\.lock)$'
-    pass_filenames: false
-
   - id: pylint
     name: pylint
     entry: pylint
     language: system
     types: [python]
     exclude: '^(doc/)|(examples/)|(futures/)|(utils/)'
-
-  - id: interpolate-workflows
-    name: Interpolate Github workflows
-    entry: python ./utils/interpolate_yaml_anchors.py
-    language: system
-    files: |
-      (?x)^(
-        .github/(.)*|
-        utils/interpolate_yaml_anchors.py
-      )$
-    pass_filenames: false

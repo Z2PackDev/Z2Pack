@@ -2,11 +2,11 @@
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.poetry]
+[project]
 name = "z2pack"
-version = "2.2.0"
-description = "Automating the computation of topological numbers of band-structures.."
-authors = ["Dominik Gresch <mail@greschd.ch>"]
+version = "2.2.1"
+description = "Automating the computation of topological numbers of band-structures."
+authors = [{ name ="Dominik Gresch", email = "mail@greschd.ch" }]
 license = "GPL"
 readme = "README.md"
 documentation = "https://z2pack.greschd.ch"
@@ -37,33 +37,30 @@ keywords = [
 packages = [
     { include = "z2pack", from = "src" },
 ]
+requires-python = ">=3.9"
+dependencies = [
+    "numpy>=1.20",
+    "scipy>=1.7",
+    "decorator>=5.0",
+    "blessings>=1.7",
+    "sortedcontainers>=2.4.0",
+    "msgpack>=1.0",
+    "fsc.locker>=1.1.0",
+    "fsc.formatting>=1.0.0",
+    "fsc.iohelper>=1.0.3",
+]
 
-[tool.poetry.dependencies]
-python = ">=3.9,<3.13"
-numpy = "^1.20"
-scipy = "^1.7"
-decorator = "^5.0"
-blessings = "^1.7"
-sortedcontainers = "^2.4.0"
-msgpack = "^1.0"
-"fsc.locker" = "^1.1.0"
-"fsc.formatting" = "^1.0.0"
-"fsc.iohelper" = "^1.0.3"
-matplotlib = { version = "^3", optional = true }
-tbmodels = { version =  "^1.1", optional = true }
+[project.optional-dependencies]
+plot = [ "matplotlib>=3" ]
+tb = [ "tbmodels>=1.1" ]
 
 [tool.poetry.group.dev.dependencies]
-sphinx = "^5"
-sphinx-rtd-theme = "^1.1.1"
-pytest = "^6"
-pytest-cov = "^4.0.0"
-pre-commit = "^3.0.0"
-pylint = "^3"
-"ruamel.yaml" = "^0.17"
-
-[tool.poetry.extras]
-plot = ["matplotlib"]
-tb = ["tbmodels"]
+sphinx = ">=5"
+sphinx-rtd-theme = ">=1.1.1"
+pytest = ">=6"
+pytest-cov = ">=4.0.0"
+pre-commit = ">=3.0.0"
+pylint = ">=3"
 
 [tool.black]
 line-length = 100
@@ -108,6 +105,7 @@ disable = [
     "consider-using-f-string",
     "use-dict-literal",
     "too-many-arguments",
+    "too-many-positional-arguments",
 ]
 
 [tool.pylint.design]

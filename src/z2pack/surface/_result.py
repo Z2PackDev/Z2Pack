@@ -1,4 +1,4 @@
-""""Defines the result (data + convergence information) object for surface calculations."""
+""" "Defines the result (data + convergence information) object for surface calculations."""
 
 from .._result import Result
 
